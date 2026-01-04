@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Execurive Roleplay Server</title>
+<style>
+/* --- MOBILE FIX --- */
+@media screen and (max-width:600px){
+  .ex-container{padding:20px;}
+  .ex-header h1{font-size:28px;}
+  .ex-header h2{font-size:20px;}
+  .tagline{font-size:16px;}
+  .ex-grid{grid-template-columns:1fr !important;}
+}
+
+/* --- SHINY HEADER --- */
+.shiny-text{
+  font-weight:bold;
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9, #6366f1, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size:200% auto;
+  animation: shine 2s linear infinite;
+}
+@keyframes shine{
+  0%{background-position:200% center;}
+  100%{background-position:-200% center;}
+}
+
+/* --- TAGLINE --- */
+.tagline {
+  font-weight:bold;
+  font-size:18px;
+  text-align:center;
+  margin-top:15px;
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9, #6366f1, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size:200% auto;
+  animation: shineTagline 3s linear infinite, bounceTagline 2s ease-in-out infinite;
+  text-shadow: 0 0 8px rgba(56,189,248,0.6), 0 0 16px rgba(14,165,233,0.4);
+  display:inline-block;
+}
+@keyframes shineTagline {0%{background-position:200% center;}100%{background-position:-200% center;}}
+@keyframes bounceTagline {0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+
+/* --- COPY BUTTON --- */
+.copy-btn{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 10px;
+  background:#38bdf8;
+  color:#0f172a;
+  font-weight:bold;
+  font-size:13px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.2s;
+}
+.copy-btn:hover{background:#0ea5e9;}
+
+/* --- LINK BUTTONS --- */
+.link-btn{
+  display:block;
+  background:#020617;
+  padding:18px;
+  border-radius:14px;
+  border:1px solid #1e293b;
+  color:#38bdf8;
+  text-decoration:none;
+  transition:0.2s;
+  font-weight:bold;
+}
+.link-btn:hover{
+  background:#38bdf8;
+  color:#0f172a;
+  cursor:pointer;
+}
+
+/* --- EXPIRED LINK --- */
+.link-expired{
+  background:#1e293b;
+  border:1px solid #f87171;
+  color:#f87171;
+  text-align:center;
+  font-weight:bold;
+  padding:18px;
+  border-radius:14px;
+  transition:0.2s;
+}
+.link-expired:hover{
+  background:#f87171;
+  color:#0f172a;
+  cursor:not-allowed;
+}
+
+/* --- STATUS BADGE --- */
+.status-badge{
+  display:flex;
+  align-items:center;
+}
+.status-badge .dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  margin-right:8px;
+  animation:pulse 1.5s infinite;
+}
+.status-online{background:#22c55e;}
+.status-offline{background:#f87171;}
+@keyframes pulse{
+  0% {transform: scale(0.8); opacity:0.6;}
+  50% {transform: scale(1.2); opacity:1;}
+  100% {transform: scale(0.8); opacity:0.6;}
+}
+</style>
+</head>
+<body style="background:#0a0f1a;">
+
+<div class="ex-container" style="max-width:900px;margin:40px auto;background:#0f172a;border-radius:18px;padding:30px;font-family:Arial,Helvetica,sans-serif;color:#e5e7eb;box-shadow:0 0 0 1px #1e293b;">
+
+  <!-- HEADER -->
+  <div class="ex-header" style="text-align:center">
+    <h1 class="shiny-text" style="margin:0;letter-spacing:1px;">WELCOME TO SERVER</h1>
+    <h2 class="shiny-text" style="margin:10px 0 0;">EXECURIVE ROLEPLAY</h2>
+    <div class="tagline">RP gampang, paket awal komplet, teman baru menanti.</div>
+  </div>
+
+  <hr style="margin:35px 0;border:1px solid #334155">
+
+  <!-- SERVER INFO -->
+  <h3 style="border-left:4px solid #38bdf8;padding-left:12px">SERVER INFORMATION</h3>
+
+  <div class="ex-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:20px">
+
+<!-- IP -->
+<div style="background:#020617;padding:15px;border-radius:12px;border:1px solid #38bdf8;text-align:center;">
+  <b style="display:block;margin-bottom:6px;">IP Address</b>
+  <span style="
+    font-weight:bold;
+    background: linear-gradient(90deg, #38bdf8, #0ea5e9, #6366f1, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size:200% auto;
+    animation: shine 3s linear infinite;
+    padding:4px 10px;
+    border-radius:8px;
+    border:1px solid #38bdf8;
+    display:inline-block;
+    box-shadow:0 0 8px rgba(56,189,248,0.5);
+    user-select:text;
+  " id="server-ip">104.234.180.117:7006</span><br>
+  <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('server-ip').innerText)">COPY IP</button>
+</div>
+
+<!-- STATUS -->
+<div style="background:#020617;padding:15px;border-radius:12px;border:1px solid #38bdf8;text-align:center;">
+  <b style="display:block;margin-bottom:6px;">Status</b>
+  <div class="status-badge" style="justify-content:center;">
+    <span class="dot status-online"></span>
+    <span style="
+      font-weight:bold;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9, #6366f1, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size:200% auto;
+      animation: shine 3s linear infinite;
+      padding:4px 10px;
+      border-radius:8px;
+      border:1px solid #38bdf8;
+      display:inline-block;
+      box-shadow:0 0 8px rgba(56,189,248,0.5);
+    ">
+      Online
+    </span>
+  </div>
+</div>
+
+
+
+<!-- SYSTEM -->
+<div style="background:#020617;padding:15px;border-radius:12px;border:1px solid #1e293b;text-align:center;">
+  <b style="display:block;margin-bottom:6px;">System</b>
+  <span style="
+    font-weight:bold;
+    background: linear-gradient(90deg, #38bdf8, #0ea5e9, #6366f1, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size:200% auto;
+    animation: shine 3s linear infinite;
+    padding:4px 10px;
+    border-radius:8px;
+    border:1px solid #38bdf8;
+    display:inline-block;
+    box-shadow:0 0 8px rgba(56,189,248,0.5);
+  ">
+    WHITELIST
+  </span>
+</div>
+
+
+  </div>
+
+  <!-- STARTER PACK -->
+  <h3 style="margin-top:45px;border-left:4px solid #38bdf8;padding-left:12px">STARTER PACK</h3>
+
+  <div style="background:#020617;border:1px solid #1e293b;border-radius:14px;padding:20px;margin-top:15px">
+    <ul style="padding-left:20px;margin:0">
+      <li>💰 Uang <b>100.000.000</b></li>
+      <li>⭐ Level <b>+4</b></li>
+      <li>🍔 Snack & Sprite <b>x10</b></li>
+      <li>🎰 <b>3x Spin</b> (/roulette)</li>
+      <li>🚗 Mobil <b>Sultan</b></li>
+    </ul>
+  </div>
+
+  <!-- LINKS -->
+  <h3 style="margin-top:45px;border-left:4px solid #38bdf8;padding-left:12px">OFFICIAL LINKS</h3>
+
+  <div class="ex-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-top:20px">
+
+    <a href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H" class="link-btn">
+      📢 SALURAN / ANNOUNCEMENT<br>
+      <span style="font-size:13px">Official Channel</span>
+    </a>
+
+    <a href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho" class="link-btn">
+      🌐 LINK UTAMA<br>
+      <span style="font-size:13px">Execurive Roleplay</span>
+    </a>
+
+    <a href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc" class="link-btn">
+      ⚔ GOODSIDE EXECURIVE<br>
+      <span style="font-size:13px">Faction / Community</span>
+    </a>
+
+<a href="https://chat.whatsapp.com/CSuWdylEUgHEEGFPzGmYD7" class="link-btn">
+  🔥 FNG BADSIDE<br>
+  <span style="font-size:13px">Faction / Community</span>
+</a>
+
+  </div>
+
+  <!-- FOOTER -->
+  <hr style="margin:45px 0;border:1px solid #334155">
+  <p style="text-align:center;font-size:13px;color:#94a3b8">
+    © Execurive Roleplay — Join, Play, and Build Your Story.
+  </p>
+
+</div>
+</body>
+</html>
