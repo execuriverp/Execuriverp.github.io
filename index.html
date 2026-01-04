@@ -3,83 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Execurive Roleplay | SA-MP Server</title>
+<title>Execurive Roleplay | Blue City SA-MP</title>
 
 <style>
 :root{
-  --bg-main:#020617;
-  --bg-card:#0f172a;
+  --bg:#020617;
+  --card:#0f172a;
   --border:#1e293b;
   --blue:#38bdf8;
-  --blue-soft:#0ea5e9;
+  --blue2:#0ea5e9;
   --text:#e5e7eb;
   --muted:#94a3b8;
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-  background:radial-gradient(circle at top,#020617,#000);
+  background:
+    radial-gradient(1200px 400px at top, rgba(56,189,248,.08), transparent),
+    var(--bg);
   font-family:Inter,Segoe UI,Arial,sans-serif;
   color:var(--text);
 }
 
-/* ===== CONTAINER ===== */
-.container{
+/* ===== LAYOUT ===== */
+.wrapper{
   max-width:1100px;
   margin:40px auto;
-  padding:24px;
+  padding:20px;
 }
 
 /* ===== HEADER ===== */
 .header{
-  text-align:center;
-  padding:40px 20px;
-  background:linear-gradient(145deg,#020617,#0b1224);
+  background:linear-gradient(160deg,#020617,#0b1224);
   border:1px solid var(--border);
   border-radius:20px;
+  padding:42px 24px;
+  text-align:center;
 }
 
-.shiny{
-  background:linear-gradient(90deg,var(--blue),var(--blue-soft),#6366f1,var(--blue));
+.title{
+  font-size:36px;
+  letter-spacing:2px;
+  font-weight:800;
+  background:linear-gradient(90deg,var(--blue),var(--blue2),#6366f1,var(--blue));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-size:200% auto;
-  animation:shine 3s linear infinite;
+  animation:shine 4s linear infinite;
+}
+
+.subtitle{
+  margin-top:10px;
+  font-size:24px;
+  font-weight:700;
+  color:var(--blue);
+}
+
+.tagline{
+  margin-top:14px;
+  font-size:15px;
+  color:var(--muted);
 }
 
 @keyframes shine{
   to{background-position:-200% center}
 }
 
-.header h1{
-  font-size:36px;
-  letter-spacing:2px;
-}
-
-.header h2{
-  margin-top:10px;
-  font-size:26px;
-}
-
-.tagline{
-  margin-top:16px;
-  font-size:16px;
-  color:var(--muted);
-}
-
 /* ===== SECTION ===== */
 .section{
-  margin-top:50px;
+  margin-top:52px;
 }
 
-.section-title{
-  font-size:18px;
-  margin-bottom:16px;
+.section h3{
+  font-size:17px;
+  margin-bottom:18px;
   padding-left:12px;
   border-left:4px solid var(--blue);
 }
@@ -93,96 +91,101 @@ body{
 
 /* ===== CARD ===== */
 .card{
-  background:var(--bg-card);
+  background:var(--card);
   border:1px solid var(--border);
   border-radius:16px;
   padding:18px;
-  text-align:center;
   transition:.25s;
 }
 
 .card:hover{
   border-color:var(--blue);
-  transform:translateY(-4px);
-  box-shadow:0 10px 30px rgba(56,189,248,.15);
+  box-shadow:0 10px 28px rgba(56,189,248,.12);
+  transform:translateY(-3px);
 }
 
-.card b{
-  display:block;
+.card-title{
+  font-size:14px;
+  color:var(--muted);
   margin-bottom:6px;
 }
 
-.value{
-  display:inline-block;
-  padding:6px 12px;
-  border-radius:10px;
-  border:1px solid var(--blue);
-  box-shadow:0 0 12px rgba(56,189,248,.4);
+.card-value{
+  font-size:16px;
+  font-weight:700;
+  color:var(--blue);
 }
 
 /* ===== STATUS ===== */
 .status{
   display:flex;
-  justify-content:center;
   align-items:center;
   gap:8px;
+  font-weight:700;
 }
 
 .dot{
-  width:12px;
-  height:12px;
+  width:10px;
+  height:10px;
   border-radius:50%;
   background:#22c55e;
-  animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-  0%,100%{opacity:.6}
-  50%{opacity:1}
+  box-shadow:0 0 10px rgba(34,197,94,.7);
 }
 
 /* ===== BUTTON ===== */
 .btn{
   margin-top:10px;
-  padding:8px 14px;
+  padding:7px 14px;
   border:none;
   border-radius:10px;
-  font-weight:600;
   background:var(--blue);
   color:#020617;
+  font-weight:700;
   cursor:pointer;
 }
+.btn:hover{background:var(--blue2)}
 
-.btn:hover{background:var(--blue-soft)}
+/* ===== STARTER ===== */
+.starter ul{
+  list-style:none;
+  line-height:1.9;
+}
+.starter li::before{
+  content:"•";
+  color:var(--blue);
+  margin-right:8px;
+}
 
 /* ===== LINKS ===== */
 .link{
   display:block;
-  padding:20px;
+  padding:18px;
   border-radius:16px;
-  background:var(--bg-card);
+  background:var(--card);
   border:1px solid var(--border);
-  color:var(--blue);
   text-decoration:none;
-  font-weight:600;
   transition:.25s;
 }
 
-.link span{
-  display:block;
+.link-title{
+  color:var(--blue);
+  font-weight:700;
+}
+
+.link-desc{
+  margin-top:4px;
   font-size:13px;
   color:var(--muted);
-  margin-top:4px;
 }
 
 .link:hover{
-  background:var(--blue);
-  color:#020617;
+  border-color:var(--blue);
+  background:#020617;
 }
 
 /* ===== FOOTER ===== */
 .footer{
-  margin-top:60px;
+  margin-top:64px;
   text-align:center;
   font-size:13px;
   color:var(--muted);
@@ -190,94 +193,94 @@ body{
 
 /* ===== MOBILE ===== */
 @media(max-width:600px){
-  .header h1{font-size:28px}
-  .header h2{font-size:20px}
+  .title{font-size:28px}
+  .subtitle{font-size:20px}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrapper">
 
   <!-- HEADER -->
   <div class="header">
-    <h1 class="shiny">WELCOME TO SERVER</h1>
-    <h2 class="shiny">EXECURIVE ROLEPLAY</h2>
-    <div class="tagline">RP mudah • komunitas aktif • pengalaman premium</div>
+    <div class="title">EXECURIVE ROLEPLAY</div>
+    <div class="subtitle">BLUE CITY SA-MP</div>
+    <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
   </div>
 
   <!-- INFO -->
   <div class="section">
-    <div class="section-title">SERVER INFORMATION</div>
+    <h3>SERVER INFORMATION</h3>
     <div class="grid">
 
       <div class="card">
-        <b>IP Address</b>
-        <span class="value shiny" id="ip">104.234.180.117:7006</span><br>
-        <button class="btn" onclick="navigator.clipboard.writeText(ip.innerText)">COPY IP</button>
+        <div class="card-title">IP Address</div>
+        <div class="card-value" id="ip">104.234.180.117:7006</div>
+        <button class="btn" onclick="navigator.clipboard.writeText(ip.innerText)">Copy IP</button>
       </div>
 
       <div class="card">
-        <b>Status</b>
+        <div class="card-title">Status</div>
         <div class="status">
           <div class="dot"></div>
-          <span class="shiny">ONLINE</span>
+          ONLINE
         </div>
       </div>
 
       <div class="card">
-        <b>System</b>
-        <span class="value shiny">WHITELIST</span>
+        <div class="card-title">System</div>
+        <div class="card-value">WHITELIST</div>
       </div>
 
     </div>
   </div>
 
-  <!-- STARTER PACK -->
+  <!-- STARTER -->
   <div class="section">
-    <div class="section-title">STARTER PACK</div>
-    <div class="card" style="text-align:left">
-      <ul style="padding-left:20px;line-height:1.8">
-        <li>💰 Uang <b>100.000.000</b></li>
-        <li>⭐ Level <b>+4</b></li>
-        <li>🍔 Snack & Sprite <b>x10</b></li>
-        <li>🎰 <b>3x Spin</b></li>
-        <li>🚗 Mobil <b>Sultan</b></li>
+    <h3>STARTER PACK</h3>
+    <div class="card starter">
+      <ul>
+        <li>Uang 100.000.000</li>
+        <li>Level +4</li>
+        <li>Snack & Sprite x10</li>
+        <li>3x Spin Roulette</li>
+        <li>Mobil Sultan</li>
       </ul>
     </div>
   </div>
 
   <!-- LINKS -->
   <div class="section">
-    <div class="section-title">OFFICIAL LINKS</div>
+    <h3>OFFICIAL LINKS</h3>
     <div class="grid">
 
       <a class="link" href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H">
-        📢 ANNOUNCEMENT
-        <span>Official Channel</span>
+        <div class="link-title">Announcement</div>
+        <div class="link-desc">Official Channel</div>
       </a>
 
       <a class="link" href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho">
-        🌐 MAIN GROUP
-        <span>Execurive Roleplay</span>
+        <div class="link-title">Main Group</div>
+        <div class="link-desc">Execurive Roleplay</div>
       </a>
 
       <a class="link" href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc">
-        ⚔ GOODSIDE
-        <span>Faction Community</span>
+        <div class="link-title">Goodside</div>
+        <div class="link-desc">Faction Community</div>
       </a>
 
       <a class="link" href="https://chat.whatsapp.com/CSuWdylEUgHEEGFPzGmYD7">
-        🔥 BADSIDE
-        <span>Faction Community</span>
+        <div class="link-title">Badside</div>
+        <div class="link-desc">Faction Community</div>
       </a>
 
     </div>
   </div>
 
   <div class="footer">
-    © Execurive Roleplay — SA-MP Server
+    © Execurive Roleplay — Blue City Experience
   </div>
 
 </div>
