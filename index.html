@@ -8,10 +8,11 @@
 <style>
 :root{
   --bg:#020617;
-  --card:#0f172a;
+  --panel:#0f172a;
   --border:#1e293b;
   --blue:#38bdf8;
   --blue2:#0ea5e9;
+  --blue3:#6366f1;
   --text:#e5e7eb;
   --muted:#94a3b8;
 }
@@ -20,99 +21,133 @@
 
 body{
   background:
-    radial-gradient(1200px 400px at top, rgba(56,189,248,.08), transparent),
+    radial-gradient(800px 300px at top, rgba(56,189,248,.15), transparent),
+    radial-gradient(600px 200px at bottom, rgba(99,102,241,.12), transparent),
     var(--bg);
   font-family:Inter,Segoe UI,Arial,sans-serif;
   color:var(--text);
 }
 
-/* ===== LAYOUT ===== */
+/* ===== CONTAINER ===== */
 .wrapper{
-  max-width:1100px;
+  max-width:1150px;
   margin:40px auto;
   padding:20px;
 }
 
 /* ===== HEADER ===== */
 .header{
+  position:relative;
   background:linear-gradient(160deg,#020617,#0b1224);
   border:1px solid var(--border);
-  border-radius:20px;
-  padding:42px 24px;
+  border-radius:22px;
+  padding:46px 26px;
   text-align:center;
+  overflow:hidden;
+}
+
+.header::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(56,189,248,.05),
+      rgba(56,189,248,.05) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+  pointer-events:none;
 }
 
 .title{
-  font-size:36px;
+  font-size:38px;
+  font-weight:900;
   letter-spacing:2px;
-  font-weight:800;
-  background:linear-gradient(90deg,var(--blue),var(--blue2),#6366f1,var(--blue));
+  background:linear-gradient(90deg,var(--blue),var(--blue2),var(--blue3),var(--blue));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  background-size:200% auto;
-  animation:shine 4s linear infinite;
+  background-size:300% auto;
+  animation:shine 5s linear infinite;
 }
 
 .subtitle{
-  margin-top:10px;
-  font-size:24px;
+  margin-top:8px;
+  font-size:22px;
   font-weight:700;
   color:var(--blue);
+  text-shadow:0 0 12px rgba(56,189,248,.4);
 }
 
 .tagline{
   margin-top:14px;
   font-size:15px;
   color:var(--muted);
+  letter-spacing:.3px;
 }
 
 @keyframes shine{
-  to{background-position:-200% center}
+  to{background-position:-300% center}
 }
 
 /* ===== SECTION ===== */
 .section{
-  margin-top:52px;
+  margin-top:60px;
 }
 
 .section h3{
-  font-size:17px;
+  font-size:18px;
   margin-bottom:18px;
-  padding-left:12px;
+  padding-left:14px;
   border-left:4px solid var(--blue);
+  letter-spacing:.5px;
 }
 
 /* ===== GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:18px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
 }
 
 /* ===== CARD ===== */
 .card{
-  background:var(--card);
+  position:relative;
+  background:var(--panel);
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
-  transition:.25s;
+  border-radius:18px;
+  padding:20px;
+  overflow:hidden;
+  transition:.3s;
 }
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(56,189,248,.15),transparent);
+  opacity:0;
+  transition:.3s;
+}
+
+.card:hover::before{opacity:1}
 
 .card:hover{
   border-color:var(--blue);
-  box-shadow:0 10px 28px rgba(56,189,248,.12);
-  transform:translateY(-3px);
+  box-shadow:0 15px 35px rgba(56,189,248,.18);
+  transform:translateY(-4px);
 }
 
-.card-title{
-  font-size:14px;
+.label{
+  font-size:13px;
   color:var(--muted);
   margin-bottom:6px;
 }
 
-.card-value{
-  font-size:16px;
-  font-weight:700;
+.value{
+  font-size:17px;
+  font-weight:800;
   color:var(--blue);
 }
 
@@ -120,38 +155,49 @@ body{
 .status{
   display:flex;
   align-items:center;
-  gap:8px;
-  font-weight:700;
+  gap:10px;
+  font-weight:800;
+  letter-spacing:1px;
 }
 
-.dot{
-  width:10px;
-  height:10px;
+.pulse{
+  width:12px;
+  height:12px;
   border-radius:50%;
   background:#22c55e;
-  box-shadow:0 0 10px rgba(34,197,94,.7);
+  box-shadow:0 0 0 rgba(34,197,94,.7);
+  animation:pulse 1.6s infinite;
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}
+  70%{box-shadow:0 0 0 14px rgba(34,197,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
 }
 
 /* ===== BUTTON ===== */
 .btn{
-  margin-top:10px;
-  padding:7px 14px;
+  margin-top:12px;
+  padding:8px 16px;
   border:none;
-  border-radius:10px;
-  background:var(--blue);
+  border-radius:12px;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
   color:#020617;
-  font-weight:700;
+  font-weight:800;
   cursor:pointer;
 }
-.btn:hover{background:var(--blue2)}
+
+.btn:hover{
+  background:linear-gradient(90deg,var(--blue2),var(--blue3));
+}
 
 /* ===== STARTER ===== */
 .starter ul{
   list-style:none;
-  line-height:1.9;
+  line-height:2;
 }
 .starter li::before{
-  content:"•";
+  content:"▹";
   color:var(--blue);
   margin-right:8px;
 }
@@ -159,33 +205,34 @@ body{
 /* ===== LINKS ===== */
 .link{
   display:block;
-  padding:18px;
-  border-radius:16px;
-  background:var(--card);
+  padding:20px;
+  border-radius:18px;
+  background:var(--panel);
   border:1px solid var(--border);
   text-decoration:none;
-  transition:.25s;
+  transition:.3s;
 }
 
-.link-title{
+.link strong{
   color:var(--blue);
-  font-weight:700;
+  font-size:16px;
 }
 
-.link-desc{
-  margin-top:4px;
+.link span{
+  display:block;
   font-size:13px;
   color:var(--muted);
+  margin-top:4px;
 }
 
 .link:hover{
   border-color:var(--blue);
-  background:#020617;
+  box-shadow:0 12px 30px rgba(56,189,248,.2);
 }
 
 /* ===== FOOTER ===== */
 .footer{
-  margin-top:64px;
+  margin-top:70px;
   text-align:center;
   font-size:13px;
   color:var(--muted);
@@ -193,8 +240,8 @@ body{
 
 /* ===== MOBILE ===== */
 @media(max-width:600px){
-  .title{font-size:28px}
-  .subtitle{font-size:20px}
+  .title{font-size:30px}
+  .subtitle{font-size:18px}
 }
 </style>
 </head>
@@ -206,7 +253,7 @@ body{
   <!-- HEADER -->
   <div class="header">
     <div class="title">EXECURIVE ROLEPLAY</div>
-    <div class="subtitle">BLUE CITY SA-MP</div>
+    <div class="subtitle">BLUE CITY • SA-MP SERVER</div>
     <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
   </div>
 
@@ -216,22 +263,22 @@ body{
     <div class="grid">
 
       <div class="card">
-        <div class="card-title">IP Address</div>
-        <div class="card-value" id="ip">104.234.180.117:7006</div>
-        <button class="btn" onclick="navigator.clipboard.writeText(ip.innerText)">Copy IP</button>
+        <div class="label">Server IP</div>
+        <div class="value" id="ip">104.234.180.117:7006</div>
+        <button class="btn" onclick="copyIP()">COPY IP</button>
       </div>
 
       <div class="card">
-        <div class="card-title">Status</div>
+        <div class="label">Server Status</div>
         <div class="status">
-          <div class="dot"></div>
+          <div class="pulse"></div>
           ONLINE
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">System</div>
-        <div class="card-value">WHITELIST</div>
+        <div class="label">Access System</div>
+        <div class="value">WHITELIST ENABLED</div>
       </div>
 
     </div>
@@ -239,50 +286,68 @@ body{
 
   <!-- STARTER -->
   <div class="section">
-    <h3>STARTER PACK</h3>
+    <h3>STARTER PACKAGE</h3>
     <div class="card starter">
       <ul>
-        <li>Uang 100.000.000</li>
-        <li>Level +4</li>
-        <li>Snack & Sprite x10</li>
-        <li>3x Spin Roulette</li>
-        <li>Mobil Sultan</li>
+        <li>Starting Cash 100.000.000</li>
+        <li>Level Boost +4</li>
+        <li>Food & Drink x10</li>
+        <li>Roulette Spin x3</li>
+        <li>Premium Vehicle (Sultan)</li>
       </ul>
     </div>
   </div>
 
   <!-- LINKS -->
   <div class="section">
-    <h3>OFFICIAL LINKS</h3>
+    <h3>OFFICIAL CONNECTIONS</h3>
     <div class="grid">
 
       <a class="link" href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H">
-        <div class="link-title">Announcement</div>
-        <div class="link-desc">Official Channel</div>
+        <strong>Announcement Channel</strong>
+        <span>Official Information & Updates</span>
       </a>
 
       <a class="link" href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho">
-        <div class="link-title">Main Group</div>
-        <div class="link-desc">Execurive Roleplay</div>
+        <strong>Main Community</strong>
+        <span>Execurive Roleplay Players</span>
       </a>
 
       <a class="link" href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc">
-        <div class="link-title">Goodside</div>
-        <div class="link-desc">Faction Community</div>
+        <strong>Goodside Faction</strong>
+        <span>Government & Law Enforcement</span>
       </a>
 
       <a class="link" href="https://chat.whatsapp.com/CSuWdylEUgHEEGFPzGmYD7">
-        <div class="link-title">Badside</div>
-        <div class="link-desc">Faction Community</div>
+        <strong>Badside Faction</strong>
+        <span>Criminal & Underground Roleplay</span>
       </a>
 
     </div>
   </div>
 
   <div class="footer">
-    © Execurive Roleplay — Blue City Experience
+    © Execurive Roleplay — Blue City Roleplay Experience
   </div>
 
 </div>
+
+<script>
+function copyIP(){
+  const text = document.getElementById("ip").innerText;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text);
+  }else{
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand("copy");
+    document.body.removeChild(temp);
+  }
+  alert("IP berhasil disalin!");
+}
+</script>
+
 </body>
 </html>
