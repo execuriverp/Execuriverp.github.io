@@ -17,6 +17,8 @@
   --text:#e5e7eb;
   --muted:#94a3b8;
 }
+
+/* RESET */
 *{margin:0;padding:0;box-sizing:border-box}
 body{
   background:
@@ -45,18 +47,46 @@ body{
   background:linear-gradient(135deg,var(--blue),var(--purple));
   display:flex;align-items:center;justify-content:center;
   font-weight:900;color:#020617;
+  transition:.25s;
+  cursor:pointer;
 }
+.logo:hover{transform:rotate(15deg) scale(1.1);}
 .nav-title{font-weight:900;letter-spacing:2px;color:var(--blue)}
+
+.nav-right{
+  display:flex;align-items:center;gap:10px;
+  transition:all .3s ease;
+}
 .nav-right a{
-  margin-left:12px;padding:12px 18px;
+  padding:12px 18px;
   border-radius:14px;
   font-size:12px;font-weight:900;
   letter-spacing:1.4px;text-decoration:none;
   color:var(--muted);
+  transition:.3s;
 }
 .nav-right a.active{
   background:linear-gradient(90deg,var(--blue),var(--purple));
   color:#020617;
+}
+.nav-right a:hover{
+  background:rgba(56,189,248,.15);
+  color:#fff;
+}
+
+/* HAMBURGER */
+.hamburger{
+  display:none;
+  flex-direction:column;
+  justify-content:space-between;
+  width:26px;height:20px;
+  cursor:pointer;
+}
+.hamburger div{
+  height:3px;
+  background:var(--blue);
+  border-radius:2px;
+  transition:.3s;
 }
 
 /* MAIN */
@@ -67,6 +97,7 @@ body{
   border-radius:28px;
   padding:50px 26px;
   text-align:center;
+  transition:all .3s ease;
 }
 .title{
   font-size:36px;font-weight:900;
@@ -122,6 +153,11 @@ body{
   cursor:pointer;
   background:linear-gradient(90deg,var(--green),var(--blue));
   color:#020617;
+  transition:.3s;
+}
+.btn:hover{
+  transform:scale(1.03);
+  box-shadow:0 10px 25px rgba(56,189,248,.3);
 }
 
 /* LIMITED */
@@ -171,6 +207,18 @@ body{
   font-size:13px;
   color:var(--muted);
 }
+
+/* RESPONSIVE */
+@media screen and (max-width:900px){
+  .nav-right{display:none;position:absolute;top:60px;right:20px;flex-direction:column;background:var(--panel);padding:20px;border-radius:14px;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .nav-right.show{display:flex;}
+  .hamburger{display:flex;}
+}
+@media screen and (max-width:600px){
+  .grid{gap:16px;}
+  .header{padding:40px 20px;}
+  .title{font-size:28px;}
+}
 </style>
 </head>
 
@@ -182,6 +230,9 @@ body{
     <div class="nav-left">
       <div class="logo">EX</div>
       <div class="nav-title">EXECURIVE</div>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
     </div>
     <div class="nav-right">
       <a href="index.html">HOME</a>
@@ -206,16 +257,7 @@ body{
 <h3>DONATE PACKAGE</h3>
 <div class="grid">
 <script>
-const donateList=[
-["Skin Import","15K"],["Mobil Import","15K"],["Kendaraan Udara / Air","20K"],
-["Rumah Import Bebas","25K"],["Rumah Import + Mapping","35K"],
-["Uang IC 20JT","10K"],["Level +5","10K"],
-["Workshop Bebas","30K"],["Workshop + Mapping","40K"],
-["Gudang Import","25K"],["Pasang Gate","15K"],["Pasang Garkot","15K"],
-["Rubel 750","10K"],
-["Biz Market / Elektronik","25K"],["Biz + Mapping","35K"],
-["Pom (No Mapping)","40K"],["Pom + Mapping","50K"]
-];
+const donateList=[["Skin Import","15K"],["Mobil Import","15K"],["Kendaraan Udara / Air","20K"],["Rumah Import Bebas","25K"],["Rumah Import + Mapping","35K"],["Uang IC 20JT","10K"],["Level +5","10K"],["Workshop Bebas","30K"],["Workshop + Mapping","40K"],["Gudang Import","25K"],["Pasang Gate","15K"],["Pasang Garkot","15K"],["Rubel 750","10K"],["Biz Market / Elektronik","25K"],["Biz + Mapping","35K"],["Pom (No Mapping)","40K"],["Pom + Mapping","50K"]];
 document.write(donateList.map(d=>`
 <div class="card">
   <div class="item">${d[0]}</div>
@@ -231,10 +273,7 @@ document.write(donateList.map(d=>`
 <h3>KENDARAAN LIMITED</h3>
 <div class="grid">
 <script>
-const veh=[
-["Kart","40K"],["Super GT","45K"],["Hotknife","35K"],
-["Heli Seaparrow","50K"],["Jet Hydra","55K"],["Mobil Caddy","35K"]
-];
+const veh=[["Kart","40K"],["Super GT","45K"],["Hotknife","35K"],["Heli Seaparrow","50K"],["Jet Hydra","55K"],["Mobil Caddy","35K"]];
 document.write(veh.map(v=>`
 <div class="card limited">
   <div class="item">${v[0]}</div>
@@ -250,13 +289,7 @@ document.write(veh.map(v=>`
 <h3>SKIN LIMITED</h3>
 <div class="grid">
 <script>
-const skin=[
-["Skin ID 303","45K"],["Skin ID 304","45K"],["Skin ID 305","45K"],
-["Skin ID 295","45K"],["Skin ID 289","45K"],
-["Skin ID 285","55K"],["Skin ID 277","55K"],
-["Skin ID 278","55K"],["Skin ID 279","55K"],
-["Skin ID 217","65K"],["Skin ID 99","45K"]
-];
+const skin=[["Skin ID 303","45K"],["Skin ID 304","45K"],["Skin ID 305","45K"],["Skin ID 295","45K"],["Skin ID 289","45K"],["Skin ID 285","55K"],["Skin ID 277","55K"],["Skin ID 278","55K"],["Skin ID 279","55K"],["Skin ID 217","65K"],["Skin ID 99","45K"]];
 document.write(skin.map(s=>`
 <div class="card limited">
   <div class="item">${s[0]}</div>
@@ -299,10 +332,15 @@ function topup(item,price){
     "https://wa.me/6282126437107?text="+
     encodeURIComponent(
       "Halo Owner Execurive, saya ingin donate "+item+
-      " dengan harga "+price+
+      " dengan harga "+price+ 
       ". Bisa jelaskan metode pembayarannya?"
     );
   },1600);
+}
+
+// Hamburger toggle
+function toggleMenu(){
+  document.querySelector('.nav-right').classList.toggle('show');
 }
 </script>
 
