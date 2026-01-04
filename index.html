@@ -27,7 +27,7 @@ body{
     radial-gradient(700px 250px at bottom, rgba(99,102,241,.14), transparent),
     var(--bg);
   color:var(--text);
-  cursor:auto; /* reset cursor normal */
+  cursor:auto;
 }
 
 /* NAVBAR */
@@ -53,8 +53,12 @@ body{
 }
 .logo:hover{transform:rotate(15deg) scale(1.1);}
 .nav-title{font-weight:900;letter-spacing:2px;color:var(--blue);font-size:16px;}
+.nav-right{
+  display:flex;align-items:center;gap:8px;
+  transition:all .3s ease;
+}
 .nav-right a{
-  margin-left:12px;padding:12px 18px;
+  padding:12px 18px;
   border-radius:14px;
   font-size:12px;font-weight:900;
   letter-spacing:1.4px;text-decoration:none;
@@ -64,6 +68,21 @@ body{
 }
 .nav-right a:hover{background:rgba(56,189,248,.15);color:#fff;}
 .nav-right a.active{background:linear-gradient(90deg,var(--blue),var(--purple));color:#020617;}
+
+/* HAMBURGER */
+.hamburger{
+  display:none;
+  flex-direction:column;
+  justify-content:space-between;
+  width:26px;height:20px;
+  cursor:pointer;
+}
+.hamburger div{
+  height:3px;
+  background:var(--blue);
+  border-radius:2px;
+  transition:.3s;
+}
 
 /* WRAPPER */
 .wrapper{max-width:1150px;margin:40px auto;padding:20px;}
@@ -75,6 +94,7 @@ body{
   border-radius:28px;
   padding:56px 26px;
   text-align:center;
+  transition:all .3s ease;
 }
 .title{
   font-size:42px;font-weight:900;letter-spacing:2px;
@@ -181,11 +201,17 @@ body{
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* RESPONSIVE */
+@media screen and (max-width:900px){
+  .nav-right{display:none;position:absolute;top:60px;right:20px;flex-direction:column;background:var(--panel);padding:20px;border-radius:14px;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .nav-right.show{display:flex;}
+  .hamburger{display:flex;}
+}
 @media screen and (max-width:600px){
   .header{padding:40px 20px;}
   .title{font-size:28px;}
   .subtitle{font-size:16px;}
   .nav-right a{padding:10px 14px;font-size:11px;}
+  .grid{gap:16px;}
 }
 </style>
 </head>
@@ -197,6 +223,9 @@ body{
     <div class="nav-left">
       <div class="logo">EX</div>
       <div class="nav-title">EXECURIVE</div>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
     </div>
     <div class="nav-right">
       <a href="index.html" class="active">HOME</a>
@@ -301,6 +330,11 @@ function copyIP(btn){
       },2000);
     },800);
   },300);
+}
+
+// Hamburger toggle
+function toggleMenu(){
+  document.querySelector('.nav-right').classList.toggle('show');
 }
 </script>
 
