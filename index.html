@@ -29,48 +29,92 @@ body{
   color:var(--text);
 }
 
-/* ===== CONTAINER ===== */
 .wrapper{
   max-width:1150px;
   margin:40px auto;
   padding:20px;
 }
 
+/* ===== NAVBAR ===== */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 26px;
+  margin-bottom:36px;
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 12px 34px rgba(0,0,0,.45);
+}
+
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.nav-logo{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  color:#020617;
+  background:linear-gradient(135deg,var(--blue),var(--blue2),var(--blue3));
+}
+
+.nav-title{
+  font-weight:900;
+  letter-spacing:2px;
+  font-size:14px;
+  color:var(--blue);
+}
+
+.nav-right{
+  display:flex;
+  gap:12px;
+}
+
+.nav-link{
+  padding:12px 20px;
+  border-radius:14px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.4px;
+  text-decoration:none;
+  color:var(--muted);
+  transition:.25s;
+}
+
+.nav-link:hover{
+  color:#fff;
+  background:rgba(56,189,248,.15);
+}
+
+.nav-link.active{
+  color:#020617;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
+}
+
 /* ===== HEADER ===== */
 .header{
-  position:relative;
   background:linear-gradient(160deg,#020617,#0b1224);
   border:1px solid var(--border);
   border-radius:26px;
   padding:52px 26px;
   text-align:center;
-  overflow:hidden;
-}
-
-.header::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(56,189,248,.06),
-      rgba(56,189,248,.06) 1px,
-      transparent 1px,
-      transparent 6px
-    );
-  pointer-events:none;
 }
 
 .title{
   font-size:40px;
   font-weight:900;
   letter-spacing:2px;
-  background:linear-gradient(90deg,var(--blue),var(--blue2),var(--blue3),var(--blue));
+  background:linear-gradient(90deg,var(--blue),var(--blue2),var(--blue3));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  background-size:300% auto;
-  animation:shine 5s linear infinite;
 }
 
 .subtitle{
@@ -78,18 +122,12 @@ body{
   font-size:22px;
   font-weight:700;
   color:var(--blue);
-  text-shadow:0 0 14px rgba(56,189,248,.5);
 }
 
 .tagline{
   margin-top:16px;
   font-size:15px;
   color:var(--muted);
-  letter-spacing:.4px;
-}
-
-@keyframes shine{
-  to{background-position:-300% center}
 }
 
 /* ===== SECTION ===== */
@@ -102,10 +140,8 @@ body{
   margin-bottom:20px;
   padding-left:14px;
   border-left:4px solid var(--blue);
-  letter-spacing:.6px;
 }
 
-/* ===== GRID ===== */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
@@ -114,25 +150,12 @@ body{
 
 /* ===== CARD ===== */
 .card{
-  position:relative;
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:20px;
   padding:22px;
-  overflow:hidden;
   transition:.3s;
 }
-
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(56,189,248,.18),transparent);
-  opacity:0;
-  transition:.3s;
-}
-
-.card:hover::before{opacity:1}
 
 .card:hover{
   border-color:var(--blue);
@@ -150,7 +173,6 @@ body{
   font-size:18px;
   font-weight:900;
   color:var(--blue);
-  letter-spacing:.5px;
 }
 
 /* ===== STATUS ===== */
@@ -159,7 +181,6 @@ body{
   align-items:center;
   gap:12px;
   font-weight:900;
-  letter-spacing:2px;
   color:var(--green);
 }
 
@@ -168,57 +189,28 @@ body{
   height:14px;
   border-radius:50%;
   background:var(--green);
-  box-shadow:0 0 0 rgba(34,197,94,.7);
   animation:pulse 1.6s infinite;
 }
 
 @keyframes pulse{
   0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}
   70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
-  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
 }
 
-/* ===== COPY BUTTON PRO ===== */
+/* ===== COPY ===== */
 .copy-btn{
   margin-top:16px;
   width:100%;
-  padding:14px 20px;
+  padding:14px;
   border-radius:16px;
   border:1px solid var(--blue);
   background:linear-gradient(90deg,var(--blue),var(--blue2));
-  color:#020617;
   font-weight:900;
-  letter-spacing:1px;
   cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  transition:.25s;
-  position:relative;
-  overflow:hidden;
-}
-
-.copy-btn::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
-  transform:translateX(-100%);
-}
-
-.copy-btn:hover::after{
-  transform:translateX(100%);
-  transition:.6s;
-}
-
-.copy-btn:hover{
-  box-shadow:0 0 28px rgba(56,189,248,.75);
-  transform:translateY(-3px);
 }
 
 .copy-btn.copied{
-  background:linear-gradient(90deg,#22c55e,#16a34a);
+  background:#22c55e;
   border-color:#22c55e;
 }
 
@@ -241,158 +233,120 @@ body{
   background:var(--panel);
   border:1px solid var(--border);
   text-decoration:none;
-  transition:.3s;
 }
 
-.link strong{
-  color:var(--blue);
-  font-size:16px;
-}
+.link strong{color:var(--blue)}
+.link span{font-size:13px;color:var(--muted)}
 
-.link span{
-  display:block;
-  font-size:13px;
-  color:var(--muted);
-  margin-top:6px;
-}
-
-.link:hover{
-  border-color:var(--blue);
-  box-shadow:0 16px 36px rgba(56,189,248,.25);
-}
-
-/* ===== FOOTER ===== */
 .footer{
   margin-top:80px;
   text-align:center;
   font-size:13px;
   color:var(--muted);
 }
-
-/* ===== MOBILE ===== */
-@media(max-width:600px){
-  .title{font-size:30px}
-  .subtitle{font-size:18px}
-}
 </style>
 </head>
 
 <body>
-
 <div class="wrapper">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="title">EXECURIVE ROLEPLAY</div>
-    <div class="subtitle">BLUE CITY • SA-MP SERVER</div>
-    <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
+<!-- NAVBAR -->
+<div class="nav">
+  <div class="nav-left">
+    <div class="nav-logo">EX</div>
+    <div class="nav-title">EXECURIVE</div>
   </div>
-
-  <!-- INFO -->
-  <div class="section">
-    <h3>SERVER INFORMATION</h3>
-    <div class="grid">
-
-      <div class="card">
-        <div class="label">Server IP</div>
-        <div class="value" id="ip">104.234.180.117:7006</div>
-        <button class="copy-btn" onclick="copyIP(this)">
-          <span class="icon">⧉</span>
-          <span class="text">COPY IP</span>
-        </button>
-      </div>
-
-      <div class="card">
-        <div class="label">Server Status</div>
-        <div class="status">
-          <div class="pulse"></div>
-          ONLINE
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="label">Access System</div>
-        <div class="value">WHITELIST</div>
-      </div>
-
-    </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link active">HOME</a>
+    <a href="listtopup.html" class="nav-link">LIST TOPUP</a>
   </div>
+</div>
 
-  <!-- STARTER -->
-  <div class="section">
-    <h3>STARTER PACKAGE</h3>
-    <div class="card starter">
-      <ul>
-        <li>Starting Cash 100.000.000</li>
-        <li>Level Boost +4</li>
-        <li>Food & Drink x10</li>
-        <li>Roulette Spin x3</li>
-        <li>Vehicle (Sultan)</li>
-      </ul>
-    </div>
-  </div>
+<!-- HEADER -->
+<div class="header">
+  <div class="title">EXECURIVE ROLEPLAY</div>
+  <div class="subtitle">BLUE CITY • SA-MP SERVER</div>
+  <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
+</div>
 
-  <!-- LINKS -->
-  <div class="section">
-    <h3>OFFICIAL CONNECTIONS</h3>
-    <div class="grid">
+<!-- INFO -->
+<div class="section">
+<h3>SERVER INFORMATION</h3>
+<div class="grid">
 
-      <a class="link" href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H">
-        <strong>Announcement Channel</strong>
-        <span>Official Information & Updates</span>
-      </a>
+<div class="card">
+  <div class="label">Server IP</div>
+  <div class="value" id="ip">104.234.180.117:7006</div>
+  <button class="copy-btn" onclick="copyIP(this)">COPY IP</button>
+</div>
 
-      <a class="link" href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho">
-        <strong>Main Community</strong>
-        <span>Execurive Roleplay Players</span>
-      </a>
+<div class="card">
+  <div class="label">Server Status</div>
+  <div class="status"><div class="pulse"></div>ONLINE</div>
+</div>
 
-      <a class="link" href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc">
-        <strong>Goodside Faction</strong>
-        <span>Government & Law Enforcement</span>
-      </a>
+<div class="card">
+  <div class="label">Access System</div>
+  <div class="value">WHITELIST</div>
+</div>
 
-      <a class="link" href="https://chat.whatsapp.com/CSuWdylEUgHEEGFPzGmYD7">
-        <strong>Badside Faction</strong>
-        <span>Criminal & Underground Roleplay</span>
-      </a>
+</div>
+</div>
 
-    </div>
-  </div>
+<!-- STARTER -->
+<div class="section">
+<h3>STARTER PACKAGE</h3>
+<div class="card starter">
+<ul>
+<li>Starting Cash 100.000.000</li>
+<li>Level Boost +4</li>
+<li>Food & Drink x10</li>
+<li>Roulette Spin x3</li>
+<li>Vehicle (Sultan)</li>
+</ul>
+</div>
+</div>
 
-  <div class="footer">
-    © Execurive Roleplay — Blue City Roleplay Experience
-  </div>
+<!-- LINKS -->
+<div class="section">
+<h3>OFFICIAL CONNECTIONS</h3>
+<div class="grid">
+
+<a class="link" href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H">
+<strong>Announcement Channel</strong>
+<span>Official Information & Updates</span>
+</a>
+
+<a class="link" href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho">
+<strong>Main Community</strong>
+<span>Execurive Roleplay Players</span>
+</a>
+
+<a class="link" href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc">
+<strong>Goodside Faction</strong>
+<span>Government & Law Enforcement</span>
+</a>
+
+<a class="link" href="https://chat.whatsapp.com/CSuWdylEUgHEEGFPzGmYD7">
+<strong>Badside Faction</strong>
+<span>Criminal & Underground Roleplay</span>
+</a>
+
+</div>
+</div>
+
+<div class="footer">
+© Execurive Roleplay — Blue City Roleplay Experience
+</div>
 
 </div>
 
 <script>
 function copyIP(btn){
-  const text = document.getElementById("ip").innerText;
-
-  if(navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(text);
-  }else{
-    const temp = document.createElement("textarea");
-    temp.value = text;
-    temp.style.position = "fixed";
-    temp.style.opacity = "0";
-    document.body.appendChild(temp);
-    temp.focus();
-    temp.select();
-    document.execCommand("copy");
-    document.body.removeChild(temp);
-  }
-
+  navigator.clipboard.writeText(document.getElementById("ip").innerText);
   btn.classList.add("copied");
-  btn.querySelector(".text").innerText = "COPIED!";
-  btn.querySelector(".icon").innerText = "✔";
-
-  setTimeout(()=>{
-    btn.classList.remove("copied");
-    btn.querySelector(".text").innerText = "COPY IP";
-    btn.querySelector(".icon").innerText = "⧉";
-  },2000);
+  btn.innerText="COPIED!";
+  setTimeout(()=>{btn.classList.remove("copied");btn.innerText="COPY IP"},2000);
 }
 </script>
 
