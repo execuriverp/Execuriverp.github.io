@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List Topup | Execurive Roleplay</title>
+
+<style>
+:root{
+  --bg:#020617;
+  --panel:#0f172a;
+  --border:#1e293b;
+  --blue:#38bdf8;
+  --blue2:#0ea5e9;
+  --purple:#6366f1;
+  --gold:#facc15;
+  --green:#22c55e;
+  --red:#ef4444;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:
+    radial-gradient(900px 300px at top, rgba(56,189,248,.18), transparent),
+    radial-gradient(700px 250px at bottom, rgba(99,102,241,.14), transparent),
+    var(--bg);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  color:var(--text);
+}
+
+.wrapper{
+  max-width:1200px;
+  margin:40px auto;
+  padding:20px;
+}
+
+/* ===== NAVBAR ===== */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 26px;
+  margin-bottom:40px;
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);
+}
+
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.nav-logo{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  color:#020617;
+  background:linear-gradient(135deg,var(--blue),var(--blue2),var(--purple));
+  box-shadow:0 0 22px rgba(56,189,248,.7);
+}
+
+.nav-title{
+  font-weight:900;
+  letter-spacing:2px;
+  font-size:14px;
+  color:var(--blue);
+}
+
+.nav-right{
+  display:flex;
+  gap:12px;
+}
+
+.nav-link{
+  padding:12px 20px;
+  border-radius:14px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.4px;
+  text-decoration:none;
+  color:var(--muted);
+  transition:.25s;
+}
+
+.nav-link:hover{
+  color:#fff;
+  background:rgba(56,189,248,.15);
+}
+
+.nav-link.active{
+  color:#020617;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
+}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(160deg,#020617,#0b1224);
+  border:1px solid var(--border);
+  border-radius:26px;
+  padding:46px 26px;
+  text-align:center;
+  margin-bottom:60px;
+}
+
+.title{
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:2px;
+  background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+  margin-top:12px;
+  font-size:15px;
+  color:var(--muted);
+}
+
+/* ===== BONUS TOP ===== */
+.bonus{
+  background:linear-gradient(135deg,rgba(250,204,21,.15),rgba(56,189,248,.15));
+  border:1px solid var(--gold);
+  border-radius:22px;
+  padding:26px;
+  margin-bottom:60px;
+  box-shadow:0 0 30px rgba(250,204,21,.2);
+}
+
+.bonus h3{
+  font-size:18px;
+  margin-bottom:16px;
+  color:var(--gold);
+}
+
+.bonus ul{
+  list-style:none;
+  line-height:2.1;
+  font-weight:700;
+}
+
+.bonus li::before{
+  content:"★";
+  color:var(--gold);
+  margin-right:10px;
+}
+
+/* ===== SECTION ===== */
+.section{
+  margin-bottom:70px;
+}
+
+.section h3{
+  font-size:18px;
+  margin-bottom:24px;
+  padding-left:14px;
+  border-left:4px solid var(--blue);
+}
+
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:22px;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:22px;
+  transition:.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(56,189,248,.18),transparent);
+  opacity:0;
+  transition:.3s;
+}
+
+.card:hover::before{opacity:1}
+
+.card:hover{
+  border-color:var(--blue);
+  box-shadow:0 18px 40px rgba(56,189,248,.25);
+  transform:translateY(-6px);
+}
+
+.item{
+  font-weight:900;
+  font-size:15px;
+}
+
+.price{
+  margin-top:10px;
+  font-size:14px;
+  font-weight:900;
+  color:var(--gold);
+}
+
+.limit{
+  margin-top:8px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* ===== LIMITED ===== */
+.limited{
+  border:1px solid var(--gold);
+  box-shadow:0 0 25px rgba(250,204,21,.15);
+}
+
+.limited .item{
+  color:var(--gold);
+}
+
+/* ===== BENEFIT ===== */
+.benefit{
+  background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(14,165,233,.15));
+  border:1px solid var(--green);
+  border-radius:22px;
+  padding:26px;
+}
+
+.benefit h3{
+  color:var(--green);
+  margin-bottom:16px;
+}
+
+.benefit ul{
+  list-style:none;
+  line-height:2.1;
+}
+
+.benefit li::before{
+  content:"✔";
+  color:var(--green);
+  margin-right:10px;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  margin-top:80px;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+
+<!-- NAVBAR -->
+<div class="nav">
+  <div class="nav-left">
+    <div class="nav-logo">EX</div>
+    <div class="nav-title">EXECURIVE</div>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">HOME</a>
+    <a href="listtopup.html" class="nav-link active">LIST TOPUP</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="title">LIST DONATE EXECURIVE ROLEPLAY</div>
+  <div class="subtitle">Support server & unlock exclusive content</div>
+</div>
+
+<!-- BONUS TOP -->
+<div class="bonus">
+<h3>TOP 3 DONATUR BULANAN</h3>
+<ul>
+<li>Uang IC 50 Juta</li>
+<li>Level +5</li>
+<li>VIP Gold 30 Hari</li>
+</ul>
+</div>
+
+<!-- DONATE LIST -->
+<div class="section">
+<h3>DONATE PACKAGE</h3>
+<div class="grid">
+
+<div class="card"><div class="item">Skin Import</div><div class="price">Rp 15.000</div></div>
+<div class="card"><div class="item">Mobil Import</div><div class="price">Rp 15.000</div></div>
+<div class="card"><div class="item">Kendaraan Udara / Air</div><div class="price">Rp 20.000</div></div>
+<div class="card"><div class="item">Rumah Import Bebas</div><div class="price">Rp 25.000</div></div>
+<div class="card"><div class="item">Rumah + Mapping</div><div class="price">Rp 35.000</div></div>
+<div class="card"><div class="item">Uang IC 20JT</div><div class="price">Rp 10.000</div></div>
+<div class="card"><div class="item">Level +5</div><div class="price">Rp 10.000</div></div>
+<div class="card"><div class="item">Workshop Bebas</div><div class="price">Rp 30.000</div></div>
+<div class="card"><div class="item">Workshop + Mapping</div><div class="price">Rp 40.000</div></div>
+<div class="card"><div class="item">Gudang Import</div><div class="price">Rp 25.000</div></div>
+<div class="card"><div class="item">Pasang Gate</div><div class="price">Rp 15.000</div></div>
+<div class="card"><div class="item">Pasang Garkot</div><div class="price">Rp 15.000</div></div>
+<div class="card"><div class="item">Rubel 750</div><div class="price">Rp 10.000</div></div>
+<div class="card"><div class="item">Biz Market / Elektronik</div><div class="price">Rp 25.000</div></div>
+<div class="card"><div class="item">Biz + Mapping</div><div class="price">Rp 35.000</div></div>
+<div class="card"><div class="item">Pom (No Mapping)</div><div class="price">Rp 40.000</div></div>
+<div class="card"><div class="item">Pom + Mapping</div><div class="price">Rp 50.000</div></div>
+
+</div>
+</div>
+
+<!-- LIMITED -->
+<div class="section">
+<h3>LIMITED EXCLUSIVE</h3>
+<div class="grid">
+
+<div class="card limited"><div class="item">Kart (1/5)</div><div class="price">Rp 40.000</div></div>
+<div class="card limited"><div class="item">Super GT (1/5)</div><div class="price">Rp 45.000</div></div>
+<div class="card limited"><div class="item">Hotknife (1/5)</div><div class="price">Rp 35.000</div></div>
+<div class="card limited"><div class="item">Heli Seaparrow (1/5)</div><div class="price">Rp 50.000</div></div>
+<div class="card limited"><div class="item">Jet Hydra (1/5)</div><div class="price">Rp 55.000</div></div>
+<div class="card limited"><div class="item">Mobil Caddy (0/6)</div><div class="price">Rp 35.000</div></div>
+
+</div>
+</div>
+
+<!-- BENEFIT -->
+<div class="section">
+<div class="benefit">
+<h3>BENEFIT DONATE 50K+</h3>
+<ul>
+<li>Level +5</li>
+<li>Uang IC 50 Juta</li>
+<li>VIP Gold 30 Hari</li>
+<li>Rubel 1000</li>
+</ul>
+</div>
+</div>
+
+<div class="footer">
+© Execurive Roleplay — Official Donation Page
+</div>
+
+</div>
+</body>
+</html>
