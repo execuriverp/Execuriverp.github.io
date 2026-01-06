@@ -59,7 +59,7 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== NAVBAR (IDENTIK INDEX) ===== */
+/* ===== NAVBAR ===== */
 .nav{
   position:sticky;
   top:0;
@@ -91,7 +91,17 @@ body{
   background:linear-gradient(90deg,var(--blue),var(--purple));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+  position:relative;
 }
+.nav-title::after{
+  content:" | LIST DONATE EXECURIVE ROLEPLAY";
+  font-size:11px;
+  font-weight:600;
+  color:var(--muted);
+  margin-left:6px;
+}
+
+/* nav right */
 .nav-right{display:flex;gap:10px}
 .nav-right a{
   padding:10px 16px;
@@ -122,22 +132,44 @@ body{
   padding:60px 26px;
   text-align:center;
 }
-.title{
-  font-size:38px;
-  font-weight:900;
-  background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.subtitle{margin-top:14px;color:var(--muted)}
-.bonus{
-  margin-top:30px;
-  padding:24px;
+
+/* ===== SLIDER GAMBAR ===== */
+.slider-container{
+  position:relative;
+  overflow:hidden;
   border-radius:20px;
   border:1px solid var(--gold);
-  background:rgba(250,204,21,.08);
-  color:var(--gold);
-  font-weight:900;
+  margin-top:30px;
+  width:100%;
+}
+.slider-track{
+  display:flex;
+  transition:transform 1.5s ease; /* slow */
+}
+.slider-track img{
+  width:100%;
+  height:auto; /* menyesuaikan lebar gambar */
+  flex-shrink:0;
+  object-fit:contain;
+  user-select:none;
+}
+
+/* ===== SLIDER DOT ===== */
+.slider-dots{
+  text-align:center;
+  margin-top:12px;
+}
+.slider-dots span{
+  display:inline-block;
+  width:10px;height:10px;
+  margin:0 6px;
+  background:var(--muted);
+  border-radius:50%;
+  cursor:pointer;
+  transition:.3s;
+}
+.slider-dots span.active{
+  background:var(--gold);
 }
 
 /* ===== CATEGORY ===== */
@@ -242,7 +274,7 @@ body{
   color:var(--muted);
 }
 
-/* ===== MOBILE (IDENTIK INDEX) ===== */
+/* ===== MOBILE ===== */
 @media(max-width:768px){
   .nav-inner{padding:12px 14px}
   .logo{width:36px;height:36px}
@@ -254,9 +286,6 @@ body{
 
   .wrapper{padding:28px 14px}
   .header{padding:44px 18px}
-  .title{font-size:30px}
-  .bonus{padding:18px;font-size:13px}
-
   .category{
     grid-template-columns:repeat(2,1fr);
     gap:12px;
@@ -266,13 +295,11 @@ body{
     font-size:11px;
     border-radius:16px;
   }
-
   .section{margin-top:60px}
   .grid{
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:18px;
   }
-
   .card{padding:20px;border-radius:20px}
   .price{font-size:16px}
   .btn{
@@ -312,12 +339,18 @@ body{
 <div class="wrapper">
 
 <div class="header">
-  <div class="title">LIST DONATE EXECURIVE ROLEPLAY</div>
-  <div class="subtitle">Support server & unlock exclusive content</div>
-  <div class="bonus">
-    Setiap akhir bulan TOP 3 Donatur mendapatkan:<br>
-    💰 Uang IC 50JT • ⭐ Level +5 • 👑 VIP Gold 30 Hari
+
+  <!-- SLIDER GAMBAR -->
+  <div class="slider-container" id="slider">
+    <div class="slider-track">
+      <img src="top3donatur.png" alt="Top Donatur">
+      <!-- Tambah gambar lain disini kalau mau -->
+    </div>
   </div>
+  <div class="slider-dots" id="slider-dots">
+    <!-- Dot akan dibuat otomatis -->
+  </div>
+
 </div>
 
 <div class="category">
@@ -332,21 +365,8 @@ body{
 <h3>DONATE PACKAGE</h3>
 <div class="grid">
 <script>
-const pkg=[
-["Skin Import","15K"],["Mobil Import","15K"],["Kendaraan Udara/Air","20K"],
-["Rumah Import Bebas","25K"],["Rumah Import + Mapping","35K"],
-["Uang IC 20JT","10K"],["Level +5","10K"],
-["Workshop Bebas","30K"],["Workshop + Mapping","40K"],
-["Gudang Import","25K"],["Pasang Gate","15K"],["Pasang Garkot","15K"],
-["Rubel 750","10K"],["Biz Market / Elektronik","25K"],
-["Biz + Mapping","35K"],["Pom (No Mapping)","40K"],["Pom + Mapping","50K"]
-];
-document.write(pkg.map(p=>`
-<div class="card">
-  <div class="item">${p[0]}</div>
-  <div class="price">${p[1]}</div>
-  <button class="btn" onclick="topup('${p[0]}','${p[1]}')">TOP UP</button>
-</div>`).join(""));
+const pkg=[["Skin Import","15K"],["Mobil Import","15K"],["Kendaraan Udara/Air","20K"],["Rumah Import Bebas","25K"],["Rumah Import + Mapping","35K"],["Uang IC 20JT","10K"],["Level +5","10K"],["Workshop Bebas","30K"],["Workshop + Mapping","40K"],["Gudang Import","25K"],["Pasang Gate","15K"],["Pasang Garkot","15K"],["Rubel 750","10K"],["Biz Market / Elektronik","25K"],["Biz + Mapping","35K"],["Pom (No Mapping)","40K"],["Pom + Mapping","50K"]];
+document.write(pkg.map(p=>`<div class="card"><div class="item">${p[0]}</div><div class="price">${p[1]}</div><button class="btn" onclick="topup('${p[0]}','${p[1]}')">TOP UP</button></div>`).join(""));
 </script>
 </div>
 </div>
@@ -356,20 +376,8 @@ document.write(pkg.map(p=>`
 <h3>KENDARAAN LIMITED</h3>
 <div class="grid">
 <script>
-const veh=[
-["Kart","Kart.png","40K"],
-["Super GT","Supergt.png","45K"],
-["Hotknife","Hotknife.png","35K"],
-["Heli Seaparrow","Sparrow.png","50K"],
-["Mobil Caddy","Caddy.png","35K"]
-];
-document.write(veh.map(v=>`
-<div class="card limited">
-  <div class="vehicle-img"><img src="${v[1]}"></div>
-  <div class="item">${v[0]}</div>
-  <div class="price">${v[2]}</div>
-  <button class="btn" onclick="topup('${v[0]}','${v[2]}')">TOP UP</button>
-</div>`).join(""));
+const veh=[["Kart","Kart.png","40K"],["Super GT","Supergt.png","45K"],["Hotknife","Hotknife.png","35K"],["Heli Seaparrow","Sparrow.png","50K"],["Mobil Caddy","Caddy.png","35K"]];
+document.write(veh.map(v=>`<div class="card limited"><div class="vehicle-img"><img src="${v[1]}"></div><div class="item">${v[0]}</div><div class="price">${v[2]}</div><button class="btn" onclick="topup('${v[0]}','${v[2]}')">TOP UP</button></div>`).join(""));
 </script>
 </div>
 </div>
@@ -379,21 +387,8 @@ document.write(veh.map(v=>`
 <h3>SKIN LIMITED</h3>
 <div class="grid">
 <script>
-const skin=[
-["ID 303","303.png","45K"],["ID 304","304.png","45K"],
-["ID 305","305.png","45K"],["ID 295","295.png","45K"],
-["ID 289","289.png","45K"],["ID 285","285.png","55K"],
-["ID 277","277.png","55K"],["ID 278","278.png","55K"],
-["ID 279","279.png","55K"],["ID 217","217.png","65K"],
-["ID 99","99.png","45K"]
-];
-document.write(skin.map(s=>`
-<div class="card limited">
-  <div class="vehicle-img"><img src="${s[1]}"></div>
-  <div class="item">${s[0]}</div>
-  <div class="price">${s[2]}</div>
-  <button class="btn" onclick="topup('${s[0]}','${s[2]}')">TOP UP</button>
-</div>`).join(""));
+const skin=[["ID 303","303.png","45K"],["ID 304","304.png","45K"],["ID 305","305.png","45K"],["ID 295","295.png","45K"],["ID 289","289.png","45K"],["ID 285","285.png","55K"],["ID 277","277.png","55K"],["ID 278","278.png","55K"],["ID 279","279.png","55K"],["ID 217","217.png","65K"],["ID 99","99.png","45K"]];
+document.write(skin.map(s=>`<div class="card limited"><div class="vehicle-img"><img src="${s[1]}"></div><div class="item">${s[0]}</div><div class="price">${s[2]}</div><button class="btn" onclick="topup('${s[0]}','${s[2]}')">TOP UP</button></div>`).join(""));
 </script>
 </div>
 </div>
@@ -407,24 +402,41 @@ const waNumber="6282126437107";
 function topup(item,price){
   document.getElementById("loading").classList.add("active");
   const msg=`Halo Min, saya mau TOP UP\n\nItem: ${item}\nHarga: ${price}\nServer: Execurive Roleplay`;
-  setTimeout(()=>{
-    window.location.href=
-      `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-  },1100);
+  setTimeout(()=>{window.location.href=`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`},1100);
 }
 
 function filterCat(cat,el){
-  document.querySelectorAll('.category button')
-    .forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.category button').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  document.querySelectorAll('.section[data-cat]')
-    .forEach(s=>{
-      s.style.display=(cat==="all"||s.dataset.cat===cat)
-      ?"block":"none";
-    });
+  document.querySelectorAll('.section[data-cat]').forEach(s=>{s.style.display=(cat==="all"||s.dataset.cat===cat)?"block":"none";});
 }
+
+/* SLIDER GAMBAR SLOWMO DENGAN DOT */
+const sliderTrack = document.querySelector('.slider-track');
+const dotsContainer = document.getElementById('slider-dots');
+const slides = Array.from(sliderTrack.children);
+let sliderIndex = 0;
+
+// Buat dot
+slides.forEach((s,i)=>{
+  const dot = document.createElement('span');
+  if(i===0) dot.classList.add('active');
+  dot.addEventListener('click',()=>{ sliderIndex=i; updateSlider(); });
+  dotsContainer.appendChild(dot);
+});
+
+function updateSlider(){
+  sliderTrack.style.transform = `translateX(-${sliderIndex*100}%)`;
+  dotsContainer.querySelectorAll('span').forEach((d,i)=>{ d.classList.toggle('active',i===sliderIndex); });
+}
+
+// Auto scroll slow
+setInterval(()=>{
+  if(slides.length<=1) return;
+  sliderIndex = (sliderIndex+1)%slides.length;
+  updateSlider();
+},6000); // 6 detik slow
 </script>
 
 </body>
 </html>
-
