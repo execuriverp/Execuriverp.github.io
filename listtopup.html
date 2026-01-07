@@ -447,7 +447,7 @@ document.write(pkg.map(p=>`<div class="card"><div class="item">${p[0]}</div><div
 <h3>KENDARAAN LIMITED</h3>
 <div class="grid">
 <script>
-const veh=[["Kart","Kart.png","40K"],["Super GT","Supergt.png","45K"],["Hotknife","Hotknife.png","35K"],["Heli Seaparrow","Sparrow.png","50K"],["Mobil Caddy","Caddy.png","35K"],["Pesawat Hydra","hydra.png","60K"]];
+const veh=[["Kart","Kart.png","40K"],["Super GT","Supergt.png","45K"],["Hotknife","Hotknife.png","35K"],["Heli Seaparrow","Sparrow.png","50K"],["Mobil Caddy","Caddy.png","35K"],["Jet Hydra","hydra.png","60K"]];
 document.write(veh.map(v=>`<div class="card limited"><div class="vehicle-img"><img src="${v[1]}"></div><div class="item">${v[0]}</div><div class="price">${v[2]}</div><button class="btn" onclick="openModal('${v[0]}','${v[2]}')">TOP UP</button></div>`).join(""));
 </script>
 </div>
@@ -523,6 +523,7 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
 
