@@ -3,180 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lamaran WS | Contrue</title>
+<title>Lamaran Anggota WS | Contrue</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#020617;
-  --panel:#052e1a;
-  --panel-dark:#022c22;
-  --border:#14532d;
-  --green:#22c55e;
-  --lime:#a3e635;
-  --text:#ecfeff;
+  --panel:#0f172a;
+  --panel-soft:#020617;
+  --border:#1e293b;
+  --accent:#84cc16;
+  --accent-soft:#bef264;
+  --text:#e5e7eb;
   --muted:#94a3b8;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  font-family:'Poppins',sans-serif;
-  background:
-    radial-gradient(circle at top, rgba(34,197,94,.15), transparent 60%),
-    linear-gradient(135deg,#020617,#022c22);
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,#020617,#020617);
   color:var(--text);
   min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  padding:25px;
+  padding:30px;
 }
 
 .container{
   width:100%;
-  max-width:820px;
-  background:linear-gradient(180deg,var(--panel),var(--panel-dark));
-  border-radius:28px;
-  padding:45px 40px;
-  box-shadow:0 25px 60px rgba(0,0,0,.7);
+  max-width:900px;
+  background:var(--panel);
+  border-radius:18px;
+  padding:40px;
+  border:1px solid var(--border);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
   position:relative;
-  overflow:hidden;
-}
-
-.container::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(163,230,53,.15),transparent);
-  pointer-events:none;
 }
 
 h1{
   text-align:center;
-  font-size:32px;
+  font-size:28px;
   font-weight:700;
-  background:linear-gradient(90deg,var(--lime),var(--green));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  color:var(--accent-soft);
   margin-bottom:35px;
 }
 
 .section{
-  margin-bottom:35px;
-  padding:25px;
-  border-radius:20px;
-  background:rgba(2,44,34,.7);
   border:1px solid var(--border);
+  border-radius:14px;
+  padding:25px;
+  margin-bottom:30px;
+  background:var(--panel-soft);
 }
 
 .section-title{
-  font-size:18px;
+  font-size:15px;
   font-weight:600;
   margin-bottom:20px;
-  color:var(--lime);
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.section-title span{
-  width:8px;
-  height:8px;
-  background:var(--green);
-  border-radius:50%;
-  box-shadow:0 0 10px var(--green);
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.5px;
 }
 
 label{
-  display:block;
-  font-size:14px;
+  font-size:13px;
+  color:var(--muted);
   margin-bottom:6px;
-  color:#bbf7d0;
+  display:block;
 }
 
 input,select,textarea{
   width:100%;
   background:#020617;
   border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px 16px;
+  border-radius:10px;
+  padding:13px 14px;
   color:var(--text);
   font-size:14px;
   margin-bottom:16px;
-  transition:.3s;
 }
 
 input:focus,select:focus,textarea:focus{
   outline:none;
-  border-color:var(--lime);
-  box-shadow:0 0 15px rgba(163,230,53,.4);
+  border-color:var(--accent);
 }
 
 textarea{min-height:90px;resize:vertical}
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:16px;
 }
 
-/* CAPTCHA CUSTOM */
-.captcha-box{
+/* CAPTCHA */
+.captcha{
   display:flex;
   align-items:center;
-  gap:15px;
-  padding:16px;
-  border-radius:16px;
-  background:#020617;
+  gap:14px;
+  padding:14px;
+  border-radius:10px;
   border:1px solid var(--border);
-  cursor:pointer;
-  transition:.3s;
+  background:#020617;
 }
 
-.captcha-box:hover{
-  box-shadow:0 0 15px rgba(34,197,94,.35);
-}
-
-.captcha-circle{
-  width:26px;
-  height:26px;
-  border-radius:50%;
-  border:2px solid var(--lime);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.captcha-circle.active{
-  background:radial-gradient(circle,var(--lime),var(--green));
-  box-shadow:0 0 12px var(--lime);
-}
-
-.captcha-text{
-  font-size:14px;
-  color:#bbf7d0;
-}
-
-/* BUTTON */
-button{
-  width:100%;
-  padding:18px;
+.captcha-btn{
+  padding:10px 16px;
+  border-radius:8px;
   border:none;
-  border-radius:18px;
-  background:linear-gradient(90deg,var(--lime),var(--green));
-  font-weight:700;
-  font-size:16px;
+  background:var(--accent);
+  font-weight:600;
   cursor:pointer;
-  color:#022c22;
-  transition:.3s;
-  box-shadow:0 15px 30px rgba(34,197,94,.4);
+  color:#020617;
 }
 
-button:hover{
-  transform:translateY(-3px) scale(1.03);
-  box-shadow:0 20px 40px rgba(163,230,53,.6);
+.captcha-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.captcha-status{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* SUBMIT */
+button.submit{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-soft));
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  color:#020617;
 }
 
 /* LOADING */
@@ -184,47 +148,42 @@ button:hover{
   display:none;
   position:absolute;
   inset:0;
-  background:rgba(2,6,23,.96);
-  border-radius:28px;
+  background:rgba(2,6,23,.95);
+  border-radius:18px;
   z-index:10;
   justify-content:center;
   align-items:center;
   flex-direction:column;
 }
 
-.loader{
-  width:60px;
-  height:60px;
+.spinner{
+  width:50px;
+  height:50px;
+  border:5px solid #1e293b;
+  border-top:5px solid var(--accent);
   border-radius:50%;
-  border:6px solid #14532d;
-  border-top:6px solid var(--lime);
   animation:spin 1s linear infinite;
 }
 
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .loading span{
-  margin-top:15px;
-  color:var(--lime);
-  font-weight:600;
-}
-
-@media(max-width:600px){
-  .container{padding:30px 20px}
-  h1{font-size:26px}
+  margin-top:14px;
+  color:var(--accent-soft);
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-<h1>Lamaran Anggota WS Contrue</h1>
+<h1>Lamaran Anggota Workshop Contrue</h1>
 
-<form id="formWS">
+<form id="form">
 
-<!-- IC SECTION -->
+<!-- IC -->
 <div class="section">
-  <div class="section-title"><span></span>Data IC</div>
+  <div class="section-title">Data IC</div>
 
   <label>Nama IC</label>
   <input id="nama_ic" required>
@@ -242,34 +201,31 @@ button:hover{
 
   <label>Nomor HP IC</label>
   <input id="hp_ic" required>
-
-  <label>Contoh RP (/me /do)</label>
-  <textarea id="contoh_rp" required></textarea>
 </div>
 
-<!-- OOC SECTION -->
+<!-- OOC -->
 <div class="section">
-  <div class="section-title"><span></span>Data OOC</div>
+  <div class="section-title">Data OOC</div>
 
-  <label>Nama Real</label>
-  <input id="nama_real" required>
+  <label>Nama OOC</label>
+  <input id="nama_ooc" required>
 
   <label>Usia OOC</label>
   <input type="number" id="usia_ooc" required>
 
-  <label>Jam Duty</label>
-  <input id="jam_duty" placeholder="18.00 - 23.00 WIB" required>
+  <label>Contoh RP (/me /do)</label>
+  <textarea id="contoh_rp" required></textarea>
 
-  <label>Kontak WhatsApp</label>
-  <input id="kontak" required>
+  <label>Jam Duty</label>
+  <input id="jam_duty" placeholder="Contoh: 18.00 - 23.00 WIB" required>
 </div>
 
-<!-- WS REQUIREMENT -->
+<!-- ADMIN -->
 <div class="section">
-  <div class="section-title"><span></span>Persyaratan WS</div>
+  <div class="section-title">Administrasi WS</div>
 
   <label>CS Sudah ON?</label>
-  <select id="cs_on">
+  <select id="cs">
     <option value="">Pilih</option>
     <option>Ya</option>
     <option>Belum</option>
@@ -285,67 +241,80 @@ button:hover{
     <option>Belum</option>
   </select>
 
-  <div class="captcha-box" id="captchaBox">
-    <div class="captcha-circle" id="captchaCircle"></div>
-    <div class="captcha-text">Saya bukan robot (Verifikasi WS)</div>
+  <label>Kontak WhatsApp</label>
+  <input id="kontak" required>
+
+  <div class="captcha">
+    <button type="button" class="captcha-btn" id="verify">Verifikasi</button>
+    <div class="captcha-status" id="status">Belum diverifikasi</div>
   </div>
 </div>
 
-<button type="submit">Kirim Lamaran WS</button>
+<button class="submit">Kirim Lamaran</button>
 </form>
 
 <div class="loading" id="loading">
-  <div class="loader"></div>
-  <span>Mengirim ke WhatsApp...</span>
+  <div class="spinner"></div>
+  <span>Mengirim data...</span>
 </div>
 </div>
 
 <script>
-const wa = "62895329018240";
-let captcha = false;
+const wa="62895329018240";
+let verified=false;
 
-document.getElementById("captchaBox").onclick=()=>{
-  captcha=!captcha;
-  document.getElementById("captchaCircle").classList.toggle("active");
+verify.onclick=()=>{
+  verify.disabled=true;
+  status.textContent="Memverifikasi...";
+  setTimeout(()=>{
+    verified=true;
+    status.textContent="Terverifikasi";
+    status.style.color="#84cc16";
+  },1500);
 }
 
-document.getElementById("formWS").onsubmit=e=>{
+form.onsubmit=e=>{
   e.preventDefault();
 
-  if(!captcha) return alert("Verifikasi captcha dulu!");
-  if(cs_on.value!=="Ya") return alert("CS wajib ON!");
-  if(kas.value!=="Ya") return alert("Wajib rajin setor kas!");
+  if(!verified) return alert("Silakan verifikasi terlebih dahulu.");
+  if(cs.value!=="Ya") return alert("CS wajib ON.");
+  if(kas.value!=="Ya") return alert("Wajib rajin setor kas.");
 
   loading.style.display="flex";
 
-  const msg=`*LAMARAN WS - CONTRUE*
+  const msg=`*LAMARAN WS CONTRUE*
 
 Nama IC: ${nama_ic.value}
 Usia IC: ${usia_ic.value}
 Level IC: ${level_ic.value}
 HP IC: ${hp_ic.value}
 
-Nama Real: ${nama_real.value}
+Nama OOC: ${nama_ooc.value}
 Usia OOC: ${usia_ooc.value}
 Jam Duty: ${jam_duty.value}
-Kontak: ${kontak.value}
 
 CS ON: Ya
 Setor Kas: Ya
+
 Pengalaman Modifikasi:
 ${modifikasi.value}
 
 Contoh RP:
-${contoh_rp.value}`;
+${contoh_rp.value}
+
+Kontak:
+${kontak.value}`;
 
   setTimeout(()=>{
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`);
     loading.style.display="none";
-    alert("Lamaran terkirim! Kirim screenshot stats IC sebagai bukti.");
-    e.target.reset();
-    captcha=false;
-    captchaCircle.classList.remove("active");
-  },1300);
+    alert("Lamaran berhasil dikirim. Sertakan screenshot stats IC.");
+    form.reset();
+    verified=false;
+    verify.disabled=false;
+    status.textContent="Belum diverifikasi";
+    status.style.color="";
+  },1500);
 }
 </script>
 </body>
