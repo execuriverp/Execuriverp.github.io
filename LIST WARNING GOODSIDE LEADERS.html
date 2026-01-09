@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Roleplay | Leader Warning Control</title>
+
+<style>
+:root{
+  --bg:#020b1f;
+  --panel:#0b1633;
+  --panel-soft:#0f1f45;
+  --border:#1e40af;
+
+  --text:#e5f0ff;
+  --muted:#9db7e5;
+
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --yellow:#facc15;
+  --orange:#fb923c;
+  --red:#f87171;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:Segoe UI,Inter,Arial,sans-serif;
+  background:
+    radial-gradient(800px 400px at 10% -10%,#38bdf833,transparent),
+    radial-gradient(600px 300px at 90% 0%,#0ea5e933,transparent),
+    var(--bg);
+  color:var(--text);
+}
+
+/* ===== HEADER ===== */
+.topbar{
+  padding:22px 44px;
+  background:rgba(2,12,40,.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.topbar h1{
+  font-size:15px;
+  letter-spacing:1px;
+  font-weight:600;
+}
+.topbar span{color:var(--blue)}
+
+/* ===== CONTENT ===== */
+.wrapper{
+  max-width:1200px;
+  margin:44px auto;
+  padding:0 28px;
+}
+
+.title h2{
+  font-size:28px;
+  font-weight:700;
+}
+.title p{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* ===== TABLE ===== */
+.card{
+  margin-top:28px;
+  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+thead{
+  background:#020b1f;
+}
+
+th{
+  padding:18px;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#c7ddff;
+  border-bottom:1px solid var(--border);
+}
+
+td{
+  padding:16px 18px;
+  font-size:14px;
+  border-bottom:1px solid var(--border);
+}
+
+tbody tr:hover{
+  background:#020b1fcc;
+  cursor:pointer;
+}
+
+/* ===== STATUS ===== */
+.badge{
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+}
+.ok{background:#052e1b;color:var(--green)}
+.warn1{background:#3a2e05;color:var(--yellow)}
+.warn2{background:#422006;color:var(--orange)}
+.warn3{background:#3b0a0a;color:var(--red)}
+
+/* ===== MODAL ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(2,12,40,.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-box{
+  width:600px;
+  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:26px;
+}
+
+.warn-box{
+  background:#020b1f;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  margin-top:14px;
+}
+
+.warn-box strong{color:var(--blue)}
+.date{font-style:italic;color:#c7ddff}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <h1>EXECUTIVE ROLEPLAY <span>LEADER DISCIPLINARY RECORD • BLUECITY</span></h1>
+</div>
+
+<div class="wrapper">
+  <div class="title">
+    <h2>Faction Leadership Warning Overview</h2>
+    <p>This panel displays the current disciplinary status of all faction leaders.</p>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Faction</th>
+          <th>Leader IC</th>
+          <th>Total Warnings</th>
+          <th>Leadership Status</th>
+        </tr>
+      </thead>
+      <tbody>
+
+<!-- WARN TERBESAR PALING ATAS -->
+<tr onclick="openWarn('San News Network',[
+{admin:'nx.07',reason:'Leader inactivity',date:''},
+{admin:'nx.07',reason:'Failure to recruit and manage members',date:''},
+{admin:'ku',reason:'Deleted content under 3 days without administrative approval',date:'8 January 2026, 22:00'}
+])">
+<td>San News Network</td>
+<td>Wody_Wodpacker</td>
+<td>3</td>
+<td><span class="badge warn3">Critical – Leadership Review</span></td>
+</tr>
+
+<tr onclick="openWarn('San Andreas Medical Department',[
+{admin:'nx.07',reason:'Poor member selection and internal management',date:''}
+])">
+<td>SAMD</td>
+<td>Ana_Carolyne</td>
+<td>1</td>
+<td><span class="badge warn1">Under Observation</span></td>
+</tr>
+
+<tr onclick="openWarn('San Andreas Police Department',[
+{admin:'nx.07',reason:'Poor member selection and internal management',date:''}
+])">
+<td>SAPD</td>
+<td>Reyy_Helns</td>
+<td>1</td>
+<td><span class="badge warn1">Under Observation</span></td>
+</tr>
+
+<tr>
+<td>Federal Bureau of Investigation</td>
+<td>Sundala_Escobar</td>
+<td>0</td>
+<td><span class="badge ok">Stable</span></td>
+</tr>
+
+<tr>
+<td>PEDAGANG</td>
+<td>Cavaro_Victorian</td>
+<td>0</td>
+<td><span class="badge ok">Stable</span></td>
+</tr>
+
+<tr>
+<td>Military</td>
+<td>Empty_Empty</td>
+<td>0</td>
+<td><span class="badge ok">Stable</span></td>
+</tr>
+
+<tr>
+<td>Government</td>
+<td>Kenneth_Lowel</td>
+<td>0</td>
+<td><span class="badge ok">Stable</span></td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3 id="mt"></h3>
+    <div id="list"></div>
+    <br>
+    <button onclick="modal.style.display='none'">Close</button>
+  </div>
+</div>
+
+<script>
+function openWarn(f,w){
+  modal.style.display='flex';
+  mt.innerText=f+' — Warning Details';
+  list.innerHTML='';
+  w.forEach((x,i)=>{
+    list.innerHTML+=`
+    <div class="warn-box">
+      <strong>Warning #${i+1}</strong>
+      <div>Issued by : ${x.admin}</div>
+      <div>Reason : ${x.reason}</div>
+      <div class="date">Date : ${x.date || 'Not specified'}</div>
+    </div>`;
+  });
+}
+</script>
+
+</body>
+</html>
