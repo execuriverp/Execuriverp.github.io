@@ -3,232 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Executive Roleplay | Leader Warning Control</title>
+<title>Execurive Roleplay | Leader Warning Control</title>
+<link rel="icon" type="image/png" href="favicon.png">
 
 <style>
 :root{
-  --bg:#020b1f;
+  --bg:#020617;
   --panel:#0b1633;
-  --panel-soft:#0f1f45;
+  --panel2:#0f1f45;
   --border:#1e40af;
-
-  --text:#e5f0ff;
-  --muted:#9db7e5;
 
   --blue:#38bdf8;
   --green:#22c55e;
   --yellow:#facc15;
-  --orange:#fb923c;
   --red:#f87171;
+
+  --text:#e5f0ff;
+  --muted:#9db7e5;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  font-family:Segoe UI,Inter,Arial,sans-serif;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
   background:
-    radial-gradient(800px 400px at 10% -10%,#38bdf833,transparent),
+    radial-gradient(600px 300px at 10% -10%,#38bdf833,transparent),
     radial-gradient(600px 300px at 90% 0%,#0ea5e933,transparent),
     var(--bg);
   color:var(--text);
 }
 
-/* ===== HEADER ===== */
-.topbar{
-  padding:22px 44px;
-  background:rgba(2,12,40,.9);
-  backdrop-filter:blur(10px);
+/* LOADER */
+#loader{
+  position:fixed;
+  inset:0;
+  background:#020617;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.loader-box{width:220px}
+.loader-text{
+  text-align:center;
+  font-size:13px;
+  letter-spacing:2px;
+  color:var(--blue);
+  margin-bottom:10px;
+}
+.bar{
+  height:6px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  overflow:hidden;
+}
+.bar span{
+  display:block;
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--blue),#0ea5e9);
+  animation:load 2.5s forwards;
+}
+@keyframes load{to{width:100%}}
+
+/* HEADER */
+header{
+  padding:22px;
+  text-align:center;
   border-bottom:1px solid var(--border);
 }
-.topbar h1{
-  font-size:15px;
-  letter-spacing:1px;
-  font-weight:600;
+header h1{
+  font-size:16px;
+  letter-spacing:2px;
 }
-.topbar span{color:var(--blue)}
-
-/* ===== CONTENT ===== */
-.wrapper{
-  max-width:1200px;
-  margin:44px auto;
-  padding:0 28px;
+header span{
+  color:var(--blue);
+  text-shadow:0 0 12px #38bdf8aa;
 }
 
-.title h2{
-  font-size:28px;
-  font-weight:700;
+/* CONTENT */
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:22px;
 }
+.title h2{font-size:22px}
 .title p{
-  margin-top:8px;
-  font-size:14px;
+  margin-top:6px;
+  font-size:13px;
   color:var(--muted);
 }
 
-/* ===== TABLE ===== */
+/* CARDS */
+.list{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
 .card{
-  margin-top:28px;
-  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--border);
-  border-radius:18px;
-  overflow:hidden;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-thead{
-  background:#020b1f;
-}
-
-th{
-  padding:18px;
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  color:#c7ddff;
-  border-bottom:1px solid var(--border);
-}
-
-td{
-  padding:16px 18px;
-  font-size:14px;
-  border-bottom:1px solid var(--border);
-}
-
-tbody tr:hover{
-  background:#020b1fcc;
+  border-radius:16px;
+  padding:16px;
   cursor:pointer;
+  transition:.3s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 0 25px #38bdf844;
+}
+.card h3{font-size:16px}
+.card small{color:var(--muted);font-size:12px}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px;
+  font-size:13px;
 }
 
-/* ===== STATUS ===== */
+/* BADGE */
 .badge{
   padding:6px 14px;
   border-radius:999px;
-  font-size:12px;
+  font-size:11px;
   font-weight:600;
 }
-.ok{background:#052e1b;color:var(--green)}
-.warn1{background:#3a2e05;color:var(--yellow)}
-.warn2{background:#422006;color:var(--orange)}
-.warn3{background:#3b0a0a;color:var(--red)}
+.ok{
+  background:#052e1b;
+  color:var(--green);
+  box-shadow:0 0 12px #22c55e55;
+}
+.warn{
+  background:#3a2e05;
+  color:var(--yellow);
+  box-shadow:0 0 12px #facc1555;
+}
+.critical{
+  background:#3b0a0a;
+  color:var(--red);
+  box-shadow:0 0 14px #f8717155;
+}
 
-/* ===== MODAL ===== */
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(2,12,40,.85);
+  background:#020617e8;
   display:none;
   align-items:center;
   justify-content:center;
 }
-
 .modal-box{
-  width:600px;
-  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  width:92%;
+  max-width:500px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--border);
   border-radius:18px;
-  padding:26px;
+  padding:18px;
 }
-
 .warn-box{
-  background:#020b1f;
+  background:#020617;
   border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  margin-top:14px;
+  border-radius:12px;
+  padding:12px;
+  margin-top:12px;
 }
-
-.warn-box strong{color:var(--blue)}
-.date{font-style:italic;color:#c7ddff}
+.warn-box b{color:var(--blue)}
+button{
+  margin-top:16px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(90deg,#1e40af,#2563eb);
+  color:white;
+}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-  <h1>EXECUTIVE ROLEPLAY <span>LEADER DISCIPLINARY RECORD • BLUECITY</span></h1>
+<div id="loader">
+  <div class="loader-box">
+    <div class="loader-text">EXECURIVE ROLEPLAY</div>
+    <div class="bar"><span></span></div>
+  </div>
 </div>
 
-<div class="wrapper">
+<header>
+  <h1>EXECURIVE ROLEPLAY <span>LEADER WARNING SYSTEM</span></h1>
+</header>
+
+<div class="container">
   <div class="title">
-    <h2>Faction Leadership Warning Overview</h2>
-    <p>This panel displays the current disciplinary status of all faction leaders.</p>
+    <h2>Faction Leadership Status</h2>
+    <p>Tap faction card to view warning details</p>
   </div>
 
-  <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>Faction</th>
-          <th>Leader IC</th>
-          <th>Total Warnings</th>
-          <th>Leadership Status</th>
-        </tr>
-      </thead>
-      <tbody>
+  <div class="list">
 
-<!-- WARN TERBESAR PALING ATAS -->
-<tr onclick="openWarn('San News Network',[
-{admin:'nx.07',reason:'Leader inactivity',date:''},
-{admin:'nx.07',reason:'Failure to recruit and manage members',date:''},
-{admin:'ku',reason:'Deleted content under 3 days without administrative approval',date:'8 January 2026, 22:00'}
-])">
-<td>San News Network</td>
-<td>Wody_Wodpacker</td>
-<td>3</td>
-<td><span class="badge warn3">Critical – Leadership Review</span></td>
-</tr>
+    <!-- SNN -->
+    <div class="card" onclick="openWarn('San News Network',[
+      {a:'nx.07',r:'Leader inactivity'},
+      {a:'nx.07',r:'Failure to recruit and manage members'},
+      {a:'nx.07',r:'Deleted content without admin approval'}
+    ])">
+      <h3>San News Network</h3>
+      <small>Leader: Wody_Wodpacker</small>
+      <div class="row">
+        <span>Warnings: 3</span>
+        <span class="badge critical">CRITICAL</span>
+      </div>
+    </div>
 
-<tr onclick="openWarn('San Andreas Medical Department',[
-{admin:'nx.07',reason:'Poor member selection and internal management',date:''}
-])">
-<td>SAMD</td>
-<td>Ana_Carolyne</td>
-<td>1</td>
-<td><span class="badge warn1">Under Observation</span></td>
-</tr>
+    <!-- SAMD -->
+    <div class="card" onclick="openWarn('San Andreas Medical Department',[
+      {a:'nx.07',r:'Poor member selection and management'}
+    ])">
+      <h3>SAMD</h3>
+      <small>Leader: Ana_Carolyne</small>
+      <div class="row">
+        <span>Warnings: 1</span>
+        <span class="badge warn">UNDER OBSERVATION</span>
+      </div>
+    </div>
 
-<tr onclick="openWarn('San Andreas Police Department',[
-{admin:'nx.07',reason:'Poor member selection and internal management',date:''}
-])">
-<td>SAPD</td>
-<td>Reyy_Helns</td>
-<td>1</td>
-<td><span class="badge warn1">Under Observation</span></td>
-</tr>
+    <!-- SAPD -->
+    <div class="card" onclick="openWarn('San Andreas Police Department',[
+      {a:'nx.07',r:'Poor member selection and management'}
+    ])">
+      <h3>SAPD</h3>
+      <small>Leader: Reyy_Helns</small>
+      <div class="row">
+        <span>Warnings: 1</span>
+        <span class="badge warn">UNDER OBSERVATION</span>
+      </div>
+    </div>
 
-<tr>
-<td>Federal Bureau of Investigation</td>
-<td>Sundala_Escobar</td>
-<td>0</td>
-<td><span class="badge ok">Stable</span></td>
-</tr>
+    <!-- FBI -->
+    <div class="card">
+      <h3>Federal Bureau of Investigation</h3>
+      <small>Leader: Sundala_Escobar</small>
+      <div class="row">
+        <span>Warnings: 0</span>
+        <span class="badge ok">STABLE</span>
+      </div>
+    </div>
 
-<tr>
-<td>PEDAGANG</td>
-<td>Cavaro_Victorian</td>
-<td>0</td>
-<td><span class="badge ok">Stable</span></td>
-</tr>
+    <!-- PEDAGANG -->
+    <div class="card">
+      <h3>PEDAGANG</h3>
+      <small>Leader: Cavaro_Victorian</small>
+      <div class="row">
+        <span>Warnings: 0</span>
+        <span class="badge ok">STABLE</span>
+      </div>
+    </div>
 
-<tr>
-<td>Military</td>
-<td>Empty_Empty</td>
-<td>0</td>
-<td><span class="badge ok">Stable</span></td>
-</tr>
+    <!-- MILITARY -->
+    <div class="card">
+      <h3>Military</h3>
+      <small>Leader: Empty_Empty</small>
+      <div class="row">
+        <span>Warnings: 0</span>
+        <span class="badge ok">STABLE</span>
+      </div>
+    </div>
 
-<tr>
-<td>Government</td>
-<td>Kenneth_Lowel</td>
-<td>0</td>
-<td><span class="badge ok">Stable</span></td>
-</tr>
+    <!-- GOV -->
+    <div class="card">
+      <h3>Government</h3>
+      <small>Leader: Kenneth_Lowel</small>
+      <div class="row">
+        <span>Warnings: 0</span>
+        <span class="badge ok">STABLE</span>
+      </div>
+    </div>
 
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -236,24 +290,24 @@ tbody tr:hover{
   <div class="modal-box">
     <h3 id="mt"></h3>
     <div id="list"></div>
-    <br>
     <button onclick="modal.style.display='none'">Close</button>
   </div>
 </div>
 
 <script>
+window.onload=()=>setTimeout(()=>loader.style.display='none',2500);
+
 function openWarn(f,w){
   modal.style.display='flex';
   mt.innerText=f+' — Warning Details';
   list.innerHTML='';
   w.forEach((x,i)=>{
     list.innerHTML+=`
-    <div class="warn-box">
-      <strong>Warning #${i+1}</strong>
-      <div>Issued by : ${x.admin}</div>
-      <div>Reason : ${x.reason}</div>
-      <div class="date">Date : ${x.date || 'Not specified'}</div>
-    </div>`;
+      <div class="warn-box">
+        <b>Warning #${i+1}</b>
+        <div>Admin: ${x.a}</div>
+        <div>Reason: ${x.r}</div>
+      </div>`;
   });
 }
 </script>
