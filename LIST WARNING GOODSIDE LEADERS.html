@@ -12,18 +12,14 @@
   --panel:#0b1633;
   --panel2:#0f1f45;
   --border:#1e40af;
-
   --blue:#38bdf8;
   --green:#22c55e;
   --yellow:#facc15;
   --red:#f87171;
-
   --text:#e5f0ff;
   --muted:#9db7e5;
 }
-
 *{margin:0;padding:0;box-sizing:border-box}
-
 body{
   font-family:Inter,Segoe UI,Arial,sans-serif;
   background:
@@ -34,15 +30,16 @@ body{
 }
 
 /* LOADER */
-#loader{
+#loader,#clickLoader{
   position:fixed;
   inset:0;
-  background:#020617;
+  background:#020617e8;
   display:flex;
   align-items:center;
   justify-content:center;
   z-index:9999;
 }
+#clickLoader{display:none}
 .loader-box{width:220px}
 .loader-text{
   text-align:center;
@@ -72,27 +69,13 @@ header{
   text-align:center;
   border-bottom:1px solid var(--border);
 }
-header h1{
-  font-size:16px;
-  letter-spacing:2px;
-}
-header span{
-  color:var(--blue);
-  text-shadow:0 0 12px #38bdf8aa;
-}
+header h1{font-size:16px;letter-spacing:2px}
+header span{color:var(--blue);text-shadow:0 0 12px #38bdf8aa}
 
 /* CONTENT */
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:22px;
-}
+.container{max-width:1100px;margin:auto;padding:22px}
 .title h2{font-size:22px}
-.title p{
-  margin-top:6px;
-  font-size:13px;
-  color:var(--muted);
-}
+.title p{margin-top:6px;font-size:13px;color:var(--muted)}
 
 /* CARDS */
 .list{
@@ -111,11 +94,10 @@ header span{
 }
 .card:hover{
   transform:translateY(-4px);
-  box-shadow:0 0 25px #38bdf844;
+  box-shadow:0 0 30px #38bdf866;
 }
 .card h3{font-size:16px}
 .card small{color:var(--muted);font-size:12px}
-
 .row{
   display:flex;
   justify-content:space-between;
@@ -131,21 +113,9 @@ header span{
   font-size:11px;
   font-weight:600;
 }
-.ok{
-  background:#052e1b;
-  color:var(--green);
-  box-shadow:0 0 12px #22c55e55;
-}
-.warn{
-  background:#3a2e05;
-  color:var(--yellow);
-  box-shadow:0 0 12px #facc1555;
-}
-.critical{
-  background:#3b0a0a;
-  color:var(--red);
-  box-shadow:0 0 14px #f8717155;
-}
+.ok{background:#052e1b;color:var(--green)}
+.warn{background:#3a2e05;color:var(--yellow)}
+.critical{background:#3b0a0a;color:var(--red)}
 
 /* MODAL */
 .modal{
@@ -158,12 +128,15 @@ header span{
 }
 .modal-box{
   width:92%;
-  max-width:500px;
+  max-width:520px;
   background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--border);
-  border-radius:18px;
-  padding:18px;
+  border-radius:20px;
+  padding:20px;
+  animation:pop .25s ease;
 }
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+
 .warn-box{
   background:#020617;
   border:1px solid var(--border);
@@ -172,14 +145,47 @@ header span{
   margin-top:12px;
 }
 .warn-box b{color:var(--blue)}
+
+.empty{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+}
+
+/* INPUT + BUTTON */
+input{
+  width:100%;
+  padding:11px;
+  margin-top:14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:white;
+}
+
 button{
-  margin-top:16px;
+  margin-top:14px;
   width:100%;
   padding:12px;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ADD WARN BUTTON */
+.addwarn{
+  background:linear-gradient(90deg,#dc2626,#f87171);
+  box-shadow:0 0 20px #f8717155;
+}
+.addwarn:hover{
+  box-shadow:0 0 35px #f87171aa;
+}
+
+/* CLOSE */
+.close{
   background:linear-gradient(90deg,#1e40af,#2563eb);
-  color:white;
 }
 </style>
 </head>
@@ -193,6 +199,13 @@ button{
   </div>
 </div>
 
+<div id="clickLoader">
+  <div class="loader-box">
+    <div class="loader-text">LOADING DATA</div>
+    <div class="bar"><span></span></div>
+  </div>
+</div>
+
 <header>
   <h1>EXECURIVE ROLEPLAY <span>LEADER WARNING SYSTEM</span></h1>
 </header>
@@ -200,87 +213,72 @@ button{
 <div class="container">
   <div class="title">
     <h2>Faction Leadership Status</h2>
-    <p>Tap faction card to view warning details</p>
+    <p>Tap faction card to view warning history</p>
   </div>
 
   <div class="list">
 
-    <!-- SNN -->
     <div class="card" onclick="openWarn('San News Network',[
       {a:'nx.07',r:'Leader inactivity'},
       {a:'nx.07',r:'Failure to recruit and manage members'},
-      {a:'nx.07',r:'Deleted content without admin approval'}
+      {a:'nx.07',r:'Deleted content without admin approval'},
+      {a:'nx.07',r:'Warn Remove (-3) — Delete Leader Wody_Wodpacker'}
     ])">
       <h3>San News Network</h3>
-      <small>Leader: Wody_Wodpacker</small>
-      <div class="row">
-        <span>Warnings: 3</span>
-        <span class="badge critical">CRITICAL</span>
-      </div>
+      <small>Leader: empty</small>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
-    <!-- SAMD -->
-    <div class="card" onclick="openWarn('San Andreas Medical Department',[
+    <div class="card" onclick="openWarn('SAMD',[
       {a:'nx.07',r:'Poor member selection and management'}
     ])">
       <h3>SAMD</h3>
       <small>Leader: Ana_Carolyne</small>
-      <div class="row">
-        <span>Warnings: 1</span>
-        <span class="badge warn">UNDER OBSERVATION</span>
-      </div>
+      <div class="row"><span>Warnings: 1</span><span class="badge warn">UNDER OBSERVATION</span></div>
     </div>
 
-    <!-- SAPD -->
-    <div class="card" onclick="openWarn('San Andreas Police Department',[
+    <div class="card" onclick="openWarn('SAPD',[
       {a:'nx.07',r:'Poor member selection and management'}
     ])">
       <h3>SAPD</h3>
       <small>Leader: Reyy_Helns</small>
-      <div class="row">
-        <span>Warnings: 1</span>
-        <span class="badge warn">UNDER OBSERVATION</span>
-      </div>
+      <div class="row"><span>Warnings: 1</span><span class="badge warn">UNDER OBSERVATION</span></div>
     </div>
 
-    <!-- FBI -->
-    <div class="card">
+    <div class="card" onclick="openWarn('FBI',[])">
       <h3>Federal Bureau of Investigation</h3>
       <small>Leader: Sundala_Escobar</small>
-      <div class="row">
-        <span>Warnings: 0</span>
-        <span class="badge ok">STABLE</span>
-      </div>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
-    <!-- PEDAGANG -->
-    <div class="card">
+    <div class="card" onclick="openWarn('PEDAGANG',[])">
       <h3>PEDAGANG</h3>
       <small>Leader: Cavaro_Victorian</small>
-      <div class="row">
-        <span>Warnings: 0</span>
-        <span class="badge ok">STABLE</span>
-      </div>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
-    <!-- MILITARY -->
-    <div class="card">
-      <h3>Military</h3>
-      <small>Leader: Empty_Empty</small>
-      <div class="row">
-        <span>Warnings: 0</span>
-        <span class="badge ok">STABLE</span>
-      </div>
+    <div class="card" onclick="openWarn('TNI AD',[])">
+      <h3>TNI Angkatan Darat</h3>
+      <small>Leader: -</small>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
-    <!-- GOV -->
-    <div class="card">
+    <div class="card" onclick="openWarn('TNI AL',[])">
+      <h3>TNI Angkatan Laut</h3>
+      <small>Leader: -</small>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
+    </div>
+
+    <div class="card" onclick="openWarn('TNI AU',[])">
+      <h3>TNI Angkatan Udara</h3>
+      <small>Leader: Cakra_Wiratama</small>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
+    </div>
+
+    <div class="card" onclick="openWarn('Government',[])">
       <h3>Government</h3>
       <small>Leader: Kenneth_Lowel</small>
-      <div class="row">
-        <span>Warnings: 0</span>
-        <span class="badge ok">STABLE</span>
-      </div>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
   </div>
@@ -290,25 +288,47 @@ button{
   <div class="modal-box">
     <h3 id="mt"></h3>
     <div id="list"></div>
-    <button onclick="modal.style.display='none'">Close</button>
+    <button class="addwarn" onclick="addWarn()">Add Warn</button>
+    <button class="close" onclick="modal.style.display='none'">Close</button>
   </div>
 </div>
 
 <script>
 window.onload=()=>setTimeout(()=>loader.style.display='none',2500);
 
+function fakeLoad(cb){
+  clickLoader.style.display='flex';
+  setTimeout(()=>{
+    clickLoader.style.display='none';
+    cb();
+  },600);
+}
+
 function openWarn(f,w){
-  modal.style.display='flex';
-  mt.innerText=f+' — Warning Details';
-  list.innerHTML='';
-  w.forEach((x,i)=>{
-    list.innerHTML+=`
-      <div class="warn-box">
-        <b>Warning #${i+1}</b>
-        <div>Admin: ${x.a}</div>
-        <div>Reason: ${x.r}</div>
-      </div>`;
+  fakeLoad(()=>{
+    modal.style.display='flex';
+    mt.innerText=f+' — Warning History';
+    list.innerHTML='';
+    if(!w.length){
+      list.innerHTML='<div class="empty">No warning history found</div>';
+    }else{
+      w.forEach((x,i)=>{
+        list.innerHTML+=`
+        <div class="warn-box">
+          <b>Log #${i+1}</b>
+          <div>Admin: ${x.a}</div>
+          <div>Info: ${x.r}</div>
+        </div>`;
+      });
+    }
   });
+}
+
+function addWarn(){
+  const r = prompt('Enter warning reason');
+  if(r && r.trim()){
+    alert('You Dont Have Permissions');
+  }
 }
 </script>
 
