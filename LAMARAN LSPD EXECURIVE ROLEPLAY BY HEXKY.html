@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LSPD Recruitment | Execurive Roleplay</title>
+
+<style>
+:root{
+  --bg:#020617;
+  --panel:#0b1d3a;
+  --border:#1e3a8a;
+  --text:#e5e7eb;
+  --accent:#3b82f6;
+  --accent2:#60a5fa;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* INPUT */
+input,textarea,select{
+  width:100%;
+  padding:13px;
+  margin-top:6px;
+  background:#020617;
+  border:1px solid var(--border);
+  color:white;
+  border-radius:10px;
+  font-size:15px;
+}
+textarea{resize:none;height:95px}
+
+/* LOADING */
+#loading{
+  position:fixed;inset:0;
+  background:linear-gradient(120deg,#020617,#0b1d3a,#020617);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+}
+.loader{
+  width:60px;height:60px;
+  border:6px solid #1e3a8a;
+  border-top:6px solid #3b82f6;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:10;
+}
+header h1{
+  color:#60a5fa;
+  font-size:16px;
+}
+header button{
+  background:#020617;
+  border:1px solid var(--border);
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+/* THEME BOX */
+#themeBox{
+  display:none;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+#themeBox button{
+  margin:4px;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:white;
+  cursor:pointer;
+  font-size:12px;
+}
+
+/* CONTAINER */
+.container{
+  max-width:100%;
+  padding:14px;
+}
+
+/* CARD */
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+}
+.card h2{
+  color:var(--accent2);
+  font-size:15px;
+  margin-bottom:10px;
+}
+
+/* GRID RESPONSIVE */
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media(min-width:768px){
+  .container{max-width:900px;margin:auto}
+  .grid{grid-template-columns:1fr 1fr}
+}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:16px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border:none;
+  border-radius:14px;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+  color:white;
+}
+
+/* NOTIF */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(2,6,23,.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:16px;
+}
+.notif-card{
+  background:#020617;
+  border:1px solid #3b82f6;
+  border-radius:16px;
+  padding:22px;
+  max-width:420px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 0 35px rgba(59,130,246,.4);
+}
+.notif-card h3{
+  color:#60a5fa;
+  margin-bottom:8px;
+}
+.notif-card p{
+  font-size:14px;
+  color:#cbd5f5;
+  line-height:1.5;
+}
+.notif-card button{
+  margin-top:16px;
+  padding:12px;
+  width:100%;
+  background:#3b82f6;
+  border:none;
+  border-radius:12px;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading"><div class="loader"></div></div>
+
+<header>
+  <h1>LSPD Recruitment</h1>
+  <button onclick="toggleTheme()">🎨 Theme</button>
+</header>
+
+<div id="themeBox">
+  <button onclick="setTheme(1)">Biru Muda</button>
+  <button onclick="setTheme(2)">Biru + Putih</button>
+  <button onclick="setTheme(3)">VIP</button>
+  <button onclick="setTheme(4)">Dark Blue</button>
+  <button onclick="setTheme(5)">Putih</button>
+</div>
+
+<div class="container">
+<form id="form">
+
+<div class="card">
+<h2>A. IC INFORMATION</h2>
+<div class="grid">
+<input id="ic_name" required placeholder="Nama Lengkap (IC)">
+<input id="ic_age" required placeholder="Umur (IC)">
+<input id="ic_phone" required placeholder="Nomor Telepon (IC)">
+</div>
+<textarea id="ic_reason" required placeholder="Alasan bergabung SAPD"></textarea>
+</div>
+
+<div class="card">
+<h2>B. OOC INFORMATION</h2>
+<div class="grid">
+<input id="ooc_age" required placeholder="Umur Asli (OOC)">
+<input id="ooc_exp" required placeholder="Pengalaman RP / Faction">
+<input id="ooc_active" required placeholder="Aktivitas per hari (jam)">
+<input id="ooc_eng" required placeholder="Rating Bahasa Inggris (1-10)">
+</div>
+</div>
+
+<div class="card">
+<h2>C. ROLEPLAY KNOWLEDGE</h2>
+<textarea id="rp_def" required placeholder="Apa itu Roleplay?"></textarea>
+<textarea id="rp_rules" required placeholder="Apa itu Powergaming & Metagaming?"></textarea>
+</div>
+
+<div class="card">
+<h2>D. PERNYATAAN</h2>
+<select id="agree_sop" required>
+<option value="">Siap mematuhi SOP?</option>
+<option>Ya</option>
+<option>Tidak</option>
+</select>
+<select id="agree_training" required>
+<option value="">Siap mengikuti training?</option>
+<option>Ya</option>
+<option>Tidak</option>
+</select>
+</div>
+
+<button type="button" class="btn" onclick="checkForm()">KIRIM LAMARAN</button>
+</form>
+</div>
+
+<div id="errorNotif" class="overlay">
+  <div class="notif-card">
+    <h3>❌ Upss error</h3>
+    <p>Sepertinya kamu lupa mengisi sesuatu 🙂</p>
+    <button onclick="errorNotif.style.display='none'">OK</button>
+  </div>
+</div>
+
+<div id="statsNotif" class="overlay">
+  <div class="notif-card">
+    <h3>⚠️ PERHATIAN</h3>
+    <p>
+      Setelah lamaran dikirim, WAJIB mengirim
+      <b>Screenshot /STATS</b>.
+    </p>
+    <button onclick="sendWA()">OK, KIRIM</button>
+  </div>
+</div>
+
+<script>
+window.onload=()=>setTimeout(()=>loading.style.display="none",900)
+
+function toggleTheme(){
+  themeBox.style.display =
+    themeBox.style.display=="block"?"none":"block"
+}
+
+function checkForm(){
+  let valid=true
+  document.querySelectorAll("#form input, #form textarea, #form select")
+    .forEach(e=>{ if(!e.value) valid=false })
+  if(!valid){
+    errorNotif.style.display="flex"
+    return
+  }
+  statsNotif.style.display="flex"
+}
+
+function sendWA(){
+const msg = `
+[LSPD RECRUITMENT - EXECURIVE RP]
+
+A. IC
+Nama: ${ic_name.value}
+Umur: ${ic_age.value}
+No HP: ${ic_phone.value}
+Alasan: ${ic_reason.value}
+
+B. OOC
+Umur: ${ooc_age.value}
+Pengalaman: ${ooc_exp.value}
+Aktif: ${ooc_active.value} jam
+English: ${ooc_eng.value}/10
+
+C. RP KNOWLEDGE
+Roleplay: ${rp_def.value}
+PG & MG: ${rp_rules.value}
+
+D. PERNYATAAN
+SOP: ${agree_sop.value}
+Training: ${agree_training.value}
+
+SS /STATS menyusul.
+`
+window.open("https://wa.me/6287883012364?text="+encodeURIComponent(msg),"_blank")
+}
+
+function setTheme(x){
+  if(x==1)document.documentElement.style.cssText="--bg:#0b1d3a;--panel:#102a56;--border:#2563eb;--accent:#60a5fa;--accent2:#93c5fd"
+  if(x==2)document.documentElement.style.cssText="--bg:#f8fafc;--panel:#ffffff;--border:#93c5fd;--text:#020617;--accent:#3b82f6;--accent2:#60a5fa"
+  if(x==3)document.documentElement.style.cssText="--bg:#020617;--panel:#020617;--border:#facc15;--accent:#facc15;--accent2:#fde047"
+  if(x==4)document.documentElement.style.cssText="--bg:#020617;--panel:#020617;--border:#1e3a8a;--accent:#1d4ed8;--accent2:#2563eb"
+  if(x==5)document.documentElement.style.cssText="--bg:#ffffff;--panel:#ffffff;--border:#cbd5e1;--text:#020617;--accent:#020617;--accent2:#475569"
+}
+</script>
+
+</body>
+</html>
