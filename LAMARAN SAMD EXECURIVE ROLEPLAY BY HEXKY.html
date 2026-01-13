@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SAMD Recruitment | Execurive Roleplay</title>
+
+<style>
+:root{
+  --bg:#020617;
+  --panel:#0b1d3a;
+  --border:#1e3a8a;
+  --text:#e5e7eb;
+  --accent:#3b82f6;
+  --accent2:#60a5fa;
+  --radius:16px;
+  --blur:blur(10px);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 600px at top,rgba(59,130,246,.15),transparent 60%),
+    var(--bg);
+  color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* INPUT */
+input,textarea,select{
+  width:100%;
+  padding:14px 15px;
+  margin-top:6px;
+  background:rgba(2,6,23,.85);
+  border:1px solid var(--border);
+  color:white;
+  border-radius:14px;
+  font-size:15px;
+  transition:.25s;
+}
+input:focus,textarea:focus,select:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px rgba(59,130,246,.25);
+}
+textarea{resize:none;height:100px}
+
+/* LOADING */
+#loading{
+  position:fixed;inset:0;
+  background:linear-gradient(120deg,#020617,#0b1d3a,#020617);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+}
+.loader{
+  width:64px;height:64px;
+  border:6px solid rgba(255,255,255,.15);
+  border-top:6px solid var(--accent);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  background:rgba(2,6,23,.85);
+  backdrop-filter:var(--blur);
+  z-index:10;
+}
+header h1{color:var(--accent2);font-size:16px}
+header button{
+  background:#020617;
+  border:1px solid var(--border);
+  color:white;
+  padding:9px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-size:13px;
+  transition:.25s;
+}
+header button:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* THEME */
+#themeBox{
+  display:none;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+  background:rgba(2,6,23,.8);
+  backdrop-filter:var(--blur);
+}
+#themeBox button{
+  margin:5px;
+  padding:9px 14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:white;
+  cursor:pointer;
+  font-size:12px;
+  transition:.25s;
+}
+#themeBox button:hover{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+
+/* CONTAINER */
+.container{padding:14px}
+@media(min-width:768px){.container{max-width:900px;margin:auto}}
+
+/* CARD */
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+.card h2{color:var(--accent2);font-size:15px;margin-bottom:12px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:768px){.grid{grid-template-columns:1fr 1fr}}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:18px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;
+  border-radius:18px;
+  font-weight:800;
+  font-size:16px;
+  cursor:pointer;
+  color:white;
+  box-shadow:0 10px 30px rgba(59,130,246,.45);
+  transition:.25s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(59,130,246,.6)}
+.btn:active{transform:scale(.98)}
+
+/* NOTIF */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(2,6,23,.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:16px;
+}
+.notif-card{
+  background:#020617;
+  border:1px solid var(--accent);
+  border-radius:22px;
+  padding:24px;
+  max-width:420px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 0 45px rgba(59,130,246,.5);
+  animation:pop .3s ease;
+}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.notif-card h3{color:var(--accent2);margin-bottom:10px}
+.notif-card p{font-size:14px;color:#cbd5f5;line-height:1.55}
+.notif-card button{
+  padding:14px;
+  width:100%;
+  border:none;
+  border-radius:14px;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+/* EXTRA BUTTON */
+.notif-actions{display:grid;gap:10px;margin-top:12px}
+.btn-leader{background:linear-gradient(135deg,#16a34a,#22c55e)}
+.btn-wakil{background:linear-gradient(135deg,#2563eb,#3b82f6)}
+.btn-edit{background:linear-gradient(135deg,#15803d,#16a34a)}
+.notif-actions button:hover{transform:translateY(-1px);filter:brightness(1.1)}
+</style>
+</head>
+
+<body>
+
+<div id="loading"><div class="loader"></div></div>
+
+<header>
+  <h1>SAMD Recruitment</h1>
+  <button onclick="toggleTheme()">🎨 Theme</button>
+</header>
+
+<div id="themeBox">
+  <button onclick="setTheme(1)">Biru Muda</button>
+  <button onclick="setTheme(2)">Biru + Putih</button>
+  <button onclick="setTheme(3)">VIP</button>
+  <button onclick="setTheme(4)">Dark Blue</button>
+  <button onclick="setTheme(5)">Putih</button>
+  <button onclick="setTheme(6)">SAMD Pink</button>
+</div>
+
+<div class="container">
+<form id="form">
+
+<div class="card">
+<h2>INFORMATION OOC</h2>
+<div class="grid">
+<input id="ooc_name" required placeholder="Nama">
+<input id="ooc_age" required placeholder="Umur">
+<input id="ooc_origin" required placeholder="Asal">
+<input id="ooc_busy" required placeholder="Kesibukan">
+</div>
+</div>
+
+<div class="card">
+<h2>INFORMATION IC</h2>
+<div class="grid">
+<input id="ic_name" required placeholder="Nama">
+<input id="ic_age" required placeholder="Umur">
+<input id="ic_address" required placeholder="Alamat">
+</div>
+</div>
+
+<div class="card">
+<h2>VISI & MISI MEDICAL DEPARTMENT</h2>
+<textarea id="visi" required placeholder="VISI (minimal 1, tidak boleh sama dengan MISI)"></textarea>
+<textarea id="misi" required placeholder="MISI (minimal 1, tidak boleh sama dengan VISI)"></textarea>
+</div>
+
+<div class="card">
+<h2>KELENGKAPAN</h2>
+<select id="stats" required>
+<option value="">Apakah siap melampirkan SS (STATS / LIC / KTP)?</option>
+<option>Siap</option>
+<option>Tidak</option>
+</select>
+<select id="cs" required>
+<option value="">Apakah memiliki CS?</option>
+<option>Ya</option>
+<option>Tidak</option>
+</select>
+</div>
+
+<button type="button" class="btn" onclick="checkForm()">KIRIM LAMARAN</button>
+</form>
+</div>
+
+<div id="errorNotif" class="overlay">
+  <div class="notif-card">
+    <h3>❌ Upss error</h3>
+    <p>Sepertinya kamu lupa mengisi sesuatu 🙂</p>
+    <button onclick="errorNotif.style.display='none'">OK</button>
+  </div>
+</div>
+
+<div id="statsNotif" class="overlay">
+  <div class="notif-card">
+    <h3>⚠️ PERHATIAN</h3>
+    <p>Setelah lamaran dikirim, WAJIB mengirim <b>SS (STATS / LIC / KTP)</b>.</p>
+    <div class="notif-actions">
+      <button class="btn-leader" onclick="sendWA('leader')">KIRIM KE LEADER</button>
+      <button class="btn-wakil" onclick="sendWA('wakil')">KIRIM KE WAKIL</button>
+      <button class="btn-edit" onclick="statsNotif.style.display='none'">✏️ EDIT FORM</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.onload=()=>setTimeout(()=>loading.style.display="none",900)
+
+function toggleTheme(){
+  themeBox.style.display =
+    themeBox.style.display=="block"?"none":"block"
+}
+
+function checkForm(){
+  let valid=true
+  document.querySelectorAll("#form input, #form textarea, #form select")
+    .forEach(e=>{ if(!e.value) valid=false })
+  if(!valid){
+    errorNotif.style.display="flex"
+    return
+  }
+  statsNotif.style.display="flex"
+}
+
+function sendWA(target){
+const msg = `
+===== LAMARAN MEDICAL DEPARTMENT =====
+
+[INFORMATION OOC]
+Nama : ${ooc_name.value}
+Umur : ${ooc_age.value}
+Asal : ${ooc_origin.value}
+Kesibukan : ${ooc_busy.value}
+
+[INFORMATION IC]
+Nama : ${ic_name.value}
+Umur : ${ic_age.value}
+Alamat : ${ic_address.value}
+
+========== VISI ==========
+${visi.value}
+
+========== MISI ==========
+${misi.value}
+
+SS (STATS / LIC / KTP) : ${stats.value}
+Memiliki CS : ${cs.value}
+
+NB: VISI & MISI TIDAK BOLEH SAMA.
+`
+const number =
+  target=="leader" ? "6285758328941" : "6288214375964"
+window.open("https://wa.me/"+number+"?text="+encodeURIComponent(msg),"_blank")
+}
+
+function setTheme(x){
+  if(x==1)document.documentElement.style.cssText="--bg:#0b1d3a;--panel:#102a56;--border:#2563eb;--accent:#60a5fa;--accent2:#93c5fd"
+  if(x==2)document.documentElement.style.cssText="--bg:#f8fafc;--panel:#ffffff;--border:#93c5fd;--text:#020617;--accent:#3b82f6;--accent2:#60a5fa"
+  if(x==3)document.documentElement.style.cssText="--bg:#020617;--panel:#020617;--border:#facc15;--accent:#facc15;--accent2:#fde047"
+  if(x==4)document.documentElement.style.cssText="--bg:#020617;--panel:#020617;--border:#1e3a8a;--accent:#1d4ed8;--accent2:#2563eb"
+  if(x==5)document.documentElement.style.cssText="--bg:#ffffff;--panel:#ffffff;--border:#cbd5e1;--text:#020617;--accent:#020617;--accent2:#475569"
+  if(x==6)document.documentElement.style.cssText="--bg:#fff1f2;--panel:#ffe4e6;--border:#fda4af;--text:#4a0f1f;--accent:#fb7185;--accent2:#f43f5e"
+}
+</script>
+
+</body>
+</html>
