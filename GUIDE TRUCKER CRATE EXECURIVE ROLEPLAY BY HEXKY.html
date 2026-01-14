@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benson Trucker Crate | Execurive RP</title>
+
+<!-- FAVICON -->
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<style>
+/* ================= THEME ================= */
+:root{
+  --bg:#020617;
+  --card:#0b1d3a;
+  --card2:#0f2a52;
+  --border:#1e3a8a;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#3b82f6;
+}
+
+[data-theme="neon"]{
+  --card:#020c2b;
+  --card2:#02164a;
+  --accent:#38bdf8;
+}
+
+/* ================= BASE ================= */
+*{
+  box-sizing:border-box;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* ================= TOPBAR ================= */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+}
+
+.topbar img{
+  width:26px;
+  height:26px;
+  border-radius:6px;
+}
+
+.title{
+  font-weight:700;
+  font-size:16px;
+  flex:1;
+}
+
+.menu-btn{
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* ================= DROPDOWN MENU ================= */
+.menu{
+  display:none;
+  background:var(--bg);
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+
+.menu.active{display:block}
+
+.menu-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.menu-card:hover{
+  background:var(--card2);
+}
+
+.menu-card h4{
+  margin:0;
+  font-size:15px;
+}
+
+.menu-card p{
+  margin:4px 0 0;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* ================= LAYOUT ================= */
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+/* ================= HEADER ================= */
+.header{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:22px;
+}
+
+.header h1{
+  margin:0;
+  font-size:26px;
+}
+
+.header p{
+  color:var(--muted);
+  margin-top:6px;
+}
+
+/* ================= BUTTON ================= */
+.btn{
+  margin-top:14px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn:hover{opacity:.85}
+.btn.outline{
+  background:transparent;
+  border:1px solid var(--border);
+}
+
+/* ================= THEME SELECT ================= */
+.theme-box{
+  display:none;
+  margin-top:12px;
+  gap:10px;
+}
+
+.theme-box.active{
+  display:flex;
+}
+
+.theme-box button{
+  flex:1;
+}
+
+/* ================= SECTION ================= */
+.section{
+  margin-top:30px;
+}
+
+.section-title{
+  border-left:5px solid var(--accent);
+  padding-left:12px;
+  font-size:20px;
+  margin-bottom:15px;
+}
+
+/* ================= CARD ================= */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+}
+
+/* ================= STEP ================= */
+.step{
+  margin-top:28px;
+}
+
+.step img{
+  width:100%;
+  border-radius:14px;
+  border:1px solid var(--border);
+}
+
+.caption{
+  margin-top:10px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+  font-weight:600;
+}
+
+/* ================= MODAL ================= */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.85);
+  align-items:center;
+  justify-content:center;
+}
+
+.modal.active{display:flex}
+
+.modal-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  max-width:320px;
+  text-align:center;
+}
+
+/* ================= FOOTER ================= */
+.footer{
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+  margin:50px 0 20px;
+}
+
+/* ================= MOBILE ================= */
+@media(max-width:768px){
+  .container{padding:14px}
+  .header h1{font-size:22px}
+  .section-title{font-size:18px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <img src="favicon.png">
+  <div class="title">Execurive Guide</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+</div>
+
+<!-- MENU -->
+<div class="menu" id="menu">
+  <div class="menu-card" onclick="openDev()">
+    <h4>📘 All Guide</h4>
+    <p>Sedang dalam pengembangan</p>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Benson / Trucker Crate</h1>
+  <p>Official Civil Job Guide — Execurive Roleplay</p>
+
+  <button class="btn" onclick="toggleThemeBox()">🎨 Pilih Theme</button>
+
+  <div class="theme-box" id="themeBox">
+    <button class="btn outline" onclick="setTheme('')">Default</button>
+    <button class="btn outline" onclick="setTheme('neon')">Neon Blue</button>
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="section">
+  <div class="section-title">Informasi Job</div>
+  <div class="card">
+    <ul>
+      <li>Status: <b>Civil Job</b></li>
+      <li>Daftar: <b>City Hall</b></li>
+      <li>Jam Kerja: <b>14.00 – 00.00</b></li>
+      <li>Non-GoodSide</li>
+    </ul>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="section">
+  <div class="section-title">Alur Pekerjaan</div>
+
+  <div class="step">
+    <img src="SSAN GUIDE/AMBILKERJA.png">
+    <div class="caption">1️⃣ Ambil pekerjaan di City Hall</div>
+  </div>
+
+  <div class="step">
+    <img src="SSAN GUIDE/BELIBENSON.png">
+    <div class="caption">2️⃣ Membeli kendaraan Benson</div>
+  </div>
+
+  <div class="step">
+    <img src="SSAN GUIDE/LOKASITAKECRATE.png">
+    <div class="caption">3️⃣ Menuju lokasi Take Crate</div>
+  </div>
+
+  <div class="step">
+    <img src="SSAN GUIDE/TAKECRATE.png">
+    <div class="caption">4️⃣ <code>/takecrate</code> + RP (<code>/me</code>, <code>/do</code>)</div>
+  </div>
+
+  <div class="step">
+    <img src="SSAN GUIDE/LOKASISTORCRATE.png">
+    <div class="caption">5️⃣ Menuju lokasi Stor Crate</div>
+  </div>
+
+  <div class="step">
+    <img src="SSAN GUIDE/STORCRATE.png">
+    <div class="caption">6️⃣ <code>/loadcrate</code> — Job selesai</div>
+  </div>
+</div>
+
+<div class="footer">
+  Benson Trucker Crate Guide<br>
+  Execurive Roleplay
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="devModal">
+  <div class="modal-card">
+    <h3>🚧 Sedang Dalam Pengembangan</h3>
+    <p style="color:var(--muted)">All Guide akan segera tersedia.</p>
+    <button class="btn" onclick="closeDev()">OK</button>
+  </div>
+</div>
+
+<script>
+function toggleMenu(){
+  document.getElementById("menu").classList.toggle("active");
+}
+
+function toggleThemeBox(){
+  document.getElementById("themeBox").classList.toggle("active");
+}
+
+function setTheme(t){
+  document.body.dataset.theme = t;
+}
+
+function openDev(){
+  document.getElementById("devModal").classList.add("active");
+}
+
+function closeDev(){
+  document.getElementById("devModal").classList.remove("active");
+}
+</script>
+
+</body>
+</html>
