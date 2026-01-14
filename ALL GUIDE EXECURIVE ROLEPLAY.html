@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Guide | Execurive Roleplay</title>
+
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<style>
+:root{
+  --bg:#020617;
+  --card:#0b1d3a;
+  --card2:#0f2a52;
+  --border:#1e3a8a;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#3b82f6;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+
+.topbar{
+  position:sticky;top:0;z-index:10;
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px
+}
+.topbar img{width:26px;height:26px;border-radius:6px}
+.title{font-weight:700;flex:1}
+.admin-btn{
+  padding:6px 12px;border-radius:999px;
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);cursor:pointer
+}
+
+.container{max-width:1200px;margin:auto;padding:20px}
+
+.header{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:22px
+}
+.header h1{margin:0;font-size:26px}
+.header p{margin-top:6px;color:var(--muted)}
+
+.search{margin-top:14px}
+.search input{
+  width:100%;padding:12px 16px;border-radius:12px;
+  background:#020617;border:1px solid var(--border);color:#fff
+}
+
+.section{margin-top:36px}
+.section-title{
+  border-left:5px solid var(--accent);
+  padding-left:12px;font-size:20px;margin-bottom:14px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:18px
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px
+}
+.card h3{margin:0;font-size:18px}
+.card p{font-size:13px;color:var(--muted)}
+
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.badge{
+  font-size:11px;padding:4px 10px;border-radius:999px;
+  border:1px solid var(--border);color:var(--muted)
+}
+.badge.new{border-color:#22c55e;color:#22c55e}
+.badge.updated{border-color:#facc15;color:#facc15}
+
+.btn{
+  margin-top:12px;padding:10px 14px;border-radius:10px;
+  border:none;font-weight:700;
+  background:var(--accent);color:#fff;cursor:pointer
+}
+.btn.outline{
+  background:transparent;border:1px solid var(--border);color:var(--text)
+}
+
+.video{
+  position:relative;padding-top:56%;
+  border-radius:14px;overflow:hidden;
+  border:1px solid var(--border);margin-top:10px
+}
+.video iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0
+}
+
+.empty{text-align:center;color:var(--muted)}
+
+.footer{
+  margin:50px 0 20px;
+  text-align:center;font-size:13px;color:var(--muted)
+}
+
+.modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(2,6,23,.9);
+  align-items:center;justify-content:center;z-index:99
+}
+
+@media(max-width:768px){
+  .container{padding:14px}
+  .header h1{font-size:22px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <img src="favicon.png">
+  <div class="title">Execurive Guide</div>
+  <button class="admin-btn" onclick="openAdmin()">Admin</button>
+</div>
+
+<div class="container">
+
+<div class="header">
+  <h1>All Guide Execurive Roleplay</h1>
+  <p>Faction • Side Job • Video Guide</p>
+
+  <div class="search">
+    <input id="search" placeholder="Search guide...">
+  </div>
+
+  <div style="margin-top:14px">
+    <button class="btn outline" id="deviceToggle">🧠 Low Device Mode</button>
+  </div>
+</div>
+
+<div id="content"></div>
+
+<div class="footer">© 2026 Execurive Roleplay</div>
+</div>
+
+<!-- ADMIN -->
+<div class="modal" id="adminModal">
+  <div class="card" style="max-width:320px;text-align:center">
+    <h3>🔒 Admin Panel</h3>
+    <p style="color:var(--muted)">Tidak ada akses</p>
+    <button class="btn" onclick="closeAdmin()">OK</button>
+  </div>
+</div>
+
+<!-- VIDEO -->
+<div class="modal" id="videoModal">
+  <div class="card" style="max-width:420px;width:90%">
+    <h3>🎬 Video Guide</h3>
+    <div class="video">
+      <iframe id="videoFrame" allowfullscreen></iframe>
+    </div>
+    <a id="ytLink" target="_blank" class="btn outline" style="width:100%">Open YouTube</a>
+    <button class="btn" style="width:100%" onclick="closeVideo()">Close</button>
+  </div>
+</div>
+
+<script>
+const data={
+  faction:[],
+  sidejob:[
+    {
+      title:"🚚 Trucker Crate",
+      desc:"Benson / Trucker Crate Guide",
+      by:"Hexky",
+      date:"2026-01-10",
+      guide:"GUIDE TRUCKER CRATE EXECURIVE ROLEPLAY BY HEXKY.html"
+    }
+  ],
+  video:[
+    {
+      title:"⛏ Miner",
+      by:"Luxxy",
+      date:"2026-01-05",
+      embed:"https://www.youtube.com/embed/d50dxv2ayP8",
+      link:"https://youtube.com/shorts/d50dxv2ayP8?si=sSbFGJOCUiQk2YZh"
+    },
+    {
+      title:"🚛 Hauling",
+      by:"Luxxy",
+      date:"2026-01-05",
+      embed:"https://www.youtube.com/shorts/ZEXA4L_-uzs",
+      link:"https://youtube.com/shorts/ZEXA4L_-uzs?si=69foOzANqHkZg7Hc"
+    }
+  ],
+  log:[
+    "2026-01-10 — Added Trucker Crate Guide",
+    "2026-01-05 — Added Miner & Hauling Video Guide"
+  ]
+};
+
+function badge(d){
+  const day=(Date.now()-new Date(d))/86400000;
+  if(day<=7)return'<span class="badge new">NEW</span>';
+  if(day<=30)return'<span class="badge updated">UPDATED</span>';
+  return'';
+}
+
+/* LOW DEVICE MODE */
+let lowEnd =
+  localStorage.getItem("lowDevice") !== null
+    ? localStorage.getItem("lowDevice")==="true"
+    : (innerWidth<=480 || navigator.connection?.saveData);
+
+const toggle=document.getElementById("deviceToggle");
+function updateToggle(){
+  toggle.innerText = lowEnd ? "🧠 Low Device Mode: ON" : "⚡ Low Device Mode: OFF";
+}
+toggle.onclick=()=>{
+  lowEnd=!lowEnd;
+  localStorage.setItem("lowDevice",lowEnd);
+  location.reload();
+};
+updateToggle();
+
+const el=document.getElementById("content");
+el.innerHTML=`
+<div class="section">
+  <div class="section-title">Faction Guide</div>
+  <div class="grid">
+    <div class="card empty"><h3>Empty</h3></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Side Job Guide</div>
+  <div class="grid">
+    ${data.sidejob.map(g=>`
+    <div class="card guide">
+      <h3>${g.title}</h3>
+      <p>${g.desc}</p>
+      <div class="meta">
+        ${badge(g.date)}
+        <span class="badge">By ${g.by}</span>
+        <span class="badge">${g.date}</span>
+      </div>
+      <button class="btn" onclick="location.href='${g.guide}'">View Guide</button>
+    </div>`).join("")}
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Video Guide</div>
+  <div class="grid">
+    ${data.video.map(v=>`
+    <div class="card guide">
+      <h3>${v.title}</h3>
+      ${lowEnd
+        ? `<p style="color:var(--muted)">Video disembunyikan (Low Device Mode)</p>`
+        : `<div class="video"><iframe loading="lazy" src="${v.embed}" allowfullscreen></iframe></div>`
+      }
+      <div class="meta">
+        ${badge(v.date)}
+        <span class="badge">By ${v.by}</span>
+      </div>
+      <button class="btn outline" onclick="openVideo('${v.embed}','${v.link}')">View Video</button>
+    </div>`).join("")}
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Update Log</div>
+  <div class="card">
+    ${data.log.map(l=>`<p>• ${l}</p>`).join("")}
+  </div>
+</div>
+`;
+
+search.oninput=()=>{
+  document.querySelectorAll(".guide").forEach(c=>{
+    c.style.display=c.innerText.toLowerCase().includes(search.value.toLowerCase())?"":"none";
+  });
+};
+
+function openAdmin(){adminModal.style.display="flex"}
+function closeAdmin(){adminModal.style.display="none"}
+
+function openVideo(embed,link){
+  videoFrame.src=embed+"?autoplay=1";
+  ytLink.href=link;
+  videoModal.style.display="flex";
+}
+function closeVideo(){
+  videoFrame.src="";
+  videoModal.style.display="none";
+}
+</script>
+
+</body>
+</html>
