@@ -415,10 +415,10 @@ body{
 
   <!-- SLIDER GAMBAR -->
   <div class="slider-container" id="slider">
-    <div class="slider-track">
-      <img src="top3donatur.png" alt="loading image...">
-      <img src="benefit50k.png" alt="loading image...">
-    </div>
+<div class="slider-track">
+  <img src="fotowebsite/top3donatur.png" alt="loading image...">
+  <img src="fotowebsite/benefit50k.png" alt="loading image...">
+</div>
   </div>
   <div class="slider-dots" id="slider-dots"></div>
 
@@ -447,8 +447,21 @@ document.write(pkg.map(p=>`<div class="card"><div class="item">${p[0]}</div><div
 <h3>KENDARAAN LIMITED</h3>
 <div class="grid">
 <script>
-const veh=[["Kart","Kart.png","40K"],["Super GT","Supergt.png","45K"],["Hotknife","Hotknife.png","35K"],["Heli Seaparrow","Sparrow.png","50K"],["Mobil Caddy","Caddy.png","35K"],["Jet Hydra","hydra.png","60K"]];
-document.write(veh.map(v=>`<div class="card limited"><div class="vehicle-img"><img src="${v[1]}"></div><div class="item">${v[0]}</div><div class="price">${v[2]}</div><button class="btn" onclick="openModal('${v[0]}','${v[2]}')">TOP UP</button></div>`).join(""));
+const veh=[
+["Kart","fotowebsite/Kart.png","40K"],
+["Super GT","fotowebsite/Supergt.png","45K"],
+["Hotknife","fotowebsite/Hotknife.png","35K"],
+["Heli Seaparrow","fotowebsite/Sparrow.png","50K"],
+["Mobil Caddy","fotowebsite/Caddy.png","35K"],
+["Jet Hydra","fotowebsite/hydra.png","60K"]
+];
+document.write(veh.map(v=>`
+<div class="card limited">
+  <div class="vehicle-img"><img src="${v[1]}"></div>
+  <div class="item">${v[0]}</div>
+  <div class="price">${v[2]}</div>
+  <button class="btn" onclick="openModal('${v[0]}','${v[2]}')">TOP UP</button>
+</div>`).join(""));
 </script>
 </div>
 </div>
@@ -458,8 +471,26 @@ document.write(veh.map(v=>`<div class="card limited"><div class="vehicle-img"><i
 <h3>SKIN LIMITED</h3>
 <div class="grid">
 <script>
-const skin=[["ID 303","303.png","45K"],["ID 304","304.png","45K"],["ID 305","305.png","45K"],["ID 295","295.png","45K"],["ID 289","289.png","45K"],["ID 285","285.png","55K"],["ID 277","277.png","55K"],["ID 278","278.png","55K"],["ID 279","279.png","55K"],["ID 217","217.png","65K"],["ID 99","99.png","45K"]];
-document.write(skin.map(s=>`<div class="card limited"><div class="vehicle-img"><img src="${s[1]}"></div><div class="item">${s[0]}</div><div class="price">${s[2]}</div><button class="btn" onclick="openModal('${s[0]}','${s[2]}')">TOP UP</button></div>`).join(""));
+const skin=[
+["ID 303","fotowebsite/303.png","45K"],
+["ID 304","fotowebsite/304.png","45K"],
+["ID 305","fotowebsite/305.png","45K"],
+["ID 295","fotowebsite/295.png","45K"],
+["ID 289","fotowebsite/289.png","45K"],
+["ID 285","fotowebsite/285.png","55K"],
+["ID 277","fotowebsite/277.png","55K"],
+["ID 278","fotowebsite/278.png","55K"],
+["ID 279","fotowebsite/279.png","55K"],
+["ID 217","fotowebsite/217.png","65K"],
+["ID 99","fotowebsite/99.png","45K"]
+];
+document.write(skin.map(s=>`
+<div class="card limited">
+  <div class="vehicle-img"><img src="${s[1]}"></div>
+  <div class="item">${s[0]}</div>
+  <div class="price">${s[2]}</div>
+  <button class="btn" onclick="openModal('${s[0]}','${s[2]}')">TOP UP</button>
+</div>`).join(""));
 </script>
 </div>
 </div>
@@ -523,7 +554,3 @@ setInterval(()=>{
 
 </body>
 </html>
-
-
-
-
