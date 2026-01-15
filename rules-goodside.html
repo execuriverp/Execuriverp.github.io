@@ -5,145 +5,294 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rules Goodside | Execurive Roleplay</title>
 
+<!-- FAVICON -->
 <link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#020617;
-  --panel:#0f172a;
-  --panel-soft:#111827;
-  --border:#1e293b;
+  --bg-soft:#020b1e;
+  --card:#0b1224;
+  --card2:#0f1f45;
+  --border:#1e3a8a;
   --text:#e5e7eb;
-  --muted:#94a3b8;
+  --muted:#9ca3af;
   --accent:#38bdf8;
   --danger:#ef4444;
+  --success:#22c55e;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body{
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
   font-family:Poppins,sans-serif;
-  background:radial-gradient(1000px 500px at top,#020617,#000);
+}
+
+body{
+  background:
+    radial-gradient(900px 500px at top,#020b1e,transparent),
+    var(--bg);
   color:var(--text);
 }
+
+/* ===== NAVBAR ===== */
 .navbar{
-  position:sticky;top:0;
-  background:rgba(2,6,23,.9);
-  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(2,6,23,.85);
+  backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border);
 }
+
 .nav-inner{
-  max-width:1100px;
+  max-width:1200px;
   margin:auto;
-  padding:14px 16px;
+  padding:14px 18px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
 }
-.brand{font-weight:700}
-.brand span{color:var(--accent)}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  font-size:18px;
+}
+
+.brand img{
+  width:28px;
+  height:28px;
+}
+
+.brand span{
+  color:var(--accent);
+}
+
 .back-btn{
-  background:var(--accent);
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
   color:#000;
-  padding:8px 14px;
-  border-radius:10px;
+  padding:8px 16px;
+  border-radius:12px;
   text-decoration:none;
   font-size:13px;
   font-weight:600;
 }
+
+/* ===== HEADER ===== */
 header{
   text-align:center;
-  padding:40px 16px 20px;
+  padding:48px 16px 30px;
 }
-header h1{font-size:28px}
-header p{color:var(--muted);font-size:14px}
+
+header h1{
+  font-size:32px;
+  font-weight:700;
+}
+
+header p{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:6px;
+}
+
+/* ===== CONTAINER ===== */
 .container{
-  max-width:1100px;
+  max-width:1200px;
   margin:auto;
-  padding:16px;
+  padding:0 16px 30px;
 }
+
+/* ===== SECTION ===== */
+.section{
+  margin-bottom:30px;
+}
+
+.section-title{
+  font-size:22px;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.section-title::before{
+  content:"";
+  width:6px;
+  height:26px;
+  background:var(--accent);
+  border-radius:6px;
+}
+
+/* ===== CARD ===== */
 .card{
-  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  background:
+    linear-gradient(180deg,rgba(56,189,248,.06),transparent),
+    var(--card);
   border:1px solid var(--border);
-  border-radius:18px;
+  border-radius:20px;
   padding:20px;
-  margin-bottom:20px;
+  margin-bottom:16px;
+  box-shadow:0 0 0 transparent;
+  transition:.3s;
 }
-.card h2{color:var(--accent);margin-bottom:12px}
-.card h3{margin-top:14px}
-ul{list-style:none}
-li{margin-bottom:8px;font-size:14px}
-li::before{content:"• ";color:var(--accent)}
-.highlight{
+
+.card:hover{
+  box-shadow:0 0 25px rgba(56,189,248,.15);
+}
+
+.card h3{
+  color:var(--accent);
+  margin-bottom:12px;
+  font-size:18px;
+}
+
+ul{
+  list-style:none;
+}
+
+li{
+  font-size:14px;
+  margin-bottom:10px;
+  padding-left:18px;
+  position:relative;
+}
+
+li::before{
+  content:"•";
+  position:absolute;
+  left:0;
+  color:var(--accent);
+  font-size:18px;
+}
+
+/* ===== ALERT ===== */
+.alert{
   margin-top:14px;
-  padding:14px;
-  background:rgba(239,68,68,.1);
-  border:1px solid rgba(239,68,68,.4);
-  border-radius:12px;
+  padding:14px 16px;
+  border-radius:14px;
   font-size:14px;
 }
+
+.alert-danger{
+  background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.4);
+}
+
+.alert-info{
+  background:rgba(56,189,248,.1);
+  border:1px solid rgba(56,189,248,.4);
+}
+
+/* ===== FOOTER ===== */
 footer{
   text-align:center;
-  padding:20px;
+  padding:24px 12px;
   color:var(--muted);
   font-size:12px;
+  border-top:1px solid var(--border);
 }
 </style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <div class="nav-inner">
-    <div class="brand">Execurive <span>Roleplay</span></div>
+    <div class="brand">
+      <img src="favicon.png" alt="Logo">
+      Execurive <span>Rules</span>
+    </div>
     <a href="homerules.html" class="back-btn">← BACK</a>
   </div>
 </nav>
 
+<!-- HEADER -->
 <header>
-  <h1>Rules & Tugas Goodside</h1>
-  <p>Pedoman resmi fraksi Goodside di Execurive Roleplay</p>
+  <h1>Rules & Sistem Goodside</h1>
+  <p>Update resmi berdasarkan kebijakan terbaru manajemen server</p>
 </header>
 
 <div class="container">
 
-<div class="card">
-<h2>Tugas Goodside</h2>
-<h3>Kepolisian</h3>
-<p>Menjaga keamanan dan ketentraman kota dari kriminal dan lalu lintas.</p>
-
-<h3>Army</h3>
-<p>Menangani kriminal tingkat berat dan menyuplai persenjataan negara.</p>
-
-<h3>FBI</h3>
-<p>Penyelidikan rahasia, pencarian ladang ganja, dan intelijen kriminal.</p>
-
-<h3>News</h3>
-<p>Penyampai informasi dan layanan iklan masyarakat.</p>
-
-<h3>EMS</h3>
-<p>Pelayanan kesehatan profesional untuk warga dan aparat.</p>
+<!-- SISTEM PAYDAY -->
+<div class="section">
+  <div class="section-title">Sistem Payday</div>
+  <div class="card">
+    <ul>
+      <li>Gaji tidak diberikan langsung, menggunakan sistem Payday</li>
+      <li>Wajib masuk kota / Duty sebelum Payday berlangsung</li>
+      <li>Semakin sering Payday, semakin besar cuan yang didapat</li>
+      <li>Diterapkan untuk mencegah oknum yang hanya muncul saat gajian</li>
+    </ul>
+    <div class="alert alert-danger">
+      Anggota yang hanya online saat Payday tanpa kontribusi berhak tidak menerima gaji.
+    </div>
+  </div>
 </div>
 
-<div class="card">
-<h2>Rules Goodside</h2>
-<ul>
-<li>Wajib RP Behavior</li>
-<li>Dilarang berbaur dengan Badside saat On Duty</li>
-<li>Wajib bahasa formal</li>
-<li>Dilarang mask saat On Duty (kecuali RP penyamaran)</li>
-<li>Dilarang Open Fire tanpa perlawanan</li>
-<li>Dilarang kriminal saat On Duty</li>
-<li>Dilarang keluar fraksi sebelum 7 hari</li>
-<li>Invite member wajib lewat lamaran</li>
-</ul>
+<!-- RULES GOODSIDE -->
+<div class="section">
+  <div class="section-title">Rules Goodside</div>
+  <div class="card">
+    <ul>
+      <li>EMS dilarang melakukan RP begal</li>
+      <li>Semua fraksi boleh kerja sampingan (WS / Mekanik) saat Off Duty</li>
+      <li>Jika dipanggil Duty, wajib hadir</li>
+      <li>Army dilarang patroli seperti Kepolisian</li>
+      <li>Goodside dilarang sidejob kecuali poin di atas</li>
+      <li>Wajib menjaga behavior sebagai Goodside</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Penegasan</h2>
-<p>Leader dan Wakil wajib membimbing anggota.</p>
-<div class="highlight">
-On Duty / War Fraksi dilarang memakai mask kecuali RP penyamaran.
+<!-- RULES EMS -->
+<div class="section">
+  <div class="section-title">Rules EMS</div>
+  <div class="card">
+    <ul>
+      <li>Wajib menggunakan kendaraan dinas saat bertugas</li>
+      <li>Dilarang keras membegal EMS</li>
+      <li>Dilarang membawa senjata api</li>
+      <li>Saat peperangan EMS dilarang mendekat atau revive</li>
+      <li>Revive hanya boleh setelah situasi aman</li>
+      <li>Saat Off Duty EMS dilarang RP kriminal</li>
+    </ul>
+  </div>
 </div>
+
+<!-- RULES POLICE -->
+<div class="section">
+  <div class="section-title">Rules Police</div>
+  <div class="card">
+    <ul>
+      <li>Patroli dilarang melewati Craftgun, Hood Gangster, dan BM</li>
+      <li>Ladang masih diperbolehkan patroli</li>
+      <li>Persuit &gt; 20 menit diperbolehkan Drive By (SG / MP5)</li>
+      <li>Off Duty Police dilarang RP kriminal</li>
+      <li>Patroli wajib menggunakan unit resmi</li>
+    </ul>
+  </div>
+</div>
+
+<!-- RULES MEKANIK -->
+<div class="section">
+  <div class="section-title">Rules Mekanik / Workshop</div>
+  <div class="card">
+    <ul>
+      <li>Mekanik bersifat netral (bebas RP baik / jahat)</li>
+      <li>Pegawai WS luar fraksi bebas aktivitas</li>
+      <li>Dilarang keras membawa senjata saat Duty</li>
+    </ul>
+  </div>
 </div>
 
 </div>

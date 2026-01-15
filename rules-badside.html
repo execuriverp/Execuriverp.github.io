@@ -5,211 +5,352 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rules Badside | Execurive Roleplay</title>
 
+<!-- FAVICON -->
 <link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#020617;
-  --panel:#0f172a;
-  --panel-soft:#111827;
-  --border:#1e293b;
+  --bg-soft:#030712;
+  --card:#0b1224;
+  --border:#7f1d1d;
   --text:#e5e7eb;
-  --muted:#94a3b8;
-  --accent:#f43f5e;
+  --muted:#9ca3af;
+  --accent:#ef4444;
+  --danger:#dc2626;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body{
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
   font-family:Poppins,sans-serif;
-  background:radial-gradient(1000px 500px at top,#020617,#000);
+}
+
+body{
+  background:
+    radial-gradient(900px 500px at top,#09090b,transparent),
+    var(--bg);
   color:var(--text);
 }
+
+/* NAVBAR */
 .navbar{
-  position:sticky;top:0;
-  background:rgba(2,6,23,.9);
-  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(2,6,23,.88);
+  backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border);
 }
+
 .nav-inner{
-  max-width:1100px;
+  max-width:1200px;
   margin:auto;
-  padding:14px 16px;
+  padding:14px 18px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
 }
-.brand{font-weight:700}
-.brand span{color:var(--accent)}
-.back{
-  background:var(--accent);
-  color:#000;
-  padding:8px 14px;
-  border-radius:10px;
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  font-size:18px;
+}
+
+.brand img{
+  width:28px;
+  height:28px;
+}
+
+.brand span{
+  color:var(--accent);
+}
+
+.back-btn{
+  background:linear-gradient(135deg,#ef4444,#b91c1c);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:12px;
   text-decoration:none;
   font-size:13px;
   font-weight:600;
 }
+
+/* HEADER */
 header{
   text-align:center;
-  padding:40px 16px 20px;
+  padding:48px 16px 30px;
 }
-header h1{font-size:28px}
-header p{color:var(--muted);font-size:14px}
+
+header h1{
+  font-size:32px;
+  font-weight:700;
+}
+
+header p{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:6px;
+}
+
+/* CONTAINER */
 .container{
-  max-width:1100px;
+  max-width:1200px;
   margin:auto;
-  padding:16px;
+  padding:0 16px 30px;
 }
+
+/* SECTION */
+.section{
+  margin-bottom:32px;
+}
+
+.section-title{
+  font-size:22px;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.section-title::before{
+  content:"";
+  width:6px;
+  height:26px;
+  background:var(--accent);
+  border-radius:6px;
+}
+
+/* CARD */
 .card{
-  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  background:
+    linear-gradient(180deg,rgba(239,68,68,.08),transparent),
+    var(--card);
   border:1px solid var(--border);
-  border-radius:18px;
+  border-radius:20px;
   padding:20px;
-  margin-bottom:20px;
+  margin-bottom:16px;
+  transition:.3s;
 }
-.card h2{color:var(--accent);margin-bottom:12px}
-ul{list-style:none}
-li{margin-bottom:8px;font-size:14px}
-li::before{content:"• ";color:var(--accent)}
+
+.card:hover{
+  box-shadow:0 0 25px rgba(239,68,68,.2);
+}
+
+ul{
+  list-style:none;
+}
+
+li{
+  font-size:14px;
+  margin-bottom:10px;
+  padding-left:18px;
+  position:relative;
+}
+
+li::before{
+  content:"•";
+  position:absolute;
+  left:0;
+  color:var(--accent);
+  font-size:18px;
+}
+
+/* ALERT */
+.alert{
+  margin-top:14px;
+  padding:14px 16px;
+  border-radius:14px;
+  font-size:14px;
+  background:rgba(220,38,38,.12);
+  border:1px solid rgba(220,38,38,.4);
+}
+
+/* FOOTER */
 footer{
   text-align:center;
-  padding:20px;
-  font-size:12px;
+  padding:24px 12px;
   color:var(--muted);
+  font-size:12px;
+  border-top:1px solid var(--border);
 }
 </style>
 </head>
+
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <div class="nav-inner">
-    <div class="brand">Execurive <span>Roleplay</span></div>
-    <a href="homerules.html" class="back">← BACK</a>
+    <div class="brand">
+      <img src="favicon.png" alt="Logo">
+      Execurive <span>Rules</span>
+    </div>
+    <a href="homerules.html" class="back-btn">← BACK</a>
   </div>
 </nav>
 
+<!-- HEADER -->
 <header>
   <h1>Rules Badside</h1>
-  <p>Peraturan resmi fraksi kriminal Execurive Roleplay</p>
+  <p>Aturan resmi aktivitas kriminal & gang di Execurive Roleplay</p>
 </header>
 
 <div class="container">
 
-<div class="card">
-<h2>Rules War Gang / Families</h2>
-<ul>
-<li>Harus ada permasalahan yang jelas</li>
-<li>Dilarang mengajak warga biasa</li>
-<li>Wajib menggunakan RP Fear</li>
-<li>Max senjata Shotgun</li>
-<li>Jika polisi datang dan jumlah unggul, silahkan dilawan</li>
-<li>Jika kalah jumlah, wajib kabur</li>
-<li>Jika medic datang, perang dihentikan</li>
-</ul>
+<!-- RULES BADSIDE -->
+<div class="section">
+  <div class="section-title">Rules Badside</div>
+  <div class="card">
+    <ul>
+      <li>Dilarang kumpul di Green Zone (punya hood, kumpul di sana)</li>
+      <li>Gunakan bahasa yang baik, no mixing & no singkatan berlebihan</li>
+      <li>Dilarang provoke LEO / taunting Police</li>
+      <li>Dilarang koar, bullying, kasar, atau SARA</li>
+      <li>Buat Roleplay semenarik mungkin</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Rules Rob Bank</h2>
-<ul>
-<li>Khusus Faction Badside</li>
-<li>Senjata: DE, AK, Shotgun</li>
-<li>Aparat minimal 6 orang</li>
-<li>Wajib Full /me dan /do</li>
-<li>Boleh menyandra dengan RP Fear</li>
-<li>Sebelum mulai wajib report agar admin mengawasi</li>
-<li>Tertangkap = CK</li>
-</ul>
+<!-- JOIN GENG -->
+<div class="section">
+  <div class="section-title">Rules Join Geng</div>
+  <div class="card">
+    <ul>
+      <li>Warga dilarang langsung minta join, wajib RP approach</li>
+      <li>Bebas menggunakan RP apapun untuk komunikasi</li>
+      <li>Tidak boleh MG</li>
+      <li>Gang akan memberi clue untuk approaching</li>
+      <li>Dilarang PM PM (Admin bisa sadap)</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Behavior Mafia</h2>
-<ul>
-<li>Bertingkah layaknya warga biasa</li>
-<li>Melindungi identitas</li>
-<li>Sensitif namun tidak agresif</li>
-<li>Tidak ingin diganggu</li>
-<li>Bisa membunuh penguping</li>
-<li>Menyelesaikan masalah dengan kepala dingin</li>
-</ul>
+<!-- DRIVE BY -->
+<div class="section">
+  <div class="section-title">Rules Drive By</div>
+  <div class="card">
+    <ul>
+      <li>Dilarang menggunakan Desert Eagle</li>
+      <li>Drive By hanya UZI & SMG</li>
+      <li>Hanya saat persuit atau robbery</li>
+      <li>Jika lawan On Foot, dilarang diam di mobil</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Rules Begal</h2>
-<ul>
-<li>Minimal 2 orang</li>
-<li>Pembegal minimal level 5</li>
-<li>Level 1–4 tidak boleh dibegal</li>
-<li>Warga hanya boleh slc</li>
-<li>Dilarang motor dan mobil sport</li>
-</ul>
+<!-- WAR GENG -->
+<div class="section">
+  <div class="section-title">Rules War Antar Geng (Capture)</div>
+  <div class="card">
+    <ul>
+      <li>Senjata: AK47, MP5, Shotgun</li>
+      <li>Wajib ada konflik masuk akal</li>
+      <li>Minimal 4 orang</li>
+      <li>Warga dilarang masuk area war</li>
+      <li>Boleh me-looting teman atau musuh</li>
+      <li>Setelah war kumpul di tempat aman</li>
+      <li>Down dilarang radio (MG)</li>
+      <li>No Goodside asal report admin</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Rules Persenjataan</h2>
-<ul>
-<li>Warga: Max Desert Eagle</li>
-<li>Families: Max Shotgun</li>
-<li>Gangster: Max AK-47</li>
-<li>Mafia: Max M4</li>
-</ul>
+<!-- NANAM GANJA -->
+<div class="section">
+  <div class="section-title">Rules Nanam Ganja</div>
+  <div class="card">
+    <ul>
+      <li>Minimal 2 orang</li>
+      <li>Kendaraan Sanchez & Sultan no modif</li>
+      <li>Minimal Police 3 (no EMS)</li>
+      <li>Dilarang kabur ke Hood / Green Zone</li>
+      <li>Senjata hanya Shotgun & Desert Eagle</li>
+      <li>Badside boleh open fire saat terciduk</li>
+      <li>Police dilarang open fire duluan</li>
+      <li>Boleh memanggil backup</li>
+      <li>Selesai wajib meninggalkan lokasi</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Behavior Gang</h2>
-<ul>
-<li>Agresif dan sensitif</li>
-<li>Bebas menunjukkan aktivitas</li>
-<li>Identitas tidak perlu disembunyikan</li>
-<li>Sering membunuh aparat</li>
-</ul>
+<!-- ROB / BEGAL -->
+<div class="section">
+  <div class="section-title">Rules Rob / Begal</div>
+  <div class="card">
+    <ul>
+      <li>Dilarang lari ke Green Zone</li>
+      <li>Minimal Police 2 & EMS 1</li>
+      <li>Mobil Sultan / Premier no modif</li>
+      <li>Jam 19:00 - 06:00</li>
+      <li>Maksimal rampasan uang 1JT</li>
+      <li>Boleh ambil barang korban</li>
+      <li>Maksimal 4 pelaku</li>
+      <li>Gunakan RP yang benar</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Rules Capture Gang</h2>
-<ul>
-<li>Minimal 4 orang</li>
-<li>Wajib RP Fear</li>
-<li>Target base gang</li>
-<li>Max senjata AK-47</li>
-<li>Dilarang autoaim</li>
-<li>Jika polisi datang, RP selesai</li>
-<li>RP pendekatan minimal 1 hari</li>
-</ul>
+<!-- FULL WAR -->
+<div class="section">
+  <div class="section-title">Rules Peperangan / Fullup</div>
+  <div class="card">
+    <ul>
+      <li>Minimal 4 Police & 3 EMS</li>
+      <li>Senjata: AK47, Shotgun, DE</li>
+      <li>Harus ada konflik atau perebutan wilayah</li>
+      <li>Maksimal 10 orang per fam / fraksi</li>
+      <li>Dilarang menyerang tanpa alur jelas</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Rules Badside Umum</h2>
-<ul>
-<li>Badside boleh dari kalangan miskin atau kaya (kecuali Mafia wajib kaya)</li>
-<li>Dilarang CK tanpa alasan jelas</li>
-<li>Gang boleh beraliansi dengan Mafia</li>
-<li>Badside boleh jual beli senjata ke warga</li>
-<li>Badside boleh jual marijuana, harga ditentukan di WhatsApp</li>
-<li>Boleh Rob ATM</li>
-<li>Identitas tidak wajib disembunyikan kecuali Mafia</li>
-<li>Dilarang berada di area umum tertentu</li>
-<li>Dilarang kendaraan sport kecuali Mafia</li>
-<li>Mafia disegani, bukan diperintah</li>
-<li>Dilarang memberontak ke aparat kecuali Mafia</li>
-</ul>
+<!-- ROB BANK -->
+<div class="section">
+  <div class="section-title">Rules Rob Bank</div>
+  <div class="card">
+    <ul>
+      <li>Wajib On PD 4 Police & 2 EMS</li>
+      <li>Boleh laras</li>
+      <li>Wajib sandera minimal 1 orang</li>
+      <li>Wajib membawa bomb</li>
+      <li>Wajib dialog, tebusan max 50JT</li>
+      <li>Dilarang open fire di dalam bank</li>
+      <li>Boleh persuit & open fire saat terdesak</li>
+    </ul>
+  </div>
 </div>
 
-<div class="card">
-<h2>Note</h2>
-<ul>
-<li>Ketua/Wakil wajib mendidik anggota</li>
-<li>Dilarang abuse invite tanpa RP jelas</li>
-<li>Ketua/Wakil bertanggung jawab penuh</li>
-<li>Pelanggaran dikenakan Warning Fraksi</li>
-</ul>
+<!-- JAM BEBAS -->
+<div class="section">
+  <div class="section-title">Jam Bebas (00:00 - 06:00)</div>
+  <div class="card">
+    <ul>
+      <li>Dilarang DM</li>
+      <li>Dilarang War</li>
+      <li>Dilarang Nanem</li>
+      <li>Dilarang Rob Bank</li>
+      <li>Hanya boleh RP Begal</li>
+    </ul>
+    <div class="alert">
+      Jam bebas bukan berarti bebas melanggar rules lainnya.
+    </div>
+  </div>
 </div>
 
 </div>
 
 <footer>
-© 2026 Execurive Roleplay — Rules Badside
+© 2026 <span style="color:#ef4444">Execurive Roleplay</span>
 </footer>
 
 </body>
 </html>
-
