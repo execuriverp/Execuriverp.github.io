@@ -153,17 +153,6 @@ header span{color:var(--blue);text-shadow:0 0 12px #38bdf8aa}
   text-align:center;
 }
 
-/* INPUT + BUTTON */
-input{
-  width:100%;
-  padding:11px;
-  margin-top:14px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:#020617;
-  color:white;
-}
-
 button{
   margin-top:14px;
   width:100%;
@@ -173,17 +162,9 @@ button{
   font-weight:600;
   cursor:pointer;
 }
-
-/* ADD WARN BUTTON */
 .addwarn{
   background:linear-gradient(90deg,#dc2626,#f87171);
-  box-shadow:0 0 20px #f8717155;
 }
-.addwarn:hover{
-  box-shadow:0 0 35px #f87171aa;
-}
-
-/* CLOSE */
 .close{
   background:linear-gradient(90deg,#1e40af,#2563eb);
 }
@@ -229,12 +210,14 @@ button{
       <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
+    <!-- SAMD RESET (LOG TETAP ADA) -->
     <div class="card" onclick="openWarn('SAMD',[
-      {a:'nx.07',r:'Warn Add (+1) — Poor member selection and management'}
+      {a:'nx.07',r:'Warn Add (+1) — Poor member selection and management'},
+      {a:'nx.07',r:'Warn Remove (-1) — Delete Leader Ana_Carolyne'}
     ])">
       <h3>SAMD</h3>
-      <small>Leader: Ana_Carolyne</small>
-      <div class="row"><span>Warnings: 1</span><span class="badge warn">UNDER OBSERVATION</span></div>
+      <small>Leader: empty</small>
+      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
     <div class="card" onclick="openWarn('SAPD',[
@@ -255,7 +238,7 @@ button{
 
     <div class="card" onclick="openWarn('PEDAGANG',[])">
       <h3>PEDAGANG</h3>
-      <small>Leader: Cavaro_Victorian</small>
+      <small>Leader: Aron_Biusome</small>
       <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
     </div>
 
@@ -327,10 +310,7 @@ function openWarn(f,w){
 }
 
 function addWarn(){
-  const r = prompt('Enter warning reason');
-  if(r && r.trim()){
-    alert('You Dont Have Permissions');
-  }
+  alert('You Dont Have Permissions');
 }
 </script>
 
