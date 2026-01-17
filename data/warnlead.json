@@ -82,7 +82,9 @@
       "warnings": 0,
       "status": "STABLE",
       "badge": "ok",
-      "logs": []
+      "logs": [
+        { "a": "nx.07", "r": "Warn Add (+1) — Failure to recruit and manage members" },
+      ]
     }
   ]
 }
