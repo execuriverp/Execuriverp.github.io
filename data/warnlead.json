@@ -7,10 +7,22 @@
       "status": "STABLE",
       "badge": "ok",
       "logs": [
-        { "a": "nx.07", "r": "Warn Add (+1) — Leader inactivity" },
-        { "a": "nx.07", "r": "Warn Add (+1) — Failure to recruit and manage members" },
-        { "a": "nx.07", "r": "Warn Add (+1) — Deleted content without admin approval" },
-        { "a": "nx.07", "r": "Warn Remove (-3) — Delete Leader Wody_Wodpacker" }
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Leader inactivity"
+        },
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Failure to recruit and manage members"
+        },
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Deleted content without admin approval"
+        },
+        {
+          "a": "nx.07",
+          "r": "Warn Remove (-3) — Delete Leader Wody_Wodpacker"
+        }
       ]
     },
     {
@@ -20,8 +32,14 @@
       "status": "STABLE",
       "badge": "ok",
       "logs": [
-        { "a": "nx.07", "r": "Warn Add (+1) — Poor member selection and management" },
-        { "a": "nx.07", "r": "Warn Remove (-1) — Delete Leader Ana_Carolyne" }
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Poor member selection and management"
+        },
+        {
+          "a": "nx.07",
+          "r": "Warn Remove (-1) — Delete Leader Ana_Carolyne"
+        }
       ]
     },
     {
@@ -31,7 +49,10 @@
       "status": "UNDER OBSERVATION",
       "badge": "warn",
       "logs": [
-        { "a": "nx.07", "r": "Warn Add (+1) — Poor member selection and management" }
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Poor member selection and management"
+        }
       ]
     },
     {
@@ -41,7 +62,10 @@
       "status": "UNDER OBSERVATION",
       "badge": "warn",
       "logs": [
-        { "a": "nx.07", "r": "Warn Add (+1) — Poor member selection and management" }
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Poor member selection and management"
+        }
       ]
     },
     {
@@ -79,10 +103,15 @@
     {
       "name": "Government",
       "leader": "Kenneth_Lowel",
-      "warnings": 0,
-      "status": "STABLE",
-      "badge": "ok",
-      "logs": []
+      "warnings": 1,
+      "status": "UNDER OBSERVATION",
+      "badge": "warn",
+      "logs": [
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Failure to recruit and manage members"
+        }
+      ]
     }
   ]
 }
