@@ -95,10 +95,15 @@
     {
       "name": "TNI Angkatan Udara",
       "leader": "Cakra_Wiratama",
-      "warnings": 0,
-      "status": "STABLE",
-      "badge": "ok",
-      "logs": []
+      "warnings": 1,
+      "status": "UNDER OBSERVATION",
+      "badge": "warn",
+      "logs": [
+        {
+          "a": "nx.07",
+          "r": "Warn Add (+1) — Poor member selection and management"
+        }
+      ]
     },
     {
       "name": "Government",
