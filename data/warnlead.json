@@ -1,0 +1,88 @@
+{
+  "factions": [
+    {
+      "name": "San News Network",
+      "leader": "empty",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": [
+        { "a": "nx.07", "r": "Warn Add (+1) — Leader inactivity" },
+        { "a": "nx.07", "r": "Warn Add (+1) — Failure to recruit and manage members" },
+        { "a": "nx.07", "r": "Warn Add (+1) — Deleted content without admin approval" },
+        { "a": "nx.07", "r": "Warn Remove (-3) — Delete Leader Wody_Wodpacker" }
+      ]
+    },
+    {
+      "name": "SAMD",
+      "leader": "Morgan_Dragon",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": [
+        { "a": "nx.07", "r": "Warn Add (+1) — Poor member selection and management" },
+        { "a": "nx.07", "r": "Warn Remove (-1) — Delete Leader Ana_Carolyne" }
+      ]
+    },
+    {
+      "name": "SAPD",
+      "leader": "Reyy_Helns",
+      "warnings": 1,
+      "status": "UNDER OBSERVATION",
+      "badge": "warn",
+      "logs": [
+        { "a": "nx.07", "r": "Warn Add (+1) — Poor member selection and management" }
+      ]
+    },
+    {
+      "name": "Federal Bureau of Investigation",
+      "leader": "Sundala_Escobar",
+      "warnings": 1,
+      "status": "UNDER OBSERVATION",
+      "badge": "warn",
+      "logs": [
+        { "a": "nx.07", "r": "Warn Add (+1) — Poor member selection and management" }
+      ]
+    },
+    {
+      "name": "PEDAGANG",
+      "leader": "Aron_Biusome",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": []
+    },
+    {
+      "name": "TNI Angkatan Darat",
+      "leader": "-",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": []
+    },
+    {
+      "name": "TNI Angkatan Laut",
+      "leader": "-",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": []
+    },
+    {
+      "name": "TNI Angkatan Udara",
+      "leader": "Cakra_Wiratama",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": []
+    },
+    {
+      "name": "Government",
+      "leader": "Kenneth_Lowel",
+      "warnings": 0,
+      "status": "STABLE",
+      "badge": "ok",
+      "logs": []
+    }
+  ]
+}
