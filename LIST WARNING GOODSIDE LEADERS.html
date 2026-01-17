@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 
 <style>
+/* === STYLE TIDAK DIUBAH === */
 :root{
   --bg:#020617;
   --panel:#0b1633;
@@ -28,8 +29,6 @@ body{
     var(--bg);
   color:var(--text);
 }
-
-/* LOADER */
 #loader,#clickLoader{
   position:fixed;
   inset:0;
@@ -41,49 +40,17 @@ body{
 }
 #clickLoader{display:none}
 .loader-box{width:220px}
-.loader-text{
-  text-align:center;
-  font-size:13px;
-  letter-spacing:2px;
-  color:var(--blue);
-  margin-bottom:10px;
-}
-.bar{
-  height:6px;
-  border:1px solid var(--border);
-  border-radius:999px;
-  overflow:hidden;
-}
-.bar span{
-  display:block;
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--blue),#0ea5e9);
-  animation:load 2.5s forwards;
-}
+.loader-text{text-align:center;font-size:13px;letter-spacing:2px;color:var(--blue);margin-bottom:10px}
+.bar{height:6px;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--blue),#0ea5e9);animation:load 2.5s forwards}
 @keyframes load{to{width:100%}}
-
-/* HEADER */
-header{
-  padding:22px;
-  text-align:center;
-  border-bottom:1px solid var(--border);
-}
+header{padding:22px;text-align:center;border-bottom:1px solid var(--border)}
 header h1{font-size:16px;letter-spacing:2px}
 header span{color:var(--blue);text-shadow:0 0 12px #38bdf8aa}
-
-/* CONTENT */
 .container{max-width:1100px;margin:auto;padding:22px}
 .title h2{font-size:22px}
 .title p{margin-top:6px;font-size:13px;color:var(--muted)}
-
-/* CARDS */
-.list{
-  margin-top:22px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:16px;
-}
+.list{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
 .card{
   background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--border);
@@ -92,40 +59,15 @@ header span{color:var(--blue);text-shadow:0 0 12px #38bdf8aa}
   cursor:pointer;
   transition:.3s;
 }
-.card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 0 30px #38bdf866;
-}
+.card:hover{transform:translateY(-4px);box-shadow:0 0 30px #38bdf866}
 .card h3{font-size:16px}
 .card small{color:var(--muted);font-size:12px}
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:12px;
-  font-size:13px;
-}
-
-/* BADGE */
-.badge{
-  padding:6px 14px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:600;
-}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px}
+.badge{padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600}
 .ok{background:#052e1b;color:var(--green)}
 .warn{background:#3a2e05;color:var(--yellow)}
 .critical{background:#3b0a0a;color:var(--red)}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:#020617e8;
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
+.modal{position:fixed;inset:0;background:#020617e8;display:none;align-items:center;justify-content:center}
 .modal-box{
   width:92%;
   max-width:520px;
@@ -133,59 +75,20 @@ header span{color:var(--blue);text-shadow:0 0 12px #38bdf8aa}
   border:1px solid var(--border);
   border-radius:20px;
   padding:20px;
-  animation:pop .25s ease;
 }
-@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-
-.warn-box{
-  background:#020617;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px;
-  margin-top:12px;
-}
+.warn-box{background:#020617;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:12px}
 .warn-box b{color:var(--blue)}
-
-.empty{
-  margin-top:14px;
-  font-size:13px;
-  color:var(--muted);
-  text-align:center;
-}
-
-button{
-  margin-top:14px;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:14px;
-  font-weight:600;
-  cursor:pointer;
-}
-.addwarn{
-  background:linear-gradient(90deg,#dc2626,#f87171);
-}
-.close{
-  background:linear-gradient(90deg,#1e40af,#2563eb);
-}
+.empty{margin-top:14px;font-size:13px;color:var(--muted);text-align:center}
+button{margin-top:14px;width:100%;padding:12px;border:none;border-radius:14px;font-weight:600;cursor:pointer}
+.addwarn{background:linear-gradient(90deg,#dc2626,#f87171)}
+.close{background:linear-gradient(90deg,#1e40af,#2563eb)}
 </style>
 </head>
 
 <body>
 
-<div id="loader">
-  <div class="loader-box">
-    <div class="loader-text">EXECURIVE ROLEPLAY</div>
-    <div class="bar"><span></span></div>
-  </div>
-</div>
-
-<div id="clickLoader">
-  <div class="loader-box">
-    <div class="loader-text">LOADING DATA</div>
-    <div class="bar"><span></span></div>
-  </div>
-</div>
+<div id="loader"><div class="loader-box"><div class="loader-text">EXECURIVE ROLEPLAY</div><div class="bar"><span></span></div></div></div>
+<div id="clickLoader"><div class="loader-box"><div class="loader-text">LOADING DATA</div><div class="bar"><span></span></div></div></div>
 
 <header>
   <h1>EXECURIVE ROLEPLAY <span>LEADER WARNING SYSTEM</span></h1>
@@ -197,76 +100,7 @@ button{
     <p>Tap faction card to view warning history</p>
   </div>
 
-  <div class="list">
-
-    <div class="card" onclick="openWarn('San News Network',[
-      {a:'nx.07',r:'Warn Add (+1) — Leader inactivity'},
-      {a:'nx.07',r:'Warn Add (+1) — Failure to recruit and manage members'},
-      {a:'nx.07',r:'Warn Add (+1) — Deleted content without admin approval'},
-      {a:'nx.07',r:'Warn Remove (-3) — Delete Leader Wody_Wodpacker'}
-    ])">
-      <h3>San News Network</h3>
-      <small>Leader: empty</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-    <!-- SAMD RESET (LOG TETAP ADA) -->
-    <div class="card" onclick="openWarn('SAMD',[
-      {a:'nx.07',r:'Warn Add (+1) — Poor member selection and management'},
-      {a:'nx.07',r:'Warn Remove (-1) — Delete Leader Ana_Carolyne'}
-    ])">
-      <h3>SAMD</h3>
-      <small>Leader: Morgan_Dragon</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('SAPD',[
-      {a:'nx.07',r:'Warn Add (+1) — Poor member selection and management'}
-    ])">
-      <h3>SAPD</h3>
-      <small>Leader: Reyy_Helns</small>
-      <div class="row"><span>Warnings: 1</span><span class="badge warn">UNDER OBSERVATION</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('FBI',[
-      {a:'nx.07',r:'Warn Add (+1) — Poor member selection and management'}
-    ])">
-      <h3>Federal Bureau of Investigation</h3>
-      <small>Leader: Sundala_Escobar</small>
-      <div class="row"><span>Warnings: 1</span><span class="badge warn">UNDER OBSERVATION</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('PEDAGANG',[])">
-      <h3>PEDAGANG</h3>
-      <small>Leader: Aron_Biusome</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('TNI AD',[])">
-      <h3>TNI Angkatan Darat</h3>
-      <small>Leader: -</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('TNI AL',[])">
-      <h3>TNI Angkatan Laut</h3>
-      <small>Leader: -</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('TNI AU',[])">
-      <h3>TNI Angkatan Udara</h3>
-      <small>Leader: Cakra_Wiratama</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-    <div class="card" onclick="openWarn('Government',[])">
-      <h3>Government</h3>
-      <small>Leader: Kenneth_Lowel</small>
-      <div class="row"><span>Warnings: 0</span><span class="badge ok">STABLE</span></div>
-    </div>
-
-  </div>
+  <div class="list" id="factionList"></div>
 </div>
 
 <div class="modal" id="modal">
@@ -283,10 +117,7 @@ window.onload=()=>setTimeout(()=>loader.style.display='none',2500);
 
 function fakeLoad(cb){
   clickLoader.style.display='flex';
-  setTimeout(()=>{
-    clickLoader.style.display='none';
-    cb();
-  },600);
+  setTimeout(()=>{clickLoader.style.display='none';cb()},600);
 }
 
 function openWarn(f,w){
@@ -309,11 +140,25 @@ function openWarn(f,w){
   });
 }
 
-function addWarn(){
-  alert('You Dont Have Permissions');
-}
+function addWarn(){alert('You Dont Have Permissions');}
+
+fetch('data/warnlead.json')
+.then(r=>r.json())
+.then(d=>{
+  const box=document.getElementById('factionList');
+  d.factions.forEach(f=>{
+    box.innerHTML+=`
+    <div class="card" onclick='openWarn("${f.name}",${JSON.stringify(f.logs)})'>
+      <h3>${f.name}</h3>
+      <small>Leader: ${f.leader}</small>
+      <div class="row">
+        <span>Warnings: ${f.warnings}</span>
+        <span class="badge ${f.badge}">${f.status}</span>
+      </div>
+    </div>`;
+  });
+});
 </script>
 
 </body>
 </html>
-
