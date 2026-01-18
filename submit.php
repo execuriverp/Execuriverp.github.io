@@ -31,5 +31,5 @@ $dataLama[] = $dataBaru;
 file_put_contents($file, json_encode($dataLama, JSON_PRETTY_PRINT));
 
 // redirect
-header("Location: index.html?success=1");
+header("Location: test.html?success=1");
 exit;
