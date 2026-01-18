@@ -1,164 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Execurive Roleplay | Leader Warning Control</title>
-<link rel="icon" type="image/png" href="favicon.png">
+  <meta charset="UTF-8">
+  <title>Maintenance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-/* === STYLE TIDAK DIUBAH === */
-:root{
-  --bg:#020617;
-  --panel:#0b1633;
-  --panel2:#0f1f45;
-  --border:#1e40af;
-  --blue:#38bdf8;
-  --green:#22c55e;
-  --yellow:#facc15;
-  --red:#f87171;
-  --text:#e5f0ff;
-  --muted:#9db7e5;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    radial-gradient(600px 300px at 10% -10%,#38bdf833,transparent),
-    radial-gradient(600px 300px at 90% 0%,#0ea5e933,transparent),
-    var(--bg);
-  color:var(--text);
-}
-#loader,#clickLoader{
-  position:fixed;
-  inset:0;
-  background:#020617e8;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-#clickLoader{display:none}
-.loader-box{width:220px}
-.loader-text{text-align:center;font-size:13px;letter-spacing:2px;color:var(--blue);margin-bottom:10px}
-.bar{height:6px;border:1px solid var(--border);border-radius:999px;overflow:hidden}
-.bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--blue),#0ea5e9);animation:load 2.5s forwards}
-@keyframes load{to{width:100%}}
-header{padding:22px;text-align:center;border-bottom:1px solid var(--border)}
-header h1{font-size:16px;letter-spacing:2px}
-header span{color:var(--blue);text-shadow:0 0 12px #38bdf8aa}
-.container{max-width:1100px;margin:auto;padding:22px}
-.title h2{font-size:22px}
-.title p{margin-top:6px;font-size:13px;color:var(--muted)}
-.list{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.card{
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-  cursor:pointer;
-  transition:.3s;
-}
-.card:hover{transform:translateY(-4px);box-shadow:0 0 30px #38bdf866}
-.card h3{font-size:16px}
-.card small{color:var(--muted);font-size:12px}
-.row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px}
-.badge{padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600}
-.ok{background:#052e1b;color:var(--green)}
-.warn{background:#3a2e05;color:var(--yellow)}
-.critical{background:#3b0a0a;color:var(--red)}
-.modal{position:fixed;inset:0;background:#020617e8;display:none;align-items:center;justify-content:center}
-.modal-box{
-  width:92%;
-  max-width:520px;
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:20px;
-}
-.warn-box{background:#020617;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:12px}
-.warn-box b{color:var(--blue)}
-.empty{margin-top:14px;font-size:13px;color:var(--muted);text-align:center}
-button{margin-top:14px;width:100%;padding:12px;border:none;border-radius:14px;font-weight:600;cursor:pointer}
-.addwarn{background:linear-gradient(90deg,#dc2626,#f87171)}
-.close{background:linear-gradient(90deg,#1e40af,#2563eb)}
-</style>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+        url('bkucing1.png') no-repeat center center/cover;
+      color:#fff;
+    }
+
+    .card{
+      background:rgba(10,10,20,0.75);
+      border:1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding:40px 45px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:
+        0 0 40px rgba(0,180,255,0.35),
+        inset 0 0 30px rgba(255,255,255,0.05);
+      animation: float 4s ease-in-out infinite;
+      max-width:600px;
+    }
+
+    @keyframes float{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-10px); }
+    }
+
+    h1{
+      font-size:2.4em;
+      margin-bottom:20px;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      text-shadow:
+        0 0 10px #00c8ff,
+        0 0 25px #00c8ff;
+    }
+
+    p{
+      font-size:1.2em;
+      opacity:0.95;
+      margin-bottom:35px;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:14px 36px;
+      border-radius:50px;
+      text-decoration:none;
+      font-weight:600;
+      font-size:1em;
+      color:#fff;
+      background:linear-gradient(135deg,#00c8ff,#0066ff);
+      box-shadow:
+        0 0 15px rgba(0,200,255,0.7),
+        0 0 30px rgba(0,100,255,0.5);
+      transition:all 0.3s ease;
+    }
+
+    .btn:hover{
+      transform:scale(1.08);
+      box-shadow:
+        0 0 25px rgba(0,200,255,0.9),
+        0 0 45px rgba(0,100,255,0.7);
+    }
+
+    .footer{
+      margin-top:25px;
+      font-size:0.85em;
+      opacity:0.6;
+    }
+  </style>
 </head>
-
 <body>
 
-<div id="loader"><div class="loader-box"><div class="loader-text">EXECURIVE ROLEPLAY</div><div class="bar"><span></span></div></div></div>
-<div id="clickLoader"><div class="loader-box"><div class="loader-text">LOADING DATA</div><div class="bar"><span></span></div></div></div>
+  <div class="card">
+    <h1>Website Sedang<br>Maintenance</h1>
 
-<header>
-  <h1>EXECURIVE ROLEPLAY <span>LEADER WARNING SYSTEM</span></h1>
-</header>
+    <p>Silahkan Tunggu Beberapa Saat...</p>
 
-<div class="container">
-  <div class="title">
-    <h2>Faction Leadership Status</h2>
-    <p>Tap faction card to view warning history</p>
+    <a class="btn" href="https://wa.me/62895329018240" target="_blank">
+      💬 Wa Hexky
+    </a>
+
+    <div class="footer">
+      © Made By Hexky
+    </div>
   </div>
-
-  <div class="list" id="factionList"></div>
-</div>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <h3 id="mt"></h3>
-    <div id="list"></div>
-    <button class="addwarn" onclick="addWarn()">Add Warn</button>
-    <button class="close" onclick="modal.style.display='none'">Close</button>
-  </div>
-</div>
-
-<script>
-window.onload=()=>setTimeout(()=>loader.style.display='none',2500);
-
-function fakeLoad(cb){
-  clickLoader.style.display='flex';
-  setTimeout(()=>{clickLoader.style.display='none';cb()},600);
-}
-
-function openWarn(f,w){
-  fakeLoad(()=>{
-    modal.style.display='flex';
-    mt.innerText=f+' — Warning History';
-    list.innerHTML='';
-    if(!w.length){
-      list.innerHTML='<div class="empty">No warning history found</div>';
-    }else{
-      w.forEach((x,i)=>{
-        list.innerHTML+=`
-        <div class="warn-box">
-          <b>Log #${i+1}</b>
-          <div>Admin: ${x.a}</div>
-          <div>Info: ${x.r}</div>
-        </div>`;
-      });
-    }
-  });
-}
-
-function addWarn(){alert('You Dont Have Permissions');}
-
-fetch('data/warnlead.json')
-.then(r=>r.json())
-.then(d=>{
-  const box=document.getElementById('factionList');
-  d.factions.forEach(f=>{
-    box.innerHTML+=`
-    <div class="card" onclick='openWarn("${f.name}",${JSON.stringify(f.logs)})'>
-      <h3>${f.name}</h3>
-      <small>Leader: ${f.leader}</small>
-      <div class="row">
-        <span>Warnings: ${f.warnings}</span>
-        <span class="badge ${f.badge}">${f.status}</span>
-      </div>
-    </div>`;
-  });
-});
-</script>
 
 </body>
 </html>
