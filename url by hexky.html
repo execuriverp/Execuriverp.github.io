@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BB URL Player • Pro</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+
+<style>
+:root{
+    --bg:#0b0f14;
+    --card:#121923;
+    --accent:#3cf2ff;
+    --text:#eaf2f6;
+    --muted:#8a9aa9;
+}
+
+*{
+    box-sizing:border-box;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at top, #1b2735, #0b0f14 60%);
+    color:var(--text);
+}
+
+.container{
+    max-width:720px;
+    margin:auto;
+    padding:18px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:22px;
+}
+
+.header h1{
+    margin:0;
+    font-size:28px;
+    letter-spacing:1px;
+}
+
+.header p{
+    margin-top:6px;
+    color:var(--muted);
+    font-size:14px;
+}
+
+.howto{
+    background:linear-gradient(145deg,#101826,#0e1520);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.howto code{
+    background:#0b1220;
+    padding:3px 7px;
+    border-radius:6px;
+    color:var(--accent);
+}
+
+.list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.song{
+    background:linear-gradient(145deg,#131c2b,#0f1623);
+    border-radius:18px;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.05);
+}
+
+.song-title{
+    font-weight:600;
+    font-size:15px;
+}
+
+.song-url{
+    font-size:11px;
+    color:var(--muted);
+    margin:4px 0 6px;
+    word-break:break-all;
+}
+
+.copy-count{
+    font-size:11px;
+    color:#7fdfff;
+    margin-bottom:6px;
+}
+
+audio{
+    width:100%;
+    margin-bottom:10px;
+}
+
+.controls{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+button{
+    background:linear-gradient(135deg,var(--accent),#00c8ff);
+    border:none;
+    color:#000;
+    padding:9px 16px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.96);
+}
+
+.loading{
+    width:18px;
+    height:18px;
+    border:3px solid rgba(255,255,255,.25);
+    border-top:3px solid var(--accent);
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+    display:none;
+}
+
+.copy-ok{
+    width:22px;
+    height:22px;
+    display:none;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+.footer{
+    text-align:center;
+    margin:26px 0 10px;
+    font-size:12px;
+    color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="header">
+    <h1>BB URL PLAYER</h1>
+    <p>For • Execurive Community</p>
+</div>
+
+<div class="howto">
+<b>How To Use:</b><br>
+<code>/placebb</code> → <code>/setbb</code> → <code>url</code> → paste URL<br><br>
+<b>Jika URL tidak jalan / boombox tidak bunyi:</b><br>
+ubah <code>https</code> menjadi <code>http</code> (hapus huruf <b>s</b>)
+</div>
+
+<div class="list">
+
+<!-- 1 -->
+<div class="song" data-id="dj-lowkey">
+<div class="song-title">DJ Lowkey</div>
+<div class="song-url">https://e.top4top.io/m_3663xnyxb1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://e.top4top.io/m_3663xnyxb1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://e.top4top.io/m_3663xnyxb1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 2 -->
+<div class="song" data-id="dj-barudak">
+<div class="song-title">DJ Barudak Phonk Teror - Aloy</div>
+<div class="song-url">https://l.top4top.io/m_3663el4ki1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://l.top4top.io/m_3663el4ki1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://l.top4top.io/m_3663el4ki1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 3 -->
+<div class="song" data-id="poppin-club">
+<div class="song-title">DJ Poppin The Club</div>
+<div class="song-url">https://a.top4top.io/m_3663e5c4g1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://a.top4top.io/m_3663e5c4g1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://a.top4top.io/m_3663e5c4g1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 4 -->
+<div class="song" data-id="gak-dulu">
+<div class="song-title">DJ Gak Dulu</div>
+<div class="song-url">https://k.top4top.io/m_3663k2izf1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://k.top4top.io/m_3663k2izf1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://k.top4top.io/m_3663k2izf1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 5 -->
+<div class="song" data-id="hero-breakbeat">
+<div class="song-title">DJ Hero Breakbeat Remix</div>
+<div class="song-url">https://j.top4top.io/m_3663j8iv41.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://j.top4top.io/m_3663j8iv41.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://j.top4top.io/m_3663j8iv41.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 6 -->
+<div class="song" data-id="sedia-hujan">
+<div class="song-title">Sedia Aku Sebelum Hujan</div>
+<div class="song-url">https://j.top4top.io/m_3663vjzab1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://j.top4top.io/m_3663vjzab1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://j.top4top.io/m_3663vjzab1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 7 -->
+<div class="song" data-id="monolog">
+<div class="song-title">Monolog</div>
+<div class="song-url">https://h.top4top.io/m_3663ws86l1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://h.top4top.io/m_3663ws86l1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://h.top4top.io/m_3663ws86l1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 8 -->
+<div class="song" data-id="jokowi" data-jokowi>
+<div class="song-title">JKT48 Jokowi</div>
+<div class="song-url">https://l.top4top.io/m_3663gpm0b1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://l.top4top.io/m_3663gpm0b1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://l.top4top.io/m_3663gpm0b1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 9 -->
+<div class="song" data-id="jokowi-slow">
+<div class="song-title">JKT48 Jokowi (Slow)</div>
+<div class="song-url">https://g.top4top.io/m_3663oirnh1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://g.top4top.io/m_3663oirnh1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://g.top4top.io/m_3663oirnh1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+<!-- 10 -->
+<div class="song" data-id="prabowo">
+<div class="song-title">JKT48 Prabowo</div>
+<div class="song-url">https://l.top4top.io/m_3663iy1xi1.mp3</div>
+<div class="copy-count">Total Copy: <span></span></div>
+<audio controls src="https://l.top4top.io/m_3663iy1xi1.mp3"></audio>
+<div class="controls">
+<button onclick="copyURL(this,'https://l.top4top.io/m_3663iy1xi1.mp3')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+BB URL Player • By Hexky
+</div>
+
+</div>
+
+<script>
+function copyURL(btn,url){
+const c = btn.parentElement;
+const load = c.querySelector('.loading');
+const ok = c.querySelector('.copy-ok');
+
+ok.style.display='none';
+load.style.display='block';
+
+setTimeout(()=>{
+navigator.clipboard.writeText(url);
+load.style.display='none';
+ok.style.display='block';
+setTimeout(()=> ok.style.display='none',2000);
+},700);
+}
+
+// === FIX FAKE COPY (ANTI RESET) ===
+document.querySelectorAll('.song').forEach(song=>{
+const id = song.dataset.id;
+const span = song.querySelector('.copy-count span');
+const key = 'bb_copy_' + id;
+
+let value = localStorage.getItem(key);
+
+if(value === null){
+value = song.hasAttribute('data-jokowi') ? 20 : Math.floor(Math.random()*10);
+localStorage.setItem(key,value);
+}
+
+span.textContent = value;
+});
+</script>
+
+</body>
+</html>
