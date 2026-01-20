@@ -22,25 +22,24 @@ body{
     margin:0;
     min-height:100vh;
     background:
-        linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
+        linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.85)),
         url("bkucing1.png") center/cover no-repeat fixed;
     color:var(--text);
-    transition:backdrop-filter .6s;
-}
-
-body.playing{
-    backdrop-filter:blur(8px);
 }
 
 /* PLAYER */
 .player{
     max-width:420px;
     margin:30px auto;
-    background:linear-gradient(180deg,#181818,#0b0b0b);
+    background:linear-gradient(180deg,#1a1a1a,#0b0b0b);
     border-radius:28px;
     padding:22px;
-    box-shadow:0 40px 100px rgba(0,0,0,.85);
-    position:relative;
+    box-shadow:0 40px 90px rgba(0,0,0,.8);
+    transition:transform .4s, box-shadow .4s;
+}
+.player.playing{
+    transform:scale(1.01);
+    box-shadow:0 60px 120px rgba(0,0,0,.95);
 }
 
 /* COVER */
@@ -52,19 +51,7 @@ body.playing{
     align-items:center;
     justify-content:center;
     margin-bottom:18px;
-    position:relative;
 }
-
-.play-dot{
-    position:absolute;
-    top:12px;
-    right:14px;
-    width:10px;height:10px;
-    background:#1db954;
-    border-radius:50%;
-    opacity:0;
-}
-.playing .play-dot{opacity:1}
 
 /* EQ */
 .eq{display:flex;gap:5px;height:40px}
@@ -85,12 +72,12 @@ body.playing{
 .req{font-size:13px;color:var(--muted)}
 .url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:8px 0}
 
-/* LOADING INFO */
+/* LOADING */
 .loading{
     font-size:11px;
     color:#a7f3d0;
     opacity:0;
-    margin-top:4px;
+    transition:.3s;
 }
 .loading.show{opacity:1}
 
@@ -147,12 +134,16 @@ body.playing{
     font-weight:800;
     cursor:pointer;
 }
+.actions button.repeat.active{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#000;
+}
 
-/* OVERLAY LIST CARD */
+/* OVERLAY */
 .overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.6);
+    background:rgba(0,0,0,.55);
     backdrop-filter:blur(8px);
     display:none;
     align-items:center;
@@ -161,16 +152,30 @@ body.playing{
 }
 .overlay.show{display:flex}
 
-.list-card{
+/* CARD */
+.card{
     width:90%;
     max-width:420px;
-    max-height:70vh;
     background:#121212;
     border-radius:22px;
     padding:18px;
-    overflow:auto;
+}
+.card button{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border:none;
+    border-radius:14px;
+    background:var(--card2);
+    color:#fff;
+    font-weight:800;
 }
 
+/* LIST */
+.list{
+    max-height:60vh;
+    overflow:auto;
+}
 .song-card{
     display:flex;
     align-items:center;
@@ -178,29 +183,23 @@ body.playing{
     padding:10px;
     border-radius:14px;
 }
-.song-card:hover{background:#222}
+.song-card.active{background:#222}
 .song-title{font-size:14px;font-weight:800}
 .song-by,.song-dur{font-size:11px;color:var(--muted)}
-.song-dot{
+.dot{
     width:6px;height:6px;
-    background:#1db954;
+    background:var(--accent);
     border-radius:50%;
     opacity:0;
 }
-.song-card.active .song-dot{opacity:1}
-
-/* MOBILE */
-@media(max-width:480px){
-    .player{margin:10px}
-}
+.song-card.active .dot{opacity:1}
 </style>
 </head>
 
 <body>
 
-<div class="player">
+<div class="player" id="player">
     <div class="cover">
-        <div class="play-dot"></div>
         <div class="eq" id="eq">
             <span></span><span></span><span></span><span></span>
         </div>
@@ -213,7 +212,7 @@ body.playing{
 
     <div class="progress">
         <span id="cur">0:00</span>
-        <input type="range" id="seek">
+        <input type="range" id="seek" value="0">
         <span id="dur">0:00</span>
     </div>
 
@@ -230,17 +229,17 @@ body.playing{
 
     <div class="actions">
         <button onclick="openList()">☰</button>
-        <button onclick="openFav()">★</button>
-        <button onclick="toggleRepeat()">🔁</button>
+        <button onclick="openFavMenu()">★</button>
+        <button class="repeat" id="repeatBtn" onclick="toggleRepeat()">🔁</button>
     </div>
 </div>
 
-<div class="overlay" id="overlay" onclick="closeList()">
-    <div class="list-card" id="list" onclick="event.stopPropagation()"></div>
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+    <div class="card" id="card" onclick="event.stopPropagation()"></div>
 </div>
 
 <script>
-let songs=[],index=0,repeat=false,loadingTimer;
+let songs=[],index=0,repeat=false;
 const audio=new Audio();
 const eq=document.querySelectorAll(".eq span");
 
@@ -257,64 +256,122 @@ function load(i){
     url.textContent=songs[i].url;
     audio.play();
     playBtn.textContent="❚❚";
-    document.body.classList.add("playing");
+    player.classList.add("playing");
     eq.forEach(e=>e.style.animationPlayState="running");
-    checkLoading();
+    startLoadingCheck();
     buildList();
 }
+
+audio.addEventListener("loadedmetadata",()=>{
+    seek.max=audio.duration;
+    dur.textContent=format(audio.duration);
+});
+
+audio.addEventListener("timeupdate",()=>{
+    seek.value=audio.currentTime;
+    cur.textContent=format(audio.currentTime);
+    loading.classList.remove("show");
+});
+
+audio.onended=()=>repeat?audio.play():next();
+seek.oninput=()=>audio.currentTime=seek.value;
 
 function toggle(){
     if(audio.paused){
         audio.play();
         playBtn.textContent="❚❚";
-        document.body.classList.add("playing");
+        player.classList.add("playing");
         eq.forEach(e=>e.style.animationPlayState="running");
-        checkLoading();
+        startLoadingCheck();
     }else{
         audio.pause();
         playBtn.textContent="▶";
-        document.body.classList.remove("playing");
+        player.classList.remove("playing");
         eq.forEach(e=>e.style.animationPlayState="paused");
     }
 }
 
-function checkLoading(){
+function startLoadingCheck(){
     loading.classList.remove("show");
-    clearTimeout(loadingTimer);
-    loadingTimer=setTimeout(()=>{
+    setTimeout(()=>{
         if(audio.currentTime===0 && !audio.paused){
             loading.classList.add("show");
         }
     },5000);
 }
 
-audio.ontimeupdate=()=>loading.classList.remove("show");
-
-audio.onended=()=>repeat?audio.play():next();
 function next(){load((index+1)%songs.length)}
 function prev(){load((index-1+songs.length)%songs.length)}
-function toggleRepeat(){repeat=!repeat}
 
-function openList(){overlay.classList.add("show")}
-function closeList(){overlay.classList.remove("show")}
-function openFav(){openList()}
+function toggleRepeat(){
+    repeat=!repeat;
+    repeatBtn.classList.toggle("active",repeat);
+}
 
-function buildList(){
-    list.innerHTML="";
+/* FAVORITE SYSTEM */
+function openFavMenu(){
+    overlay.classList.add("show");
+    card.innerHTML=`
+        <button onclick="addFav()">➕ Add to Favorite</button>
+        <button onclick="openFavList()">📂 Favorite List</button>`;
+}
+
+function addFav(){
+    let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
+    if(!fav.includes(songs[index].url)){
+        fav.push(songs[index].url);
+        localStorage.setItem("bbFav",JSON.stringify(fav));
+    }
+    closeOverlay();
+}
+
+function openFavList(){
+    let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
+    card.innerHTML=`<div class="list"></div>`;
+    const l=card.querySelector(".list");
     songs.forEach((s,i)=>{
+        if(!fav.includes(s.url))return;
         const d=document.createElement("div");
         d.className="song-card"+(i===index?" active":"");
         d.innerHTML=`
-            <div class="song-dot"></div>
+            <div class="dot"></div>
             <div style="flex:1">
                 <div class="song-title">${s.title}</div>
                 <div class="song-by">${s.by}</div>
             </div>
             <div class="song-dur">${s.duration||"--:--"}</div>`;
-        d.onclick=()=>{load(i);closeList();}
-        list.appendChild(d);
+        d.onclick=()=>{load(i);closeOverlay();}
+        l.appendChild(d);
     });
 }
+
+function openList(){
+    overlay.classList.add("show");
+    card.innerHTML=`<div class="list"></div>`;
+    const l=card.querySelector(".list");
+    buildList(l);
+}
+
+function buildList(target){
+    const l=target||document.createElement("div");
+    l.innerHTML="";
+    songs.forEach((s,i)=>{
+        const d=document.createElement("div");
+        d.className="song-card"+(i===index?" active":"");
+        d.innerHTML=`
+            <div class="dot"></div>
+            <div style="flex:1">
+                <div class="song-title">${s.title}</div>
+                <div class="song-by">${s.by}</div>
+            </div>
+            <div class="song-dur">${s.duration||"--:--"}</div>`;
+        d.onclick=()=>{load(i);closeOverlay();}
+        l.appendChild(d);
+    });
+    if(!target) card.appendChild(l);
+}
+
+function closeOverlay(){overlay.classList.remove("show")}
 
 /* VOLUME */
 vol.value=.6;audio.volume=.6;
@@ -322,6 +379,12 @@ vol.oninput=e=>{
     audio.volume=e.target.value;
     volIcon.textContent=e.target.value==0?"🔇":e.target.value>=.6?"🔊":"🔉";
 };
+
+function format(t){
+    const m=Math.floor(t/60);
+    const s=Math.floor(t%60).toString().padStart(2,"0");
+    return m+":"+s;
+}
 </script>
 
 </body>
