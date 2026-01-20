@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ExeMusic</title>
 
+<!-- FAVICON -->
+<link rel="icon" type="image/png" href="exemusicicon.png">
+
 <style>
 :root{
   --accent:#1db954;
@@ -39,7 +42,27 @@ html,body{
 }
 
 /* HEADER */
-.header{text-align:center;font-size:22px;font-weight:900}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 0;
+}
+.header img{
+  width:220px;          /* ⬅️ GANTI DARI TEXT ExeMusic */
+  max-width:85vw;       /* aman di layar kecil */
+  height:auto;
+  object-fit:contain;
+  filter:drop-shadow(0 6px 18px rgba(0,0,0,.65));
+}
+
+/* VERSION */
+.version{
+  text-align:center;
+  font-size:11px;
+  color:var(--muted);
+  margin-top:-4px;
+}
 
 /* COVER */
 .cover{
@@ -168,7 +191,10 @@ html,body{
 <div class="bg"></div>
 
 <div class="app">
-  <div class="header">🎧 ExeMusic</div>
+  <div class="header">
+    <img src="exemusic.png" alt="ExeMusic Logo">
+  </div>
+  <div class="version">v1.0.1</div>
 
   <div class="cover">
     <div class="eq"><span></span><span></span><span></span></div>
@@ -207,12 +233,12 @@ html,body{
   </div>
 </div>
 
-<!-- POPUP LIST (ASLI) -->
+<!-- POPUP LIST -->
 <div class="popup" id="popup">
   <div class="sheet" id="sheet"></div>
 </div>
 
-<!-- POPUP REQUEST (BARU, TERPISAH) -->
+<!-- POPUP REQUEST -->
 <div class="popup" id="reqPopup">
   <div class="sheet">
     <div class="close" onclick="closeReq()">✕</div>
@@ -239,18 +265,14 @@ fetch("data/urlbb.json").then(r=>r.json()).then(d=>{
   load(0);
 });
 
-/* FIX DURATION */
 function preloadDurations(){
   songs.forEach((s,idx)=>{
     const a=new Audio();
     a.src=s.url;
-    a.onloadedmetadata=()=>{
-      songs[idx].duration=format(a.duration);
-    };
+    a.onloadedmetadata=()=>songs[idx].duration=format(a.duration);
   });
 }
 
-/* PLAYER */
 function load(n){
   i=n;
   audio.src=songs[n].url;
@@ -261,6 +283,7 @@ function load(n){
   play.textContent="❚❚";
   eq.forEach(e=>e.style.animationPlayState="running");
 }
+
 function toggle(){
   if(audio.paused){
     audio.play();play.textContent="❚❚";
@@ -283,7 +306,6 @@ audio.ontimeupdate=()=>{
 };
 seek.oninput=()=>audio.currentTime=seek.value;
 
-/* VOLUME */
 vol.value=0.6;
 audio.volume=0.6;
 vol.oninput=e=>{
@@ -291,14 +313,12 @@ vol.oninput=e=>{
   volIcon.textContent=e.target.value==0?"🔇":e.target.value<0.6?"🔉":"🔊";
 };
 
-/* REPEAT */
 function toggleRepeat(){
   repeat=!repeat;
   rep.classList.toggle("active",repeat);
 }
 audio.onended=()=>repeat?audio.play():next();
 
-/* COPY URL */
 function copyURL(){
   const t=url.textContent;
   if(navigator.clipboard){
@@ -311,7 +331,6 @@ function copyURL(){
   }
 }
 
-/* LIST */
 function openList(favOnly){
   popup.style.display="block";
   sheet.innerHTML="";
@@ -338,7 +357,6 @@ function toggleFav(u,e){
 }
 popup.onclick=e=>{if(e.target===popup)popup.style.display="none"}
 
-/* REQUEST */
 function openReq(){reqPopup.style.display="block"}
 function closeReq(){reqPopup.style.display="none"}
 function sendReq(){
@@ -353,7 +371,6 @@ Nama Lagu : ${rLagu.value}`;
   );
 }
 
-/* FORMAT */
 function format(t){
   return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
 }
