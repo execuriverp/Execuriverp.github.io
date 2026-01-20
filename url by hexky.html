@@ -3,217 +3,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BB DJ Player • Demo</title>
+<title>BB URL Player • Pro</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
 
 <style>
 :root{
     --bg:#070b12;
     --card:#0f1724;
+    --glass:rgba(255,255,255,.04);
     --accent:#3cf2ff;
     --accent2:#00c2ff;
     --text:#eaf2f6;
     --muted:#8fa3b8;
+    --border:rgba(255,255,255,.08);
 }
 
 *{
     box-sizing:border-box;
-    font-family:Inter,system-ui,sans-serif;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
 }
 
 body{
     margin:0;
-    background:radial-gradient(circle at top,#1b2a40,#070b12 65%);
+    background:
+        radial-gradient(circle at top,#1b2a40,#070b12 65%);
     color:var(--text);
 }
 
-.player{
-    max-width:460px;
-    margin:70px auto;
-    background:linear-gradient(145deg,#121c2d,#0b1322);
-    border-radius:26px;
-    padding:26px;
-    text-align:center;
-    box-shadow:0 20px 45px rgba(0,0,0,.55);
+.container{
+    max-width:760px;
+    margin:auto;
+    padding:18px;
 }
 
-.title{
-    font-size:26px;
-    font-weight:900;
+.header{
+    text-align:center;
+    margin-bottom:22px;
+}
+
+.header h1{
+    margin:0;
+    font-size:30px;
+    letter-spacing:1.5px;
+    background:linear-gradient(90deg,var(--accent),#7fffff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.header p{
+    margin-top:6px;
+    font-size:13px;
+    color:var(--muted);
+}
+
+.howto{
+    background:linear-gradient(145deg,#0e1625,#0b1220);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:15px 17px;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:22px;
+}
+
+.howto code{
+    background:#050a14;
+    padding:4px 8px;
+    border-radius:6px;
+    color:var(--accent);
+}
+
+.list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.song{
+    background:
+        linear-gradient(145deg,#121c2d,#0b1322);
+    border-radius:20px;
+    padding:15px;
+    border:1px solid var(--border);
+    box-shadow:0 0 0 1px rgba(60,242,255,.03),
+               0 12px 30px rgba(0,0,0,.45);
+    position:relative;
+    overflow:hidden;
+}
+
+.song::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(60,242,255,.06),transparent);
+    opacity:.4;
+    pointer-events:none;
+}
+
+.song-title{
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:3px;
+}
+
+.song-meta{
+    font-size:12px;
+    color:var(--muted);
     margin-bottom:6px;
 }
 
-.req{
-    font-size:13px;
-    color:var(--muted);
-    margin-bottom:14px;
-}
-
-.url{
+.song-url{
     font-size:11px;
     color:#9fb9cc;
     word-break:break-all;
-    margin-bottom:18px;
+    margin-bottom:10px;
+}
+
+audio{
+    width:100%;
+    margin-bottom:12px;
 }
 
 .controls{
     display:flex;
-    justify-content:center;
-    gap:26px;
-    font-size:28px;
-    margin-bottom:18px;
-}
-
-.controls span{
-    cursor:pointer;
-    padding:12px;
-    border-radius:14px;
-    background:#0b1322;
-    box-shadow:0 0 0 1px rgba(60,242,255,.15);
-    color:var(--accent);
-    transition:.2s;
-}
-
-.controls span:hover{
-    transform:scale(1.25);
-    color:#7fffff;
-}
-
-.volume{
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    margin-bottom:18px;
-}
-
-.volume button{
-    font-size:18px;
-    padding:10px 18px;
+    align-items:center;
+    gap:12px;
 }
 
 button{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     border:none;
-    border-radius:14px;
-    font-weight:900;
-    cursor:pointer;
-}
-
-.bottom{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-}
-
-.list{
-    display:none;
-    margin-top:18px;
-    background:#0b1322;
-    border-radius:16px;
-    padding:14px;
-    text-align:left;
+    color:#001016;
+    padding:9px 18px;
+    border-radius:12px;
     font-size:13px;
-}
-
-.list div{
-    padding:6px 0;
-    border-bottom:1px solid rgba(255,255,255,.06);
+    font-weight:800;
     cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,200,255,.35);
 }
 
-.list div:last-child{
-    border:none;
+button:active{
+    transform:scale(.95);
+}
+
+.loading{
+    width:18px;
+    height:18px;
+    border:3px solid rgba(255,255,255,.25);
+    border-top:3px solid var(--accent);
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+    display:none;
+}
+
+.copy-ok{
+    width:22px;
+    height:22px;
+    display:none;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+.footer{
+    text-align:center;
+    margin:28px 0 12px;
+    font-size:12px;
+    color:var(--muted);
 }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<div class="player">
-    <div class="title" id="title">☊ DJ Lowkey</div>
-    <div class="req" id="req">request by Hexky</div>
-    <div class="url" id="url">http://example.com/music1.mp3</div>
+<div class="header">
+    <h1>BB URL PLAYER</h1>
+    <p>For • Execurive Community</p>
+</div>
 
-    <div class="controls">
-        <span onclick="prev()">◁</span>
-        <span onclick="play()">▷</span>
-        <span onclick="pause()">❚❚</span>
-        <span onclick="next()">▷▷</span>
-    </div>
+<div class="howto">
+<b>How To Use:</b><br>
+<code>/placebb</code> → <code>/setbb</code> → <code>url</code> → paste URL<br><br>
+<b>Jika URL tidak bunyi:</b><br>
+ubah <code>https</code> menjadi <code>http</code> (hapus huruf <b>s</b>)
+</div>
 
-    <div class="volume">
-        <button onclick="volDown()">-</button>
-        <button onclick="volUp()">+</button>
-    </div>
+<div class="list" id="songList"></div>
 
-    <div class="bottom">
-        <button onclick="copyURL()">Salin URL</button>
-        <button onclick="toggleList()">List Lagu</button>
-    </div>
+<div class="footer">
+BB URL Player • By Hexky
+</div>
 
-    <div class="list" id="list"></div>
 </div>
 
 <script>
-/* === DATA LAGU (SIMULASI) === */
-const songs=[
-{
-    title:"☊ DJ Lowkey",
-    by:"Hexky",
-    url:"http://example.com/music1.mp3"
-},
-{
-    title:"☊ DJ Night Bass",
-    by:"Admin",
-    url:"http://example.com/music2.mp3"
-},
-{
-    title:"☊ DJ Chill RP",
-    by:"Execurive",
-    url:"http://example.com/music3.mp3"
-}
-];
+fetch('data/urlbb.json')
+.then(res=>res.json())
+.then(data=>{
+const list=document.getElementById('songList');
 
-let index=0;
-const audio=new Audio(songs[0].url);
-audio.volume=0.6;
+data.forEach(song=>{
+const el=document.createElement('div');
+el.className='song';
 
-const titleEl=document.getElementById("title");
-const reqEl=document.getElementById("req");
-const urlEl=document.getElementById("url");
-const listEl=document.getElementById("list");
+el.innerHTML=`
+<div class="song-title">${song.title}</div>
+<div class="song-meta">By : ${song.by}</div>
+<div class="song-url">${song.url}</div>
 
-/* INIT LIST */
-songs.forEach((s,i)=>{
-    const d=document.createElement("div");
-    d.innerText=(i+1)+". "+s.title+" — "+s.by;
-    d.onclick=()=>load(i);
-    listEl.appendChild(d);
+<audio controls src="${song.url}"></audio>
+
+<div class="controls">
+<button onclick="copyURL(this,'${song.url}')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+`;
+list.appendChild(el);
+});
 });
 
-function load(i){
-    index=i;
-    audio.src=songs[i].url;
-    titleEl.innerText=songs[i].title;
-    reqEl.innerText="request by "+songs[i].by;
-    urlEl.innerText=songs[i].url;
-    audio.play();
-}
+function copyURL(btn,url){
+const c=btn.parentElement;
+const load=c.querySelector('.loading');
+const ok=c.querySelector('.copy-ok');
 
-function play(){audio.play();}
-function pause(){audio.pause();}
-function next(){load((index+1)%songs.length);}
-function prev(){load((index-1+songs.length)%songs.length);}
+ok.style.display='none';
+load.style.display='block';
 
-function volUp(){audio.volume=Math.min(1,audio.volume+0.1);}
-function volDown(){audio.volume=Math.max(0,audio.volume-0.1);}
-
-function copyURL(){
-    navigator.clipboard.writeText(songs[index].url);
-    alert("URL berhasil disalin!");
-}
-
-function toggleList(){
-    listEl.style.display=listEl.style.display==="block"?"none":"block";
+setTimeout(()=>{
+navigator.clipboard.writeText(url);
+load.style.display='none';
+ok.style.display='block';
+setTimeout(()=>ok.style.display='none',2000);
+},700);
 }
 </script>
 
