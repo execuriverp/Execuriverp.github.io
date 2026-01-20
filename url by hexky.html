@@ -4,14 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BB URL Player • Pro</title>
-
 <link rel="icon" type="image/png" href="favicon.png">
 
 <style>
 :root{
     --bg:#070b12;
     --card:#0f1724;
-    --glass:rgba(255,255,255,.04);
     --accent:#3cf2ff;
     --accent2:#00c2ff;
     --text:#eaf2f6;
@@ -21,13 +19,12 @@
 
 *{
     box-sizing:border-box;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+    font-family:Inter,system-ui,sans-serif;
 }
 
 body{
     margin:0;
-    background:
-        radial-gradient(circle at top,#1b2a40,#070b12 65%);
+    background:radial-gradient(circle at top,#1b2a40,#070b12 65%);
     color:var(--text);
 }
 
@@ -45,131 +42,72 @@ body{
 .header h1{
     margin:0;
     font-size:30px;
-    letter-spacing:1.5px;
     background:linear-gradient(90deg,var(--accent),#7fffff);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 }
 
 .header p{
-    margin-top:6px;
     font-size:13px;
     color:var(--muted);
-}
-
-.howto{
-    background:linear-gradient(145deg,#0e1625,#0b1220);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:15px 17px;
-    font-size:13px;
-    line-height:1.6;
-    margin-bottom:22px;
-}
-
-.howto code{
-    background:#050a14;
-    padding:4px 8px;
-    border-radius:6px;
-    color:var(--accent);
-}
-
-.list{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
 }
 
 .song{
-    background:
-        linear-gradient(145deg,#121c2d,#0b1322);
-    border-radius:20px;
-    padding:15px;
+    background:linear-gradient(145deg,#121c2d,#0b1322);
+    border-radius:18px;
+    padding:18px;
     border:1px solid var(--border);
-    box-shadow:0 0 0 1px rgba(60,242,255,.03),
-               0 12px 30px rgba(0,0,0,.45);
-    position:relative;
-    overflow:hidden;
-}
-
-.song::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(120deg,transparent,rgba(60,242,255,.06),transparent);
-    opacity:.4;
-    pointer-events:none;
+    margin-bottom:18px;
+    text-align:center;
 }
 
 .song-title{
-    font-weight:700;
-    font-size:16px;
-    margin-bottom:3px;
-}
-
-.song-meta{
-    font-size:12px;
-    color:var(--muted);
+    font-size:20px;
+    font-weight:800;
     margin-bottom:6px;
 }
 
-.song-url{
-    font-size:11px;
-    color:#9fb9cc;
-    word-break:break-all;
-    margin-bottom:10px;
+.song-req{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:14px;
 }
 
-audio{
-    width:100%;
-    margin-bottom:12px;
-}
-
-.controls{
+.dj-controls{
     display:flex;
-    align-items:center;
-    gap:12px;
+    justify-content:center;
+    gap:22px;
+    font-size:22px;
+    user-select:none;
+}
+
+.dj-controls span{
+    cursor:pointer;
+    color:var(--accent);
+    transition:.2s;
+}
+
+.dj-controls span:hover{
+    transform:scale(1.25);
+    color:#7fffff;
+}
+
+.copy{
+    margin-top:14px;
 }
 
 button{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     border:none;
-    color:#001016;
-    padding:9px 18px;
+    padding:9px 20px;
     border-radius:12px;
-    font-size:13px;
     font-weight:800;
     cursor:pointer;
-    box-shadow:0 6px 18px rgba(0,200,255,.35);
-}
-
-button:active{
-    transform:scale(.95);
-}
-
-.loading{
-    width:18px;
-    height:18px;
-    border:3px solid rgba(255,255,255,.25);
-    border-top:3px solid var(--accent);
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-    display:none;
-}
-
-.copy-ok{
-    width:22px;
-    height:22px;
-    display:none;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg);}
 }
 
 .footer{
     text-align:center;
-    margin:28px 0 12px;
+    margin:30px 0 10px;
     font-size:12px;
     color:var(--muted);
 }
@@ -184,14 +122,7 @@ button:active{
     <p>For • Execurive Community</p>
 </div>
 
-<div class="howto">
-<b>How To Use:</b><br>
-<code>/placebb</code> → <code>/setbb</code> → <code>url</code> → paste URL<br><br>
-<b>Jika URL tidak bunyi:</b><br>
-ubah <code>https</code> menjadi <code>http</code> (hapus huruf <b>s</b>)
-</div>
-
-<div class="list" id="songList"></div>
+<div id="songList"></div>
 
 <div class="footer">
 BB URL Player • By Hexky
@@ -200,46 +131,87 @@ BB URL Player • By Hexky
 </div>
 
 <script>
+let audios=[];
+let current=0;
+
 fetch('data/urlbb.json')
-.then(res=>res.json())
+.then(r=>r.json())
 .then(data=>{
 const list=document.getElementById('songList');
 
-data.forEach(song=>{
+data.forEach((song,i)=>{
+const audio=new Audio(song.url);
+audios.push(audio);
+
 const el=document.createElement('div');
 el.className='song';
 
 el.innerHTML=`
-<div class="song-title">${song.title}</div>
-<div class="song-meta">By : ${song.by}</div>
-<div class="song-url">${song.url}</div>
+<div class="song-title">☊ ${song.title}</div>
+<div class="song-req">request by ${song.by}</div>
 
-<audio controls src="${song.url}"></audio>
+<div class="dj-controls">
+<span onclick="restart(${i})">↻</span>
+<span onclick="prev()">◁</span>
+<span onclick="toggle(${i},this)">||</span>
+<span onclick="next()">▷</span>
+<span onclick="stop(${i})">↺</span>
+</div>
 
-<div class="controls">
-<button onclick="copyURL(this,'${song.url}')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
+<div class="copy">
+<button onclick="copyURL('${song.url}')">Salin URL</button>
 </div>
 `;
 list.appendChild(el);
 });
 });
 
-function copyURL(btn,url){
-const c=btn.parentElement;
-const load=c.querySelector('.loading');
-const ok=c.querySelector('.copy-ok');
+function stopAll(){
+audios.forEach(a=>{
+a.pause();
+a.currentTime=0;
+});
+}
 
-ok.style.display='none';
-load.style.display='block';
+function toggle(i,el){
+const a=audios[i];
+if(a.paused){
+stopAll();
+a.play();
+el.innerText="❚❚";
+current=i;
+}else{
+a.pause();
+el.innerText="▷";
+}
+}
 
-setTimeout(()=>{
+function restart(i){
+audios[i].currentTime=0;
+audios[i].play();
+current=i;
+}
+
+function stop(i){
+audios[i].pause();
+audios[i].currentTime=0;
+}
+
+function next(){
+current=(current+1)%audios.length;
+stopAll();
+audios[current].play();
+}
+
+function prev(){
+current=(current-1+audios.length)%audios.length;
+stopAll();
+audios[current].play();
+}
+
+function copyURL(url){
 navigator.clipboard.writeText(url);
-load.style.display='none';
-ok.style.display='block';
-setTimeout(()=>ok.style.display='none',2000);
-},700);
+alert("URL berhasil disalin!");
 }
 </script>
 
