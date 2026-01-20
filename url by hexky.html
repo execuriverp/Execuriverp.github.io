@@ -15,11 +15,11 @@
   --card2:#1b1b1b;
 }
 
+/* RESET */
 *{
   box-sizing:border-box;
   font-family:Inter,system-ui,sans-serif;
 }
-
 html,body{
   margin:0;
   width:100%;
@@ -34,38 +34,40 @@ html,body{
   position:fixed;
   inset:0;
   background:
-    linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.9)),
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.9)),
     url("bkucing1.png") center/cover no-repeat;
   z-index:0;
 }
 
-/* ===== APP ===== */
+/* ===== APP WRAPPER ===== */
 .app{
   position:relative;
   z-index:1;
   height:100dvh;
-  max-width:480px;
+  max-width:420px;
   margin:auto;
-  padding:14px;
+  padding:14px 14px env(safe-area-inset-bottom,14px);
   display:flex;
   flex-direction:column;
+  gap:6px;
 }
 
 /* ===== HEADER ===== */
 .header{
   font-size:22px;
   font-weight:900;
+  text-align:center;
 }
 
 /* ===== COVER ===== */
 .cover{
-  height:34dvh;
+  height:32dvh;
   border-radius:22px;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   display:flex;
   align-items:center;
   justify-content:center;
-  margin:10px 0;
+  margin:6px 0;
 }
 
 /* EQ */
@@ -80,9 +82,9 @@ html,body{
 @keyframes eq{0%,100%{height:10px}50%{height:46px}}
 
 /* ===== META ===== */
-.title{font-size:20px;font-weight:900}
-.by{font-size:12px;color:var(--muted)}
-.url{font-size:11px;color:#8ab4f8}
+.title{font-size:20px;font-weight:900;text-align:center}
+.by{font-size:12px;color:var(--muted);text-align:center}
+.url{font-size:11px;color:#8ab4f8;text-align:center;word-break:break-all}
 
 /* ===== PROGRESS ===== */
 .progress{
@@ -93,29 +95,36 @@ html,body{
 
 /* ===== CONTROLS ===== */
 .controls{
-  display:flex;justify-content:center;gap:26px;
-  margin:10px 0;
+  display:flex;justify-content:center;gap:28px;
+  margin:6px 0;
 }
 .play{
-  width:58px;height:58px;border-radius:50%;
+  width:60px;height:60px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   display:flex;align-items:center;justify-content:center;
   font-size:26px;color:#000;
 }
 
 /* ===== VOLUME ===== */
-.volume{display:flex;gap:10px;font-size:12px;color:var(--muted)}
+.volume{
+  display:flex;gap:10px;
+  font-size:12px;color:var(--muted);
+}
 .volume input{flex:1;accent-color:var(--accent)}
 
 /* ===== ACTIONS ===== */
 .actions{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:10px;margin-top:10px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:6px;
 }
 .actions button{
   background:var(--card2);
-  border:none;color:#fff;
-  padding:12px;border-radius:18px;
+  border:none;
+  color:#fff;
+  padding:12px;
+  border-radius:16px;
   font-weight:800;
 }
 .actions button.active{
@@ -123,42 +132,64 @@ html,body{
   color:#000;
 }
 
-/* ===== POPUP LIST ===== */
+/* ===== POPUP ===== */
 .popup{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.65);
-  display:none;z-index:20;
+  display:none;
+  z-index:20;
 }
+
+/* ===== SHEET ===== */
 .sheet{
   position:absolute;
-  bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:480px;
-  max-height:70dvh;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:420px;
+  height:65dvh;
   background:#0f0f0f;
   border-radius:26px 26px 0 0;
   padding:14px;
   overflow-y:auto;
 }
 
-/* ===== SONG CARD (SMALL & MODERN) ===== */
+/* ===== SONG CARD ===== */
 .song{
-  display:flex;align-items:center;gap:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
   background:var(--card);
   border-radius:14px;
-  padding:10px;
+  padding:10px 12px;
   margin-bottom:8px;
 }
 .thumb{
   width:42px;height:42px;border-radius:10px;
-  background:linear-gradient(135deg,#333,#111);
+  background:linear-gradient(135deg,#2a2a2a,#0f0f0f);
 }
-.song-meta{flex:1}
-.song-title{font-size:13px;font-weight:800}
-.song-by{font-size:11px;color:var(--muted)}
+.song-meta{flex:1;min-width:0}
+.song-title{
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.song-by{
+  font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 .song-dur{font-size:11px;color:var(--muted)}
 .fav-btn{
   font-size:16px;
   cursor:pointer;
+  margin-left:4px;
 }
 .fav-btn.active{color:var(--accent)}
 </style>
@@ -222,7 +253,7 @@ fetch("data/urlbb.json").then(r=>r.json()).then(d=>{
   load(0);
 });
 
-/* PRELOAD DURATION FIX */
+/* FIX DURATION 0:00 */
 function preloadDurations(){
   songs.forEach((s,idx)=>{
     const a=new Audio();
@@ -257,11 +288,19 @@ function toggle(){
 function prev(){load((i-1+songs.length)%songs.length)}
 function next(){load((i+1)%songs.length)}
 
-audio.onloadedmetadata=()=>{seek.max=audio.duration;dur.textContent=format(audio.duration)}
-audio.ontimeupdate=()=>{seek.value=audio.currentTime;cur.textContent=format(audio.currentTime)}
+audio.onloadedmetadata=()=>{
+  seek.max=audio.duration;
+  dur.textContent=format(audio.duration);
+};
+audio.ontimeupdate=()=>{
+  seek.value=audio.currentTime;
+  cur.textContent=format(audio.currentTime);
+};
 seek.oninput=()=>audio.currentTime=seek.value;
 
-vol.value=0.6;audio.volume=0.6;
+/* VOLUME */
+vol.value=0.6;
+audio.volume=0.6;
 vol.oninput=e=>{
   audio.volume=e.target.value;
   volIcon.textContent=e.target.value==0?"🔇":e.target.value<0.6?"🔉":"🔊";
