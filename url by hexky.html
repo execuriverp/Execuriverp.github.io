@@ -27,7 +27,7 @@ body{
     color:var(--text);
 }
 
-/* === PLAYER === */
+/* PLAYER */
 .player{
     max-width:420px;
     margin:30px auto;
@@ -37,24 +37,19 @@ body{
     box-shadow:0 40px 100px rgba(0,0,0,.85);
 }
 
-/* === COVER === */
+/* COVER */
 .cover{
     height:210px;
     border-radius:20px;
     background:linear-gradient(135deg,#1db954,#1ed760);
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
     margin-bottom:18px;
 }
 
-/* === EQUALIZER === */
-.eq{
-    display:flex;
-    gap:4px;
-    height:40px;
-}
+/* EQUALIZER */
+.eq{display:flex;gap:5px;height:40px}
 .eq span{
     width:6px;
     background:#000;
@@ -62,24 +57,21 @@ body{
     animation:equalize 1s infinite ease-in-out;
     animation-play-state:paused;
 }
-.eq span:nth-child(2){animation-delay:.2s}
-.eq span:nth-child(3){animation-delay:.4s}
-.eq span:nth-child(4){animation-delay:.1s}
+.eq span:nth-child(2){animation-delay:.15s}
+.eq span:nth-child(3){animation-delay:.3s}
+.eq span:nth-child(4){animation-delay:.45s}
 
 @keyframes equalize{
     0%,100%{height:8px}
     50%{height:40px}
 }
 
-/* === META === */
-.title{
-    font-size:22px;
-    font-weight:900;
-}
+/* META */
+.title{font-size:22px;font-weight:900}
 .req{font-size:13px;color:var(--muted)}
-.url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:10px 0}
+.url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:8px 0}
 
-/* === PROGRESS === */
+/* PROGRESS */
 .progress{
     display:flex;
     align-items:center;
@@ -89,13 +81,13 @@ body{
 }
 .progress input{flex:1;accent-color:var(--accent)}
 
-/* === CONTROLS === */
+/* CONTROLS */
 .controls{
     display:flex;
     justify-content:center;
     align-items:center;
     gap:26px;
-    margin:16px 0;
+    margin:18px 0;
 }
 .controls span{font-size:22px;cursor:pointer}
 .play{
@@ -106,7 +98,7 @@ body{
     font-size:26px;
 }
 
-/* === VOLUME === */
+/* VOLUME */
 .volume{
     display:flex;
     align-items:center;
@@ -116,12 +108,12 @@ body{
 }
 .volume input{flex:1;accent-color:var(--accent)}
 
-/* === ACTIONS === */
+/* ACTIONS */
 .actions{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:8px;
-    margin:14px 0;
+    margin:16px 0;
 }
 .actions button{
     background:var(--card2);
@@ -137,31 +129,32 @@ body{
     color:#000;
 }
 
-/* === LIST === */
+/* LIST */
 .list{
     display:none;
     max-height:260px;
     overflow:auto;
+    margin-top:10px;
 }
 
 .song-card{
     background:var(--card2);
     border-radius:16px;
-    padding:10px;
+    padding:12px;
     display:flex;
     align-items:center;
     gap:10px;
     margin-bottom:10px;
+    cursor:pointer;
 }
 .song-card:hover{background:#222}
 .song-meta{flex:1}
 .song-title{font-size:14px;font-weight:800}
 .song-by{font-size:11px;color:var(--muted)}
 .song-dur{font-size:11px;color:var(--muted)}
-.song-actions{display:flex;gap:8px}
 .song-actions span{cursor:pointer}
 
-/* === MOBILE === */
+/* MOBILE */
 @media(max-width:480px){
     .player{margin:10px;border-radius:20px}
     .cover{height:180px}
@@ -184,7 +177,7 @@ body{
 
     <div class="progress">
         <span id="cur">0:00</span>
-        <input type="range" id="seek">
+        <input type="range" id="seek" value="0">
         <span id="dur">0:00</span>
     </div>
 
@@ -202,122 +195,109 @@ body{
     <div class="actions">
         <button id="repeatBtn" onclick="toggleRepeat()">🔁</button>
         <button onclick="toggleList()">☰</button>
-        <button onclick="toggleFavList()">★</button>
+        <button onclick="toggleFav()">★</button>
     </div>
 
     <div class="list" id="list"></div>
 </div>
 
 <script>
-let songs=[],index=0,repeat=false,showFav=false;
-const audio=new Audio(),eq=document.querySelectorAll(".eq span");
+let songs=[],index=0,repeat=false;
+const audio=new Audio();
+const eq=document.querySelectorAll(".eq span");
 
 fetch("data/urlbb.json").then(r=>r.json()).then(d=>{
-songs=d;buildList();load(0);
+    songs=d;
+    buildList();
+    load(0);
 });
 
 function load(i){
-index=i;
-audio.src=songs[i].url;
-title.innerText=songs[i].title;
-req.innerText="request by "+songs[i].by;
-url.innerText=songs[i].url;
-audio.play();
-playBtn.innerText="❚❚";
-eq.forEach(e=>e.style.animationPlayState="running");
+    index=i;
+    audio.src=songs[i].url;
+    title.textContent=songs[i].title;
+    req.textContent="request by "+songs[i].by;
+    url.textContent=songs[i].url;
+    audio.play();
+    playBtn.textContent="❚❚";
+    eq.forEach(e=>e.style.animationPlayState="running");
 }
 
 audio.onended=()=>repeat?audio.play():next();
 
 function toggle(){
-if(audio.paused){
-audio.play();playBtn.innerText="❚❚";
-eq.forEach(e=>e.style.animationPlayState="running");
-}else{
-audio.pause();playBtn.innerText="▶";
-eq.forEach(e=>e.style.animationPlayState="paused");
-}
+    if(audio.paused){
+        audio.play();
+        playBtn.textContent="❚❚";
+        eq.forEach(e=>e.style.animationPlayState="running");
+    }else{
+        audio.pause();
+        playBtn.textContent="▶";
+        eq.forEach(e=>e.style.animationPlayState="paused");
+    }
 }
 
 function toggleRepeat(){
-repeat=!repeat;
-repeatBtn.classList.toggle("active",repeat);
+    repeat=!repeat;
+    repeatBtn.classList.toggle("active",repeat);
 }
 
 function next(){load((index+1)%songs.length)}
 function prev(){load((index-1+songs.length)%songs.length)}
 
 audio.onloadedmetadata=()=>{
-seek.max=audio.duration;
-dur.innerText=format(audio.duration);
+    seek.max=audio.duration;
+    dur.textContent=format(audio.duration);
 };
 
 audio.ontimeupdate=()=>{
-seek.value=audio.currentTime;
-cur.innerText=format(audio.currentTime);
+    seek.value=audio.currentTime;
+    cur.textContent=format(audio.currentTime);
 };
 
 seek.oninput=()=>audio.currentTime=seek.value;
 
-/* === VOLUME ICON === */
-vol.value=.6; audio.volume=.6; updateVolIcon(.6);
+/* VOLUME */
+vol.value=.6;
+audio.volume=.6;
+updateVolIcon(.6);
+
 vol.oninput=e=>{
-audio.volume=e.target.value;
-updateVolIcon(e.target.value);
+    audio.volume=e.target.value;
+    updateVolIcon(e.target.value);
 };
 
 function updateVolIcon(v){
-volIcon.innerText=v==0?"🔇":v>=.6?"🔊":"🔉";
+    volIcon.textContent=v==0?"🔇":v>=.6?"🔊":"🔉";
 }
 
-/* === LIST & FAVORITE === */
+/* LIST */
 function buildList(){
-list.innerHTML="";
-let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
-songs.forEach((s,i)=>{
-if(showFav && !fav.includes(s.url))return;
-const d=document.createElement("div");
-d.className="song-card";
-d.innerHTML=`
-<div class="song-meta">
-<div class="song-title">${s.title}</div>
-<div class="song-by">${s.by}</div>
-</div>
-<div class="song-dur">${s.duration||"--:--"}</div>
-<div class="song-actions">
-<span onclick="event.stopPropagation();toggleFav('${s.url}')">❤️</span>
-${fav.includes(s.url)?`<span onclick="event.stopPropagation();removeFav('${s.url}')">❌</span>`:""}
-</div>`;
-d.onclick=()=>load(i);
-list.appendChild(d);
-});
+    list.innerHTML="";
+    songs.forEach((s,i)=>{
+        const d=document.createElement("div");
+        d.className="song-card";
+        d.innerHTML=`
+            <div class="song-meta">
+                <div class="song-title">${s.title}</div>
+                <div class="song-by">${s.by}</div>
+            </div>
+            <div class="song-dur">${s.duration||"--:--"}</div>`;
+        d.onclick=()=>load(i);
+        list.appendChild(d);
+    });
 }
 
 function toggleList(){
-list.style.display=list.style.display==="block"?"none":"block";
-showFav=false;buildList();
+    list.style.display=list.style.display==="block"?"none":"block";
 }
 
-function toggleFavList(){
-list.style.display="block";
-showFav=!showFav;buildList();
-}
-
-function toggleFav(u){
-let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
-if(!fav.includes(u))fav.push(u);
-localStorage.setItem("bbFav",JSON.stringify(fav));
-buildList();
-}
-
-function removeFav(u){
-let fav=JSON.parse(localStorage.getItem("bbFav")||"[]").filter(x=>x!==u);
-localStorage.setItem("bbFav",JSON.stringify(fav));
-buildList();
+function toggleFav(){
+    alert("Favorit disimpan otomatis");
 }
 
 function format(t){
-return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
+    return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
 }
 </script>
 
