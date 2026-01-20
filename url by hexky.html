@@ -3,50 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boombox Url By Hexky</title>
-<link rel="icon" href="favicon.png">
+<title>BB DJ Player • Pro</title>
 
 <style>
 :root{
     --bg:#070b12;
-    --card:#121923;
+    --card:#121212;
     --accent:#1db954;
     --accent2:#1ed760;
-    --text:#eaf2f6;
-    --muted:#9fb0c4;
-    --border:rgba(255,255,255,.08);
+    --text:#ffffff;
+    --muted:#b3b3b3;
 }
 
 *{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
 
 body{
     margin:0;
-    background:linear-gradient(180deg,#0b1322,#070b12);
+    background:linear-gradient(180deg,#0f2027,#070b12);
     color:var(--text);
 }
 
 .player{
     max-width:420px;
-    margin:60px auto;
+    margin:50px auto;
     background:var(--card);
     border-radius:26px;
     padding:24px;
-    box-shadow:0 25px 60px rgba(0,0,0,.6);
-    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
 }
 
 .cover{
-    width:180px;
-    height:180px;
+    height:220px;
     border-radius:18px;
     background:linear-gradient(135deg,#1db954,#1ed760);
-    margin:0 auto 18px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:42px;
+    font-size:48px;
     font-weight:900;
-    color:#00310f;
+    margin-bottom:18px;
 }
 
 .title{
@@ -57,75 +52,126 @@ body{
 .req{
     font-size:13px;
     color:var(--muted);
-    margin-bottom:6px;
+    margin-bottom:8px;
 }
 
 .url{
     font-size:11px;
-    color:#9fb9cc;
+    color:#8ab4f8;
     word-break:break-all;
-    margin-bottom:18px;
+    margin-bottom:16px;
 }
 
+/* === PROGRESS === */
+.progress{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:14px;
+}
+
+.progress input{
+    flex:1;
+    accent-color:var(--accent);
+}
+
+/* === CONTROLS === */
 .controls{
     display:flex;
     justify-content:center;
-    gap:22px;
+    align-items:center;
+    gap:26px;
     margin-bottom:18px;
 }
 
 .controls span{
-    font-size:26px;
+    font-size:22px;
     cursor:pointer;
-    padding:14px;
+    color:var(--muted);
+}
+
+.controls .play{
+    background:var(--accent);
+    color:#000;
+    width:54px;
+    height:54px;
     border-radius:50%;
-    background:#0b1322;
-    box-shadow:0 0 0 1px var(--border);
-    transition:.2s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    box-shadow:0 10px 30px rgba(29,185,84,.6);
 }
 
 .controls span:hover{
-    transform:scale(1.2);
-    background:var(--accent);
-    color:#001a0a;
+    color:#fff;
+    transform:scale(1.15);
 }
 
+/* === VOLUME === */
+.volume{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+    font-size:12px;
+    color:var(--muted);
+}
+
+.volume input{
+    flex:1;
+    accent-color:var(--accent);
+}
+
+/* === ACTIONS === */
 .actions{
     display:flex;
     justify-content:space-between;
+    gap:10px;
     margin-bottom:14px;
 }
 
 .actions button{
     flex:1;
-    margin:0 4px;
-    background:#0b1322;
-    border:1px solid var(--border);
+    background:#181818;
+    border:none;
     color:var(--text);
     padding:10px;
     border-radius:14px;
-    cursor:pointer;
     font-weight:700;
+    cursor:pointer;
 }
 
 .actions button.active{
     background:var(--accent);
-    color:#00210f;
+    color:#000;
 }
 
-.copy-wrap{
+/* === COPY === */
+.copy-box{
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     gap:10px;
-    margin-bottom:14px;
+}
+
+.copy-btn{
+    flex:1;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none;
+    padding:12px;
+    border-radius:18px;
+    font-weight:900;
+    cursor:pointer;
 }
 
 .loading{
     width:18px;
     height:18px;
     border:3px solid rgba(255,255,255,.2);
-    border-top:3px solid var(--accent);
+    border-top:3px solid #fff;
     border-radius:50%;
     animation:spin .8s linear infinite;
     display:none;
@@ -136,36 +182,25 @@ body{
     display:none;
 }
 
-.volume{
-    display:flex;
-    justify-content:center;
-    gap:14px;
+@keyframes spin{
+    to{transform:rotate(360deg);}
 }
 
-.volume button{
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    border:none;
-    padding:10px 18px;
-    border-radius:14px;
-    font-weight:900;
-    cursor:pointer;
-}
-
+/* === LIST === */
 .list{
-    margin-top:18px;
     display:none;
-    text-align:left;
+    margin-top:16px;
     font-size:13px;
 }
 
 .list div{
     padding:8px;
-    border-bottom:1px solid var(--border);
+    border-bottom:1px solid #222;
     cursor:pointer;
 }
 
-@keyframes spin{
-    to{transform:rotate(360deg);}
+.list div:hover{
+    background:#1a1a1a;
 }
 </style>
 </head>
@@ -178,109 +213,107 @@ body{
     <div class="req" id="req"></div>
     <div class="url" id="url"></div>
 
+    <div class="progress">
+        <span id="cur">0:00</span>
+        <input type="range" id="seek" min="0" value="0">
+        <span id="dur">0:00</span>
+    </div>
+
     <div class="controls">
         <span onclick="prev()">◁</span>
-        <span onclick="play()">▷</span>
-        <span onclick="pause()">❚❚</span>
+        <div class="play" onclick="toggle()">▶</div>
         <span onclick="next()">▷▷</span>
     </div>
 
+    <div class="volume">
+        🔊
+        <input type="range" min="0" max="1" step="0.01" value="0.6" id="vol">
+    </div>
+
     <div class="actions">
-        <button id="favBtn" onclick="toggleFav()">♥</button>
-        <button onclick="download()">⬇</button>
+        <button id="fav" onclick="fav()">♥</button>
         <button onclick="toggleList()">≡</button>
     </div>
 
-    <div class="copy-wrap">
-        <button onclick="copyURL()">Copy URL</button>
+    <div class="copy-box">
+        <button class="copy-btn" onclick="copyURL()">Copy URL</button>
         <div class="loading" id="load"></div>
         <img src="ceklist.png" class="copy-ok" id="ok">
-    </div>
-
-    <div class="volume">
-        <button onclick="volDown()">-</button>
-        <button onclick="volUp()">+</button>
     </div>
 
     <div class="list" id="list"></div>
 </div>
 
 <script>
-let songs=[],index=0,audio=new Audio();
+let songs=[],i=0;
+const audio=new Audio();
+audio.volume=0.6;
 
-fetch('data/urlbb.json')
-.then(r=>r.json())
-.then(d=>{
+fetch('data/urlbb.json').then(r=>r.json()).then(d=>{
 songs=d;
 initList();
 load(0);
 });
 
-const titleEl=title,reqEl=req,urlEl=url,listEl=list,favBtn=document.getElementById("favBtn");
+const titleEl=title,reqEl=req,urlEl=url,seek=seek,cur=cur,dur=dur;
 
-function load(i){
-index=i;
+function load(n){
+i=n;
 audio.src=songs[i].url;
-titleEl.innerText="☊ "+songs[i].title;
+titleEl.innerText=songs[i].title;
 reqEl.innerText="request by "+songs[i].by;
 urlEl.innerText=songs[i].url;
 audio.play();
-checkFav();
 }
 
-function play(){audio.play()}
-function pause(){audio.pause()}
-function next(){load((index+1)%songs.length)}
-function prev(){load((index-1+songs.length)%songs.length)}
+function toggle(){audio.paused?audio.play():audio.pause()}
+function next(){load((i+1)%songs.length)}
+function prev(){load((i-1+songs.length)%songs.length)}
 
-function volUp(){audio.volume=Math.min(1,audio.volume+0.1)}
-function volDown(){audio.volume=Math.max(0,audio.volume-0.1)}
+audio.addEventListener("loadedmetadata",()=>{
+seek.max=audio.duration;
+dur.innerText=format(audio.duration);
+});
+
+audio.addEventListener("timeupdate",()=>{
+seek.value=audio.currentTime;
+cur.innerText=format(audio.currentTime);
+});
+
+seek.oninput=()=>audio.currentTime=seek.value;
+vol.oninput=e=>audio.volume=e.target.value;
+
+function format(t){
+const m=Math.floor(t/60);
+const s=Math.floor(t%60).toString().padStart(2,"0");
+return m+":"+s;
+}
 
 function copyURL(){
-loadAnim(true);
+load.style.display="block";
 setTimeout(()=>{
-navigator.clipboard.writeText(songs[index].url);
-loadAnim(false,true);
+navigator.clipboard.writeText(songs[i].url);
+load.style.display="none";
+ok.style.display="block";
+setTimeout(()=>ok.style.display="none",2000);
 },700);
 }
 
-function loadAnim(load,ok=false){
-document.getElementById("load").style.display=load?"block":"none";
-document.getElementById("ok").style.display=ok?"block":"none";
-setTimeout(()=>document.getElementById("ok").style.display="none",2000);
-}
-
-function download(){
-const a=document.createElement("a");
-a.href=songs[index].url;
-a.download="";
-a.click();
-}
-
-function toggleFav(){
-let fav=JSON.parse(localStorage.getItem("fav")||"[]");
-const u=songs[index].url;
-fav=fav.includes(u)?fav.filter(x=>x!==u):[...fav,u];
-localStorage.setItem("fav",JSON.stringify(fav));
-checkFav();
-}
-
-function checkFav(){
-let fav=JSON.parse(localStorage.getItem("fav")||"[]");
-favBtn.classList.toggle("active",fav.includes(songs[index].url));
-}
-
 function initList(){
-songs.forEach((s,i)=>{
+songs.forEach((s,n)=>{
 const d=document.createElement("div");
-d.innerText=(i+1)+". "+s.title+" — "+s.by;
-d.onclick=()=>load(i);
-listEl.appendChild(d);
+d.innerText=(n+1)+". "+s.title;
+d.onclick=()=>load(n);
+list.appendChild(d);
 });
 }
 
 function toggleList(){
-listEl.style.display=listEl.style.display==="block"?"none":"block";
+list.style.display=list.style.display==="block"?"none":"block";
+}
+
+function fav(){
+fav.classList.toggle("active");
 }
 </script>
 
