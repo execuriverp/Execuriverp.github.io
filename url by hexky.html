@@ -17,11 +17,22 @@
 
 *{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
 
+html,body{
+    -webkit-overflow-scrolling:touch;
+}
+
 body{
     margin:0;
     min-height:100vh;
     color:var(--text);
     overflow-x:hidden;
+    overflow-y:auto; /* FIX SCROLL */
+}
+
+/* PAGE WRAPPER */
+.page{
+    min-height:100vh;
+    padding-bottom:40px;
 }
 
 /* BACKGROUND */
@@ -163,7 +174,7 @@ body{
     overflow-y:auto;
 }
 
-/* SONG CARD (FIX SIZE & SCROLL) */
+/* SONG CARD */
 .song-card{
     background:var(--card2);
     border-radius:12px;
@@ -199,6 +210,7 @@ body{
 
 <div class="bg" id="bg"></div>
 
+<div class="page">
 <div class="player">
     <div class="cover">
         <div class="eq">
@@ -232,6 +244,7 @@ body{
         <button onclick="openList(false)">☰</button>
         <button onclick="openFavMenu()">★</button>
     </div>
+</div>
 </div>
 
 <div class="popup" id="popup">
@@ -314,7 +327,6 @@ audio.volume=e.target.value;
 volIcon.innerText=e.target.value==0?"🔇":e.target.value>=0.6?"🔊":"🔉";
 };
 
-/* FAVORIT */
 function openFavMenu(){
 popup.style.display="flex";
 popupCard.innerHTML=`
@@ -332,7 +344,6 @@ localStorage.setItem("bbFav",JSON.stringify(fav));
 popup.style.display="none";
 }
 
-/* LIST */
 function openList(favOnly){
 popup.style.display="flex";
 popupCard.innerHTML="";
