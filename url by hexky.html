@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>EXECURIVE BOOMBOX URL</title>
 
 <style>
@@ -15,57 +15,69 @@
     --card2:#181818;
 }
 
-*{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+*{
+    box-sizing:border-box;
+    font-family:Inter,system-ui,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+}
 
 html,body{
-    -webkit-overflow-scrolling:touch;
-}
-
-body{
     margin:0;
-    min-height:100vh;
-    color:var(--text);
-    overflow-x:hidden;
-    overflow-y:auto; /* FIX SCROLL */
+    padding:0;
+    height:100%;
+    overflow:hidden;
+    background:#000;
 }
 
-/* PAGE WRAPPER */
-.page{
-    min-height:100vh;
-    padding-bottom:40px;
-}
-
-/* BACKGROUND */
-.bg{
+/* ================= BACKGROUND (FIX MOBILE) ================= */
+.app-bg{
     position:fixed;
     inset:0;
+    height:100dvh;            /* 🔥 mobile viewport fix */
+    width:100%;
+    z-index:0;
     background:
-        linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.85)),
+        linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.75)),
         url("bkucing1.png") center/cover no-repeat;
-    transition:.6s ease;
-    z-index:-1;
+    transform:translateZ(0);  /* 🔥 force mobile render */
+    will-change:transform,filter;
 }
-.bg.playing{filter:blur(14px)}
 
-/* PLAYER */
+.app-bg.playing{
+    filter:blur(12px);
+    transform:scale(1.05) translateZ(0);
+}
+
+/* ================= APP ================= */
+.app{
+    position:relative;
+    z-index:1;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+}
+
+/* ================= PLAYER ================= */
 .player{
+    width:100%;
     max-width:420px;
-    margin:24px auto;
-    background:linear-gradient(180deg,#181818,#0b0b0b);
+    margin:env(safe-area-inset-top,16px) 12px;
+    padding:18px;
+    background:linear-gradient(180deg,#1a1a1a,#0b0b0b);
     border-radius:26px;
-    padding:20px;
-    box-shadow:0 40px 90px rgba(0,0,0,.85);
+    box-shadow:0 30px 70px rgba(0,0,0,.8);
 }
 
 /* COVER */
 .cover{
-    height:200px;
+    height:190px;
     border-radius:18px;
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     display:flex;
     align-items:center;
     justify-content:center;
-    margin-bottom:16px;
+    margin-bottom:14px;
 }
 
 /* EQ */
@@ -73,7 +85,7 @@ body{
     display:flex;
     align-items:flex-end;
     gap:5px;
-    height:44px;
+    height:42px;
 }
 .eq span{
     width:6px;
@@ -88,11 +100,11 @@ body{
 
 @keyframes equalize{
     0%,100%{height:8px}
-    50%{height:44px}
+    50%{height:42px}
 }
 
 /* META */
-.title{font-size:21px;font-weight:900}
+.title{font-size:20px;font-weight:900}
 .req{font-size:12px;color:var(--muted)}
 .url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:6px 0}
 
@@ -111,12 +123,12 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:24px;
-    margin:14px 0;
+    gap:22px;
+    margin:12px 0;
 }
-.controls span{font-size:22px;cursor:pointer}
+.controls span{font-size:22px}
 .play{
-    width:54px;height:54px;
+    width:52px;height:52px;
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     color:#000;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
@@ -138,23 +150,22 @@ body{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:8px;
-    margin:12px 0;
+    margin-top:10px;
 }
 .actions button{
     background:var(--card2);
     border:none;
-    padding:10px;
-    border-radius:14px;
+    padding:12px;
+    border-radius:16px;
     color:#fff;
     font-weight:800;
-    cursor:pointer;
 }
 .actions button.active{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     color:#000;
 }
 
-/* POPUP */
+/* ================= POPUP (NO SCROLL, FIT SCALE) ================= */
 .popup{
     position:fixed;
     inset:0;
@@ -162,39 +173,38 @@ body{
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:50;
+    z-index:20;
 }
+
+/* CARD FIXED HEIGHT */
 .popup .card{
     width:92%;
     max-width:420px;
     background:#0f0f0f;
     border-radius:22px;
     padding:14px;
-    max-height:70vh;
-    overflow-y:auto;
 }
 
-/* SONG CARD */
+/* SONG CARD – AUTO FIT */
 .song-card{
     background:var(--card2);
-    border-radius:12px;
+    border-radius:14px;
     padding:8px 10px;
     display:flex;
     align-items:center;
     gap:10px;
     margin-bottom:8px;
-    cursor:pointer;
 }
 .song-meta{flex:1}
-.song-title{font-size:13px;font-weight:800}
-.song-by{font-size:11px;color:var(--muted)}
-.song-dur{font-size:11px;color:var(--muted);min-width:38px;text-align:right}
+.song-title{font-size:12px;font-weight:800}
+.song-by{font-size:10px;color:var(--muted)}
+.song-dur{font-size:10px;color:var(--muted)}
 .playing{font-size:10px;color:#1db954}
 
 /* NOTIF */
 .notif{
     position:fixed;
-    bottom:20px;
+    bottom:calc(18px + env(safe-area-inset-bottom));
     left:50%;
     transform:translateX(-50%);
     background:#000;
@@ -202,16 +212,18 @@ body{
     border-radius:20px;
     font-size:12px;
     display:none;
+    z-index:30;
 }
 </style>
 </head>
 
 <body>
 
-<div class="bg" id="bg"></div>
+<div class="app-bg" id="bg"></div>
 
-<div class="page">
+<div class="app">
 <div class="player">
+
     <div class="cover">
         <div class="eq">
             <span></span><span></span><span></span><span></span>
@@ -224,7 +236,7 @@ body{
 
     <div class="progress">
         <span id="cur">0:00</span>
-        <input type="range" id="seek" value="0">
+        <input type="range" id="seek">
         <span id="dur">0:00</span>
     </div>
 
@@ -244,6 +256,7 @@ body{
         <button onclick="openList(false)">☰</button>
         <button onclick="openFavMenu()">★</button>
     </div>
+
 </div>
 </div>
 
@@ -251,7 +264,7 @@ body{
     <div class="card" id="popupCard"></div>
 </div>
 
-<div class="notif" id="notif">🎧 Music memerlukan beberapa detik untuk dimulai…</div>
+<div class="notif" id="notif">🎧 Music memerlukan beberapa detik…</div>
 
 <script>
 let songs=[],index=0,repeat=false,fav=[];
@@ -274,39 +287,20 @@ audio.play();
 playBtn.innerText="❚❚";
 eq.forEach(e=>e.style.animationPlayState="running");
 bg.classList.add("playing");
-
-setTimeout(()=>{
-if(audio.currentTime===0 && !audio.paused){
-notif.style.display="block";
-setTimeout(()=>notif.style.display="none",2500);
-}
-},5000);
 }
 
 audio.onended=()=>repeat?audio.play():next();
-
-audio.onloadedmetadata=()=>{
-seek.max=audio.duration;
-dur.innerText=format(audio.duration);
-songs[index].duration=format(audio.duration);
-};
-
-audio.ontimeupdate=()=>{
-seek.value=audio.currentTime;
-cur.innerText=format(audio.currentTime);
-};
-
+audio.onloadedmetadata=()=>{seek.max=audio.duration;dur.innerText=format(audio.duration);}
+audio.ontimeupdate=()=>{seek.value=audio.currentTime;cur.innerText=format(audio.currentTime);}
 seek.oninput=()=>audio.currentTime=seek.value;
 
 function toggle(){
 if(audio.paused){
-audio.play();
-playBtn.innerText="❚❚";
+audio.play();playBtn.innerText="❚❚";
 eq.forEach(e=>e.style.animationPlayState="running");
 bg.classList.add("playing");
 }else{
-audio.pause();
-playBtn.innerText="▶";
+audio.pause();playBtn.innerText="▶";
 eq.forEach(e=>e.style.animationPlayState="paused");
 bg.classList.remove("playing");
 }
@@ -316,12 +310,10 @@ function toggleRepeat(){
 repeat=!repeat;
 repeatBtn.classList.toggle("active",repeat);
 }
-
 function prev(){load((index-1+songs.length)%songs.length)}
 function next(){load((index+1)%songs.length)}
 
-vol.value=0.6;
-audio.volume=0.6;
+vol.value=0.6;audio.volume=0.6;
 vol.oninput=e=>{
 audio.volume=e.target.value;
 volIcon.innerText=e.target.value==0?"🔇":e.target.value>=0.6?"🔊":"🔉";
@@ -341,27 +333,27 @@ if(!fav.includes(u)){
 fav.push(u);
 localStorage.setItem("bbFav",JSON.stringify(fav));
 }
-popup.style.display="none";
+closePopup();
 }
 
 function openList(favOnly){
 popup.style.display="flex";
 popupCard.innerHTML="";
-songs.forEach((s,i)=>{
+songs.slice(0,6).forEach((s,i)=>{  /* 🔥 limit items */
 if(favOnly && !fav.includes(s.url))return;
 popupCard.innerHTML+=`
-<div class="song-card" onclick="load(${i});popup.style.display='none'">
+<div class="song-card" onclick="load(${i});closePopup()">
 <div class="song-meta">
 <div class="song-title">${s.title}</div>
 <div class="song-by">${s.by}</div>
-${i===index?'<div class="playing">🟢 Playing</div>':''}
 </div>
 <div class="song-dur">${s.duration||"0:00"}</div>
 </div>`;
 });
 }
 
-popup.onclick=e=>{if(e.target===popup)popup.style.display="none"};
+function closePopup(){popup.style.display="none";}
+popup.onclick=e=>{if(e.target===popup)closePopup();}
 
 function format(t){
 return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
