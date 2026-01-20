@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BB URL Player • Pro</title>
-<link rel="icon" type="image/png" href="favicon.png">
+<title>BB DJ Player • Demo</title>
 
 <style>
 :root{
@@ -14,7 +13,6 @@
     --accent2:#00c2ff;
     --text:#eaf2f6;
     --muted:#8fa3b8;
-    --border:rgba(255,255,255,.08);
 }
 
 *{
@@ -28,190 +26,194 @@ body{
     color:var(--text);
 }
 
-.container{
-    max-width:760px;
-    margin:auto;
-    padding:18px;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:22px;
-}
-
-.header h1{
-    margin:0;
-    font-size:30px;
-    background:linear-gradient(90deg,var(--accent),#7fffff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.header p{
-    font-size:13px;
-    color:var(--muted);
-}
-
-.song{
+.player{
+    max-width:460px;
+    margin:70px auto;
     background:linear-gradient(145deg,#121c2d,#0b1322);
-    border-radius:18px;
-    padding:18px;
-    border:1px solid var(--border);
-    margin-bottom:18px;
+    border-radius:26px;
+    padding:26px;
     text-align:center;
+    box-shadow:0 20px 45px rgba(0,0,0,.55);
 }
 
-.song-title{
-    font-size:20px;
-    font-weight:800;
+.title{
+    font-size:26px;
+    font-weight:900;
     margin-bottom:6px;
 }
 
-.song-req{
-    font-size:12px;
+.req{
+    font-size:13px;
     color:var(--muted);
     margin-bottom:14px;
 }
 
-.dj-controls{
-    display:flex;
-    justify-content:center;
-    gap:22px;
-    font-size:22px;
-    user-select:none;
+.url{
+    font-size:11px;
+    color:#9fb9cc;
+    word-break:break-all;
+    margin-bottom:18px;
 }
 
-.dj-controls span{
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:26px;
+    font-size:28px;
+    margin-bottom:18px;
+}
+
+.controls span{
     cursor:pointer;
+    padding:12px;
+    border-radius:14px;
+    background:#0b1322;
+    box-shadow:0 0 0 1px rgba(60,242,255,.15);
     color:var(--accent);
     transition:.2s;
 }
 
-.dj-controls span:hover{
+.controls span:hover{
     transform:scale(1.25);
     color:#7fffff;
 }
 
-.copy{
-    margin-top:14px;
+.volume{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-bottom:18px;
+}
+
+.volume button{
+    font-size:18px;
+    padding:10px 18px;
 }
 
 button{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     border:none;
-    padding:9px 20px;
-    border-radius:12px;
-    font-weight:800;
+    border-radius:14px;
+    font-weight:900;
     cursor:pointer;
 }
 
-.footer{
-    text-align:center;
-    margin:30px 0 10px;
-    font-size:12px;
-    color:var(--muted);
+.bottom{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+}
+
+.list{
+    display:none;
+    margin-top:18px;
+    background:#0b1322;
+    border-radius:16px;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+}
+
+.list div{
+    padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    cursor:pointer;
+}
+
+.list div:last-child{
+    border:none;
 }
 </style>
 </head>
 
 <body>
-<div class="container">
 
-<div class="header">
-    <h1>BB URL PLAYER</h1>
-    <p>For • Execurive Community</p>
-</div>
+<div class="player">
+    <div class="title" id="title">☊ DJ Lowkey</div>
+    <div class="req" id="req">request by Hexky</div>
+    <div class="url" id="url">http://example.com/music1.mp3</div>
 
-<div id="songList"></div>
+    <div class="controls">
+        <span onclick="prev()">◁</span>
+        <span onclick="play()">▷</span>
+        <span onclick="pause()">❚❚</span>
+        <span onclick="next()">▷▷</span>
+    </div>
 
-<div class="footer">
-BB URL Player • By Hexky
-</div>
+    <div class="volume">
+        <button onclick="volDown()">-</button>
+        <button onclick="volUp()">+</button>
+    </div>
 
+    <div class="bottom">
+        <button onclick="copyURL()">Salin URL</button>
+        <button onclick="toggleList()">List Lagu</button>
+    </div>
+
+    <div class="list" id="list"></div>
 </div>
 
 <script>
-let audios=[];
-let current=0;
+/* === DATA LAGU (SIMULASI) === */
+const songs=[
+{
+    title:"☊ DJ Lowkey",
+    by:"Hexky",
+    url:"http://example.com/music1.mp3"
+},
+{
+    title:"☊ DJ Night Bass",
+    by:"Admin",
+    url:"http://example.com/music2.mp3"
+},
+{
+    title:"☊ DJ Chill RP",
+    by:"Execurive",
+    url:"http://example.com/music3.mp3"
+}
+];
 
-fetch('data/urlbb.json')
-.then(r=>r.json())
-.then(data=>{
-const list=document.getElementById('songList');
+let index=0;
+const audio=new Audio(songs[0].url);
+audio.volume=0.6;
 
-data.forEach((song,i)=>{
-const audio=new Audio(song.url);
-audios.push(audio);
+const titleEl=document.getElementById("title");
+const reqEl=document.getElementById("req");
+const urlEl=document.getElementById("url");
+const listEl=document.getElementById("list");
 
-const el=document.createElement('div');
-el.className='song';
-
-el.innerHTML=`
-<div class="song-title">☊ ${song.title}</div>
-<div class="song-req">request by ${song.by}</div>
-
-<div class="dj-controls">
-<span onclick="restart(${i})">↻</span>
-<span onclick="prev()">◁</span>
-<span onclick="toggle(${i},this)">||</span>
-<span onclick="next()">▷</span>
-<span onclick="stop(${i})">↺</span>
-</div>
-
-<div class="copy">
-<button onclick="copyURL('${song.url}')">Salin URL</button>
-</div>
-`;
-list.appendChild(el);
+/* INIT LIST */
+songs.forEach((s,i)=>{
+    const d=document.createElement("div");
+    d.innerText=(i+1)+". "+s.title+" — "+s.by;
+    d.onclick=()=>load(i);
+    listEl.appendChild(d);
 });
-});
 
-function stopAll(){
-audios.forEach(a=>{
-a.pause();
-a.currentTime=0;
-});
+function load(i){
+    index=i;
+    audio.src=songs[i].url;
+    titleEl.innerText=songs[i].title;
+    reqEl.innerText="request by "+songs[i].by;
+    urlEl.innerText=songs[i].url;
+    audio.play();
 }
 
-function toggle(i,el){
-const a=audios[i];
-if(a.paused){
-stopAll();
-a.play();
-el.innerText="❚❚";
-current=i;
-}else{
-a.pause();
-el.innerText="▷";
-}
+function play(){audio.play();}
+function pause(){audio.pause();}
+function next(){load((index+1)%songs.length);}
+function prev(){load((index-1+songs.length)%songs.length);}
+
+function volUp(){audio.volume=Math.min(1,audio.volume+0.1);}
+function volDown(){audio.volume=Math.max(0,audio.volume-0.1);}
+
+function copyURL(){
+    navigator.clipboard.writeText(songs[index].url);
+    alert("URL berhasil disalin!");
 }
 
-function restart(i){
-audios[i].currentTime=0;
-audios[i].play();
-current=i;
-}
-
-function stop(i){
-audios[i].pause();
-audios[i].currentTime=0;
-}
-
-function next(){
-current=(current+1)%audios.length;
-stopAll();
-audios[current].play();
-}
-
-function prev(){
-current=(current-1+audios.length)%audios.length;
-stopAll();
-audios[current].play();
-}
-
-function copyURL(url){
-navigator.clipboard.writeText(url);
-alert("URL berhasil disalin!");
+function toggleList(){
+    listEl.style.display=listEl.style.display==="block"?"none":"block";
 }
 </script>
 
