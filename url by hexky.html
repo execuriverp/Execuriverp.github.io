@@ -95,19 +95,14 @@ body{
 .controls .play{
     background:var(--accent);
     color:#000;
-    width:54px;
-    height:54px;
+    width:56px;
+    height:56px;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:26px;
     box-shadow:0 10px 30px rgba(29,185,84,.6);
-}
-
-.controls span:hover{
-    color:#fff;
-    transform:scale(1.15);
 }
 
 /* === VOLUME === */
@@ -198,10 +193,6 @@ body{
     border-bottom:1px solid #222;
     cursor:pointer;
 }
-
-.list div:hover{
-    background:#1a1a1a;
-}
 </style>
 </head>
 
@@ -209,66 +200,87 @@ body{
 
 <div class="player">
     <div class="cover">☊</div>
+
     <div class="title" id="title">Loading...</div>
     <div class="req" id="req"></div>
     <div class="url" id="url"></div>
 
     <div class="progress">
         <span id="cur">0:00</span>
-        <input type="range" id="seek" min="0" value="0">
+        <input type="range" id="seek" value="0">
         <span id="dur">0:00</span>
     </div>
 
     <div class="controls">
         <span onclick="prev()">◁</span>
-        <div class="play" onclick="toggle()">▶</div>
+        <div class="play" id="playBtn" onclick="toggle()">▶</div>
         <span onclick="next()">▷▷</span>
     </div>
 
     <div class="volume">
         🔊
-        <input type="range" min="0" max="1" step="0.01" value="0.6" id="vol">
+        <input type="range" id="vol" min="0" max="1" step="0.01">
     </div>
 
     <div class="actions">
-        <button id="fav" onclick="fav()">♥</button>
+        <button id="favBtn" onclick="toggleFav()">♥</button>
         <button onclick="toggleList()">≡</button>
     </div>
 
     <div class="copy-box">
         <button class="copy-btn" onclick="copyURL()">Copy URL</button>
-        <div class="loading" id="load"></div>
-        <img src="ceklist.png" class="copy-ok" id="ok">
+        <div class="loading" id="loading"></div>
+        <img src="ceklist.png" class="copy-ok" id="check">
     </div>
 
     <div class="list" id="list"></div>
 </div>
 
 <script>
-let songs=[],i=0;
+let songs=[],index=0;
 const audio=new Audio();
-audio.volume=0.6;
+audio.preload="metadata";
 
-fetch('data/urlbb.json').then(r=>r.json()).then(d=>{
+const titleEl=title,reqEl=req,urlEl=url;
+const seek=document.getElementById("seek");
+const cur=document.getElementById("cur");
+const dur=document.getElementById("dur");
+const playBtn=document.getElementById("playBtn");
+const vol=document.getElementById("vol");
+const favBtn=document.getElementById("favBtn");
+
+fetch('data/urlbb.json')
+.then(r=>r.json())
+.then(d=>{
 songs=d;
-initList();
+buildList();
 load(0);
 });
 
-const titleEl=title,reqEl=req,urlEl=url,seek=seek,cur=cur,dur=dur;
-
-function load(n){
-i=n;
-audio.src=songs[i].url;
-titleEl.innerText=songs[i].title;
-reqEl.innerText="request by "+songs[i].by;
-urlEl.innerText=songs[i].url;
+function load(i){
+index=i;
+audio.src=songs[index].url;
+titleEl.innerText=songs[index].title;
+reqEl.innerText="request by "+songs[index].by;
+urlEl.innerText=songs[index].url;
+audio.load();
 audio.play();
+playBtn.innerText="❚❚";
+syncFav();
 }
 
-function toggle(){audio.paused?audio.play():audio.pause()}
-function next(){load((i+1)%songs.length)}
-function prev(){load((i-1+songs.length)%songs.length)}
+function toggle(){
+if(audio.paused){
+audio.play();
+playBtn.innerText="❚❚";
+}else{
+audio.pause();
+playBtn.innerText="▶";
+}
+}
+
+function next(){load((index+1)%songs.length)}
+function prev(){load((index-1+songs.length)%songs.length)}
 
 audio.addEventListener("loadedmetadata",()=>{
 seek.max=audio.duration;
@@ -281,39 +293,55 @@ cur.innerText=format(audio.currentTime);
 });
 
 seek.oninput=()=>audio.currentTime=seek.value;
+
+vol.value=0.6;
+audio.volume=0.6;
 vol.oninput=e=>audio.volume=e.target.value;
 
 function format(t){
+if(!t) return "0:00";
 const m=Math.floor(t/60);
 const s=Math.floor(t%60).toString().padStart(2,"0");
 return m+":"+s;
 }
 
+/* === COPY === */
 function copyURL(){
-load.style.display="block";
+loading.style.display="block";
 setTimeout(()=>{
-navigator.clipboard.writeText(songs[i].url);
-load.style.display="none";
-ok.style.display="block";
-setTimeout(()=>ok.style.display="none",2000);
-},700);
+navigator.clipboard.writeText(songs[index].url);
+loading.style.display="none";
+check.style.display="block";
+setTimeout(()=>check.style.display="none",2000);
+},600);
 }
 
-function initList(){
-songs.forEach((s,n)=>{
+/* === FAVORITE === */
+function toggleFav(){
+let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
+const u=songs[index].url;
+fav=fav.includes(u)?fav.filter(x=>x!==u):[...fav,u];
+localStorage.setItem("bbFav",JSON.stringify(fav));
+syncFav();
+}
+
+function syncFav(){
+let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
+favBtn.classList.toggle("active",fav.includes(songs[index].url));
+}
+
+/* === LIST === */
+function buildList(){
+songs.forEach((s,i)=>{
 const d=document.createElement("div");
-d.innerText=(n+1)+". "+s.title;
-d.onclick=()=>load(n);
+d.innerText=(i+1)+". "+s.title;
+d.onclick=()=>load(i);
 list.appendChild(d);
 });
 }
 
 function toggleList(){
 list.style.display=list.style.display==="block"?"none":"block";
-}
-
-function fav(){
-fav.classList.toggle("active");
 }
 </script>
 
