@@ -7,13 +7,12 @@
 
 <style>
 :root{
-    --bg:#070b12;
-    --card:#121212;
-    --card2:#181818;
     --accent:#1db954;
     --accent2:#1ed760;
-    --text:#ffffff;
+    --text:#fff;
     --muted:#9aa0a6;
+    --card:#121212;
+    --card2:#181818;
 }
 
 *{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
@@ -21,67 +20,74 @@
 body{
     margin:0;
     min-height:100vh;
-    background:
-        linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.85)),
-        url("bkucing1.png") center/cover no-repeat fixed;
     color:var(--text);
+    overflow-x:hidden;
 }
 
-/* PLAYER */
+/* === BACKGROUND + BLUR === */
+.bg{
+    position:fixed;
+    inset:0;
+    background:
+        linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.85)),
+        url("bkucing1.png") center/cover no-repeat;
+    transition:.6s ease;
+    z-index:-1;
+}
+.bg.playing{
+    filter:blur(14px);
+}
+
+/* === PLAYER === */
 .player{
     max-width:420px;
     margin:30px auto;
-    background:linear-gradient(180deg,#1a1a1a,#0b0b0b);
+    background:linear-gradient(180deg,#181818,#0b0b0b);
     border-radius:28px;
     padding:22px;
-    box-shadow:0 40px 90px rgba(0,0,0,.8);
-    transition:transform .4s, box-shadow .4s;
-}
-.player.playing{
-    transform:scale(1.01);
-    box-shadow:0 60px 120px rgba(0,0,0,.95);
+    box-shadow:0 40px 100px rgba(0,0,0,.85);
 }
 
-/* COVER */
+/* === COVER === */
 .cover{
     height:210px;
     border-radius:20px;
-    background:linear-gradient(135deg,#1db954,#1ed760);
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
     display:flex;
     align-items:center;
     justify-content:center;
     margin-bottom:18px;
 }
 
-/* EQ */
-.eq{display:flex;gap:5px;height:40px}
+/* === EQ (FIX ARAH) === */
+.eq{
+    display:flex;
+    align-items:flex-end;
+    gap:5px;
+    height:46px;
+}
 .eq span{
     width:6px;
     background:#000;
     border-radius:4px;
-    animation:equalize 1s infinite ease-in-out;
+    animation:equalize .8s infinite ease-in-out;
     animation-play-state:paused;
 }
+.eq span:nth-child(2){animation-delay:.15s}
+.eq span:nth-child(3){animation-delay:.3s}
+.eq span:nth-child(4){animation-delay:.45s}
+
 @keyframes equalize{
     0%,100%{height:8px}
-    50%{height:40px}
+    50%{height:46px}
 }
 
-/* META */
+/* === META === */
 .title{font-size:22px;font-weight:900}
 .req{font-size:13px;color:var(--muted)}
 .url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:8px 0}
 
-/* LOADING */
-.loading{
-    font-size:11px;
-    color:#a7f3d0;
-    opacity:0;
-    transition:.3s;
-}
-.loading.show{opacity:1}
-
-/* PROGRESS */
+/* === PROGRESS === */
 .progress{
     display:flex;
     align-items:center;
@@ -91,13 +97,13 @@ body{
 }
 .progress input{flex:1;accent-color:var(--accent)}
 
-/* CONTROLS */
+/* === CONTROLS === */
 .controls{
     display:flex;
     justify-content:center;
     align-items:center;
     gap:26px;
-    margin:18px 0;
+    margin:16px 0;
 }
 .controls span{font-size:22px;cursor:pointer}
 .play{
@@ -108,7 +114,7 @@ body{
     font-size:26px;
 }
 
-/* VOLUME */
+/* === VOLUME === */
 .volume{
     display:flex;
     align-items:center;
@@ -118,12 +124,12 @@ body{
 }
 .volume input{flex:1;accent-color:var(--accent)}
 
-/* ACTIONS */
+/* === ACTIONS === */
 .actions{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:8px;
-    margin:16px 0;
+    margin:14px 0;
 }
 .actions button{
     background:var(--card2);
@@ -134,73 +140,68 @@ body{
     font-weight:800;
     cursor:pointer;
 }
-.actions button.repeat.active{
+.actions button.active{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     color:#000;
 }
 
-/* OVERLAY */
-.overlay{
+/* === POPUP === */
+.popup{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.55);
-    backdrop-filter:blur(8px);
+    background:rgba(0,0,0,.6);
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:99;
+    z-index:50;
 }
-.overlay.show{display:flex}
-
-/* CARD */
-.card{
+.popup .card{
     width:90%;
     max-width:420px;
-    background:#121212;
+    background:#0f0f0f;
     border-radius:22px;
     padding:18px;
 }
-.card button{
-    width:100%;
-    margin-top:10px;
-    padding:12px;
-    border:none;
-    border-radius:14px;
-    background:var(--card2);
-    color:#fff;
-    font-weight:800;
-}
 
-/* LIST */
-.list{
-    max-height:60vh;
-    overflow:auto;
-}
+/* === SONG CARD === */
 .song-card{
+    background:var(--card2);
+    border-radius:14px;
+    padding:10px;
     display:flex;
     align-items:center;
     gap:10px;
-    padding:10px;
-    border-radius:14px;
+    margin-bottom:10px;
+    cursor:pointer;
 }
-.song-card.active{background:#222}
+.song-meta{flex:1}
 .song-title{font-size:14px;font-weight:800}
-.song-by,.song-dur{font-size:11px;color:var(--muted)}
-.dot{
-    width:6px;height:6px;
-    background:var(--accent);
-    border-radius:50%;
-    opacity:0;
+.song-by{font-size:11px;color:var(--muted)}
+.song-dur{font-size:11px;color:var(--muted)}
+.playing{font-size:10px;color:#1db954}
+
+/* === NOTIF === */
+.notif{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#000;
+    padding:10px 16px;
+    border-radius:20px;
+    font-size:12px;
+    display:none;
 }
-.song-card.active .dot{opacity:1}
 </style>
 </head>
 
 <body>
 
-<div class="player" id="player">
+<div class="bg" id="bg"></div>
+
+<div class="player">
     <div class="cover">
-        <div class="eq" id="eq">
+        <div class="eq">
             <span></span><span></span><span></span><span></span>
         </div>
     </div>
@@ -208,7 +209,6 @@ body{
     <div class="title" id="title">Loading...</div>
     <div class="req" id="req"></div>
     <div class="url" id="url"></div>
-    <div class="loading" id="loading">Music ini memerlukan beberapa detik untuk dimulai…</div>
 
     <div class="progress">
         <span id="cur">0:00</span>
@@ -228,162 +228,134 @@ body{
     </div>
 
     <div class="actions">
-        <button onclick="openList()">☰</button>
+        <button id="repeatBtn" onclick="toggleRepeat()">🔁</button>
+        <button onclick="openList(false)">☰</button>
         <button onclick="openFavMenu()">★</button>
-        <button class="repeat" id="repeatBtn" onclick="toggleRepeat()">🔁</button>
     </div>
 </div>
 
-<div class="overlay" id="overlay" onclick="closeOverlay()">
-    <div class="card" id="card" onclick="event.stopPropagation()"></div>
+<div class="popup" id="popup">
+    <div class="card" id="popupCard"></div>
 </div>
 
+<div class="notif" id="notif">🎧 Music memerlukan beberapa detik untuk dimulai…</div>
+
 <script>
-let songs=[],index=0,repeat=false;
+let songs=[],index=0,repeat=false,fav=[];
 const audio=new Audio();
 const eq=document.querySelectorAll(".eq span");
 
 fetch("data/urlbb.json").then(r=>r.json()).then(d=>{
-    songs=d;
-    load(0);
+songs=d;
+fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
+load(0);
 });
 
 function load(i){
-    index=i;
-    audio.src=songs[i].url;
-    title.textContent=songs[i].title;
-    req.textContent="request by "+songs[i].by;
-    url.textContent=songs[i].url;
-    audio.play();
-    playBtn.textContent="❚❚";
-    player.classList.add("playing");
-    eq.forEach(e=>e.style.animationPlayState="running");
-    startLoadingCheck();
-    buildList();
+index=i;
+audio.src=songs[i].url;
+title.innerText=songs[i].title;
+req.innerText="request by "+songs[i].by;
+url.innerText=songs[i].url;
+audio.play();
+playBtn.innerText="❚❚";
+eq.forEach(e=>e.style.animationPlayState="running");
+bg.classList.add("playing");
+
+setTimeout(()=>{
+if(audio.currentTime===0 && !audio.paused){
+notif.style.display="block";
+setTimeout(()=>notif.style.display="none",2500);
+}
+},5000);
 }
 
-audio.addEventListener("loadedmetadata",()=>{
-    seek.max=audio.duration;
-    dur.textContent=format(audio.duration);
-});
-
-audio.addEventListener("timeupdate",()=>{
-    seek.value=audio.currentTime;
-    cur.textContent=format(audio.currentTime);
-    loading.classList.remove("show");
-});
-
 audio.onended=()=>repeat?audio.play():next();
+
+audio.onloadedmetadata=()=>{
+seek.max=audio.duration;
+dur.innerText=format(audio.duration);
+};
+
+audio.ontimeupdate=()=>{
+seek.value=audio.currentTime;
+cur.innerText=format(audio.currentTime);
+};
+
 seek.oninput=()=>audio.currentTime=seek.value;
 
 function toggle(){
-    if(audio.paused){
-        audio.play();
-        playBtn.textContent="❚❚";
-        player.classList.add("playing");
-        eq.forEach(e=>e.style.animationPlayState="running");
-        startLoadingCheck();
-    }else{
-        audio.pause();
-        playBtn.textContent="▶";
-        player.classList.remove("playing");
-        eq.forEach(e=>e.style.animationPlayState="paused");
-    }
+if(audio.paused){
+audio.play();
+playBtn.innerText="❚❚";
+eq.forEach(e=>e.style.animationPlayState="running");
+bg.classList.add("playing");
+}else{
+audio.pause();
+playBtn.innerText="▶";
+eq.forEach(e=>e.style.animationPlayState="paused");
+bg.classList.remove("playing");
 }
-
-function startLoadingCheck(){
-    loading.classList.remove("show");
-    setTimeout(()=>{
-        if(audio.currentTime===0 && !audio.paused){
-            loading.classList.add("show");
-        }
-    },5000);
 }
-
-function next(){load((index+1)%songs.length)}
-function prev(){load((index-1+songs.length)%songs.length)}
 
 function toggleRepeat(){
-    repeat=!repeat;
-    repeatBtn.classList.toggle("active",repeat);
+repeat=!repeat;
+repeatBtn.innerText=repeat?"🔁":"🔁";
+repeatBtn.classList.toggle("active",repeat);
 }
 
-/* FAVORITE SYSTEM */
+function prev(){load((index-1+songs.length)%songs.length)}
+function next(){load((index+1)%songs.length)}
+
+vol.value=0.6;
+audio.volume=0.6;
+vol.oninput=e=>{
+audio.volume=e.target.value;
+volIcon.innerText=e.target.value==0?"🔇":e.target.value>=0.6?"🔊":"🔉";
+};
+
+/* === FAVORIT MENU === */
 function openFavMenu(){
-    overlay.classList.add("show");
-    card.innerHTML=`
-        <button onclick="addFav()">➕ Add to Favorite</button>
-        <button onclick="openFavList()">📂 Favorite List</button>`;
+popup.style.display="flex";
+popupCard.innerHTML=`
+<button onclick="addFav()" style="width:100%;margin-bottom:10px">➕ Add current song</button>
+<button onclick="openList(true)" style="width:100%">📂 Favorite list</button>
+`;
 }
 
 function addFav(){
-    let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
-    if(!fav.includes(songs[index].url)){
-        fav.push(songs[index].url);
-        localStorage.setItem("bbFav",JSON.stringify(fav));
-    }
-    closeOverlay();
+const u=songs[index].url;
+if(!fav.includes(u)){
+fav.push(u);
+localStorage.setItem("bbFav",JSON.stringify(fav));
+}
+popup.style.display="none";
 }
 
-function openFavList(){
-    let fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
-    card.innerHTML=`<div class="list"></div>`;
-    const l=card.querySelector(".list");
-    songs.forEach((s,i)=>{
-        if(!fav.includes(s.url))return;
-        const d=document.createElement("div");
-        d.className="song-card"+(i===index?" active":"");
-        d.innerHTML=`
-            <div class="dot"></div>
-            <div style="flex:1">
-                <div class="song-title">${s.title}</div>
-                <div class="song-by">${s.by}</div>
-            </div>
-            <div class="song-dur">${s.duration||"--:--"}</div>`;
-        d.onclick=()=>{load(i);closeOverlay();}
-        l.appendChild(d);
-    });
+/* === LIST === */
+function openList(favOnly){
+popup.style.display="flex";
+popupCard.innerHTML="";
+songs.forEach((s,i)=>{
+if(favOnly && !fav.includes(s.url))return;
+popupCard.innerHTML+=`
+<div class="song-card" onclick="load(${i});popup.style.display='none'">
+<div class="song-meta">
+<div class="song-title">${s.title}</div>
+<div class="song-by">${s.by}</div>
+${i===index?'<div class="playing">🟢 Playing</div>':''}
+</div>
+<div class="song-dur">${s.duration||"--:--"}</div>
+</div>`;
+});
 }
 
-function openList(){
-    overlay.classList.add("show");
-    card.innerHTML=`<div class="list"></div>`;
-    const l=card.querySelector(".list");
-    buildList(l);
-}
-
-function buildList(target){
-    const l=target||document.createElement("div");
-    l.innerHTML="";
-    songs.forEach((s,i)=>{
-        const d=document.createElement("div");
-        d.className="song-card"+(i===index?" active":"");
-        d.innerHTML=`
-            <div class="dot"></div>
-            <div style="flex:1">
-                <div class="song-title">${s.title}</div>
-                <div class="song-by">${s.by}</div>
-            </div>
-            <div class="song-dur">${s.duration||"--:--"}</div>`;
-        d.onclick=()=>{load(i);closeOverlay();}
-        l.appendChild(d);
-    });
-    if(!target) card.appendChild(l);
-}
-
-function closeOverlay(){overlay.classList.remove("show")}
-
-/* VOLUME */
-vol.value=.6;audio.volume=.6;
-vol.oninput=e=>{
-    audio.volume=e.target.value;
-    volIcon.textContent=e.target.value==0?"🔇":e.target.value>=.6?"🔊":"🔉";
+popup.onclick=e=>{
+if(e.target===popup)popup.style.display="none";
 };
 
 function format(t){
-    const m=Math.floor(t/60);
-    const s=Math.floor(t%60).toString().padStart(2,"0");
-    return m+":"+s;
+return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
 }
 </script>
 
