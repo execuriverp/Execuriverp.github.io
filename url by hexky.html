@@ -3,154 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BB URL Player • Pro</title>
-
-<link rel="icon" type="image/png" href="favicon.png">
+<title>Boombox Url By Hexky</title>
+<link rel="icon" href="favicon.png">
 
 <style>
 :root{
     --bg:#070b12;
-    --card:#0f1724;
-    --glass:rgba(255,255,255,.04);
-    --accent:#3cf2ff;
-    --accent2:#00c2ff;
+    --card:#121923;
+    --accent:#1db954;
+    --accent2:#1ed760;
     --text:#eaf2f6;
-    --muted:#8fa3b8;
+    --muted:#9fb0c4;
     --border:rgba(255,255,255,.08);
 }
 
-*{
-    box-sizing:border-box;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
-}
+*{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
 
 body{
     margin:0;
-    background:
-        radial-gradient(circle at top,#1b2a40,#070b12 65%);
+    background:linear-gradient(180deg,#0b1322,#070b12);
     color:var(--text);
 }
 
-.container{
-    max-width:760px;
-    margin:auto;
-    padding:18px;
-}
-
-.header{
+.player{
+    max-width:420px;
+    margin:60px auto;
+    background:var(--card);
+    border-radius:26px;
+    padding:24px;
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
     text-align:center;
-    margin-bottom:22px;
 }
 
-.header h1{
-    margin:0;
-    font-size:30px;
-    letter-spacing:1.5px;
-    background:linear-gradient(90deg,var(--accent),#7fffff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.header p{
-    margin-top:6px;
-    font-size:13px;
-    color:var(--muted);
-}
-
-.howto{
-    background:linear-gradient(145deg,#0e1625,#0b1220);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:15px 17px;
-    font-size:13px;
-    line-height:1.6;
-    margin-bottom:22px;
-}
-
-.howto code{
-    background:#050a14;
-    padding:4px 8px;
-    border-radius:6px;
-    color:var(--accent);
-}
-
-.list{
+.cover{
+    width:180px;
+    height:180px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#1db954,#1ed760);
+    margin:0 auto 18px;
     display:flex;
-    flex-direction:column;
-    gap:16px;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    font-weight:900;
+    color:#00310f;
 }
 
-.song{
-    background:
-        linear-gradient(145deg,#121c2d,#0b1322);
-    border-radius:20px;
-    padding:15px;
-    border:1px solid var(--border);
-    box-shadow:0 0 0 1px rgba(60,242,255,.03),
-               0 12px 30px rgba(0,0,0,.45);
-    position:relative;
-    overflow:hidden;
+.title{
+    font-size:22px;
+    font-weight:900;
 }
 
-.song::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(120deg,transparent,rgba(60,242,255,.06),transparent);
-    opacity:.4;
-    pointer-events:none;
-}
-
-.song-title{
-    font-weight:700;
-    font-size:16px;
-    margin-bottom:3px;
-}
-
-.song-meta{
-    font-size:12px;
+.req{
+    font-size:13px;
     color:var(--muted);
     margin-bottom:6px;
 }
 
-.song-url{
+.url{
     font-size:11px;
     color:#9fb9cc;
     word-break:break-all;
-    margin-bottom:10px;
-}
-
-audio{
-    width:100%;
-    margin-bottom:12px;
+    margin-bottom:18px;
 }
 
 .controls{
     display:flex;
-    align-items:center;
-    gap:12px;
+    justify-content:center;
+    gap:22px;
+    margin-bottom:18px;
 }
 
-button{
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    border:none;
-    color:#001016;
-    padding:9px 18px;
-    border-radius:12px;
-    font-size:13px;
-    font-weight:800;
+.controls span{
+    font-size:26px;
     cursor:pointer;
-    box-shadow:0 6px 18px rgba(0,200,255,.35);
+    padding:14px;
+    border-radius:50%;
+    background:#0b1322;
+    box-shadow:0 0 0 1px var(--border);
+    transition:.2s;
 }
 
-button:active{
-    transform:scale(.95);
+.controls span:hover{
+    transform:scale(1.2);
+    background:var(--accent);
+    color:#001a0a;
+}
+
+.actions{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:14px;
+}
+
+.actions button{
+    flex:1;
+    margin:0 4px;
+    background:#0b1322;
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.actions button.active{
+    background:var(--accent);
+    color:#00210f;
+}
+
+.copy-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
 }
 
 .loading{
     width:18px;
     height:18px;
-    border:3px solid rgba(255,255,255,.25);
+    border:3px solid rgba(255,255,255,.2);
     border-top:3px solid var(--accent);
     border-radius:50%;
     animation:spin .8s linear infinite;
@@ -159,87 +133,154 @@ button:active{
 
 .copy-ok{
     width:22px;
-    height:22px;
     display:none;
+}
+
+.volume{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+}
+
+.volume button{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none;
+    padding:10px 18px;
+    border-radius:14px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.list{
+    margin-top:18px;
+    display:none;
+    text-align:left;
+    font-size:13px;
+}
+
+.list div{
+    padding:8px;
+    border-bottom:1px solid var(--border);
+    cursor:pointer;
 }
 
 @keyframes spin{
     to{transform:rotate(360deg);}
 }
-
-.footer{
-    text-align:center;
-    margin:28px 0 12px;
-    font-size:12px;
-    color:var(--muted);
-}
 </style>
 </head>
 
 <body>
-<div class="container">
 
-<div class="header">
-    <h1>BB URL PLAYER</h1>
-    <p>For • Execurive Community</p>
-</div>
+<div class="player">
+    <div class="cover">☊</div>
+    <div class="title" id="title">Loading...</div>
+    <div class="req" id="req"></div>
+    <div class="url" id="url"></div>
 
-<div class="howto">
-<b>How To Use:</b><br>
-<code>/placebb</code> → <code>/setbb</code> → <code>url</code> → paste URL<br><br>
-<b>Jika URL tidak bunyi:</b><br>
-ubah <code>https</code> menjadi <code>http</code> (hapus huruf <b>s</b>)
-</div>
+    <div class="controls">
+        <span onclick="prev()">◁</span>
+        <span onclick="play()">▷</span>
+        <span onclick="pause()">❚❚</span>
+        <span onclick="next()">▷▷</span>
+    </div>
 
-<div class="list" id="songList"></div>
+    <div class="actions">
+        <button id="favBtn" onclick="toggleFav()">♥</button>
+        <button onclick="download()">⬇</button>
+        <button onclick="toggleList()">≡</button>
+    </div>
 
-<div class="footer">
-BB URL Player • By Hexky
-</div>
+    <div class="copy-wrap">
+        <button onclick="copyURL()">Copy URL</button>
+        <div class="loading" id="load"></div>
+        <img src="ceklist.png" class="copy-ok" id="ok">
+    </div>
 
+    <div class="volume">
+        <button onclick="volDown()">-</button>
+        <button onclick="volUp()">+</button>
+    </div>
+
+    <div class="list" id="list"></div>
 </div>
 
 <script>
+let songs=[],index=0,audio=new Audio();
+
 fetch('data/urlbb.json')
-.then(res=>res.json())
-.then(data=>{
-const list=document.getElementById('songList');
-
-data.forEach(song=>{
-const el=document.createElement('div');
-el.className='song';
-
-el.innerHTML=`
-<div class="song-title">${song.title}</div>
-<div class="song-meta">By : ${song.by}</div>
-<div class="song-url">${song.url}</div>
-
-<audio controls src="${song.url}"></audio>
-
-<div class="controls">
-<button onclick="copyURL(this,'${song.url}')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-`;
-list.appendChild(el);
-});
+.then(r=>r.json())
+.then(d=>{
+songs=d;
+initList();
+load(0);
 });
 
-function copyURL(btn,url){
-const c=btn.parentElement;
-const load=c.querySelector('.loading');
-const ok=c.querySelector('.copy-ok');
+const titleEl=title,reqEl=req,urlEl=url,listEl=list,favBtn=document.getElementById("favBtn");
 
-ok.style.display='none';
-load.style.display='block';
+function load(i){
+index=i;
+audio.src=songs[i].url;
+titleEl.innerText="☊ "+songs[i].title;
+reqEl.innerText="request by "+songs[i].by;
+urlEl.innerText=songs[i].url;
+audio.play();
+checkFav();
+}
 
+function play(){audio.play()}
+function pause(){audio.pause()}
+function next(){load((index+1)%songs.length)}
+function prev(){load((index-1+songs.length)%songs.length)}
+
+function volUp(){audio.volume=Math.min(1,audio.volume+0.1)}
+function volDown(){audio.volume=Math.max(0,audio.volume-0.1)}
+
+function copyURL(){
+loadAnim(true);
 setTimeout(()=>{
-navigator.clipboard.writeText(url);
-load.style.display='none';
-ok.style.display='block';
-setTimeout(()=>ok.style.display='none',2000);
+navigator.clipboard.writeText(songs[index].url);
+loadAnim(false,true);
 },700);
+}
+
+function loadAnim(load,ok=false){
+document.getElementById("load").style.display=load?"block":"none";
+document.getElementById("ok").style.display=ok?"block":"none";
+setTimeout(()=>document.getElementById("ok").style.display="none",2000);
+}
+
+function download(){
+const a=document.createElement("a");
+a.href=songs[index].url;
+a.download="";
+a.click();
+}
+
+function toggleFav(){
+let fav=JSON.parse(localStorage.getItem("fav")||"[]");
+const u=songs[index].url;
+fav=fav.includes(u)?fav.filter(x=>x!==u):[...fav,u];
+localStorage.setItem("fav",JSON.stringify(fav));
+checkFav();
+}
+
+function checkFav(){
+let fav=JSON.parse(localStorage.getItem("fav")||"[]");
+favBtn.classList.toggle("active",fav.includes(songs[index].url));
+}
+
+function initList(){
+songs.forEach((s,i)=>{
+const d=document.createElement("div");
+d.innerText=(i+1)+". "+s.title+" — "+s.by;
+d.onclick=()=>load(i);
+listEl.appendChild(d);
+});
+}
+
+function toggleList(){
+listEl.style.display=listEl.style.display==="block"?"none":"block";
 }
 </script>
 
