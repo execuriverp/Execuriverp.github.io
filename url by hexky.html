@@ -84,7 +84,28 @@ html,body{
 /* ===== META ===== */
 .title{font-size:20px;font-weight:900;text-align:center}
 .by{font-size:12px;color:var(--muted);text-align:center}
-.url{font-size:11px;color:#8ab4f8;text-align:center;word-break:break-all}
+
+/* URL + COPY */
+.url-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.url{
+  font-size:11px;
+  color:#8ab4f8;
+  word-break:break-all;
+  max-width:85%;
+}
+.copy-btn{
+  font-size:14px;
+  cursor:pointer;
+  opacity:.75;
+  transition:.2s;
+}
+.copy-btn:active{transform:scale(.9)}
+.copy-btn.copied{color:var(--accent);opacity:1}
 
 /* ===== PROGRESS ===== */
 .progress{
@@ -210,7 +231,11 @@ html,body{
 
   <div class="title" id="title">Loading…</div>
   <div class="by" id="by"></div>
-  <div class="url" id="url"></div>
+
+  <div class="url-wrap">
+    <div class="url" id="url"></div>
+    <div class="copy-btn" id="copyBtn" onclick="copyURL()">📋</div>
+  </div>
 
   <div class="progress">
     <span id="cur">0:00</span>
@@ -311,6 +336,33 @@ function toggleRepeat(){
   rep.classList.toggle("active",repeat);
 }
 audio.onended=()=>repeat?audio.play():next();
+
+/* COPY URL (ALL DEVICE SAFE) */
+function copyURL(){
+  const text=url.textContent;
+  const btn=document.getElementById("copyBtn");
+
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(done);
+  }else{
+    const t=document.createElement("textarea");
+    t.value=text;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    document.body.removeChild(t);
+    done();
+  }
+
+  function done(){
+    btn.textContent="✓";
+    btn.classList.add("copied");
+    setTimeout(()=>{
+      btn.textContent="📋";
+      btn.classList.remove("copied");
+    },1200);
+  }
+}
 
 /* LIST */
 function openList(favOnly){
