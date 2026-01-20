@@ -25,6 +25,11 @@ body{
         linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
         url("bkucing1.png") center/cover no-repeat fixed;
     color:var(--text);
+    transition:backdrop-filter .6s;
+}
+
+body.playing{
+    backdrop-filter:blur(8px);
 }
 
 /* PLAYER */
@@ -35,6 +40,7 @@ body{
     border-radius:28px;
     padding:22px;
     box-shadow:0 40px 100px rgba(0,0,0,.85);
+    position:relative;
 }
 
 /* COVER */
@@ -46,9 +52,21 @@ body{
     align-items:center;
     justify-content:center;
     margin-bottom:18px;
+    position:relative;
 }
 
-/* EQUALIZER */
+.play-dot{
+    position:absolute;
+    top:12px;
+    right:14px;
+    width:10px;height:10px;
+    background:#1db954;
+    border-radius:50%;
+    opacity:0;
+}
+.playing .play-dot{opacity:1}
+
+/* EQ */
 .eq{display:flex;gap:5px;height:40px}
 .eq span{
     width:6px;
@@ -57,10 +75,6 @@ body{
     animation:equalize 1s infinite ease-in-out;
     animation-play-state:paused;
 }
-.eq span:nth-child(2){animation-delay:.15s}
-.eq span:nth-child(3){animation-delay:.3s}
-.eq span:nth-child(4){animation-delay:.45s}
-
 @keyframes equalize{
     0%,100%{height:8px}
     50%{height:40px}
@@ -70,6 +84,15 @@ body{
 .title{font-size:22px;font-weight:900}
 .req{font-size:13px;color:var(--muted)}
 .url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:8px 0}
+
+/* LOADING INFO */
+.loading{
+    font-size:11px;
+    color:#a7f3d0;
+    opacity:0;
+    margin-top:4px;
+}
+.loading.show{opacity:1}
 
 /* PROGRESS */
 .progress{
@@ -124,40 +147,51 @@ body{
     font-weight:800;
     cursor:pointer;
 }
-.actions button.active{
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#000;
-}
 
-/* LIST */
-.list{
+/* OVERLAY LIST CARD */
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    backdrop-filter:blur(8px);
     display:none;
-    max-height:260px;
+    align-items:center;
+    justify-content:center;
+    z-index:99;
+}
+.overlay.show{display:flex}
+
+.list-card{
+    width:90%;
+    max-width:420px;
+    max-height:70vh;
+    background:#121212;
+    border-radius:22px;
+    padding:18px;
     overflow:auto;
-    margin-top:10px;
 }
 
 .song-card{
-    background:var(--card2);
-    border-radius:16px;
-    padding:12px;
     display:flex;
     align-items:center;
     gap:10px;
-    margin-bottom:10px;
-    cursor:pointer;
+    padding:10px;
+    border-radius:14px;
 }
 .song-card:hover{background:#222}
-.song-meta{flex:1}
 .song-title{font-size:14px;font-weight:800}
-.song-by{font-size:11px;color:var(--muted)}
-.song-dur{font-size:11px;color:var(--muted)}
-.song-actions span{cursor:pointer}
+.song-by,.song-dur{font-size:11px;color:var(--muted)}
+.song-dot{
+    width:6px;height:6px;
+    background:#1db954;
+    border-radius:50%;
+    opacity:0;
+}
+.song-card.active .song-dot{opacity:1}
 
 /* MOBILE */
 @media(max-width:480px){
-    .player{margin:10px;border-radius:20px}
-    .cover{height:180px}
+    .player{margin:10px}
 }
 </style>
 </head>
@@ -166,6 +200,7 @@ body{
 
 <div class="player">
     <div class="cover">
+        <div class="play-dot"></div>
         <div class="eq" id="eq">
             <span></span><span></span><span></span><span></span>
         </div>
@@ -174,10 +209,11 @@ body{
     <div class="title" id="title">Loading...</div>
     <div class="req" id="req"></div>
     <div class="url" id="url"></div>
+    <div class="loading" id="loading">Music ini memerlukan beberapa detik untuk dimulai…</div>
 
     <div class="progress">
         <span id="cur">0:00</span>
-        <input type="range" id="seek" value="0">
+        <input type="range" id="seek">
         <span id="dur">0:00</span>
     </div>
 
@@ -193,22 +229,23 @@ body{
     </div>
 
     <div class="actions">
-        <button id="repeatBtn" onclick="toggleRepeat()">🔁</button>
-        <button onclick="toggleList()">☰</button>
-        <button onclick="toggleFav()">★</button>
+        <button onclick="openList()">☰</button>
+        <button onclick="openFav()">★</button>
+        <button onclick="toggleRepeat()">🔁</button>
     </div>
+</div>
 
-    <div class="list" id="list"></div>
+<div class="overlay" id="overlay" onclick="closeList()">
+    <div class="list-card" id="list" onclick="event.stopPropagation()"></div>
 </div>
 
 <script>
-let songs=[],index=0,repeat=false;
+let songs=[],index=0,repeat=false,loadingTimer;
 const audio=new Audio();
 const eq=document.querySelectorAll(".eq span");
 
 fetch("data/urlbb.json").then(r=>r.json()).then(d=>{
     songs=d;
-    buildList();
     load(0);
 });
 
@@ -220,85 +257,71 @@ function load(i){
     url.textContent=songs[i].url;
     audio.play();
     playBtn.textContent="❚❚";
+    document.body.classList.add("playing");
     eq.forEach(e=>e.style.animationPlayState="running");
+    checkLoading();
+    buildList();
 }
-
-audio.onended=()=>repeat?audio.play():next();
 
 function toggle(){
     if(audio.paused){
         audio.play();
         playBtn.textContent="❚❚";
+        document.body.classList.add("playing");
         eq.forEach(e=>e.style.animationPlayState="running");
+        checkLoading();
     }else{
         audio.pause();
         playBtn.textContent="▶";
+        document.body.classList.remove("playing");
         eq.forEach(e=>e.style.animationPlayState="paused");
     }
 }
 
-function toggleRepeat(){
-    repeat=!repeat;
-    repeatBtn.classList.toggle("active",repeat);
+function checkLoading(){
+    loading.classList.remove("show");
+    clearTimeout(loadingTimer);
+    loadingTimer=setTimeout(()=>{
+        if(audio.currentTime===0 && !audio.paused){
+            loading.classList.add("show");
+        }
+    },5000);
 }
 
+audio.ontimeupdate=()=>loading.classList.remove("show");
+
+audio.onended=()=>repeat?audio.play():next();
 function next(){load((index+1)%songs.length)}
 function prev(){load((index-1+songs.length)%songs.length)}
+function toggleRepeat(){repeat=!repeat}
 
-audio.onloadedmetadata=()=>{
-    seek.max=audio.duration;
-    dur.textContent=format(audio.duration);
-};
+function openList(){overlay.classList.add("show")}
+function closeList(){overlay.classList.remove("show")}
+function openFav(){openList()}
 
-audio.ontimeupdate=()=>{
-    seek.value=audio.currentTime;
-    cur.textContent=format(audio.currentTime);
-};
-
-seek.oninput=()=>audio.currentTime=seek.value;
-
-/* VOLUME */
-vol.value=.6;
-audio.volume=.6;
-updateVolIcon(.6);
-
-vol.oninput=e=>{
-    audio.volume=e.target.value;
-    updateVolIcon(e.target.value);
-};
-
-function updateVolIcon(v){
-    volIcon.textContent=v==0?"🔇":v>=.6?"🔊":"🔉";
-}
-
-/* LIST */
 function buildList(){
     list.innerHTML="";
     songs.forEach((s,i)=>{
         const d=document.createElement("div");
-        d.className="song-card";
+        d.className="song-card"+(i===index?" active":"");
         d.innerHTML=`
-            <div class="song-meta">
+            <div class="song-dot"></div>
+            <div style="flex:1">
                 <div class="song-title">${s.title}</div>
                 <div class="song-by">${s.by}</div>
             </div>
             <div class="song-dur">${s.duration||"--:--"}</div>`;
-        d.onclick=()=>load(i);
+        d.onclick=()=>{load(i);closeList();}
         list.appendChild(d);
     });
 }
 
-function toggleList(){
-    list.style.display=list.style.display==="block"?"none":"block";
-}
-
-function toggleFav(){
-    alert("Favorit disimpan otomatis");
-}
-
-function format(t){
-    return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
-}
+/* VOLUME */
+vol.value=.6;audio.volume=.6;
+vol.oninput=e=>{
+    audio.volume=e.target.value;
+    volIcon.textContent=e.target.value==0?"🔇":e.target.value>=.6?"🔊":"🔉";
+};
 </script>
 
 </body>
