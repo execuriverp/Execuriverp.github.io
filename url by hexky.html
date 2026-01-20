@@ -9,21 +9,19 @@
 :root{
   --accent:#1db954;
   --accent2:#1ed760;
-  --text:#ffffff;
-  --muted:#b3b3b3;
+  --text:#fff;
+  --muted:#a7a7a7;
   --card:#121212;
-  --card2:#1a1a1a;
+  --card2:#1b1b1b;
 }
 
 *{
   box-sizing:border-box;
   font-family:Inter,system-ui,sans-serif;
-  -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
   margin:0;
-  padding:0;
   width:100%;
   height:100%;
   overflow:hidden;
@@ -31,132 +29,93 @@ html,body{
   color:var(--text);
 }
 
-/* ================= BACKGROUND ================= */
+/* ===== BACKGROUND ===== */
 .bg{
   position:fixed;
   inset:0;
-  height:100dvh;
   background:
-    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.9)),
+    linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.9)),
     url("bkucing1.png") center/cover no-repeat;
   z-index:0;
 }
 
-/* ================= APP ================= */
+/* ===== APP ===== */
 .app{
   position:relative;
   z-index:1;
   height:100dvh;
   max-width:480px;
   margin:auto;
-  padding:env(safe-area-inset-top,14px) 14px env(safe-area-inset-bottom,14px);
+  padding:14px;
   display:flex;
   flex-direction:column;
 }
 
-/* ================= HEADER ================= */
+/* ===== HEADER ===== */
 .header{
   font-size:22px;
   font-weight:900;
-  margin-bottom:10px;
 }
 
-/* ================= COVER ================= */
+/* ===== COVER ===== */
 .cover{
-  height:36dvh;
+  height:34dvh;
   border-radius:22px;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   display:flex;
   align-items:center;
   justify-content:center;
-  margin-bottom:12px;
+  margin:10px 0;
 }
 
 /* EQ */
-.eq{
-  display:flex;
-  gap:6px;
-  align-items:flex-end;
-  height:46px;
-}
+.eq{display:flex;gap:6px;height:46px;align-items:flex-end}
 .eq span{
-  width:6px;
-  background:#000;
-  border-radius:6px;
+  width:6px;background:#000;border-radius:6px;
   animation:eq .8s infinite ease-in-out;
   animation-play-state:paused;
 }
 .eq span:nth-child(2){animation-delay:.15s}
 .eq span:nth-child(3){animation-delay:.3s}
-@keyframes eq{
-  0%,100%{height:10px}
-  50%{height:46px}
-}
+@keyframes eq{0%,100%{height:10px}50%{height:46px}}
 
-/* ================= META ================= */
+/* ===== META ===== */
 .title{font-size:20px;font-weight:900}
 .by{font-size:12px;color:var(--muted)}
-.url{font-size:11px;color:#8ab4f8;word-break:break-all;margin:4px 0}
+.url{font-size:11px;color:#8ab4f8}
 
-/* ================= PROGRESS ================= */
+/* ===== PROGRESS ===== */
 .progress{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:11px;
-  color:var(--muted);
+  display:flex;gap:8px;align-items:center;
+  font-size:11px;color:var(--muted);
 }
 .progress input{flex:1;accent-color:var(--accent)}
 
-/* ================= CONTROLS ================= */
+/* ===== CONTROLS ===== */
 .controls{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:26px;
+  display:flex;justify-content:center;gap:26px;
   margin:10px 0;
 }
-.controls span{font-size:20px;cursor:pointer}
-
 .play{
-  width:58px;
-  height:58px;
-  border-radius:50%;
+  width:58px;height:58px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:26px;
-  color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:#000;
 }
 
-/* ================= VOLUME ================= */
-.volume{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:12px;
-  color:var(--muted);
-  margin-top:4px;
-}
-.volume input{
-  flex:1;
-  accent-color:var(--accent);
-}
+/* ===== VOLUME ===== */
+.volume{display:flex;gap:10px;font-size:12px;color:var(--muted)}
+.volume input{flex:1;accent-color:var(--accent)}
 
-/* ================= ACTIONS ================= */
+/* ===== ACTIONS ===== */
 .actions{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:10px;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;margin-top:10px;
 }
 .actions button{
   background:var(--card2);
-  border:none;
-  color:#fff;
-  padding:12px;
-  border-radius:18px;
+  border:none;color:#fff;
+  padding:12px;border-radius:18px;
   font-weight:800;
 }
 .actions button.active{
@@ -164,40 +123,44 @@ html,body{
   color:#000;
 }
 
-/* ================= POPUP LIST ================= */
+/* ===== POPUP LIST ===== */
 .popup{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:none;
-  align-items:flex-end;
-  z-index:20;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;z-index:20;
 }
-
 .sheet{
-  width:100%;
-  max-width:480px;
-  margin:auto;
+  position:absolute;
+  bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  max-height:70dvh;
   background:#0f0f0f;
   border-radius:26px 26px 0 0;
   padding:14px;
+  overflow-y:auto;
 }
 
-/* SONG CARD (NO SCROLL, FIT SCALE) */
+/* ===== SONG CARD (SMALL & MODERN) ===== */
 .song{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px;
+  display:flex;align-items:center;gap:12px;
   background:var(--card);
-  border-radius:16px;
+  border-radius:14px;
+  padding:10px;
   margin-bottom:8px;
 }
-.song-title{font-size:13px;font-weight:800;color:#fff}
+.thumb{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,#333,#111);
+}
+.song-meta{flex:1}
+.song-title{font-size:13px;font-weight:800}
 .song-by{font-size:11px;color:var(--muted)}
 .song-dur{font-size:11px;color:var(--muted)}
-
-.song:nth-child(n+6){display:none;}
+.fav-btn{
+  font-size:16px;
+  cursor:pointer;
+}
+.fav-btn.active{color:var(--accent)}
 </style>
 </head>
 
@@ -206,7 +169,6 @@ html,body{
 <div class="bg"></div>
 
 <div class="app">
-
   <div class="header">🎧 ExeMusic</div>
 
   <div class="cover">
@@ -227,7 +189,7 @@ html,body{
 
   <div class="controls">
     <span onclick="prev()">⏮</span>
-    <div class="play" onclick="toggle()" id="play">▶</div>
+    <div class="play" id="play" onclick="toggle()">▶</div>
     <span onclick="next()">⏭</span>
   </div>
 
@@ -241,7 +203,6 @@ html,body{
     <button onclick="openList(false)">☰</button>
     <button onclick="openList(true)">★</button>
   </div>
-
 </div>
 
 <div class="popup" id="popup">
@@ -249,33 +210,46 @@ html,body{
 </div>
 
 <script>
-let songs=[],i=0,repeat=false,fav=[];
+let songs=[],i=0,repeat=false;
+let fav=JSON.parse(localStorage.getItem("exeFav")||"[]");
 const audio=new Audio();
 const eq=document.querySelectorAll(".eq span");
 
+/* LOAD DATA */
 fetch("data/urlbb.json").then(r=>r.json()).then(d=>{
   songs=d;
-  fav=JSON.parse(localStorage.getItem("bbFav")||"[]");
+  preloadDurations();
   load(0);
 });
+
+/* PRELOAD DURATION FIX */
+function preloadDurations(){
+  songs.forEach((s,idx)=>{
+    const a=new Audio();
+    a.src=s.url;
+    a.onloadedmetadata=()=>{
+      songs[idx].duration=format(a.duration);
+    };
+  });
+}
 
 function load(n){
   i=n;
   audio.src=songs[n].url;
-  title.innerText=songs[n].title;
-  by.innerText="request by "+songs[n].by;
-  url.innerText=songs[n].url;
+  title.textContent=songs[n].title;
+  by.textContent="request by "+songs[n].by;
+  url.textContent=songs[n].url;
   audio.play();
-  play.innerText="❚❚";
+  play.textContent="❚❚";
   eq.forEach(e=>e.style.animationPlayState="running");
 }
 
 function toggle(){
   if(audio.paused){
-    audio.play();play.innerText="❚❚";
+    audio.play();play.textContent="❚❚";
     eq.forEach(e=>e.style.animationPlayState="running");
   }else{
-    audio.pause();play.innerText="▶";
+    audio.pause();play.textContent="▶";
     eq.forEach(e=>e.style.animationPlayState="paused");
   }
 }
@@ -283,15 +257,14 @@ function toggle(){
 function prev(){load((i-1+songs.length)%songs.length)}
 function next(){load((i+1)%songs.length)}
 
-audio.onloadedmetadata=()=>{seek.max=audio.duration;dur.innerText=f(audio.duration)}
-audio.ontimeupdate=()=>{seek.value=audio.currentTime;cur.innerText=f(audio.currentTime)}
+audio.onloadedmetadata=()=>{seek.max=audio.duration;dur.textContent=format(audio.duration)}
+audio.ontimeupdate=()=>{seek.value=audio.currentTime;cur.textContent=format(audio.currentTime)}
 seek.oninput=()=>audio.currentTime=seek.value;
 
-vol.value=0.6;
-audio.volume=0.6;
+vol.value=0.6;audio.volume=0.6;
 vol.oninput=e=>{
   audio.volume=e.target.value;
-  volIcon.innerText=e.target.value==0?"🔇":e.target.value<0.6?"🔉":"🔊";
+  volIcon.textContent=e.target.value==0?"🔇":e.target.value<0.6?"🔉":"🔊";
 };
 
 function toggleRepeat(){
@@ -300,24 +273,38 @@ function toggleRepeat(){
 }
 audio.onended=()=>repeat?audio.play():next();
 
-function openList(f){
-  popup.style.display="flex";
+/* LIST */
+function openList(favOnly){
+  popup.style.display="block";
   sheet.innerHTML="";
   songs.forEach((s,n)=>{
-    if(f && !fav.includes(s.url))return;
+    if(favOnly && !fav.includes(s.url))return;
     sheet.innerHTML+=`
-    <div class="song" onclick="load(${n});popup.style.display='none'">
-      <div style="flex:1">
+    <div class="song">
+      <div class="thumb"></div>
+      <div class="song-meta" onclick="load(${n});popup.style.display='none'">
         <div class="song-title">${s.title}</div>
         <div class="song-by">${s.by}</div>
       </div>
       <div class="song-dur">${s.duration||"0:00"}</div>
+      <div class="fav-btn ${fav.includes(s.url)?"active":""}"
+           onclick="toggleFav('${s.url}',event)">★</div>
     </div>`;
   });
 }
 
+function toggleFav(u,e){
+  e.stopPropagation();
+  fav=fav.includes(u)?fav.filter(x=>x!==u):[...fav,u];
+  localStorage.setItem("exeFav",JSON.stringify(fav));
+  openList(false);
+}
+
 popup.onclick=e=>{if(e.target===popup)popup.style.display="none"}
-function f(t){return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0")}
+
+function format(t){
+  return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
+}
 </script>
 
 </body>
