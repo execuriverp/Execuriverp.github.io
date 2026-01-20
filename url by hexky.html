@@ -3,33 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>bb url top4top</title>
+<title>BB URL Player • Pro</title>
 
 <link rel="icon" type="image/png" href="favicon.png">
 
 <style>
 :root{
-    --bg:#0b0f14;
-    --card:#121923;
+    --bg:#070b12;
+    --card:#0f1724;
+    --glass:rgba(255,255,255,.04);
     --accent:#3cf2ff;
+    --accent2:#00c2ff;
     --text:#eaf2f6;
-    --muted:#8a9aa9;
+    --muted:#8fa3b8;
+    --border:rgba(255,255,255,.08);
 }
 
 *{
     box-sizing:border-box;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
 }
 
 body{
     margin:0;
     background:
-        radial-gradient(circle at top, #1b2735, #0b0f14 60%);
+        radial-gradient(circle at top,#1b2a40,#070b12 65%);
     color:var(--text);
 }
 
 .container{
-    max-width:720px;
+    max-width:760px;
     margin:auto;
     padding:18px;
 }
@@ -41,29 +44,32 @@ body{
 
 .header h1{
     margin:0;
-    font-size:28px;
-    letter-spacing:1px;
+    font-size:30px;
+    letter-spacing:1.5px;
+    background:linear-gradient(90deg,var(--accent),#7fffff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
 .header p{
     margin-top:6px;
+    font-size:13px;
     color:var(--muted);
-    font-size:14px;
 }
 
 .howto{
-    background:linear-gradient(145deg,#101826,#0e1520);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:14px 16px;
+    background:linear-gradient(145deg,#0e1625,#0b1220);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:15px 17px;
     font-size:13px;
     line-height:1.6;
-    margin-bottom:20px;
+    margin-bottom:22px;
 }
 
 .howto code{
-    background:#0b1220;
-    padding:3px 7px;
+    background:#050a14;
+    padding:4px 8px;
     border-radius:6px;
     color:var(--accent);
 }
@@ -71,37 +77,52 @@ body{
 .list{
     display:flex;
     flex-direction:column;
-    gap:14px;
+    gap:16px;
 }
 
 .song{
-    background:linear-gradient(145deg,#131c2b,#0f1623);
-    border-radius:18px;
-    padding:14px;
-    border:1px solid rgba(255,255,255,.05);
+    background:
+        linear-gradient(145deg,#121c2d,#0b1322);
+    border-radius:20px;
+    padding:15px;
+    border:1px solid var(--border);
+    box-shadow:0 0 0 1px rgba(60,242,255,.03),
+               0 12px 30px rgba(0,0,0,.45);
+    position:relative;
+    overflow:hidden;
+}
+
+.song::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(60,242,255,.06),transparent);
+    opacity:.4;
+    pointer-events:none;
 }
 
 .song-title{
-    font-weight:600;
-    font-size:15px;
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:3px;
+}
+
+.song-meta{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
 }
 
 .song-url{
     font-size:11px;
-    color:var(--muted);
-    margin:4px 0 6px;
+    color:#9fb9cc;
     word-break:break-all;
-}
-
-.copy-count{
-    font-size:11px;
-    color:#7fdfff;
-    margin-bottom:6px;
+    margin-bottom:10px;
 }
 
 audio{
     width:100%;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 
 .controls{
@@ -111,18 +132,19 @@ audio{
 }
 
 button{
-    background:linear-gradient(135deg,var(--accent),#00c8ff);
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
     border:none;
-    color:#000;
-    padding:9px 16px;
-    border-radius:10px;
+    color:#001016;
+    padding:9px 18px;
+    border-radius:12px;
     font-size:13px;
-    font-weight:700;
+    font-weight:800;
     cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,200,255,.35);
 }
 
 button:active{
-    transform:scale(.96);
+    transform:scale(.95);
 }
 
 .loading{
@@ -147,7 +169,7 @@ button:active{
 
 .footer{
     text-align:center;
-    margin:26px 0 10px;
+    margin:28px 0 12px;
     font-size:12px;
     color:var(--muted);
 }
@@ -165,143 +187,11 @@ button:active{
 <div class="howto">
 <b>How To Use:</b><br>
 <code>/placebb</code> → <code>/setbb</code> → <code>url</code> → paste URL<br><br>
-<b>Jika URL tidak jalan / boombox tidak bunyi:</b><br>
+<b>Jika URL tidak bunyi:</b><br>
 ubah <code>https</code> menjadi <code>http</code> (hapus huruf <b>s</b>)
 </div>
 
-<div class="list">
-
-<!-- 1 -->
-<div class="song" data-id="dj-lowkey">
-<div class="song-title">DJ Lowkey</div>
-<div class="song-url">https://e.top4top.io/m_3663xnyxb1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://e.top4top.io/m_3663xnyxb1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://e.top4top.io/m_3663xnyxb1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 2 -->
-<div class="song" data-id="dj-barudak">
-<div class="song-title">DJ Barudak Phonk Teror - Aloy</div>
-<div class="song-url">https://l.top4top.io/m_3663el4ki1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://l.top4top.io/m_3663el4ki1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://l.top4top.io/m_3663el4ki1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 3 -->
-<div class="song" data-id="poppin-club">
-<div class="song-title">DJ Poppin The Club</div>
-<div class="song-url">https://a.top4top.io/m_3663e5c4g1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://a.top4top.io/m_3663e5c4g1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://a.top4top.io/m_3663e5c4g1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 4 -->
-<div class="song" data-id="gak-dulu">
-<div class="song-title">DJ Gak Dulu</div>
-<div class="song-url">https://k.top4top.io/m_3663k2izf1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://k.top4top.io/m_3663k2izf1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://k.top4top.io/m_3663k2izf1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 5 -->
-<div class="song" data-id="hero-breakbeat">
-<div class="song-title">DJ Hero Breakbeat Remix</div>
-<div class="song-url">https://j.top4top.io/m_3663j8iv41.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://j.top4top.io/m_3663j8iv41.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://j.top4top.io/m_3663j8iv41.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 6 -->
-<div class="song" data-id="sedia-hujan">
-<div class="song-title">Sedia Aku Sebelum Hujan</div>
-<div class="song-url">https://j.top4top.io/m_3663vjzab1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://j.top4top.io/m_3663vjzab1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://j.top4top.io/m_3663vjzab1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 7 -->
-<div class="song" data-id="monolog">
-<div class="song-title">Monolog</div>
-<div class="song-url">https://h.top4top.io/m_3663ws86l1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://h.top4top.io/m_3663ws86l1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://h.top4top.io/m_3663ws86l1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 8 -->
-<div class="song" data-id="jokowi" data-jokowi>
-<div class="song-title">JKT48 Jokowi</div>
-<div class="song-url">https://l.top4top.io/m_3663gpm0b1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://l.top4top.io/m_3663gpm0b1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://l.top4top.io/m_3663gpm0b1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 9 -->
-<div class="song" data-id="jokowi-slow">
-<div class="song-title">JKT48 Jokowi (Slow)</div>
-<div class="song-url">https://g.top4top.io/m_3663oirnh1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://g.top4top.io/m_3663oirnh1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://g.top4top.io/m_3663oirnh1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-<!-- 10 -->
-<div class="song" data-id="prabowo">
-<div class="song-title">JKT48 Prabowo</div>
-<div class="song-url">https://l.top4top.io/m_3663iy1xi1.mp3</div>
-<div class="copy-count">Total Copy: <span></span></div>
-<audio controls src="https://l.top4top.io/m_3663iy1xi1.mp3"></audio>
-<div class="controls">
-<button onclick="copyURL(this,'https://l.top4top.io/m_3663iy1xi1.mp3')">Salin URL</button>
-<div class="loading"></div>
-<img src="ceklist.png" class="copy-ok">
-</div>
-</div>
-
-</div>
+<div class="list" id="songList"></div>
 
 <div class="footer">
 BB URL Player • By Hexky
@@ -310,10 +200,36 @@ BB URL Player • By Hexky
 </div>
 
 <script>
+fetch('data/urlbb.json')
+.then(res=>res.json())
+.then(data=>{
+const list=document.getElementById('songList');
+
+data.forEach(song=>{
+const el=document.createElement('div');
+el.className='song';
+
+el.innerHTML=`
+<div class="song-title">${song.title}</div>
+<div class="song-meta">By : ${song.by}</div>
+<div class="song-url">${song.url}</div>
+
+<audio controls src="${song.url}"></audio>
+
+<div class="controls">
+<button onclick="copyURL(this,'${song.url}')">Salin URL</button>
+<div class="loading"></div>
+<img src="ceklist.png" class="copy-ok">
+</div>
+`;
+list.appendChild(el);
+});
+});
+
 function copyURL(btn,url){
-const c = btn.parentElement;
-const load = c.querySelector('.loading');
-const ok = c.querySelector('.copy-ok');
+const c=btn.parentElement;
+const load=c.querySelector('.loading');
+const ok=c.querySelector('.copy-ok');
 
 ok.style.display='none';
 load.style.display='block';
@@ -322,25 +238,9 @@ setTimeout(()=>{
 navigator.clipboard.writeText(url);
 load.style.display='none';
 ok.style.display='block';
-setTimeout(()=> ok.style.display='none',2000);
+setTimeout(()=>ok.style.display='none',2000);
 },700);
 }
-
-// === FIX FAKE COPY (ANTI RESET) ===
-document.querySelectorAll('.song').forEach(song=>{
-const id = song.dataset.id;
-const span = song.querySelector('.copy-count span');
-const key = 'bb_copy_' + id;
-
-let value = localStorage.getItem(key);
-
-if(value === null){
-value = song.hasAttribute('data-jokowi') ? 20 : Math.floor(Math.random()*10);
-localStorage.setItem(key,value);
-}
-
-span.textContent = value;
-});
 </script>
 
 </body>
