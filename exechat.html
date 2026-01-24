@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V29 Super Banned & Guest Control</title>
+    <title>ExeChat | V30 Owner Edition</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -11,17 +11,21 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050507; --panel: rgba(22, 22, 28, 0.98); --main: #3b82f6; --admin: #ef4444; --member: #10b981; }
+        :root { --bg: #050507; --panel: rgba(22, 22, 28, 0.98); --main: #3b82f6; --admin: #ef4444; --owner: #f59e0b; --member: #10b981; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s; }
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* BANNED SCREEN */
-        #banned-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .ban-card { background: linear-gradient(145deg, #200, #000); border: 2px solid var(--admin); padding: 40px 20px; border-radius: 30px; width: 100%; max-width: 400px; box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); }
-
-        .name-admin { background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 800; }
+        /* GRADIENT NAMES */
+        .name-owner { background: linear-gradient(to right, #f59e0b, #ef4444, #f59e0b); background-size: 200%; animation: rb 2s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+        .name-admin-v1 { background: linear-gradient(45deg, #ff0000, #ff7700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        .name-admin-v2 { background: linear-gradient(45deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        .name-admin-v3 { background: linear-gradient(45deg, #6a11cb, #2575fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
         .name-member { color: var(--member) !important; font-weight: 800; }
         @keyframes rb { to { background-position: 200% center; } }
+
+        /* SCREENS */
+        #banned-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .ban-card { background: #100; border: 2px solid var(--admin); padding: 40px 20px; border-radius: 30px; width: 100%; max-width: 400px; }
 
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; width: 85%; max-width: 320px; pointer-events: none; }
         .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px; border-radius: 12px; text-align: center; font-size: 11px; box-shadow: 0 10px 30px #000; pointer-events: auto; }
@@ -35,7 +39,7 @@
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 14px; background: #16161a; border: 1px solid #222; align-self: flex-start; }
         .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 18px; margin-bottom: 10px; font-size: 12px; }
 
-        #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
+        #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--owner); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
         #panel { position: fixed; bottom: 210px; right: 20px; width: 280px; background: var(--panel); border: 1px solid #333; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 70vh; overflow-y: auto; }
 
         .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 5px; }
@@ -48,73 +52,56 @@
 
 <div id="banned-screen">
     <div class="ban-card">
-        <h1 style="color:var(--admin); margin:0; font-size:40px">BANNED</h1>
-        <p style="color:#666; font-size:12px">Access to ExeChat has been revoked.</p>
+        <h1 style="color:var(--admin); margin:0;">BANNED</h1>
         <hr style="border:0; border-top:1px solid #333; margin:20px 0">
-        <div style="text-align:left; font-size:13px; color:#aaa; line-height:1.8">
-            <div>BY: <span id="ban-by" style="color:#fff"></span></div>
-            <div>REASON: <span id="ban-reason" style="color:#fff"></span></div>
-            <div>DATE: <span id="ban-date" style="color:#fff"></span></div>
-        </div>
-        <button class="p-btn" style="margin-top:30px" onclick="location.reload()">REFRESH</button>
+        <div id="ban-info" style="text-align:left; font-size:12px; color:#aaa"></div>
+        <button class="p-btn" style="margin-top:20px" onclick="location.reload()">REFRESH</button>
     </div>
 </div>
 
 <div id="toast-box"></div>
 
-<div id="modal-login" class="modal">
-    <div class="modal-content">
-        <h3>Login Account</h3>
-        <input type="text" id="li-user" placeholder="Username">
-        <input type="password" id="li-pass" placeholder="Password">
-        <button class="p-btn" style="background:var(--main)" onclick="doLogin()">SIGN IN</button>
-        <p style="font-size:10px; color:#666">Belum punya akun? <span style="color:var(--main); cursor:pointer" onclick="closeM('modal-login'); openM('modal-reg')">Daftar</span></p>
-        <button class="p-btn" onclick="closeM('modal-login')">BATAL</button>
-    </div>
-</div>
-
-<div id="modal-reg" class="modal">
-    <div class="modal-content">
-        <h3>Register</h3>
-        <input type="text" id="re-user" placeholder="Username (Unik)">
-        <input type="email" id="re-email" placeholder="Email Aktif">
-        <input type="password" id="re-pass" placeholder="Password">
-        <button class="p-btn" style="background:var(--main)" onclick="doRegister()">REGISTER & VERIFY</button>
-        <button class="p-btn" onclick="closeM('modal-reg')">BATAL</button>
-    </div>
-</div>
+<div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="Username"><input type="password" id="li-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doLogin()">SIGN IN</button><button class="p-btn" onclick="closeM('modal-login')">BATAL</button></div></div>
+<div id="modal-reg" class="modal"><div class="modal-content"><h3>Register</h3><input type="text" id="re-user" placeholder="Username"><input type="email" id="re-email" placeholder="Email"><input type="password" id="re-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doRegister()">DAFTAR</button><button class="p-btn" onclick="closeM('modal-reg')">BATAL</button></div></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:10px">
         <div onclick="openProfile()" style="cursor:pointer; background:#222; padding:8px; border-radius:10px">⚙️</div>
         <div><span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span><div id="my-name" style="font-size:10px; color:#666">Guest Mode</div></div>
     </div>
-    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN / REG</button>
+    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN</button>
 </header>
 
-<div id="static-area" style="padding:10px 20px 0;"><div id="anno-box"></div></div>
 <div id="chat-box"></div>
 
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
-    <h4 style="margin:0; color:var(--admin)">🛡️ ADMIN PANEL</h4>
-    <button class="p-btn" id="guestChatBtn" onclick="toggleGuestChat()">GUEST CHAT: OFF</button>
-    <button class="p-btn" id="mtBtn" onclick="toggleMT()">MAINTENANCE: OFF</button>
+    <h4 id="panel-title" style="margin:0; color:var(--owner)">PANEL</h4>
     
-    <hr style="border-top:1px solid #333">
-    <p style="font-size:10px; color:#666; margin:0 0 5px 0">BAN SYSTEM</p>
-    <input type="text" id="target-user" placeholder="Username Target">
-    <input type="text" id="ban-reason-input" placeholder="Alasan Banned">
-    <button class="p-btn" style="background:var(--admin)" onclick="bannedUser()">EXECUTE BAN</button>
-    
-    <hr style="border-top:1px solid #333">
-    <input type="text" id="a-ann" placeholder="Pengumuman...">
-    <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
+    <div id="admin-tools">
+        <button class="p-btn" id="guestChatBtn" onclick="toggleGuestChat()">GUEST CHAT: OFF</button>
+        <button class="p-btn" onclick="openM('modal-vote')">VOTE SYSTEM</button>
+        <input type="text" id="a-ann" placeholder="Announcement...">
+        <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
+    </div>
+
+    <div id="owner-tools" style="display:none; border-top:1px solid #333; padding-top:10px;">
+        <p style="font-size:10px; color:var(--owner)">OWNER EXCLUSIVE</p>
+        <input type="text" id="target-user" placeholder="Username Target">
+        <input type="text" id="ban-reason" placeholder="Alasan (Ban/Mute)">
+        <input type="number" id="mute-time" placeholder="Mute (Menit)">
+        <div style="display:flex; gap:5px">
+            <button class="p-btn" style="background:var(--admin); flex:1" onclick="executePower('banned')">BAN</button>
+            <button class="p-btn" style="background:#f59e0b; flex:1" onclick="executePower('mute')">MUTE</button>
+        </div>
+        <button class="p-btn" style="background:var(--main)" onclick="setRole('admin')">SET ADMIN</button>
+        <button class="p-btn" style="background:#444" onclick="executePower('member')">UNBAN/UNMUTE</button>
+    </div>
 </div>
 
 <div class="footer-area">
     <div style="display:flex; gap:10px; max-width:800px; margin:0 auto;">
-        <input type="text" id="u-msg" placeholder="Pesan..." onkeypress="if(event.key=='Enter') hS()">
+        <input type="text" id="u-msg" placeholder="Ketik pesan..." onkeypress="if(event.key=='Enter') hS()">
         <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button>
     </div>
 </div>
@@ -130,26 +117,35 @@
     const auth = firebase.auth();
 
     let myData = { name: "Guest", role: "guest", id: "" };
-    let isMT = false;
-    let guestChatAllowed = false;
+    let isMT = false, guestChatAllowed = false;
 
-    // Persist Login
+    // Login Check
     const saved = localStorage.getItem("exeUser");
     if(saved) {
         myData = JSON.parse(saved);
         document.getElementById('my-name').innerText = myData.name;
         document.getElementById('btn-login').style.display = 'none';
-        if(myData.role === 'admin') document.getElementById('launcher').style.display = 'flex';
         
-        // Realtime Ban Check
+        if(myData.role === 'admin' || myData.role === 'owner') {
+            document.getElementById('launcher').style.display = 'flex';
+            if(myData.role === 'owner') {
+                document.getElementById('owner-tools').style.display = 'block';
+                document.getElementById('panel-title').innerText = "🛡️ OWNER PANEL";
+            } else {
+                document.getElementById('panel-title').innerText = "🛡️ ADMIN PANEL";
+            }
+        }
+
+        // Realtime Check (Ban & Mute)
         db.ref("users/" + myData.id).on("value", s => {
             const d = s.val();
-            if(d && d.role === 'banned') {
-                document.getElementById('ban-by').innerText = d.bannedBy || "System";
-                document.getElementById('ban-reason').innerText = d.reason || "Violation";
-                document.getElementById('ban-date').innerText = d.banDate || "-";
+            if(!d) return;
+            if(d.role === 'banned') {
+                document.getElementById('ban-info').innerHTML = `BY: ${d.bannedBy}<br>REASON: ${d.reason}<br>DATE: ${d.banDate}`;
                 document.getElementById('banned-screen').style.display = 'flex';
             }
+            myData.muteUntil = d.muteUntil || 0;
+            myData.role = d.role; // Update role real-time
         });
     }
 
@@ -164,9 +160,7 @@
 
     // --- AUTH ---
     async function doRegister() {
-        const u = document.getElementById('re-user').value.trim().toLowerCase();
-        const e = document.getElementById('re-email').value.trim();
-        const p = document.getElementById('re-pass').value.trim();
+        const u = document.getElementById('re-user').value.trim().toLowerCase(), e = document.getElementById('re-email').value.trim(), p = document.getElementById('re-pass').value.trim();
         if(!u || !e || !p) return showToast("Lengkapi data!");
         try {
             const snap = await db.ref("users/" + u).once("value");
@@ -174,93 +168,99 @@
             const cred = await auth.createUserWithEmailAndPassword(e, p);
             await cred.user.sendEmailVerification();
             await db.ref("users/" + u).set({ username: u, email: e, role: "member", isVerified: false, uid: cred.user.uid });
-            showToast("Verifikasi dikirim ke Email!");
-            closeM('modal-reg');
+            showToast("Cek Email Verifikasi!"); closeM('modal-reg');
         } catch (err) { showToast(err.message); }
     }
 
     async function doLogin() {
-        const uIn = document.getElementById('li-user').value.trim().toLowerCase();
-        const pIn = document.getElementById('li-pass').value.trim();
+        const uIn = document.getElementById('li-user').value.trim().toLowerCase(), pIn = document.getElementById('li-pass').value.trim();
         try {
             const snap = await db.ref("users/" + uIn).once("value");
-            if(!snap.exists()) return showToast("User tidak ada!");
             const userData = snap.val();
             const cred = await auth.signInWithEmailAndPassword(userData.email, pIn);
-            if(!cred.user.emailVerified) { await auth.signOut(); return showToast("Verif Email dulu!"); }
+            if(!cred.user.emailVerified) return showToast("Verif Email dulu!");
             localStorage.setItem("exeUser", JSON.stringify({ name: userData.username, role: userData.role, id: uIn }));
             location.reload();
-        } catch (err) { showToast("Login Gagal!"); }
+        } catch (err) { showToast("Gagal Login!"); }
     }
 
-    // --- CHAT ---
+    // --- CHAT LOGIC ---
     function hS() {
-        if(myData.role === 'guest' && !guestChatAllowed) return showToast("Admin mematikan Guest Chat!");
+        if(myData.role === 'guest' && !guestChatAllowed) return showToast("Guest Chat OFF!");
+        if(myData.role === 'banned') return;
+        if(myData.muteUntil > Date.now()) {
+            const sisa = Math.ceil((myData.muteUntil - Date.now()) / 60000);
+            return showToast(`Muted! Sisa ${sisa} menit.`);
+        }
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if(!t) return;
-        if(isMT && myData.role !== 'admin') return showToast("Maintenance!");
         db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role });
         i.value = "";
     }
 
-    db.ref("messages").limitToLast(50).on("value", s => {
+    db.ref("messages").limitToLast(40).on("value", s => {
         const b = document.getElementById('chat-box'); b.innerHTML = "";
         s.forEach(c => {
             const d = c.val(), v = document.createElement('div');
             v.className = "msg";
-            let nC = (d.role === 'admin') ? "name-admin" : (d.role === 'member' ? "name-member" : "");
-            v.innerHTML = `<span class="${nC}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
+            let roleClass = "";
+            if(d.role === 'owner') roleClass = "name-owner";
+            else if(d.role === 'admin') roleClass = "name-admin-v1";
+            else if(d.role === 'member') roleClass = "name-member";
+            
+            v.innerHTML = `<span class="${roleClass}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
             b.appendChild(v);
         });
         b.scrollTop = b.scrollHeight;
     });
 
-    // --- ADMIN ---
-    db.ref("room_status/guest_chat").on("value", s => {
-        guestChatAllowed = s.val() || false;
-        const btn = document.getElementById('guestChatBtn');
-        if(btn) btn.innerText = guestChatAllowed ? "GUEST CHAT: ON" : "GUEST CHAT: OFF";
-    });
-
-    db.ref("room_status/maint").on("value", s => {
-        isMT = s.val() || false;
-        const btn = document.getElementById('mtBtn');
-        if(btn) btn.innerText = isMT ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
-    });
-
-    function toggleGuestChat() { db.ref("room_status/guest_chat").set(!guestChatAllowed); }
-    function toggleMT() { db.ref("room_status/maint").set(!isMT); }
-
-    function bannedUser() {
+    // --- OWNER/ADMIN POWERS ---
+    function executePower(type) {
+        if(myData.role !== 'owner') return showToast("Hanya Owner!");
         const target = document.getElementById('target-user').value.trim().toLowerCase();
-        const reason = document.getElementById('ban-reason-input').value.trim() || "Violation of rules";
-        if(!target) return showToast("Siapa yang mau di ban?");
-        
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('id-ID', { year:'numeric', month:'long', day:'numeric' }) + " Jam " + now.getHours() + ":" + now.getMinutes();
+        const reason = document.getElementById('ban-reason').value.trim() || "No reason";
+        const mins = parseInt(document.getElementById('mute-time').value) || 0;
 
-        db.ref("users/" + target).update({
-            role: "banned",
-            reason: reason,
-            bannedBy: myData.name,
-            banDate: dateStr
-        }).then(() => {
-            showToast(target + " di-banned!");
-            togP();
+        db.ref("users/" + target).once("value").then(s => {
+            const d = s.val();
+            if(!d) return showToast("User tidak ada!");
+            if(d.role === 'owner') return showToast("Gak bisa senggol Owner!");
+
+            let upd = { role: type };
+            if(type === 'banned') {
+                upd.reason = reason; upd.bannedBy = myData.name;
+                upd.banDate = new Date().toLocaleString('id-ID');
+            } else if(type === 'mute') {
+                upd.muteUntil = Date.now() + (mins * 60000);
+                upd.mutedBy = myData.name;
+                upd.role = d.role; // Mute tidak ubah role
+            } else if(type === 'member') {
+                upd.muteUntil = 0; // Unmute/Unban
+            }
+
+            db.ref("users/" + target).update(upd);
+            showToast("Berhasil!");
         });
     }
 
+    function setRole(role) {
+        if(myData.role !== 'owner') return;
+        const target = document.getElementById('target-user').value.trim().toLowerCase();
+        db.ref("users/" + target).update({ role: role });
+        showToast(target + " set as " + role);
+    }
+
+    db.ref("room_status/guest_chat").on("value", s => {
+        guestChatAllowed = s.val() || false;
+        document.getElementById('guestChatBtn').innerText = guestChatAllowed ? "GUEST CHAT: ON" : "GUEST CHAT: OFF";
+    });
+
+    function toggleGuestChat() { db.ref("room_status/guest_chat").set(!guestChatAllowed); }
     function sendAnn() {
         const t = document.getElementById('a-ann').value;
         if(t) db.ref("announcement").set({ txt: t, exp: Date.now() + 300000 });
-        document.getElementById('a-ann').value = ""; togP();
+        togP();
     }
-
-    db.ref("announcement").on("value", s => {
-        const d = s.val(), box = document.getElementById('anno-box');
-        if(d && Date.now() < d.exp) box.innerHTML = `<div class="anno-card">📢 ${d.txt}</div>`;
-        else box.innerHTML = "";
-    });
 
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
 </script>
