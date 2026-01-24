@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V30 Owner Edition</title>
+    <title>ExeChat | V31 Ultimate System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -16,16 +16,14 @@
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* GRADIENT NAMES */
-        .name-owner { background: linear-gradient(to right, #f59e0b, #ef4444, #f59e0b); background-size: 200%; animation: rb 2s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
-        .name-admin-v1 { background: linear-gradient(45deg, #ff0000, #ff7700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
-        .name-admin-v2 { background: linear-gradient(45deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
-        .name-admin-v3 { background: linear-gradient(45deg, #6a11cb, #2575fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        .name-owner { background: linear-gradient(to right, #f59e0b, #ef4444, #f59e0b); background-size: 200%; animation: rb 2s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
+        .name-admin { background: linear-gradient(to right, #3b82f6, #00d2ff, #3b82f6); background-size: 200%; animation: rb 2s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
         .name-member { color: var(--member) !important; font-weight: 800; }
         @keyframes rb { to { background-position: 200% center; } }
 
-        /* SCREENS */
+        /* SCREENS & UI */
         #banned-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .ban-card { background: #100; border: 2px solid var(--admin); padding: 40px 20px; border-radius: 30px; width: 100%; max-width: 400px; }
+        .ban-card { background: #100; border: 2px solid var(--admin); padding: 40px 20px; border-radius: 30px; width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.2); }
 
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; width: 85%; max-width: 320px; pointer-events: none; }
         .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px; border-radius: 12px; text-align: center; font-size: 11px; box-shadow: 0 10px 30px #000; pointer-events: auto; }
@@ -37,9 +35,10 @@
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 14px; background: #16161a; border: 1px solid #222; align-self: flex-start; }
-        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 18px; margin-bottom: 10px; font-size: 12px; }
+        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 18px; margin-bottom: 10px; font-size: 12px; font-weight: 600; }
+        .vote-card { background: #111; border: 1px solid var(--main); padding: 15px; border-radius: 18px; width: 100%; margin: 10px 0; }
 
-        #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--owner); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
+        #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--owner); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
         #panel { position: fixed; bottom: 210px; right: 20px; width: 280px; background: var(--panel); border: 1px solid #333; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 70vh; overflow-y: auto; }
 
         .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 5px; }
@@ -54,15 +53,17 @@
     <div class="ban-card">
         <h1 style="color:var(--admin); margin:0;">BANNED</h1>
         <hr style="border:0; border-top:1px solid #333; margin:20px 0">
-        <div id="ban-info" style="text-align:left; font-size:12px; color:#aaa"></div>
-        <button class="p-btn" style="margin-top:20px" onclick="location.reload()">REFRESH</button>
+        <div id="ban-info" style="text-align:left; font-size:12px; color:#aaa; line-height:1.6"></div>
+        <button class="p-btn" style="margin-top:20px; background:var(--main)" onclick="location.reload()">REFRESH SYSTEM</button>
     </div>
 </div>
 
 <div id="toast-box"></div>
 
-<div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="Username"><input type="password" id="li-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doLogin()">SIGN IN</button><button class="p-btn" onclick="closeM('modal-login')">BATAL</button></div></div>
-<div id="modal-reg" class="modal"><div class="modal-content"><h3>Register</h3><input type="text" id="re-user" placeholder="Username"><input type="email" id="re-email" placeholder="Email"><input type="password" id="re-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doRegister()">DAFTAR</button><button class="p-btn" onclick="closeM('modal-reg')">BATAL</button></div></div>
+<div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="Username"><input type="password" id="li-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doLogin()">SIGN IN</button><p style="font-size:10px;color:#666">Baru? <span onclick="closeM('modal-login');openM('modal-reg')" style="color:var(--main);cursor:pointer">Daftar</span></p><button class="p-btn" onclick="closeM('modal-login')">BATAL</button></div></div>
+<div id="modal-reg" class="modal"><div class="modal-content"><h3>Register</h3><input type="text" id="re-user" placeholder="Username"><input type="email" id="re-email" placeholder="Email Aktif"><input type="password" id="re-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doRegister()">DAFTAR & VERIFIKASI</button><button class="p-btn" onclick="closeM('modal-reg')">BATAL</button></div></div>
+<div id="modal-profile" class="modal"><div class="modal-content"><h3>Profil</h3><input type="text" id="p-user" placeholder="Nama Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('username')">GANTI NAMA</button><button class="p-btn" style="background:var(--admin)" onclick="logout()">LOGOUT</button><button class="p-btn" onclick="closeM('modal-profile')">TUTUP</button></div></div>
+<div id="modal-vote" class="modal"><div class="modal-content"><h3>Buat Vote</h3><input type="text" id="v-title" placeholder="Judul Vote"><input type="number" id="v-target" placeholder="Target Vote"><button class="p-btn" style="background:var(--main)" onclick="startV()">MULAI VOTE</button><button class="p-btn" onclick="closeM('modal-vote')">BATAL</button></div></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:10px">
@@ -72,21 +73,20 @@
     <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN</button>
 </header>
 
+<div id="static-area" style="padding:10px 20px 0;"><div id="anno-box"></div></div>
 <div id="chat-box"></div>
 
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
     <h4 id="panel-title" style="margin:0; color:var(--owner)">PANEL</h4>
-    
     <div id="admin-tools">
         <button class="p-btn" id="guestChatBtn" onclick="toggleGuestChat()">GUEST CHAT: OFF</button>
-        <button class="p-btn" onclick="openM('modal-vote')">VOTE SYSTEM</button>
+        <button class="p-btn" onclick="openM('modal-vote'); togP()">VOTE SYSTEM</button>
         <input type="text" id="a-ann" placeholder="Announcement...">
         <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
     </div>
-
     <div id="owner-tools" style="display:none; border-top:1px solid #333; padding-top:10px;">
-        <p style="font-size:10px; color:var(--owner)">OWNER EXCLUSIVE</p>
+        <p style="font-size:10px; color:var(--owner)">OWNER POWERS</p>
         <input type="text" id="target-user" placeholder="Username Target">
         <input type="text" id="ban-reason" placeholder="Alasan (Ban/Mute)">
         <input type="number" id="mute-time" placeholder="Mute (Menit)">
@@ -94,7 +94,7 @@
             <button class="p-btn" style="background:var(--admin); flex:1" onclick="executePower('banned')">BAN</button>
             <button class="p-btn" style="background:#f59e0b; flex:1" onclick="executePower('mute')">MUTE</button>
         </div>
-        <button class="p-btn" style="background:var(--main)" onclick="setRole('admin')">SET ADMIN</button>
+        <button class="p-btn" style="background:var(--main)" onclick="setRole('admin')">PROMOTE ADMIN</button>
         <button class="p-btn" style="background:#444" onclick="executePower('member')">UNBAN/UNMUTE</button>
     </div>
 </div>
@@ -113,39 +113,29 @@
         p: atob("ZXhlYWktZWVmYzg="), a: atob("MToxMDEzNDI4MDAyNTE3OndlYjo2ZTNlMDdhODEwMTY3Yzk3YmI4YzVj")
     };
     firebase.initializeApp({ apiKey: _0xCf.k, databaseURL: _0xCf.d, projectId: _0xCf.p, appId: _0xCf.a });
-    const db = firebase.database();
-    const auth = firebase.auth();
+    const db = firebase.database(), auth = firebase.auth();
 
     let myData = { name: "Guest", role: "guest", id: "" };
-    let isMT = false, guestChatAllowed = false;
+    let guestChatAllowed = false;
 
-    // Login Check
+    // Persist Login
     const saved = localStorage.getItem("exeUser");
     if(saved) {
         myData = JSON.parse(saved);
         document.getElementById('my-name').innerText = myData.name;
         document.getElementById('btn-login').style.display = 'none';
         
-        if(myData.role === 'admin' || myData.role === 'owner') {
-            document.getElementById('launcher').style.display = 'flex';
-            if(myData.role === 'owner') {
-                document.getElementById('owner-tools').style.display = 'block';
-                document.getElementById('panel-title').innerText = "🛡️ OWNER PANEL";
-            } else {
-                document.getElementById('panel-title').innerText = "🛡️ ADMIN PANEL";
-            }
-        }
-
-        // Realtime Check (Ban & Mute)
         db.ref("users/" + myData.id).on("value", s => {
-            const d = s.val();
-            if(!d) return;
+            const d = s.val(); if(!d) return;
             if(d.role === 'banned') {
                 document.getElementById('ban-info').innerHTML = `BY: ${d.bannedBy}<br>REASON: ${d.reason}<br>DATE: ${d.banDate}`;
                 document.getElementById('banned-screen').style.display = 'flex';
             }
-            myData.muteUntil = d.muteUntil || 0;
-            myData.role = d.role; // Update role real-time
+            myData.role = d.role; myData.muteUntil = d.muteUntil || 0;
+            if(d.role === 'admin' || d.role === 'owner') {
+                document.getElementById('launcher').style.display = 'flex';
+                if(d.role === 'owner') document.getElementById('owner-tools').style.display = 'block';
+            }
         });
     }
 
@@ -161,37 +151,35 @@
     // --- AUTH ---
     async function doRegister() {
         const u = document.getElementById('re-user').value.trim().toLowerCase(), e = document.getElementById('re-email').value.trim(), p = document.getElementById('re-pass').value.trim();
-        if(!u || !e || !p) return showToast("Lengkapi data!");
+        if(!u || !e || !p) return showToast("Isi semua!");
         try {
             const snap = await db.ref("users/" + u).once("value");
-            if(snap.exists()) return showToast("Username sudah ada!");
+            if(snap.exists()) return showToast("Username ada!");
             const cred = await auth.createUserWithEmailAndPassword(e, p);
             await cred.user.sendEmailVerification();
             await db.ref("users/" + u).set({ username: u, email: e, role: "member", isVerified: false, uid: cred.user.uid });
-            showToast("Cek Email Verifikasi!"); closeM('modal-reg');
-        } catch (err) { showToast(err.message); }
+            showToast("Verifikasi dikirim!"); closeM('modal-reg');
+        } catch (e) { showToast(e.message); }
     }
 
     async function doLogin() {
-        const uIn = document.getElementById('li-user').value.trim().toLowerCase(), pIn = document.getElementById('li-pass').value.trim();
+        const u = document.getElementById('li-user').value.trim().toLowerCase(), p = document.getElementById('li-pass').value.trim();
         try {
-            const snap = await db.ref("users/" + uIn).once("value");
-            const userData = snap.val();
-            const cred = await auth.signInWithEmailAndPassword(userData.email, pIn);
-            if(!cred.user.emailVerified) return showToast("Verif Email dulu!");
-            localStorage.setItem("exeUser", JSON.stringify({ name: userData.username, role: userData.role, id: uIn }));
+            const snap = await db.ref("users/" + u).once("value");
+            const d = snap.val();
+            const cred = await auth.signInWithEmailAndPassword(d.email, p);
+            if(!cred.user.emailVerified) return showToast("Verif Email!");
+            localStorage.setItem("exeUser", JSON.stringify({ name: d.username, role: d.role, id: u }));
             location.reload();
-        } catch (err) { showToast("Gagal Login!"); }
+        } catch (e) { showToast("Login Gagal!"); }
     }
 
-    // --- CHAT LOGIC ---
+    function logout() { localStorage.removeItem("exeUser"); auth.signOut(); location.reload(); }
+
+    // --- CHAT & VOTE ---
     function hS() {
         if(myData.role === 'guest' && !guestChatAllowed) return showToast("Guest Chat OFF!");
-        if(myData.role === 'banned') return;
-        if(myData.muteUntil > Date.now()) {
-            const sisa = Math.ceil((myData.muteUntil - Date.now()) / 60000);
-            return showToast(`Muted! Sisa ${sisa} menit.`);
-        }
+        if(myData.muteUntil > Date.now()) return showToast("Anda di-mute!");
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if(!t) return;
         db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role });
@@ -203,65 +191,54 @@
         s.forEach(c => {
             const d = c.val(), v = document.createElement('div');
             v.className = "msg";
-            let roleClass = "";
-            if(d.role === 'owner') roleClass = "name-owner";
-            else if(d.role === 'admin') roleClass = "name-admin-v1";
-            else if(d.role === 'member') roleClass = "name-member";
-            
-            v.innerHTML = `<span class="${roleClass}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
+            let rC = d.role === 'owner' ? "name-owner" : (d.role === 'admin' ? "name-admin" : "name-member");
+            v.innerHTML = `<span class="${rC}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
             b.appendChild(v);
         });
         b.scrollTop = b.scrollHeight;
     });
 
-    // --- OWNER/ADMIN POWERS ---
-    function executePower(type) {
-        if(myData.role !== 'owner') return showToast("Hanya Owner!");
-        const target = document.getElementById('target-user').value.trim().toLowerCase();
-        const reason = document.getElementById('ban-reason').value.trim() || "No reason";
-        const mins = parseInt(document.getElementById('mute-time').value) || 0;
-
-        db.ref("users/" + target).once("value").then(s => {
-            const d = s.val();
-            if(!d) return showToast("User tidak ada!");
-            if(d.role === 'owner') return showToast("Gak bisa senggol Owner!");
-
-            let upd = { role: type };
-            if(type === 'banned') {
-                upd.reason = reason; upd.bannedBy = myData.name;
-                upd.banDate = new Date().toLocaleString('id-ID');
-            } else if(type === 'mute') {
-                upd.muteUntil = Date.now() + (mins * 60000);
-                upd.mutedBy = myData.name;
-                upd.role = d.role; // Mute tidak ubah role
-            } else if(type === 'member') {
-                upd.muteUntil = 0; // Unmute/Unban
+    db.ref("vote").on("value", s => {
+        const d = s.val(); if(d && d.active) {
+            if(!document.getElementById('v-ui')) {
+                const v = document.createElement('div'); v.id='v-ui'; v.className='vote-card';
+                v.innerHTML = `<b id="v-t"></b><div style="display:flex;gap:10px;margin-top:10px"><button class="p-btn" onclick="castV('yes')">YES</button><button class="p-btn" onclick="castV('no')">NO</button></div>`;
+                document.getElementById('chat-box').appendChild(v);
             }
+            document.getElementById('v-t').innerText = `${d.title} (${d.yes+d.no}/${d.target})`;
+        } else if(document.getElementById('v-ui')) document.getElementById('v-ui').remove();
+    });
 
-            db.ref("users/" + target).update(upd);
-            showToast("Berhasil!");
+    function castV(t) { if(localStorage.getItem("voted")) return; db.ref("vote").transaction(d => { if(d) d[t]++; return d; }); localStorage.setItem("voted", "1"); }
+    function startV() { const t = document.getElementById('v-title').value, tg = document.getElementById('v-target').value; db.ref("vote").set({ title:t, target:parseInt(tg), active:true, yes:0, no:0 }); closeM('modal-vote'); }
+
+    // --- POWERS ---
+    function executePower(t) {
+        if(myData.role !== 'owner') return;
+        const target = document.getElementById('target-user').value.trim().toLowerCase();
+        db.ref("users/" + target).once("value").then(s => {
+            const d = s.val(); if(!d || d.role === 'owner') return showToast("Gagal!");
+            let upd = { role: t };
+            if(t === 'banned') { upd.reason = document.getElementById('ban-reason').value; upd.bannedBy = myData.name; upd.banDate = new Date().toLocaleString(); }
+            if(t === 'mute') { upd.muteUntil = Date.now() + (parseInt(document.getElementById('mute-time').value) * 60000); upd.role = d.role; }
+            if(t === 'member') { upd.muteUntil = 0; }
+            db.ref("users/" + target).update(upd); showToast("Selesai!");
         });
     }
 
-    function setRole(role) {
-        if(myData.role !== 'owner') return;
-        const target = document.getElementById('target-user').value.trim().toLowerCase();
-        db.ref("users/" + target).update({ role: role });
-        showToast(target + " set as " + role);
-    }
-
-    db.ref("room_status/guest_chat").on("value", s => {
-        guestChatAllowed = s.val() || false;
-        document.getElementById('guestChatBtn').innerText = guestChatAllowed ? "GUEST CHAT: ON" : "GUEST CHAT: OFF";
-    });
-
+    function setRole(r) { const t = document.getElementById('target-user').value.toLowerCase(); db.ref("users/"+t).update({role:r}); showToast("Role Updated!"); }
     function toggleGuestChat() { db.ref("room_status/guest_chat").set(!guestChatAllowed); }
-    function sendAnn() {
-        const t = document.getElementById('a-ann').value;
-        if(t) db.ref("announcement").set({ txt: t, exp: Date.now() + 300000 });
-        togP();
-    }
+    db.ref("room_status/guest_chat").on("value", s => { guestChatAllowed = s.val(); document.getElementById('guestChatBtn').innerText = guestChatAllowed ? "GUEST CHAT: ON" : "GUEST CHAT: OFF"; });
+    
+    function sendAnn() { const t = document.getElementById('a-ann').value; if(t) db.ref("announcement").set({ txt: t, exp: Date.now() + 300000 }); togP(); }
+    db.ref("announcement").on("value", s => { const d = s.val(), box = document.getElementById('anno-box'); if(d && Date.now() < d.exp) box.innerHTML = `<div class="anno-card">📢 ${d.txt}</div>`; else box.innerHTML = ""; });
 
+    function openProfile() { if(myData.role !== 'guest') openM('modal-profile'); }
+    function updateProfile(type) { 
+        const v = document.getElementById('p-user').value; 
+        db.ref("users/"+myData.id).update({username:v}); 
+        myData.name = v; localStorage.setItem("exeUser", JSON.stringify(myData)); location.reload();
+    }
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
 </script>
 </body>
