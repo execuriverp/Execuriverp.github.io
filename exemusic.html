@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.0 - Final Fix</title>
+  <title>ExeMusic v3.0 - Final Features</title>
   
   <style>
+    /* --- CSS LAYOUT (PERFECT FIT) --- */
     :root {
       --accent: #1db954;
       --text: #ffffff;
@@ -40,18 +41,17 @@
     .header { text-align: center; flex-shrink: 0; margin-bottom: 10px; }
     .header img { width: 100px; max-width: 30%; }
 
-    /* COVER ART (Dibatasi agar tidak menimpa tombol) */
     .cover-box {
-      flex: 1; /* Mengisi sisa ruang */
+      flex: 1; 
       width: 100%; 
       border-radius: 20px;
       background: #151515;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 10px;
       border: 1px solid rgba(255,255,255,0.05);
-      overflow: hidden; /* PENTING: Mencegah isinya bocor keluar */
+      overflow: hidden; 
       position: relative;
-      z-index: 1; /* Layer bawah */
+      z-index: 1; 
     }
 
     /* EQ ANIMATION */
@@ -68,7 +68,6 @@
     #title { font-size: 20px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #by { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
 
-    /* SYSTEM TOOLS */
     .sys-container {
       background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; z-index: 5;
     }
@@ -78,43 +77,50 @@
     .vol-row { display: flex; align-items: center; gap: 8px; padding: 0 5px; }
     #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
 
-    /* PROGRESS - Diberi jarak aman */
     .prog-area { margin-bottom: 15px; flex-shrink: 0; z-index: 5; }
     #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; }
     .time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
 
-    /* CONTROLS (FIX TOMBOL PLAY) */
     .main-ctrl { 
       display: flex; justify-content: space-between; align-items: center; 
       padding: 0 15px; margin-bottom: 15px; flex-shrink: 0;
-      position: relative; /* Agar z-index berfungsi */
-      z-index: 100; /* PENTING: Memaksa tombol di layer paling atas */
+      position: relative; z-index: 100;
     }
     
-    /* Tombol Play dijadikan BUTTON asli agar lebih responsif */
     .btn-play { 
       width: 60px; height: 60px; 
       background: var(--accent); border: none; border-radius: 50%; 
       display: flex; align-items: center; justify-content: center; 
       color: black; font-size: 22px; 
       box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
-      cursor: pointer;
-      transition: transform 0.1s;
+      cursor: pointer; transition: transform 0.1s;
     }
-    .btn-play:active { transform: scale(0.95); } /* Efek pencet */
+    .btn-play:active { transform: scale(0.95); }
     
     .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 10px; }
 
     .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; flex-shrink: 0; z-index: 10; }
     .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; padding: 5px; }
-    .active { color: var(--accent) !important; opacity: 1 !important; }
+    
+    /* Active State untuk Shuffle & Repeat */
+    .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px rgba(29,185,84,0.6); }
 
-    /* POPUP & TOAST */
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; }
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 25px 25px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
     .song-item { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
     
-    #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--accent); color: black; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; }
+    /* TOAST MODERN */
+    #toast { 
+      position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); 
+      background: rgba(29, 185, 84, 0.95); color: #000; 
+      padding: 10px 20px; border-radius: 30px; 
+      font-size: 13px; font-weight: bold; 
+      opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      z-index: 3000; pointer-events: none; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
@@ -135,8 +141,8 @@
 
     <div class="sys-container">
       <div class="sys-tools">
-        <button onclick="copyURL()">📋</button>
-        <button onclick="shareSong()">🔗</button>
+        <button onclick="copyRawUrl()">📋</button>
+        <button onclick="shareLink()">🔗</button>
         <button onclick="downloadSong()">⬇️</button>
         <button onclick="openReq()">➕</button>
       </div>
@@ -165,6 +171,7 @@
       <button id="shuf" onclick="toggleShuffle()">🔀</button>
       <button onclick="openList(false)">☰</button>
       <button onclick="openList(true)">⭐</button>
+      <button id="rep" onclick="toggleRepeat()">🔁</button>
     </div>
   </div>
 
@@ -183,7 +190,7 @@
   </div>
 
   <script>
-    let songs = [], i = 0, isShuf = true;
+    let songs = [], i = 0, isShuf = true, isRepeat = false; // Tambah variabel Repeat
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
     const playBtn = document.getElementById('playBtn');
@@ -191,7 +198,16 @@
 
     fetch("data/urlbb.json").then(r => r.json()).then(data => {
       songs = data;
-      if(songs.length > 0) setup(0, false);
+      if(songs.length > 0) {
+        // Cek ID di URL untuk fitur Share Player
+        const params = new URLSearchParams(window.location.search);
+        let sharedId = parseInt(params.get('id'));
+        if (!isNaN(sharedId) && sharedId >= 0 && sharedId < songs.length) {
+          setup(sharedId, false);
+        } else {
+          setup(0, false);
+        }
+      }
     });
 
     function setup(idx, play = true) {
@@ -199,21 +215,69 @@
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
       document.getElementById('by').textContent = "Req: " + songs[i].by;
+      
+      // Update URL browser untuk Share
+      const newUrl = window.location.pathname + '?id=' + i;
+      window.history.replaceState(null, '', newUrl);
+
       if(play) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
     }
 
     function toggle() {
-      if(audio.paused) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
-      else { audio.pause(); playBtn.textContent = "▶"; eq.classList.remove('playing'); }
+      if(audio.paused) { 
+        audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); 
+        msg("Playing");
+      } else { 
+        audio.pause(); playBtn.textContent = "▶"; eq.classList.remove('playing'); 
+        msg("Paused");
+      }
     }
 
-    // Tools
-    function copyURL() { navigator.clipboard.writeText(songs[i].url); msg("Link Copied"); }
-    function downloadSong() { window.open(songs[i].url); }
-    function shareSong() { if(navigator.share) navigator.share({title:'ExeMusic', url:window.location.href}); else copyURL(); }
-    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
+    // --- FITUR UTAMA ---
 
-    // Navigation
+    // 1. COPY RAW URL (Data JSON)
+    function copyRawUrl() { 
+      navigator.clipboard.writeText(songs[i].url); 
+      msg("Copy Url berhasil di salin"); // Sesuai Request
+    }
+
+    // 2. SHARE PLAYER LINK (Web + ID)
+    function shareLink() { 
+      const shareUrl = window.location.origin + window.location.pathname + '?id=' + i;
+      if(navigator.share) { 
+        navigator.share({ title: 'ExeMusic', text: 'Dengerin: ' + songs[i].title, url: shareUrl }); 
+      } else { 
+        navigator.clipboard.writeText(shareUrl);
+        msg("Link Player Disalin");
+      } 
+    }
+
+    // 3. DOWNLOAD
+    function downloadSong() { 
+      msg("Downloading..."); // Sesuai Request
+      window.open(songs[i].url); 
+    }
+
+    // 4. REPEAT SYSTEM
+    function toggleRepeat() {
+      isRepeat = !isRepeat;
+      document.getElementById('rep').classList.toggle('active', isRepeat);
+      msg(isRepeat ? "Repeat : ON" : "Repeat : OFF"); // Sesuai Request
+    }
+
+    // 5. SHUFFLE SYSTEM
+    function toggleShuffle() { 
+      isShuf = !isShuf; 
+      document.getElementById('shuf').classList.toggle('active', isShuf); 
+      msg(isShuf ? "Shuffle : ON" : "Shuffle : OFF"); // Notif Modern
+    }
+
+    // Volume
+    document.getElementById('vol').oninput = (e) => {
+        audio.volume = e.target.value;
+        // msg("Volume: " + Math.round(e.target.value*100) + "%"); // Opsional
+    };
+
     function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
     function prev() { setup((i-1+songs.length)%songs.length); }
 
@@ -223,15 +287,32 @@
       document.getElementById('dur').textContent = fmt(audio.duration);
     };
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
-    audio.onended = () => next();
+    
+    // LOGIKA REPEAT DI SINI
+    audio.onended = () => {
+      if (isRepeat) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        next();
+      }
+    };
 
     function fmt(s) { 
       if(isNaN(s)) return "0:00";
       let m=Math.floor(s/60),sec=Math.floor(s%60); 
       return m+":"+(sec<10?"0"+sec:sec); 
     }
-    function msg(m) { const t=document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0,2000); }
-    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
+
+    // TOAST NOTIFICATION MODERN
+    function msg(m) { 
+      const t = document.getElementById('toast'); 
+      t.textContent = m; 
+      t.classList.add('show'); 
+      // Reset timer jika dipencet cepat
+      if(t.timeout) clearTimeout(t.timeout);
+      t.timeout = setTimeout(() => t.classList.remove('show'), 2000); 
+    }
 
     function openList(f) {
       const c = document.getElementById('songContainer');
@@ -250,6 +331,7 @@
       fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u];
       localStorage.setItem("exeFav", JSON.stringify(fav));
       openList(false);
+      msg("Favorite Updated");
     }
 
     function openReq() { document.getElementById('modalReq').style.display='block'; }
