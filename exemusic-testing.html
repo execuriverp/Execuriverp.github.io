@@ -224,9 +224,7 @@
     <div class="sheet"><div id="songContainer"></div></div>
   </div>
 
-  <script>
-    // Hidden Config
-    const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVzaWMtZXhlY3VyaXZlcnAuZmlyZWJhc2VhcHAuY29t", "aHR0cHM6Ly9leGVtdXNpYy1leGVjdXJpdmVycC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw", "ZXhlbXVzaWMtZXhlY3VyaXZlcnA="];
+const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVzaWMtZXhlY3VyaXZlcnAuZmlyZWJhc2VhcHAuY29t", "aHR0cHM6Ly9leGVtdXNpYy1leGVjdXJpdmVycC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw", "ZXhlbXVzaWMtZXhlY3VyaXZlcnA="];
     
     firebase.initializeApp({
       apiKey: atob(_x0z[0]), authDomain: atob(_x0z[1]), databaseURL: atob(_x0z[2]), projectId: atob(_x0z[3])
@@ -243,63 +241,58 @@
     const playBtn = document.getElementById('playBtn');
     const eq = document.getElementById('eq');
 
+    // FIX: Logika Login yang lebih stabil
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        const snap = await db.ref('users/' + user.uid).get();
-        if (snap.exists()) {
-          userData = snap.val();
-          if (userData.role === atob("YWRtaW4=")) document.getElementById('adminBtn').style.display = 'block';
-          if (userData.isBanned) { auth.signOut(); location.reload(); }
-        } else {
-          document.getElementById('modalAuth').style.display = 'block';
-          document.getElementById('authInitial').style.display = 'none';
-          document.getElementById('authSetup').style.display = 'block';
+        try {
+          const snap = await db.ref('users/' + user.uid).get();
+          if (snap.exists()) {
+            userData = snap.val();
+            // Cek Admin tanpa jejak teks
+            if (userData.role === atob("YWRtaW4=")) {
+                document.getElementById('adminBtn').style.display = 'block';
+            }
+            if (userData.isBanned) { 
+              msg("Akun Terblokir!"); 
+              setTimeout(() => { auth.signOut(); location.reload(); }, 2000); 
+            }
+          } else {
+            // User baru tapi belum isi username
+            document.getElementById('modalAuth').style.display = 'block';
+            document.getElementById('authInitial').style.display = 'none';
+            document.getElementById('authSetup').style.display = 'block';
+          }
+        } catch (e) {
+          console.error("Data error", e);
         }
+      } else {
+        // Jika tidak ada user, sembunyikan admin
+        document.getElementById('adminBtn').style.display = 'none';
       }
     });
 
-    function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-
-    async function finishRegistration() {
-      const u = document.getElementById('newUsername').value.trim();
-      const p = document.getElementById('newPass').value;
-      if (u.length < 4 || u.length > 10) return msg("Username 4-10 Huruf!");
-      await db.ref('users/' + auth.currentUser.uid).set({
-        username: u, password: p, role: 'user', lastUpload: 0, isBanned: false
+    function loginGoogle() { 
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(e => {
+        msg("Gagal Login: " + e.message);
       });
-      location.reload();
     }
 
-    db.ref('settings/mt').on('value', s => {
-      mtMode = s.val();
-      if(mtMode && userData?.role !== atob("YWRtaW4=")) {
-        document.body.innerHTML = "<h2 style='color:white; text-align:center; padding-top:50px'>Server Maintenance</h2>";
+    function logoutUser() {
+      if(confirm("Logout dari akun?")) {
+        auth.signOut().then(() => location.reload());
       }
-    });
-
-    db.ref('songs').on('value', snap => {
-      const data = snap.val();
-      if (data) {
-        songs = Object.keys(data).map(k => ({...data[k], fbId: k}));
-        if(songs.length > 0 && audio.src === "") setup(0, false);
-      }
-    });
-
-    function setup(idx, play = true) {
-      if (!songs[idx]) return;
-      i = idx;
-      audio.src = songs[i].url;
-      document.getElementById('title').textContent = songs[i].title;
-      document.getElementById('by').textContent = "@" + songs[i].by;
-      if(play) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
     }
 
-    // SOCIAL SYSTEM
+    // Update di viewProfile untuk nambah tombol Logout
     async function viewProfile(uid) {
       if(!uid) return;
       const snap = await db.ref('users/' + uid).get();
+      if(!snap.exists()) return;
       const u = snap.val();
       const det = document.getElementById('profileDetail');
+      const isMe = auth.currentUser && auth.currentUser.uid === uid;
+
       det.innerHTML = `
         <div class="profile-info">
           <h2>${u.username}</h2>
@@ -308,8 +301,9 @@
             <span><b>${Object.keys(u.followers || {}).length}</b><br>Followers</span>
             <span><b>${Object.keys(u.following || {}).length}</b><br>Following</span>
           </div>
-          ${auth.currentUser && auth.currentUser.uid !== uid ? 
+          ${!isMe && auth.currentUser ? 
           `<button class="follow-btn" onclick="toggleFollow('${uid}')">${u.followers && u.followers[auth.currentUser.uid] ? 'Unfollow' : 'Follow'}</button>` : ''}
+          ${isMe ? `<button class="btn-auth" style="background:#444; color:white" onclick="logoutUser()">LOGOUT</button>` : ''}
           ${userData?.role === atob("YWRtaW4=") && u.role !== atob("YWRtaW4=") ? `<button class="btn-auth" style="background:red;color:white" onclick="banUser('${uid}')">BAN USER</button>` : ''}
         </div>
       `;
