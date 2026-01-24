@@ -32,43 +32,44 @@
 </div>
 
 <script>
-    async function talk() {
-        // GANTI INI DENGAN LINK DARI GOOGLE APPS SCRIPT TADI
-        const BRIDGE_URL = "https://script.google.com/macros/s/AKfycbxutSsVM5KE_eTV8HblvdiTwfvro-a4Zd7fGStmd5Gz-0geN0ol65Myb261D2DXcOQ/exec"; 
+async function talk() {
+    const BRIDGE_URL = "https://script.google.com/macros/s/AKfycbxutSsVM5KE_eTV8HblvdiTwfvro-a4Zd7fGStmd5Gz-0geN0ol65Myb261D2DXcOQ/exec"; 
+    const input = document.getElementById('userInput');
+    const loader = document.getElementById('loader');
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    addMsg(text, 'user');
+    input.value = "";
+    loader.style.display = "block";
+
+    try {
+        // Kita pakai mode 'no-cors' atau kita pastikan requestnya bersih
+        const response = await fetch(BRIDGE_URL, {
+            method: "POST",
+            mode: "cors", // Pastikan mode cors aktif
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8", // Trick agar tidak kena blokir pre-flight
+            },
+            body: JSON.stringify({ prompt: text })
+        });
+
+        const data = await response.json();
         
-        const input = document.getElementById('userInput');
-        const loader = document.getElementById('loader');
-        const text = input.value.trim();
-        
-        if (!text) return;
-
-        addMsg(text, 'user');
-        input.value = "";
-        loader.style.display = "block";
-
-        try {
-            const response = await fetch(BRIDGE_URL, {
-                method: "POST",
-                body: JSON.stringify({ prompt: text })
-            });
-
-            const data = await response.json();
+        if (data.candidates && data.candidates[0].content) {
             const aiReply = data.candidates[0].content.parts[0].text;
             addMsg(aiReply, 'ai');
-        } catch (e) {
-            addMsg("Koneksi Error. Pastikan link Bridge URL benar dan sudah di-Deploy sebagai 'Anyone'.", 'ai');
-        } finally {
-            loader.style.display = "none";
+        } else {
+            addMsg("Google Apps Script tersambung, tapi Gemini API ngasih error. Cek API Key di kode.gs!", "ai");
         }
+    } catch (e) {
+        console.error(e);
+        addMsg("Koneksi Gagal. Coba buka link /exec kamu langsung di tab baru browser. Kalau isinya 'File Not Found' atau error, berarti Deploy-nya salah.", 'ai');
+    } finally {
+        loader.style.display = "none";
     }
-
-    function addMsg(txt, sender) {
-        const div = document.createElement('div');
-        div.className = `msg ${sender}`;
-        div.innerHTML = txt.replace(/\n/g, '<br>');
-        document.getElementById('chat').appendChild(div);
-        document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-    }
+}
 
     document.getElementById('userInput').addEventListener("keypress", (e) => { if(e.key === 'Enter') talk(); });
 </script>
