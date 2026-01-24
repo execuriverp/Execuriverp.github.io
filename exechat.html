@@ -2,78 +2,79 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V44 Absolute Throne</title>
+    <title>ExeChat | 1.0.2</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0b0b0f; --card: #16161e; --main: #3b82f6; --owner: #f59e0b; --admin: #ef4444; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --primary: #3b82f6; --owner: #f59e0b; --admin: #ef4444; --text: #fafafa; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        body { background: var(--bg); color: #f3f4f6; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: radial-gradient(circle at top right, #1a1a2e, #09090b); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- ALL-ADMIN RAINBOW SYSTEM --- */
-        @keyframes flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        /* --- RAINBOW ADMIN ANIMATION --- */
+        @keyframes rainbow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .name-owner, .admin-red, .admin-blue, .admin-purple, .admin-green { 
-            background-size: 200% auto; animation: flow 3s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+            background-size: 200% auto; animation: rainbow 4s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px;
         }
         .name-owner { background-image: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); }
         .admin-red { background-image: linear-gradient(90deg, #f87171, #ef4444, #f87171); }
         .admin-blue { background-image: linear-gradient(90deg, #60a5fa, #3b82f6, #60a5fa); }
-        .admin-purple { background-image: linear-gradient(90deg, #a78bfa, #8b5cf6, #a78bfa); }
-        .admin-green { background-image: linear-gradient(90deg, #34d399, #10b981, #34d399); }
-        .member { color: #10b981 !important; font-weight: 700; }
+        .member { color: #10b981 !important; font-weight: 700; font-size: 11px; }
 
-        /* --- GEMINI UI LAYOUT --- */
-        header { padding: 15px 5%; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; background: rgba(11,11,15,0.9); backdrop-filter: blur(15px); z-index: 100; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px 15%; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
-        .msg { max-width: 85%; align-self: flex-start; animation: fadeIn 0.4s ease-out; }
-        .msg-body { background: var(--card); padding: 14px 20px; border-radius: 20px; border: 1px solid #27272a; line-height: 1.6; font-size: 15px; color: #e5e7eb; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- HEADER & LAYOUT --- */
+        header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.7); backdrop-filter: blur(12px); z-index: 100; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: flex; flex-direction: column; gap: 24px; }
+        .msg { max-width: 800px; width: 100%; margin: 0 auto; animation: slideUp 0.4s ease; }
+        .msg-content { background: rgba(24, 24, 27, 0.5); border: 1px solid var(--border); padding: 16px 20px; border-radius: 20px; line-height: 1.6; font-size: 15px; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ANNOUNCEMENT (15s) --- */
-        #anno-box { position: fixed; top: 80px; left: 0; right: 0; z-index: 90; padding: 0 15%; pointer-events: none; }
-        .anno-card { background: #2563eb; color: #fff; padding: 16px; border-radius: 16px; font-weight: 600; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4); position: relative; overflow: hidden; pointer-events: auto; }
-        .anno-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: rgba(255,255,255,0.8); width: 100%; transition: width 15s linear; }
+        /* --- AI MINIMALIST BUTTONS --- */
+        .btn-ai { background: var(--surface); color: white; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-ai:hover { background: var(--border); border-color: #3f3f46; }
+        .btn-ai.primary { background: var(--primary); border: none; }
+        .btn-ai.danger { color: #f87171; border-color: #450a0a; }
 
-        /* --- ABSOLUTE ADMIN PANEL --- */
-        #launcher { position: fixed; bottom: 130px; right: 30px; background: var(--main); width: 60px; height: 60px; border-radius: 20px; display: none; align-items: center; justify-content: center; z-index: 1000; cursor: pointer; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); font-size: 24px; }
-        #panel { position: fixed; bottom: 205px; right: 30px; width: 320px; background: #1c1c24; border: 1px solid #3f3f46; border-radius: 28px; padding: 25px; display: none; flex-direction: column; gap: 12px; z-index: 1001; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); }
-        .p-btn { background: #2d2d39; color: #fff; border: none; padding: 14px; border-radius: 14px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; }
-        .p-btn:active { transform: scale(0.96); }
-        .danger { background: #991b1b !important; color: #fecaca; }
-        input, select { background: #000; border: 1px solid #3f3f46; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; }
+        /* --- ANNOUNCEMENT --- */
+        #anno-box { position: fixed; top: 80px; left: 0; right: 0; z-index: 90; padding: 0 5%; pointer-events: none; }
+        .anno-card { background: var(--primary); padding: 16px; border-radius: 16px; font-weight: 700; box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative; overflow: hidden; pointer-events: auto; max-width: 600px; margin: 0 auto; }
+        .anno-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: rgba(255,255,255,0.6); width: 100%; transition: width 15s linear; }
 
-        /* --- FOOTER & DISCLAIMER --- */
-        .footer-area { padding: 20px 15%; background: var(--bg); }
-        .disclaimer { text-align: center; font-size: 11px; color: #52525b; margin-top: 12px; line-height: 1.4; }
-        .input-group { background: var(--card); border: 1px solid #27272a; border-radius: 20px; display: flex; padding: 8px 12px; align-items: center; }
-        .input-group input { border: none; background: transparent; flex: 1; padding: 12px; color: #fff; font-size: 15px; outline: none; }
-        .btn-send { background: var(--main); border: none; padding: 10px 22px; border-radius: 14px; color: #fff; font-weight: 800; cursor: pointer; }
+        /* --- ADMIN PANEL (COMPACT) --- */
+        #launcher { position: fixed; bottom: 120px; right: 24px; background: var(--primary); width: 56px; height: 56px; border-radius: 18px; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(59,130,246,0.3); z-index: 1000; }
+        #panel { position: fixed; bottom: 190px; right: 24px; width: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 12px; z-index: 1001; max-height: 70vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
+        
+        /* --- FORMS & MODALS --- */
+        input, select { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; font-size: 14px; }
+        input:focus { border-color: var(--primary); }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 28px; width: 100%; max-width: 380px; max-height: 90vh; overflow-y: auto; }
 
-        /* --- SCREENS --- */
-        .full-screen { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 40px; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 90000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 30px; width: 90%; max-width: 340px; border: 1px solid #27272a; }
+        /* --- FOOTER --- */
+        footer { padding: 20px 5%; background: transparent; }
+        .input-area { max-width: 800px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; display: flex; padding: 8px; align-items: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .input-area input { border: none; background: transparent; flex: 1; padding: 12px 16px; font-size: 16px; }
+        .disclaimer { text-align: center; font-size: 11px; color: #52525b; margin-top: 12px; }
+
+        .link-wait { font-size: 12px; color: #71717a; border: 1px dashed var(--border); padding: 12px; border-radius: 12px; margin-top: 12px; }
+        .full-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="mt-screen" class="full-screen">
-    <div style="font-size:60px; margin-bottom:20px">⚙️</div>
-    <h1 style="color:var(--owner)">UNDER MAINTENANCE</h1>
-    <p style="color:#71717a">Kami sedang menyempurnakan ExeChat. Mohon tunggu sebentar.</p>
-</div>
+<div id="mt-screen" class="full-screen"><h1>⚙️ MT MODE</h1><p>Website sedang dalam pemeliharaan.</p></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:12px">
-        <div onclick="openProfile()" style="cursor:pointer; background:#27272a; padding:10px; border-radius:15px; font-size:18px">👤</div>
-        <div><b style="font-size:20px; letter-spacing:-0.5px">EXECHAT <span style="color:var(--main)">V44</span></b><div id="my-name" style="font-size:11px; color:#52525b; font-weight:600">Connecting...</div></div>
+        <div onclick="openProfile()" style="cursor:pointer; background:var(--surface); padding:10px; border-radius:12px; border:1px solid var(--border)">👤</div>
+        <div><b style="font-size:18px; letter-spacing:-0.5px">EXECHAT <span style="color:var(--primary)">1.0.2</span></b><div id="status-text" style="font-size:10px; color:#52525b">Guest Mode</div></div>
     </div>
-    <button id="btn-login" class="p-btn" style="background:var(--main); padding:8px 20px" onclick="openM('modal-login')">Sign In</button>
+    <div id="auth-btns">
+        <button class="btn-ai primary" onclick="openM('modal-auth')">Masuk / Daftar</button>
+    </div>
 </header>
 
 <div id="anno-box"></div>
@@ -81,48 +82,82 @@
 
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
-    <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-        <b id="p-label" style="font-size:14px; color:var(--main)">ADMIN TOOLS</b>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <b style="font-size:14px">SYSTEM CONTROL</b>
         <span onclick="togP()" style="cursor:pointer; opacity:0.5">✕</span>
     </div>
-
-    <div id="owner-only-tools" style="display:none; flex-direction:column; gap:8px; background:rgba(245, 158, 11, 0.05); padding:10px; border-radius:15px; border:1px solid rgba(245, 158, 11, 0.2)">
-        <b style="font-size:10px; color:var(--owner)">OWNER PRIVILEGES</b>
-        <button class="p-btn danger" onclick="wipeChat()">🗑️ WIPE ALL DATA</button>
-        <button class="p-btn" id="mtBtn" onclick="toggleMT()">⚙️ TOGGLE MT MODE</button>
-        <button class="p-btn" id="gcBtn" onclick="toggleGC()">🔒 GUEST CHAT TOGGLE</button>
-        <select id="t-role">
-            <option value="member">MEMBER</option>
-            <option value="admin-red">ADMIN RED</option>
-            <option value="admin-blue">ADMIN BLUE</option>
-            <option value="admin-purple">ADMIN PURPLE</option>
-            <option value="admin-green">ADMIN GREEN</option>
-        </select>
-        <button class="p-btn" style="background:var(--owner)" onclick="setRole()">CHANGE USER ROLE</button>
+    <div id="owner-tools" style="display:none; flex-direction:column; gap:8px; padding-top:10px; border-top:1px solid var(--border)">
+        <button class="btn-ai danger" onclick="wipeChat()">🗑️ WIPE DATABASE</button>
+        <button class="btn-ai" id="mtBtn" onclick="toggleMT()">⚙️ MT MODE: OFF</button>
+        <button class="btn-ai" id="gcBtn" onclick="toggleGC()">🔒 GUEST CHAT: ON</button>
+        <select id="t-role"><option value="member">MEMBER</option><option value="admin-red">ADMIN RED</option><option value="admin-blue">ADMIN BLUE</option></select>
+        <button class="btn-ai primary" onclick="setRole()">UPDATE ROLE</button>
     </div>
-
+    <hr style="border:0; border-top:1px solid var(--border)">
     <input type="text" id="t-user" placeholder="Username Target">
     <div style="display:flex; gap:8px">
-        <input type="number" id="m-min" placeholder="Min" style="width:75px">
-        <button class="p-btn" style="flex:1" onclick="execCmd('mute')">MUTE</button>
-        <button class="p-btn danger" style="flex:1" onclick="execCmd('banned')">BAN</button>
+        <input type="number" id="m-min" placeholder="Min" style="width:70px">
+        <button class="btn-ai" style="flex:1" onclick="execCmd('mute')">MUTE</button>
+        <button class="btn-ai danger" style="flex:1" onclick="execCmd('banned')">BAN</button>
     </div>
-    <button class="p-btn" style="background:#3f3f46" onclick="execCmd('member')">UNBAN / UNMUTE</button>
-    <button class="p-btn" onclick="openM('modal-anno');togP()">📢 ANNOUNCEMENT</button>
-    <button class="p-btn" onclick="openM('modal-vote');togP()">🗳️ CREATE VOTE</button>
+    <button class="btn-ai" onclick="execCmd('member')">UNBAN/UNMUTE</button>
+    <button class="btn-ai" onclick="openM('modal-anno');togP()">📢 ANNOUNCEMENT (15s)</button>
+    <button class="btn-ai" onclick="openM('modal-vote');togP()">🗳️ CREATE VOTE</button>
 </div>
 
-<div id="modal-login" class="modal"><div class="modal-content"><h3>Sign In</h3><input type="text" id="li-user" placeholder="User"><input type="password" id="li-pass" placeholder="Pass"><button class="p-btn" style="background:var(--main); width:100%; margin-top:15px" onclick="doLogin()">PROCEED</button></div></div>
-<div id="modal-anno" class="modal"><div class="modal-content"><h3>Announcement</h3><input type="text" id="an-txt" placeholder="Pesan 15 detik..."><button class="p-btn" style="background:var(--main); width:100%; margin-top:15px" onclick="sendAnno()">BROADCAST</button></div></div>
-<div id="modal-vote" class="modal"><div class="modal-content"><h3>New Poll</h3><input type="text" id="v-title" placeholder="Pertanyaan?"><input type="number" id="v-target" placeholder="Target Suara"><button class="p-btn" style="background:var(--main); width:100%; margin-top:15px" onclick="startV()">LAUNCH</button></div></div>
-
-<div class="footer-area">
-    <div class="input-group">
-        <input type="text" id="u-msg" placeholder="Tanyakan sesuatu atau bagikan link..." onkeypress="if(event.key=='Enter') hS()">
-        <button class="btn-send" onclick="hS()">KIRIM</button>
+<div id="modal-auth" class="modal">
+    <div class="modal-content">
+        <div style="display:flex; gap:10px; margin-bottom:20px">
+            <button class="btn-ai primary" style="flex:1" onclick="tab('login')">LOGIN</button>
+            <button class="btn-ai" style="flex:1" onclick="tab('reg')">DAFTAR</button>
+        </div>
+        <div id="auth-form">
+            <input type="text" id="au-user" placeholder="Username" style="margin-bottom:10px">
+            <input type="password" id="au-pass" placeholder="Password">
+            <button id="au-btn" class="btn-ai primary" style="width:100%; margin-top:20px" onclick="authAction()">MASUK</button>
+        </div>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-auth')">BATAL</button>
     </div>
-    <div class="disclaimer">ExeChat dapat membuat kesalahan, jadi periksa kembali responsnya.<br>Jangan toxic di ExeChat, hargai sesama pengguna.</div>
 </div>
+
+<div id="modal-profile" class="modal">
+    <div class="modal-content">
+        <h3>PENGATURAN PROFIL</h3>
+        <p id="prof-info" style="font-size:12px; color:#71717a"></p>
+        <hr style="border:var(--border)">
+        <input type="text" id="new-name" placeholder="Ganti Nama Baru" style="margin-bottom:10px">
+        <button class="btn-ai primary" style="width:100%" onclick="updateProfile('username')">SIMPAN NAMA</button>
+        <input type="password" id="new-pass" placeholder="Ganti Password Baru" style="margin-top:20px; margin-bottom:10px">
+        <button class="btn-ai primary" style="width:100%" onclick="updateProfile('password')">SIMPAN PASSWORD</button>
+        <button class="btn-ai danger" style="width:100%; margin-top:30px" onclick="logout()">LOGOUT</button>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-profile')">TUTUP</button>
+    </div>
+</div>
+
+<div id="modal-anno" class="modal">
+    <div class="modal-content">
+        <h3>ANNOUNCEMENT</h3>
+        <input type="text" id="an-txt" placeholder="Pesan penting...">
+        <button class="btn-ai primary" style="width:100%; margin-top:20px" onclick="sendAnno()">BROADCAST (15s)</button>
+    </div>
+</div>
+
+<div id="modal-vote" class="modal">
+    <div class="modal-content">
+        <h3>VOTE BARU</h3>
+        <input type="text" id="v-title" placeholder="Pertanyaan?" style="margin-bottom:10px">
+        <input type="number" id="v-target" placeholder="Target Suara">
+        <button class="btn-ai primary" style="width:100%; margin-top:20px" onclick="startV()">MULAI</button>
+    </div>
+</div>
+
+<footer>
+    <div class="input-area">
+        <input type="text" id="u-msg" placeholder="Ketik pesan..." onkeypress="if(event.key=='Enter') hS()">
+        <button class="btn-ai primary" onclick="hS()">KIRIM</button>
+    </div>
+    <div class="disclaimer">ExeChat 1.0.2 dapat membuat kesalahan. Jangan toxic, hargai sesama pengguna.</div>
+</footer>
 
 <script>
     const _0xCf = { k: atob("QUl6YVN5Q2w0ZWk4a2ZNYUJvUUVva0ZFNUZsa1B2ei1OZEVoUVh3"), d: atob("aHR0cHM6Ly9leGVhaS1lZWZjOC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw"), p: atob("ZXhlYWktZWVmYzg="), a: atob("MToxMDEzNDI4MDAyNTE3OndlYjo2ZTNlMDdhODEwMTY3Yzk3YmI4YzVj") };
@@ -130,64 +165,64 @@
     const db = firebase.database();
 
     let myData = { name: "Guest", role: "guest", id: "", muteUntil: 0 };
+    let curTab = 'login';
     let roomStatus = { maint: false, guest_chat: true };
 
-    // --- RENDER CONTENT (GEMINI STYLE) ---
-    function render(text, role, msgId) {
-        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-        const hasLink = text.match(urlRegex);
-        if (hasLink) {
-            const link = hasLink[0].startsWith('http') ? hasLink[0] : 'https://' + hasLink[0];
-            const cleanText = text.replace(urlRegex, '').trim();
-            if (role === 'owner' || role.includes('admin')) return `${cleanText} <div><a href="${link}" target="_blank" style="background:var(--main); color:white; padding:8px 15px; border-radius:10px; text-decoration:none; display:inline-block; margin-top:10px; font-weight:700; font-size:13px">OPEN LINK (VERIFIED)</a></div>`;
-            return `${cleanText} <div id="w-${msgId}" style="font-size:11px; color:#52525b; margin-top:10px; border:1px dashed #27272a; padding:8px; border-radius:10px">⏳ Link siap dalam <span id="t-${msgId}">15</span>s...</div>
-                    <div id="b-${msgId}" style="display:none"><a href="${link}" target="_blank" style="background:#27272a; color:white; padding:8px 15px; border-radius:10px; text-decoration:none; display:inline-block; margin-top:10px; font-size:13px">BUKA LINK ➔</a></div>
-                    <script>(function(){let s=15;const t=document.getElementById('t-${msgId}'),w=document.getElementById('w-${msgId}'),b=document.getElementById('b-${msgId}');const i=setInterval(()=>{s--;if(t)t.innerText=s;if(s<=0){clearInterval(i);if(w)w.remove();if(b)b.style.display='block';}},1000);})();<\/script>`;
+    // --- AUTH LOGIC ---
+    function tab(t) { curTab = t; document.getElementById('au-btn').innerText = t==='login'?'MASUK':'DAFTAR'; }
+    async function authAction() {
+        const u = document.getElementById('au-user').value.toLowerCase().trim();
+        const p = document.getElementById('au-pass').value;
+        if(!u || !p) return alert("Isi semua!");
+        
+        const snap = await db.ref("users/"+u).once("value");
+        if(curTab === 'reg') {
+            if(snap.exists()) return alert("Username sudah ada!");
+            await db.ref("users/"+u).set({ username: u, password: p, role: 'member', muteUntil: 0 });
+            alert("Berhasil Daftar! Silakan Login.");
+            tab('login');
+        } else {
+            if(!snap.exists() || snap.val().password !== p) return alert("Salah username/password!");
+            const d = snap.val();
+            localStorage.setItem("exeUser", JSON.stringify({id: u, name: d.username}));
+            location.reload();
         }
-        return text;
     }
 
-    // --- CORE SYSTEM ---
-    db.ref("room_status").on("value", s => {
-        roomStatus = s.val() || { maint: false, guest_chat: true };
-        if(roomStatus.maint && myData.role !== 'owner') document.getElementById('mt-screen').style.display='flex';
-        else document.getElementById('mt-screen').style.display='none';
-    });
-
+    // --- SYSTEM ---
     const saved = localStorage.getItem("exeUser");
     if(saved) {
-        myData = JSON.parse(saved);
-        db.ref("users/"+myData.id).on("value", s => {
+        const cache = JSON.parse(saved);
+        db.ref("users/"+cache.id).on("value", s => {
             const d = s.val(); if(!d) return;
-            myData.role = d.role; myData.muteUntil = d.muteUntil || 0;
-            document.getElementById('my-name').innerText = myData.name.toUpperCase();
-            document.getElementById('btn-login').style.display = 'none';
-            if(d.role === 'owner') {
-                document.getElementById('owner-only-tools').style.display = 'flex';
-                document.getElementById('p-label').innerText = "OWNER CONTROL";
-                document.getElementById('p-label').style.color = "var(--owner)";
-            }
+            myData = { ...d, id: cache.id };
+            document.getElementById('status-text').innerText = d.role.toUpperCase();
+            document.getElementById('auth-btns').style.display = 'none';
+            if(d.role === 'owner') document.getElementById('owner-tools').style.display = 'flex';
             if(d.role === 'owner' || d.role.includes('admin')) document.getElementById('launcher').style.display = 'flex';
+            if(d.role === 'banned') document.body.innerHTML = "<h1 style='text-align:center;margin-top:100px'>AKUN ANDA DIBANNED</h1>";
         });
     }
 
+    db.ref("room_status").on("value", s => {
+        roomStatus = s.val() || { maint: false, guest_chat: true };
+        if(roomStatus.maint && myData.role !== 'owner') document.getElementById('mt-screen').style.display='flex';
+    });
+
+    // --- CHAT ---
     function hS() {
         if(myData.role === 'guest' && !roomStatus.guest_chat) return alert("Guest chat dinonaktifkan!");
-        if(Date.now() < myData.muteUntil) {
-            let left = Math.ceil((myData.muteUntil - Date.now()) / 60000);
-            return alert("Anda sedang di-mute. Sisa: " + left + " menit.");
-        }
+        if(Date.now() < myData.muteUntil) return alert("Muted!");
         const i = document.getElementById('u-msg'), t = i.value.trim(); if(!t) return;
-        db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role, ts: Date.now() }); i.value = "";
+        db.ref("messages").push({ nama: myData.username || myData.name, pesan: t, role: myData.role }); i.value = "";
     }
 
-    db.ref("messages").limitToLast(35).on("value", s => {
+    db.ref("messages").limitToLast(30).on("value", s => {
         const box = document.getElementById('chat-box'); box.innerHTML = "";
         s.forEach(c => {
             const d = c.val(), v = document.createElement('div'); v.className = "msg";
-            let cls = d.role.includes('admin') || d.role==='owner' ? d.role : 'member';
-            if(d.role === 'owner') cls = 'name-owner';
-            v.innerHTML = `<div class="${cls}" style="font-size:11px; margin-bottom:6px;">${d.nama}</div><div class="msg-body">${render(d.pesan, d.role, c.key)}</div>`;
+            let cls = d.role === 'owner' ? 'name-owner' : (d.role.includes('admin') ? d.role : 'member');
+            v.innerHTML = `<div class="msg-content"><div class="${cls}">${d.nama}</div><div style="margin-top:5px">${renderLinks(d.pesan, d.role, c.key)}</div></div>`;
             box.appendChild(v);
             const scripts = v.getElementsByTagName("script");
             for(let i=0; i<scripts.length; i++) { eval(scripts[i].innerText); }
@@ -195,28 +230,48 @@
         box.scrollTop = box.scrollHeight;
     });
 
-    // --- POWER FUNCTIONS ---
-    function wipeChat() { if(confirm("PERINGATAN: Hapus semua chat selamanya?")) db.ref("messages").remove(); }
+    function renderLinks(text, role, id) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.replace(urlRegex, (url) => {
+            if(role==='owner' || role.includes('admin')) return `<a href="${url}" target="_blank" style="color:var(--primary);font-weight:700">OPEN LINK (VERIFIED)</a>`;
+            return `<div id="w-${id}" class="link-wait">⏳ Link siap dalam <span id="t-${id}">15</span>s...</div>
+                    <div id="b-${id}" style="display:none"><a href="${url}" target="_blank" style="color:var(--primary)">BUKA LINK</a></div>
+                    <script>(function(){let s=15;const t=document.getElementById('t-${id}'),w=document.getElementById('w-${id}'),b=document.getElementById('b-${id}');const i=setInterval(()=>{s--;if(t)t.innerText=s;if(s<=0){clearInterval(i);if(w)w.remove();if(b)b.style.display='block';}},1000);})();<\/script>`;
+        });
+    }
+
+    // --- PROFILE ---
+    function openProfile() {
+        if(myData.role === 'guest') return openM('modal-auth');
+        document.getElementById('prof-info').innerText = `User: ${myData.username} | Role: ${myData.role}`;
+        openM('modal-profile');
+    }
+    function updateProfile(type) {
+        const val = document.getElementById(type==='username'?'new-name':'new-pass').value;
+        if(!val) return;
+        db.ref("users/"+myData.id).update({ [type]: val });
+        alert("Update " + type + " berhasil!");
+        location.reload();
+    }
+    function logout() { localStorage.clear(); location.reload(); }
+
+    // --- ADMIN ---
+    function wipeChat() { if(confirm("Hapus semua?")) db.ref("messages").remove(); }
     function toggleMT() { db.ref("room_status/maint").set(!roomStatus.maint); }
     function toggleGC() { db.ref("room_status/guest_chat").set(!roomStatus.guest_chat); }
-    function setRole() { 
-        const u = document.getElementById('t-user').value.toLowerCase().trim();
-        db.ref("users/"+u).update({role: document.getElementById('t-role').value});
-        alert("Role " + u + " berhasil diupdate!");
-    }
+    function setRole() { db.ref("users/"+document.getElementById('t-user').value.toLowerCase().trim()).update({role: document.getElementById('t-role').value}); }
     function execCmd(type) {
         const u = document.getElementById('t-user').value.toLowerCase().trim();
-        const min = parseInt(document.getElementById('m-min').value) || 15;
+        const min = parseInt(document.getElementById('m-min').value) || 10;
         if(type === 'banned') db.ref("users/"+u).update({role: 'banned'});
         else if(type === 'mute') db.ref("users/"+u).update({muteUntil: Date.now() + (min * 60000)});
         else db.ref("users/"+u).update({role: 'member', muteUntil: 0});
-        alert("Sukses: " + type + " untuk " + u);
     }
 
     function sendAnno() {
         const txt = document.getElementById('an-txt').value; if(!txt) return;
         db.ref("announcement").set({ txt: txt, exp: Date.now() + 15000 });
-        document.getElementById('modal-anno').style.display='none';
+        closeM('modal-anno');
     }
     db.ref("announcement").on("value", s => {
         const d = s.val(); const box = document.getElementById('anno-box');
@@ -227,27 +282,12 @@
         } else box.innerHTML = "";
     });
 
-    // --- VOTE & UI ---
-    db.ref("vote").on("value", s => {
-        const d = s.val(); if(d && d.active) {
-            if(!document.getElementById('v-ui')) {
-                const v = document.createElement('div'); v.id='v-ui'; v.className='msg-body'; v.style.margin="10px 0";
-                v.innerHTML = `<b id="v-t"></b><div style="display:flex;gap:10px;margin-top:10px"><button class="p-btn" onclick="castV('yes')">YES</button><button class="p-btn" onclick="castV('no')">NO</button></div>`;
-                document.getElementById('chat-box').appendChild(v);
-            }
-            document.getElementById('v-t').innerText = `POLL: ${d.title} (${d.yes+d.no}/${d.target})`;
-        } else if(document.getElementById('v-ui')) document.getElementById('v-ui').remove();
-    });
-    function startV() { db.ref("vote").set({ title:document.getElementById('v-title').value, target:parseInt(document.getElementById('v-target').value), active:true, yes:0, no:0 }); document.getElementById('modal-vote').style.display='none'; localStorage.removeItem("voted"); }
-    function castV(t) { if(localStorage.getItem("voted")) return; db.ref("vote").transaction(d => { if(d) d[t]++; return d; }); localStorage.setItem("voted", "1"); }
+    function startV() { db.ref("vote").set({ title:document.getElementById('v-title').value, target:parseInt(document.getElementById('v-target').value), active:true, yes:0, no:0 }); closeM('modal-vote'); localStorage.removeItem("voted"); }
 
+    // --- UI BASE ---
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeM(id) { document.getElementById(id).style.display = 'none'; }
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
-    async function doLogin() {
-        const u = document.getElementById('li-user').value.toLowerCase().trim();
-        const snap = await db.ref("users/"+u).once("value");
-        if(snap.exists()) { localStorage.setItem("exeUser", JSON.stringify({name: snap.val().username, role: snap.val().role, id: u})); location.reload(); }
-    }
 </script>
 </body>
 </html>
