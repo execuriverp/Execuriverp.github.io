@@ -2,49 +2,55 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | Global Hub</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExeChat | Next-Gen Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        * { box-sizing: border-box; }
-        body { background: #09090b; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { background: #111; padding: 15px; border-bottom: 1px solid #333; text-align: center; font-weight: bold; color: #3b82f6; font-size: 1.5rem; }
+        :root { --primary: #3b82f6; --admin: #ef4444; --ai: #10b981; --bg: #09090b; --panel: #16161a; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #e4e4e7; font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: fixed; width: 100%; }
         
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        header { background: rgba(18, 18, 22, 0.8); backdrop-filter: blur(10px); padding: 15px; border-bottom: 1px solid #27272a; text-align: center; font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; }
         
-        .msg { padding: 10px 14px; border-radius: 12px; max-width: 85%; word-wrap: break-word; font-size: 14px; position: relative; }
-        .warga { background: #1f1f23; align-self: flex-start; border: 1px solid #333; border-bottom-left-radius: 2px; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* Style Admin Hexky */
-        .admin { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444 !self; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .nama-admin { font-size: 11px; color: #ef4444; display: block; margin-bottom: 3px; font-weight: 900; }
+        /* Message Bubbles */
+        .msg { padding: 12px 16px; border-radius: 16px; max-width: 85%; word-wrap: break-word; font-size: 14px; line-height: 1.5; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .warga { background: var(--panel); align-self: flex-start; border: 1px solid #27272a; border-bottom-left-radius: 2px; }
+        .nama-anonim { font-size: 10px; color: var(--primary); display: block; margin-bottom: 4px; font-weight: 700; opacity: 0.8; }
         
-        .ai { background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; align-self: flex-start; color: #4ade80; border-bottom-left-radius: 2px; }
-        .nama-anonim { font-size: 10px; color: #3b82f6; display: block; margin-bottom: 3px; font-weight: bold; }
+        /* Admin & AI Style */
+        .admin { background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%); border: 1px solid var(--admin); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .nama-admin { font-size: 11px; color: #fca5a5; display: block; margin-bottom: 4px; font-weight: 900; }
         
-        .input-area { padding: 15px; background: #0d0d0f; border-top: 1px solid #27272a; display: flex; gap: 8px; flex-direction: column; }
-        .input-row { display: flex; gap: 8px; }
-        input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #18181b; color: white; outline: none; }
-        button { background: #3b82f6; color: white; border: none; padding: 0 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        button:disabled { background: #333; cursor: not-allowed; }
+        .ai-bubble { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--ai); align-self: flex-start; color: #d1fae5; border-bottom-left-radius: 2px; }
+        .nama-ai { font-size: 11px; color: var(--ai); display: block; margin-bottom: 4px; font-weight: 900; text-transform: uppercase; }
+        
+        /* Input Area */
+        .input-area { padding: 15px 15px 30px; background: var(--panel); border-top: 1px solid #27272a; display: flex; flex-direction: column; gap: 10px; }
+        .input-row { display: flex; gap: 10px; }
+        input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #3f3f46; background: #09090b; color: white; outline: none; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        button { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.3s; }
+        button:active { transform: scale(0.95); }
+        button:disabled { background: #27272a; color: #52525b; }
 
-        #cooldown-txt { font-size: 11px; color: #ef4444; display: none; text-align: center; }
-        .notif-bar { font-size: 11px; color: #888; text-align: center; padding: 5px; background: #111; border-top: 1px solid #222; }
+        #cooldown-txt { font-size: 11px; color: var(--admin); display: none; text-align: center; font-weight: bold; }
+        .notif-bar { font-size: 10px; color: #71717a; text-align: center; padding: 8px; background: #000; border-top: 1px solid #27272a; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
 <header>ExeChat</header>
 <div id="chat-box"></div>
-
-<div class="notif-bar" id="notif-text">Menghubungkan ke jaringan...</div>
+<div class="notif-bar" id="notif-text">Sistem Diinisialisasi...</div>
 
 <div class="input-area">
-    <div id="cooldown-txt">Tunggu 5 detik sebelum mengirim lagi!</div>
+    <div id="cooldown-txt">COOLDOWN: Mohon tunggu 5 detik...</div>
     <div class="input-row">
-        <input type="text" id="userMsg" placeholder="Ketik pesan..." autocomplete="off">
-        <button id="btnKirim" onclick="kirimChat()">KIRIM</button>
+        <input type="text" id="userMsg" placeholder="Tulis pesan..." autocomplete="off">
+        <button id="btnKirim" onclick="kirimChat()">SEND</button>
     </div>
 </div>
 
@@ -62,80 +68,74 @@
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const BRIDGE_URL = "ISI_LINK_EXEC_KAMU";
+    const BRIDGE_URL = "ISI_LINK_EXEC_GOOGLE_SCRIPT_KAMU"; // LINK DARI GOOGLE APPS SCRIPT
+    const ADMIN_PASSWORD = "hexky123";
 
-    // Set Identitas
-    let myName = "Warga#" + Math.floor(1000 + Math.random() * 9000);
-    // TIPS ADMIN: Ketik "/admin Hexky" di chat untuk berubah jadi admin
+    // Nama Guest (someone + 3-5 angka random)
+    const digits = Math.floor(Math.random() * (99999 - 100 + 1) + 100);
+    let myName = "someone" + digits;
     let isAdmin = false;
 
-    // --- FITUR NOTIFIKASI 20 DETIK ---
+    // Notifikasi Rolling
     const notices = [
-        "Saat ini Hexky tidak menyediakan chat realtime.",
-        "Mungkin akan delay beberapa detik jika jaringan kamu delay.",
-        "Pastikan jaringan stabil agar chat tidak semakin delay.",
-        "Gunakan !ask untuk bertanya kepada ExeAI."
+        "Jaringan mungkin delay beberapa detik.",
+        "Ketik !ask [pertanyaan] untuk ExeAI.",
+        "Sistem ini tidak menyediakan chat realtime penuh.",
+        "Gunakan bahasa yang sopan di ExeChat."
     ];
-    let noticeIdx = 0;
+    let nIdx = 0;
     setInterval(() => {
-        document.getElementById('notif-text').innerText = notices[noticeIdx];
-        noticeIdx = (noticeIdx + 1) % notices.length;
+        document.getElementById('notif-text').innerText = notices[nIdx];
+        nIdx = (nIdx + 1) % notices.length;
     }, 20000);
 
-    // --- FITUR KIRIM CHAT & COOLDOWN ---
     let canSend = true;
 
     function kirimChat() {
         const input = document.getElementById('userMsg');
-        const btn = document.getElementById('btnKirim');
-        const cdTxt = document.getElementById('cooldown-txt');
         const text = input.value.trim();
-
         if (!text || !canSend) return;
 
-        // Perintah Khusus Admin (Ketik ini di input: /login Hexky)
-        if(text === "/login dadadadasdiajnduanduawbdadha78dyadahdauidgaydgadhauidgaydagdhaduagdyagd87ahdusiadbwyadg6atya718373714654534dhauidhaudaduhdwaodaksdnkwabdsd") {
-            isAdmin = true;
-            myName = "Admin Hexky";
-            alert("Login Admin Berhasil!");
-            input.value = "";
-            return;
+        // Login Admin
+        if(text === "/admin " + ADMIN_PASSWORD) {
+            isAdmin = true; myName = "Admin Hexky";
+            alert("👑 Akses Admin Diterima!");
+            input.value = ""; return;
         }
 
-        // Kirim ke Firebase
         db.ref("messages").push({
-            nama: myName,
-            pesan: text,
+            nama: myName, pesan: text,
             role: isAdmin ? "admin" : "user",
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
 
-        if (text.toLowerCase().startsWith("!ask ")) {
+        // Logika AI Pintar
+        const lower = text.toLowerCase();
+        const triggerAI = lower.includes("ip owner") || lower.includes("cara register") || lower.startsWith("!ask ");
+        
+        if (triggerAI) {
             tanyaAI(text.replace("!ask ", ""));
         }
 
-        // Aktifkan Cooldown 5 Detik
         canSend = false;
-        btn.disabled = true;
-        cdTxt.style.display = "block";
+        document.getElementById('btnKirim').disabled = true;
+        document.getElementById('cooldown-txt').style.display = "block";
         input.value = "";
-
         setTimeout(() => {
             canSend = true;
-            btn.disabled = false;
-            cdTxt.style.display = "none";
+            document.getElementById('btnKirim').disabled = false;
+            document.getElementById('cooldown-txt').style.display = "none";
         }, 5000);
     }
 
-    // --- LISTENER CHAT ---
     db.ref("messages").limitToLast(50).on("child_added", (snapshot) => {
         const data = snapshot.val();
         const box = document.getElementById('chat-box');
         const div = document.createElement('div');
         
         if (data.type === "ai") {
-            div.className = "msg ai";
-            div.innerHTML = `<span class="nama-anonim">🛡️ ExeAI</span>${data.pesan}`;
+            div.className = "msg ai-bubble";
+            div.innerHTML = `<span class="nama-ai">🛡️ ExeAI</span>${data.pesan}`;
         } else if (data.role === "admin") {
             div.className = "msg admin";
             div.innerHTML = `<span class="nama-admin">👑 ${data.nama}</span>${data.pesan}`;
@@ -143,15 +143,11 @@
             div.className = "msg warga";
             div.innerHTML = `<span class="nama-anonim">${data.nama}</span>${data.pesan}`;
         }
-        
         box.appendChild(div);
         box.scrollTop = box.scrollHeight;
     });
 
-    // Menangani hapus chat secara realtime (jika dihapus di Firebase)
-    db.ref("messages").on("child_removed", () => {
-        location.reload(); // Reload simpel untuk update tampilan jika ada yang dihapus
-    });
+    db.ref("messages").on("child_removed", () => location.reload());
 
     function tanyaAI(prompt) {
         const script = document.createElement('script');
@@ -161,11 +157,13 @@
     }
 
     function handleAI(data) {
-        db.ref("messages").push({ nama: "ExeAI", pesan: data.reply, type: "ai", timestamp: firebase.database.ServerValue.TIMESTAMP });
+        db.ref("messages").push({ 
+            nama: "ExeAI", pesan: data.reply, type: "ai", 
+            timestamp: firebase.database.ServerValue.TIMESTAMP 
+        });
     }
 
     document.getElementById('userMsg').addEventListener("keypress", (e) => { if(e.key === 'Enter') kirimChat(); });
 </script>
-
 </body>
 </html>
