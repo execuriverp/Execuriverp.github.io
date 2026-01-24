@@ -161,14 +161,12 @@
     // Custom Confirm Actions
     function openConfirm() { document.getElementById('card-confirm').style.display = "block"; }
     function closeConfirm() { document.getElementById('card-confirm').style.display = "none"; }
-function executeClear() {
-    db.ref("messages").remove();
-
-    db.ref("system_event/clear").set(firebase.database.ServerValue.TIMESTAMP);
-    
-    closeConfirm(); 
-    togP();
-}
+    function executeClear() {
+        db.ref("messages").remove();
+        db.ref("messages").push({ type: "sys", pesan: "[i] Admin telah membersihkan riwayat chat." });
+        closeConfirm(); togP();
+        showNotif("🗑️ All messages wiped");
+    }
 
     function hS() {
         const i = document.getElementById('u-msg');
