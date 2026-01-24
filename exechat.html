@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V24.1 Final Account</title>
+    <title>ExeChat | V24.2</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,13 +12,13 @@
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s; }
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Admin/Member Styles */
+        /* Names & Badges */
         .name-admin { background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 800; }
         .name-member { color: var(--member) !important; font-weight: 800; text-shadow: 0 0 8px rgba(16, 185, 129, 0.3); }
         @keyframes rb { to { background-position: 200% center; } }
 
-        /* Custom Modal UI */
-        #custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 30000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        /* UI Overlays */
+        #custom-modal, #modal-login, #modal-vote { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 30000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-content { background: var(--panel); border: 1px solid #333; padding: 25px; border-radius: 24px; width: 90%; max-width: 320px; text-align: center; }
 
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; width: 85%; max-width: 320px; }
@@ -29,34 +29,52 @@
 
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 14px; background: #16161a; border: 1px solid #222; align-self: flex-start; }
         .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 18px; margin-bottom: 10px; font-size: 13px; }
-        
+        .vote-card { background: #111; border: 1px solid var(--main); padding: 15px; border-radius: 18px; margin: 10px 0; width: 100%; }
+
         #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
         #panel { position: fixed; bottom: 210px; right: 20px; width: 280px; background: var(--panel); border: 1px solid #333; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 70vh; overflow-y: auto; }
 
         .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; outline: none; }
+        input { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; outline: none; }
 
         .footer-area { background: #000; border-top: 1px solid #222; padding: 15px 20px calc(20px + env(safe-area-inset-bottom)); }
-        .disclaimer { font-size: 10px; color: #555; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body onkeydown="if(event.key.toLowerCase()==='t' && document.activeElement.tagName!=='INPUT') { event.preventDefault(); document.getElementById('u-msg').focus(); }">
 
 <div id="toast-box"></div>
-<div id="maint-screen" style="display:none; position:fixed; inset:0; background:#000; z-index:25000; align-items:center; justify-content:center; flex-direction:column;">
-    <h1 style="color:var(--admin)">🚧 MAINTENANCE</h1>
+
+<div id="modal-login">
+    <div class="modal-content">
+        <h3 style="margin-top:0">Login Akun</h3>
+        <input type="text" id="li-user" placeholder="Username" style="margin-bottom:8px">
+        <input type="password" id="li-pass" placeholder="Password">
+        <div style="display:flex; gap:10px; margin-top:15px">
+            <button class="p-btn" style="background:#333" onclick="closeM('modal-login')">BATAL</button>
+            <button class="p-btn" style="background:var(--main)" onclick="doLogin()">MASUK</button>
+        </div>
+    </div>
 </div>
 
-<div id="modal-login" style="display:none;" class="modal-content">
-    <div id="custom-modal" style="display:flex;">
-        <div class="modal-content">
-            <h3 style="margin-top:0">Account Login</h3>
-            <input type="text" id="li-user" placeholder="Username" style="margin-bottom:8px">
-            <input type="password" id="li-pass" placeholder="Password">
-            <div style="display:flex; gap:10px; margin-top:15px">
-                <button class="p-btn" style="background:#333" onclick="document.getElementById('modal-login').style.display='none'">CANCEL</button>
-                <button class="p-btn" style="background:var(--main)" onclick="doLogin()">LOGIN</button>
-            </div>
+<div id="modal-vote">
+    <div class="modal-content">
+        <h3 style="margin-top:0">Buat Vote</h3>
+        <input type="text" id="v-title" placeholder="Judul Vote" style="margin-bottom:8px">
+        <input type="number" id="v-target" placeholder="Target Suara">
+        <div style="display:flex; gap:10px; margin-top:15px">
+            <button class="p-btn" style="background:#333" onclick="closeM('modal-vote')">BATAL</button>
+            <button class="p-btn" style="background:var(--main)" onclick="startV()">MULAI</button>
+        </div>
+    </div>
+</div>
+
+<div id="custom-modal">
+    <div class="modal-content">
+        <h3>Hapus Chat?</h3>
+        <p style="font-size:12px; color:#aaa">Semua pesan di database akan hilang permanen.</p>
+        <div style="display:flex; gap:10px; margin-top:15px">
+            <button class="p-btn" style="background:#333" onclick="closeM('custom-modal')">BATAL</button>
+            <button class="p-btn" style="background:var(--admin)" onclick="confirmWipe()">YA, HAPUS</button>
         </div>
     </div>
 </div>
@@ -66,12 +84,11 @@
         <span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span>
         <div id="my-name" style="font-size:10px; color:#666">Guest Mode</div>
     </div>
-    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="document.getElementById('modal-login').style.display='block'">LOGIN</button>
+    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN</button>
 </header>
 
 <div id="static-area" style="padding:10px 20px 0;">
     <div id="anno-box"></div>
-    <div id="link-box"></div>
 </div>
 
 <div id="chat-box"></div>
@@ -81,15 +98,15 @@
     <h4 style="margin:0">Admin Tools</h4>
     <input type="text" id="a-ann" placeholder="Announcement (5m)">
     <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
-    <button class="p-btn" style="background:#059669" onclick="openVote()">START VOTE</button>
+    <button class="p-btn" style="background:#059669" onclick="openM('modal-vote'); togP();">CREATE VOTE</button>
     <button class="p-btn" onclick="db.ref('room_status/maint').set(!iM)" id="mtBtn">MAINTENANCE</button>
     <hr style="border-top:1px solid #333">
-    <h4 style="margin:0">Player Management</h4>
-    <input type="text" id="reg-user" placeholder="Username Baru">
-    <input type="text" id="reg-pass" placeholder="Password Baru">
+    <h4 style="margin:0">Add Player</h4>
+    <input type="text" id="reg-user" placeholder="User Baru">
+    <input type="text" id="reg-pass" placeholder="Pass Baru">
     <button class="p-btn" style="background:var(--member)" onclick="regPlayer()">ADD PLAYER</button>
     <hr style="border-top:1px solid #333">
-    <button class="p-btn" style="background:var(--admin)" onclick="wCh()">WIPE ALL CHAT</button>
+    <button class="p-btn" style="background:var(--admin)" onclick="openM('custom-modal'); togP();">WIPE CHAT</button>
 </div>
 
 <div class="footer-area">
@@ -97,7 +114,6 @@
         <input type="text" id="u-msg" placeholder="Ketik pesan... (T)" onkeypress="if(event.key=='Enter') hS()">
         <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button>
     </div>
-    <div class="disclaimer">Dilarang toxic! ExeChat V24.1 Account System.</div>
 </div>
 
 <script>
@@ -113,7 +129,7 @@
     let myData = { name: "User_" + Math.floor(Math.random()*9000), role: "guest" };
     let iM = false;
 
-    // Login Check
+    // Persist Login
     const saved = localStorage.getItem("exeUser");
     if(saved) {
         myData = JSON.parse(saved);
@@ -128,57 +144,62 @@
         setTimeout(() => t.remove(), 3000);
     }
 
-function doLogin() {
-    const uInput = document.getElementById('li-user').value.trim().toLowerCase();
-    const pInput = document.getElementById('li-pass').value.trim();
-    
-    console.log("Mencoba login untuk user:", uInput);
+    function openM(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeM(id) { document.getElementById(id).style.display = 'none'; }
 
-    db.ref("users/" + uInput).once("value").then(s => {
-        if (s.exists()) {
-            const d = s.val();
-            console.log("Data ditemukan di database:", d);
-            console.log("Password dari DB:", d.password);
-            console.log("Password input kamu:", pInput);
-
-            if(String(d.password) === String(pInput)) {
-                localStorage.setItem("exeUser", JSON.stringify({ 
-                    name: d.username, 
-                    role: d.role 
-                }));
-                showToast("Login Berhasil!");
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showToast("Password Salah!");
-            }
-        } else {
-            console.log("Folder 'users/" + uInput + "' tidak ada di Firebase.");
-            showToast("Username tidak ditemukan!");
-        }
-    }).catch(err => {
-        console.error("Error Database:", err);
-        showToast("Error Koneksi Database!");
-    });
-}
-
-    function regPlayer() {
-        const u = document.getElementById('reg-user').value.trim().toLowerCase();
-        const p = document.getElementById('reg-pass').value.trim();
-        if(u && p) {
-            db.ref("users/" + u).set({ username: u, password: p, role: "member" });
-            showToast("Player " + u + " Registered!");
-            document.getElementById('reg-user').value = ""; document.getElementById('reg-pass').value = "";
-        }
+    function doLogin() {
+        const uInput = document.getElementById('li-user').value.trim().toLowerCase();
+        const pInput = document.getElementById('li-pass').value.trim();
+        db.ref("users/" + uInput).once("value").then(s => {
+            if (s.exists()) {
+                const d = s.val();
+                if(String(d.password) === String(pInput)) {
+                    localStorage.setItem("exeUser", JSON.stringify({ name: d.username, role: d.role }));
+                    location.reload();
+                } else { showToast("Password Salah!"); }
+            } else { showToast("Username tidak ada!"); }
+        });
     }
 
+    // --- VOTE SYSTEM ---
+    function startV() {
+        const t = document.getElementById('v-title').value, tg = document.getElementById('v-target').value;
+        if(!t || !tg) return showToast("Isi semua data!");
+        db.ref("vote").set({ title: t, target: parseInt(tg), active: true, yes: 0, no: 0 });
+        closeM('modal-vote');
+        localStorage.removeItem("voted");
+    }
+
+    function castV(type) {
+        if(localStorage.getItem("voted")) return showToast("Sudah memilih!");
+        db.ref("vote").transaction(d => { if(d && d.active) d[type]++; return d; });
+        localStorage.setItem("voted", "true");
+    }
+
+    db.ref("vote").on("value", s => {
+        const d = s.val();
+        if(d && d.active) {
+            if(!document.getElementById('v-ui')) {
+                const v = document.createElement('div'); v.id = 'v-ui'; v.className = 'vote-card';
+                v.innerHTML = `<b id="v-t"></b><div style="display:flex;gap:10px;margin-top:10px"><button class="p-btn" onclick="castV('yes')">YES</button><button class="p-btn" onclick="castV('no')">NO</button></div>`;
+                document.getElementById('chat-box').appendChild(v);
+            }
+            document.getElementById('v-t').innerText = `VOTE: ${d.title} (${d.yes+d.no}/${d.target})`;
+            if((d.yes+d.no) >= d.target) {
+                db.ref("vote/active").set(false);
+                db.ref("messages").push({ nama: "SYSTEM", pesan: `Vote [${d.title}] Selesai!`, role: "guest" });
+            }
+        } else { if(document.getElementById('v-ui')) document.getElementById('v-ui').remove(); }
+    });
+
+    // --- MESSAGE & ADMIN ---
     function hS() {
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if(!t || (iM && myData.role !== 'admin')) return;
-        db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role, ts: Date.now() });
+        db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role });
         i.value = "";
     }
 
-    // Dynamic Listeners
     db.ref("messages").on("value", s => {
         const b = document.getElementById('chat-box'); b.innerHTML = "";
         s.forEach(c => {
@@ -191,26 +212,26 @@ function doLogin() {
         b.scrollTop = b.scrollHeight;
     });
 
-    db.ref("announcement").on("value", s => {
-        const d = s.val(), box = document.getElementById('anno-box');
-        if(d && Date.now() < d.exp) box.innerHTML = `<div class="anno-card">📢 <b>INFO = ADMIN :</b> ${d.txt}</div>`;
-        else box.innerHTML = "";
-    });
-
+    function confirmWipe() { db.ref("messages").set(null); closeM('custom-modal'); showToast("Chat dibersihkan!"); }
     function sendAnn() {
         const t = document.getElementById('a-ann').value;
         if(t) db.ref("announcement").set({ txt: t, exp: Date.now() + 300000 });
         document.getElementById('a-ann').value = ""; togP();
     }
-
-    function wCh() { if(confirm("Hapus semua chat?")) db.ref("messages").set(null); togP(); }
-    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
     
-    db.ref("room_status/maint").on("value", s => {
-        iM = s.val();
-        document.getElementById('maint-screen').style.display = (iM && myData.role !== 'admin') ? "flex" : "none";
-        document.getElementById('mtBtn').innerText = iM ? "MT: ON" : "MT: OFF";
+    db.ref("announcement").on("value", s => {
+        const d = s.val(), box = document.getElementById('anno-box');
+        if(d && Date.now() < d.exp) box.innerHTML = `<div class="anno-card">📢 <b>ADMIN :</b> ${d.txt}</div>`;
+        else box.innerHTML = "";
     });
+
+    function regPlayer() {
+        const u = document.getElementById('reg-user').value.trim().toLowerCase();
+        const p = document.getElementById('reg-pass').value.trim();
+        if(u && p) { db.ref("users/" + u).set({ username: u, password: p, role: "member" }); showToast("Player Registered!"); }
+    }
+
+    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
 </script>
 </body>
 </html>
