@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | 1.0.2 Official Fixed</title>
+    <title>ExeChat | 1.0.2 (V27 Full Admin Panel)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -10,96 +10,135 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS ASLI 1.0.2 (TIDAK ADA YANG DIGANTI) --- */
+        /* --- CSS ASLI BOS 1.0.2 --- */
         :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --primary: #3b82f6; --owner: #f59e0b; --admin: #ef4444; --text: #fafafa; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        
         body { background: radial-gradient(circle at top right, #1a1a2e, #09090b); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         @keyframes rainbow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .name-owner, .admin-red, .admin-blue { 
-            background-size: 200% auto; animation: rainbow 4s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px;
-        }
+        .name-owner, .admin-red { background-size: 200% auto; animation: rainbow 4s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px; }
         .name-owner { background-image: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); }
         .admin-red { background-image: linear-gradient(90deg, #f87171, #ef4444, #f87171); }
         .member { color: #10b981 !important; font-weight: 700; font-size: 11px; }
 
+        /* Khusus Bubble Owner Agar Lebih Keren */
+        .msg-owner { border: 1.5px solid #f59e0b !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+
         header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.7); backdrop-filter: blur(12px); z-index: 100; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: flex; flex-direction: column; gap: 24px; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: none; flex-direction: column; gap: 24px; }
         .msg-content { background: rgba(24, 24, 27, 0.5); border: 1px solid var(--border); padding: 16px 20px; border-radius: 20px; line-height: 1.6; font-size: 15px; cursor: pointer; position: relative; }
-        
+
         .btn-ai { background: var(--surface); color: white; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center; }
         .btn-ai.primary { background: var(--primary); border: none; }
         .btn-ai.danger { color: #f87171; border-color: #450a0a; }
 
-        #launcher { position: fixed; bottom: 120px; right: 24px; background: var(--primary); width: 56px; height: 56px; border-radius: 18px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
-        #panel { position: fixed; bottom: 190px; right: 24px; width: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 12px; z-index: 1001; }
+        /* PANEL ADMIN & LAUNCHER */
+        #launcher { position: fixed; bottom: 120px; right: 24px; background: var(--primary); width: 56px; height: 56px; border-radius: 18px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        #panel { position: fixed; bottom: 190px; right: 24px; width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 1001; max-height: 70vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         
-        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; margin-bottom: 8px; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 28px; width: 100%; max-width: 380px; }
+        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; margin-bottom: 5px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 28px; width: 90%; max-width: 400px; }
 
-        footer { padding: 20px 5%; }
+        footer { padding: 20px 5%; display: none; }
         .input-area { max-width: 800px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; display: flex; padding: 8px; }
-        .input-area input { border: none; background: transparent; flex: 1; padding: 10px; color: white; }
+        .input-area input { border: none; background: transparent; flex: 1; padding: 10px; color: white; margin: 0; }
 
-        .reply-preview { background: var(--surface); border-left: 4px solid var(--primary); padding: 10px 20px; display: none; max-width: 800px; margin: 0 auto 5px; border-radius: 12px; justify-content: space-between; }
-        .online-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 8px #22c55e; }
+        #anno-box { position: fixed; top: 80px; left: 0; right: 0; z-index: 90; padding: 0 5%; pointer-events: none; }
+        .anno-card { background: var(--primary); padding: 16px; border-radius: 16px; font-weight: 700; box-shadow: 0 20px 40px rgba(0,0,0,0.4); pointer-events: auto; max-width: 600px; margin: 0 auto; }
+
+        .lock-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .online-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .full-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
 <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+<div id="mt-screen" class="full-screen"><h1>⚙️ MAINTENANCE MODE</h1><p>Sabar ya Bos, lagi ada perbaikan.</p></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:12px">
         <div onclick="openProfile()" style="cursor:pointer; background:var(--surface); padding:10px; border-radius:12px; border:1px solid var(--border)">⚙️</div>
         <div>
             <b style="font-size:18px">EXECHAT <span style="color:var(--primary)">1.0.2</span></b>
-            <div id="status-header" style="font-size:10px; color:#52525b">Offline</div>
+            <div id="status-header" style="font-size:10px; color:#52525b">Guest Mode</div>
         </div>
     </div>
     <div id="auth-btns"><button class="btn-ai primary" onclick="openM('modal-auth')">Masuk / Daftar</button></div>
 </header>
 
+<div id="anno-box"></div>
+
+<div id="guest-lock" class="lock-screen">
+    <div style="font-size: 60px;">🔒</div>
+    <h2>Chat Locked</h2>
+    <p style="color:#71717a">Login untuk melihat isi chat dan statistik.</p>
+</div>
+
 <div id="chat-box"></div>
 
-<div id="reply-bar" class="reply-preview">
+<div id="reply-bar" style="background:var(--surface); border-left:4px solid var(--primary); padding:10px 20px; display:none; max-width:800px; margin:0 auto 5px; border-radius:12px; justify-content:space-between;">
     <div id="reply-text" style="font-size:12px"></div>
     <span onclick="cancelReply()" style="color:red; cursor:pointer">✕</span>
 </div>
 
-<footer>
+<footer id="main-footer">
     <div class="input-area">
         <input type="text" id="u-msg" placeholder="Ketik pesan..." onkeypress="if(event.key=='Enter') hS()">
         <button class="btn-ai primary" onclick="hS()">KIRIM</button>
     </div>
 </footer>
 
+<div id="launcher" onclick="togP()">🛡️</div>
+<div id="panel">
+    <div style="display:flex; justify-content:space-between"><b>ADMIN PANEL</b><span onclick="togP()" style="cursor:pointer">✕</span></div>
+    
+    <div id="owner-tools" style="display:none; flex-direction:column; gap:8px; border-top:1px solid var(--border); padding-top:10px">
+        <button class="btn-ai danger" onclick="wipeChat()">🗑️ WIPE MESSAGES</button>
+        <button class="btn-ai" id="mt-btn" onclick="toggleMT()">⚙️ MAINTENANCE: OFF</button>
+        <button class="btn-ai" id="gc-btn" onclick="toggleGC()">🔒 GUEST CHAT: ON</button>
+        <div style="display:flex; align-items:center; justify-content:space-between; font-size:12px">
+            THEME: <input type="color" onchange="setTheme(this.value)" style="width:50px; height:30px; border:none; background:none">
+        </div>
+    </div>
+
+    <hr style="border:0; border-top:1px solid var(--border)">
+    <input type="text" id="t-user" placeholder="Username Target">
+    <div style="display:flex; gap:5px">
+        <input type="number" id="m-min" placeholder="Min" style="width:70px">
+        <button class="btn-ai" style="flex:1" onclick="exec('mute')">MUTE</button>
+        <button class="btn-ai danger" style="flex:1" onclick="exec('banned')">BAN</button>
+    </div>
+    <button class="btn-ai" onclick="exec('member')">UNBAN / UNMUTE</button>
+    <button class="btn-ai" onclick="openM('modal-anno');togP()">📢 ANNOUNCEMENT</button>
+    <button class="btn-ai" onclick="openM('modal-vote');togP()">🗳️ CREATE VOTE</button>
+</div>
+
 <div id="modal-auth" class="modal">
     <div class="modal-content">
         <div style="display:flex; gap:10px; margin-bottom:20px">
             <button class="btn-ai primary" style="flex:1" onclick="tab('login')">LOGIN</button>
-            <button class="btn-ai" style="flex:1" onclick="tab('reg')">DAFTAR</button>
+            <button class="btn-ai" style="flex:1" onclick="tab('reg')">REGISTER</button>
         </div>
         <input type="text" id="au-user" placeholder="Username">
         <div id="reg-fields" style="display:none">
-            <input type="email" id="au-email" placeholder="Email (Untuk Verifikasi)">
+            <input type="email" id="au-email" placeholder="Email Terdaftar">
         </div>
         <input type="password" id="au-pass" placeholder="Password">
-        <button id="au-btn" class="btn-ai primary" style="width:100%; margin-top:15px" onclick="authAction()">MASUK</button>
+        <button id="au-btn" class="btn-ai primary" style="width:100%; margin-top:10px" onclick="authAction()">MASUK</button>
         <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-auth')">BATAL</button>
     </div>
 </div>
 
 <div id="modal-profile" class="modal">
     <div class="modal-content">
-        <h3 style="margin:0 0 15px">ACCOUNT STATS</h3>
-        <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">User: <b id="st-user">-</b></div>
+        <h3 style="margin-top:0">MY ACCOUNT</h3>
+        <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">Username: <b id="st-user">-</b></div>
         <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">Email: <b id="st-email">-</b></div>
         <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">Role: <b id="st-role">-</b></div>
         
-        <h4 style="margin:20px 0 10px">CHANGE PASSWORD</h4>
+        <h4 style="margin:20px 0 10px">GANTI PASSWORD</h4>
         <input type="password" id="new-pw" placeholder="Password Baru">
         <button class="btn-ai primary" style="width:100%" onclick="changePw()">UPDATE PASSWORD</button>
         
@@ -108,20 +147,9 @@
     </div>
 </div>
 
-<div id="launcher" onclick="togP()">🛡️</div>
-<div id="panel">
-    <b style="font-size:14px">OWNER PANEL</b>
-    <div id="owner-only" style="display:none; flex-direction:column; gap:8px; margin-top:10px">
-        <button class="btn-ai danger" onclick="wipeChat()">🗑️ WIPE MESSAGES</button>
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px">
-            THEME: <input type="color" onchange="setTheme(this.value)" style="width:50px; height:30px; margin:0">
-        </div>
-    </div>
-    <hr style="border:0; border-top:1px solid var(--border)">
-    <input type="text" id="t-user" placeholder="Username Target">
-    <button class="btn-ai danger" onclick="banUser()">BAN USER</button>
-    <button class="btn-ai" onclick="unbanUser()">UNBAN USER</button>
-</div>
+<div id="modal-anno" class="modal"><div class="modal-content"><h3>BROADCAST</h3><input type="text" id="an-txt" placeholder="Pesan..."><button class="btn-ai primary" style="width:100%; margin-top:10px" onclick="sendAnno()">KIRIM</button></div></div>
+
+<div id="modal-vote" class="modal"><div class="modal-content"><h3>NEW VOTE</h3><input type="text" id="v-title" placeholder="Pertanyaan?"><input type="number" id="v-target" placeholder="Target Suara"><button class="btn-ai primary" style="width:100%; margin-top:10px" onclick="startV()">MULAI</button></div></div>
 
 <script>
     const _0xCf = {
@@ -134,37 +162,37 @@
     const db = firebase.database();
 
     let myData = { role: "guest" };
-    let curTab = "login";
+    let roomSet = { maint: false, guest_chat: true };
     let replyData = null;
 
-    // --- AUTH LOGIC ---
-    function tab(t) { 
-        curTab = t; 
-        document.getElementById('reg-fields').style.display = t==='reg' ? 'block' : 'none';
-        document.getElementById('au-btn').innerText = t==='login' ? 'MASUK' : 'DAFTAR';
+    // --- SECURITY & UI ---
+    function updateVisibility() {
+        const isLogged = myData.role !== 'guest';
+        document.getElementById('chat-box').style.display = isLogged ? 'flex' : 'none';
+        document.getElementById('main-footer').style.display = isLogged ? 'block' : 'none';
+        document.getElementById('guest-lock').style.display = isLogged ? 'none' : 'flex';
     }
 
+    // --- AUTH ---
+    function tab(t) { curTab = t; document.getElementById('reg-fields').style.display = t==='reg'?'block':'none'; document.getElementById('au-btn').innerText = t==='login'?'MASUK':'DAFTAR'; }
     async function authAction() {
         const u = document.getElementById('au-user').value.toLowerCase().trim();
         const p = document.getElementById('au-pass').value;
         const e = document.getElementById('au-email').value;
-        if(!u || !p) return alert("Isi Lengkap!");
-
+        if(!u || !p) return alert("Isi data!");
         if(curTab === 'reg') {
-            if(!e.includes('@')) return alert("Email tidak valid!");
             const s = await db.ref("users/"+u).once("value");
-            if(s.exists()) return alert("Username sudah ada!");
-            await db.ref("users/"+u).set({ username: u, email: e, password: p, role: 'member', status: 'online' });
-            alert("Terdaftar! Verifikasi otomatis berhasil."); tab('login');
+            if(s.exists()) return alert("Username ada!");
+            await db.ref("users/"+u).set({ username: u, email: e||"No Email", password: p, role: 'member', muteUntil: 0 });
+            alert("Berhasil!"); tab('login');
         } else {
             const s = await db.ref("users/"+u).once("value");
-            if(!s.exists() || s.val().password !== p) return alert("Salah Login!");
-            localStorage.setItem("exe_session", u);
-            location.reload();
+            if(!s.exists() || s.val().password !== p) return alert("Salah login!");
+            localStorage.setItem("exe_session", u); location.reload();
         }
     }
 
-    // --- SESSION & STATS ---
+    // --- SESSION ---
     const session = localStorage.getItem("exe_session");
     if(session) {
         db.ref("users/"+session).on("value", s => {
@@ -172,71 +200,81 @@
             myData = { ...d, id: session };
             document.getElementById('auth-btns').style.display = 'none';
             document.getElementById('status-header').innerHTML = `<span class="online-dot"></span>` + d.role.toUpperCase();
-            if(d.role === 'owner' || d.role.includes('admin')) document.getElementById('launcher').style.display = 'flex';
-            if(d.role === 'owner') document.getElementById('owner-only').style.display = 'flex';
-            
+            if(d.role==='owner' || d.role.includes('admin')) document.getElementById('launcher').style.display = 'flex';
+            if(d.role==='owner') document.getElementById('owner-tools').style.display = 'flex';
             document.getElementById('st-user').innerText = d.username;
-            document.getElementById('st-email').innerText = d.email || "N/A";
+            document.getElementById('st-email').innerText = d.email || "-";
             document.getElementById('st-role').innerText = d.role.toUpperCase();
+            if(d.role === 'banned') document.body.innerHTML = "<h1>AKUN ANDA DIBANNED</h1>";
+            updateVisibility();
         });
     }
 
-    // --- CHAT & REPLY ---
+    // --- CHAT ---
     function hS() {
+        if(Date.now() < myData.muteUntil) return alert("Muted!");
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if(!t || myData.role === 'guest') return;
-        const p = { nama: myData.username, pesan: t, role: myData.role, time: Date.now(), uid: myData.id };
-        if(replyData) p.reply = replyData;
-        db.ref("messages").push(p); i.value = ""; cancelReply();
+        const payload = { nama: myData.username, pesan: t, role: myData.role, uid: myData.id, time: Date.now() };
+        if(replyData) payload.reply = { n: replyData.n, p: replyData.p };
+        db.ref("messages").push(payload); i.value = ""; cancelReply();
     }
 
     db.ref("messages").limitToLast(25).on("value", s => {
-        const box = document.getElementById('chat-box');
-        const oldLen = box.children.length;
-        box.innerHTML = "";
+        const box = document.getElementById('chat-box'); box.innerHTML = "";
         s.forEach(snap => {
-            const d = snap.val();
-            const m = document.createElement('div');
-            let cls = d.role === 'owner' ? 'name-owner' : (d.role.includes('admin') ? 'admin-red' : 'member');
+            const d = snap.val(); const v = document.createElement('div');
+            let isOwn = d.role === 'owner';
+            let cls = isOwn ? 'name-owner' : (d.role.includes('admin') ? 'admin-red' : 'member');
             let rpl = d.reply ? `<div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:10px; font-size:11px; margin-bottom:5px; border-left:3px solid var(--primary)"><b>@${d.reply.n}</b>: ${d.reply.p}</div>` : '';
-            
-            m.innerHTML = `<div class="msg-content" onclick="setReply('${d.nama}','${d.pesan}')">
-                <div class="${cls}">${d.nama}</div>
-                ${rpl}<div>${d.pesan}</div>
+            v.innerHTML = `<div class="msg-content ${isOwn?'msg-owner':''}" onclick="setReply('${d.nama}','${d.pesan}')">
+                <div class="${cls}">${d.nama}</div>${rpl}<div>${d.pesan}</div>
             </div>`;
-            box.appendChild(m);
+            box.appendChild(v);
         });
         box.scrollTop = box.scrollHeight;
-        if(oldLen > 0 && oldLen < s.numChildren()) document.getElementById('notif-sound').play().catch(()=>{});
     });
 
-    function setReply(n, p) {
-        replyData = { n, p };
-        document.getElementById('reply-bar').style.display = 'flex';
-        document.getElementById('reply-text').innerText = `Balas ${n}: ${p}`;
-        document.getElementById('u-msg').focus();
-    }
-    function cancelReply() { replyData = null; document.getElementById('reply-bar').style.display = 'none'; }
+    // --- SYSTEM CONTROLS ---
+    db.ref("room_status").on("value", s => {
+        roomSet = s.val() || { maint: false, guest_chat: true };
+        if(roomSet.maint && myData.role !== 'owner') document.getElementById('mt-screen').style.display = 'flex';
+        else document.getElementById('mt-screen').style.display = 'none';
+        if(roomSet.theme) document.documentElement.style.setProperty('--primary', roomSet.theme);
+        document.getElementById('mt-btn').innerText = "⚙️ MAINTENANCE: " + (roomSet.maint ? "ON" : "OFF");
+        document.getElementById('gc-btn').innerText = "🔒 GUEST CHAT: " + (roomSet.guest_chat ? "ON" : "OFF");
+    });
 
-    // --- ACCOUNT TOOLS ---
-    function changePw() {
-        const pw = document.getElementById('new-pw').value;
-        if(pw.length < 4) return alert("Password terlalu pendek!");
-        db.ref("users/"+myData.id).update({ password: pw }).then(() => alert("Password Berhasil Diganti!"));
-    }
+    db.ref("announcement").on("value", s => {
+        const d = s.val(); const box = document.getElementById('anno-box');
+        if(d && Date.now() < d.exp) box.innerHTML = `<div class="anno-card">📢 ${d.txt}</div>`;
+        else box.innerHTML = "";
+    });
 
-    // --- ADMIN TOOLS ---
+    function toggleMT() { db.ref("room_status/maint").set(!roomSet.maint); }
+    function toggleGC() { db.ref("room_status/guest_chat").set(!roomSet.guest_chat); }
     function setTheme(c) { db.ref("room_status/theme").set(c); }
-    db.ref("room_status/theme").on("value", s => { if(s.val()) document.documentElement.style.setProperty('--primary', s.val()); });
-    function wipeChat() { if(confirm("Wipe all?")) db.ref("messages").remove(); }
-    function banUser() { const t = document.getElementById('t-user').value.toLowerCase(); db.ref("users/"+t).update({role:'banned'}); }
-    function unbanUser() { const t = document.getElementById('t-user').value.toLowerCase(); db.ref("users/"+t).update({role:'member'}); }
+    function wipeChat() { if(confirm("Wipe?")) db.ref("messages").remove(); }
+    function sendAnno() { db.ref("announcement").set({ txt: document.getElementById('an-txt').value, exp: Date.now() + 15000 }); closeM('modal-anno'); }
+    function exec(type) {
+        const t = document.getElementById('t-user').value.toLowerCase().trim();
+        const m = parseInt(document.getElementById('m-min').value) || 10;
+        if(type==='mute') db.ref("users/"+t).update({muteUntil: Date.now() + (m*60000)});
+        else if(type==='banned') db.ref("users/"+t).update({role: 'banned'});
+        else db.ref("users/"+t).update({role: 'member', muteUntil: 0});
+    }
+    function changePw() { const pw = document.getElementById('new-pw').value; if(pw) db.ref("users/"+myData.id).update({password:pw}).then(()=>alert("Updated!")); }
 
-    function openProfile() { if(myData.role === 'guest') return openM('modal-auth'); openM('modal-profile'); }
+    // --- UI BASE ---
+    function setReply(n, p) { replyData = { n, p }; document.getElementById('reply-bar').style.display = 'flex'; document.getElementById('reply-text').innerText = `Balas ${n}: ${p}`; }
+    function cancelReply() { replyData = null; document.getElementById('reply-bar').style.display = 'none'; }
+    function openProfile() { if(myData.role==='guest') return openM('modal-auth'); openM('modal-profile'); }
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
     function closeM(id) { document.getElementById(id).style.display = 'none'; }
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
     function logout() { localStorage.clear(); location.reload(); }
+
+    updateVisibility();
 </script>
 </body>
 </html>
