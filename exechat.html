@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V25.2 Final</title>
+    <title>ExeChat | V26 Final Fix</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -46,7 +46,7 @@
 <div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="User"><input type="password" id="li-pass" placeholder="Pass"><button class="p-btn" style="background:var(--main)" onclick="doLogin()">MASUK</button><button class="p-btn" onclick="closeM('modal-login')">BATAL</button></div></div>
 <div id="modal-vote" class="modal"><div class="modal-content"><h3>Buat Vote</h3><input type="text" id="v-title" placeholder="Judul"><input type="number" id="v-target" placeholder="Target"><button class="p-btn" style="background:var(--main)" onclick="startV()">MULAI</button><button class="p-btn" onclick="closeM('modal-vote')">BATAL</button></div></div>
 <div id="modal-profile" class="modal"><div class="modal-content"><h3>Profil</h3><p id="p-status" style="font-size:10px"></p><input type="text" id="p-user" placeholder="Nama Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('username')">GANTI NAMA</button><input type="password" id="p-pass" placeholder="Pass Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('password')">GANTI PASS</button><button class="p-btn" style="background:var(--admin)" onclick="localStorage.removeItem('exeUser'); location.reload();">LOGOUT</button><button class="p-btn" onclick="closeM('modal-profile')">TUTUP</button></div></div>
-<div id="modal-wipe" class="modal"><div class="modal-content"><h3>Hapus Semua Chat?</h3><p style="font-size:11px; color:#666">Pesan di database akan hilang permanen.</p><button class="p-btn" style="background:var(--admin)" onclick="confirmWipe()">YA, HAPUS</button><button class="p-btn" onclick="closeM('modal-wipe')">BATAL</button></div></div>
+<div id="modal-wipe" class="modal"><div class="modal-content"><h3>Wipe Chat?</h3><button class="p-btn" style="background:var(--admin)" onclick="confirmWipe()">YA, HAPUS</button><button class="p-btn" onclick="closeM('modal-wipe')">BATAL</button></div></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:10px">
@@ -62,21 +62,22 @@
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
     <h4 style="margin:0">Admin Tools</h4>
-    <input type="text" id="a-ann" placeholder="Announcement (5m)">
-    <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
+    <input type="text" id="a-ann" placeholder="Announcement">
+    <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">INFO</button>
     <input type="text" id="a-link" placeholder="https://link.com">
-    <button class="p-btn" style="background:var(--main)" onclick="sendL()">SHARE LINK</button>
-    <button class="p-btn" style="background:#059669" onclick="openM('modal-vote'); togP();">CREATE VOTE</button>
+    <button class="p-btn" style="background:var(--main)" onclick="sendL()">LINK</button>
+    <button class="p-btn" style="background:#059669" onclick="openM('modal-vote'); togP();">VOTE</button>
+    <button class="p-btn" id="mtBtn" onclick="toggleMT()">MAINTENANCE: OFF</button>
     <hr style="border-top:1px solid #333">
-    <h4 style="margin:0">Management</h4>
-    <input type="text" id="reg-user" placeholder="Target Username">
-    <input type="text" id="reg-pass" placeholder="Password (hanya Add Player)">
+    <h4 style="margin:0">User Tools</h4>
+    <input type="text" id="reg-user" placeholder="Target User">
+    <input type="text" id="reg-pass" placeholder="Pass (Add Player)">
     <div style="display:flex; gap:5px">
         <button class="p-btn" style="background:var(--member)" onclick="regPlayer()">ADD PLAYER</button>
-        <button class="p-btn" style="background:var(--admin)" onclick="setRole('admin')">ADD ADMIN</button>
+        <button class="p-btn" style="background:var(--admin)" onclick="setRole('admin')">PROMOTE</button>
     </div>
     <hr style="border-top:1px solid #333">
-    <button class="p-btn" style="background:var(--admin)" onclick="openM('modal-wipe'); togP();">WIPE ALL CHAT</button>
+    <button class="p-btn" style="background:var(--admin)" onclick="openM('modal-wipe'); togP();">WIPE CHAT</button>
 </div>
 
 <div class="footer-area">
@@ -96,6 +97,8 @@
     const db = firebase.database();
 
     let myData = { name: "Guest_" + Math.floor(Math.random()*900), role: "guest", id: "" };
+    let isMT = false;
+
     const saved = localStorage.getItem("exeUser");
     if(saved) {
         myData = JSON.parse(saved);
@@ -112,6 +115,16 @@
 
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
     function closeM(id) { document.getElementById(id).style.display = 'none'; }
+
+    // --- MAINTENANCE SYSTEM ---
+    db.ref("room_status/maint").on("value", s => {
+        isMT = s.val() || false;
+        const btn = document.getElementById('mtBtn');
+        btn.innerText = isMT ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
+        btn.style.background = isMT ? "var(--admin)" : "#222";
+    });
+
+    function toggleMT() { db.ref("room_status/maint").set(!isMT); }
 
     function doLogin() {
         const u = document.getElementById('li-user').value.trim().toLowerCase();
@@ -130,9 +143,9 @@
     function regPlayer() {
         const u = document.getElementById('reg-user').value.trim().toLowerCase();
         const p = document.getElementById('reg-pass').value.trim();
-        if(!u || !p) return showToast("Isi User & Pass!");
+        if(!u || !p) return showToast("Isi data!");
         db.ref("users/" + u).set({ username: u, password: p, role: "member" });
-        showToast("Player " + u + " Terdaftar!");
+        showToast("Player Registered!");
     }
 
     function setRole(newRole) {
@@ -140,7 +153,7 @@
         db.ref("users/" + u).once("value").then(s => {
             if(s.exists()){
                 db.ref("users/" + u + "/role").set(newRole);
-                showToast(u + " Jadi Admin!");
+                showToast(u + " promoted!");
             } else showToast("User tidak ditemukan!");
         });
     }
@@ -148,6 +161,7 @@
     function hS() {
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if(!t) return;
+        if(isMT && myData.role !== 'admin') return showToast("Maintenance Aktif!");
         db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role });
         i.value = "";
     }
@@ -166,11 +180,8 @@
             const d = c.val(), v = document.createElement('div');
             v.className = "msg";
             let nC = (d.role === 'admin') ? "name-admin" : (d.role === 'member' ? "name-member" : "");
-            if(d.type === 'link') {
-                v.innerHTML = `<span class="${nC}" style="font-size:10px; display:block;">${d.nama}</span><a href="${d.pesan}" target="_blank" class="link-card">🌐 OPEN LINK</a>`;
-            } else {
-                v.innerHTML = `<span class="${nC}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
-            }
+            v.innerHTML = `<span class="${nC}" style="font-size:10px; display:block;">${d.nama}</span>` + 
+                         (d.type === 'link' ? `<a href="${d.pesan}" target="_blank" class="link-card">🌐 OPEN LINK</a>` : d.pesan);
             b.appendChild(v);
         });
         b.scrollTop = b.scrollHeight;
@@ -190,7 +201,6 @@
         else box.innerHTML = "";
     });
 
-    // VOTE
     function startV() {
         const t = document.getElementById('v-title').value, tg = document.getElementById('v-target').value;
         db.ref("vote").set({ title: t, target: parseInt(tg), active: true, yes: 0, no: 0 });
