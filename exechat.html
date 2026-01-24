@@ -132,24 +132,32 @@ function doLogin() {
     const uInput = document.getElementById('li-user').value.trim().toLowerCase();
     const pInput = document.getElementById('li-pass').value.trim();
     
-    // Kita arahkan langsung ke folder users/[username]
-    db.ref("users/" + uInput).once("value", s => {
+    console.log("Mencoba login untuk user:", uInput);
+
+    db.ref("users/" + uInput).once("value").then(s => {
         if (s.exists()) {
             const d = s.val();
-            // Cek password (jika di DB kamu pakai teks biasa, jangan di-encode lagi)
-            if(d.password === pInput) {
+            console.log("Data ditemukan di database:", d);
+            console.log("Password dari DB:", d.password);
+            console.log("Password input kamu:", pInput);
+
+            if(String(d.password) === String(pInput)) {
                 localStorage.setItem("exeUser", JSON.stringify({ 
                     name: d.username, 
                     role: d.role 
                 }));
-                showToast("Berhasil Login sebagai " + d.username);
+                showToast("Login Berhasil!");
                 setTimeout(() => location.reload(), 1000);
             } else {
                 showToast("Password Salah!");
             }
         } else {
-            showToast("Username '" + uInput + "' Tidak Ditemukan!");
+            console.log("Folder 'users/" + uInput + "' tidak ada di Firebase.");
+            showToast("Username tidak ditemukan!");
         }
+    }).catch(err => {
+        console.error("Error Database:", err);
+        showToast("Error Koneksi Database!");
     });
 }
 
