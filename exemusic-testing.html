@@ -125,7 +125,6 @@
     .btn-auth { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
     .log-container { background: #000; padding: 10px; border-radius: 10px; font-size: 10px; margin-top: 10px; max-height: 150px; overflow-y: auto; color: #0f0; }
     
-    /* New Social Style */
     .profile-info { text-align: center; padding: 10px; border-bottom: 1px solid #333; margin-bottom: 15px; }
     .follow-btn { background: var(--accent); color: black; border: none; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; cursor: pointer; }
   </style>
@@ -224,7 +223,8 @@
     <div class="sheet"><div id="songContainer"></div></div>
   </div>
 
-const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVzaWMtZXhlY3VyaXZlcnAuZmlyZWJhc2VhcHAuY29t", "aHR0cHM6Ly9leGVtdXNpYy1leGVjdXJpdmVycC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw", "ZXhlbXVzaWMtZXhlY3VyaXZlcnA="];
+  <script>
+    const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVzaWMtZXhlY3VyaXZlcnAuZmlyZWJhc2VhcHAuY29t", "aHR0cHM6Ly9leGVtdXNpYy1leGVjdXJpdmVycC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw", "ZXhlbXVzaWMtZXhlY3VyaXZlcnA="];
     
     firebase.initializeApp({
       apiKey: atob(_x0z[0]), authDomain: atob(_x0z[1]), databaseURL: atob(_x0z[2]), projectId: atob(_x0z[3])
@@ -241,14 +241,12 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
     const playBtn = document.getElementById('playBtn');
     const eq = document.getElementById('eq');
 
-    // FIX: Logika Login yang lebih stabil
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
           const snap = await db.ref('users/' + user.uid).get();
           if (snap.exists()) {
             userData = snap.val();
-            // Cek Admin tanpa jejak teks
             if (userData.role === atob("YWRtaW4=")) {
                 document.getElementById('adminBtn').style.display = 'block';
             }
@@ -257,34 +255,59 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
               setTimeout(() => { auth.signOut(); location.reload(); }, 2000); 
             }
           } else {
-            // User baru tapi belum isi username
             document.getElementById('modalAuth').style.display = 'block';
             document.getElementById('authInitial').style.display = 'none';
             document.getElementById('authSetup').style.display = 'block';
           }
-        } catch (e) {
-          console.error("Data error", e);
-        }
+        } catch (e) { console.error("Data error", e); }
       } else {
-        // Jika tidak ada user, sembunyikan admin
         document.getElementById('adminBtn').style.display = 'none';
       }
     });
 
     function loginGoogle() { 
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(e => {
-        msg("Gagal Login: " + e.message);
-      });
+      auth.signInWithPopup(provider).catch(e => { msg("Gagal Login: " + e.message); });
     }
 
     function logoutUser() {
-      if(confirm("Logout dari akun?")) {
-        auth.signOut().then(() => location.reload());
-      }
+      if(confirm("Logout dari akun?")) { auth.signOut().then(() => location.reload()); }
     }
 
-    // Update di viewProfile untuk nambah tombol Logout
+    async function finishRegistration() {
+      const u = document.getElementById('newUsername').value.trim();
+      const p = document.getElementById('newPass').value;
+      if (u.length < 4 || u.length > 10) return msg("Username 4-10 Huruf!");
+      await db.ref('users/' + auth.currentUser.uid).set({
+        username: u, password: p, role: 'user', lastUpload: 0, isBanned: false
+      });
+      location.reload();
+    }
+
+    db.ref('settings/mt').on('value', s => {
+      mtMode = s.val();
+      if(mtMode && userData?.role !== atob("YWRtaW4=")) {
+        document.body.innerHTML = "<h2 style='color:white; text-align:center; padding-top:50px'>Server Maintenance</h2>";
+      }
+    });
+
+    db.ref('songs').on('value', snap => {
+      const data = snap.val();
+      if (data) {
+        songs = Object.keys(data).map(k => ({...data[k], fbId: k}));
+        if(songs.length > 0 && audio.src === "") setup(0, false);
+      }
+    });
+
+    function setup(idx, play = true) {
+      if (!songs[idx]) return;
+      i = idx;
+      audio.src = songs[i].url;
+      document.getElementById('title').textContent = songs[i].title;
+      document.getElementById('by').textContent = "@" + songs[i].by;
+      if(play) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
+    }
+
     async function viewProfile(uid) {
       if(!uid) return;
       const snap = await db.ref('users/' + uid).get();
@@ -292,7 +315,6 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
       const u = snap.val();
       const det = document.getElementById('profileDetail');
       const isMe = auth.currentUser && auth.currentUser.uid === uid;
-
       det.innerHTML = `
         <div class="profile-info">
           <h2>${u.username}</h2>
@@ -301,12 +323,10 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
             <span><b>${Object.keys(u.followers || {}).length}</b><br>Followers</span>
             <span><b>${Object.keys(u.following || {}).length}</b><br>Following</span>
           </div>
-          ${!isMe && auth.currentUser ? 
-          `<button class="follow-btn" onclick="toggleFollow('${uid}')">${u.followers && u.followers[auth.currentUser.uid] ? 'Unfollow' : 'Follow'}</button>` : ''}
+          ${!isMe && auth.currentUser ? `<button class="follow-btn" onclick="toggleFollow('${uid}')">${u.followers && u.followers[auth.currentUser.uid] ? 'Unfollow' : 'Follow'}</button>` : ''}
           ${isMe ? `<button class="btn-auth" style="background:#444; color:white" onclick="logoutUser()">LOGOUT</button>` : ''}
           ${userData?.role === atob("YWRtaW4=") && u.role !== atob("YWRtaW4=") ? `<button class="btn-auth" style="background:red;color:white" onclick="banUser('${uid}')">BAN USER</button>` : ''}
-        </div>
-      `;
+        </div>`;
       document.getElementById('modalProfile').style.display='block';
     }
 
@@ -315,7 +335,7 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
       const fRef = db.ref(`users/${t}/followers/${m}`);
       const iRef = db.ref(`users/${m}/following/${t}`);
       const s = await fRef.get();
-      if(s.exists()) { fRef.remove(); iRef.remove(); } else { fRef.set(true); iRef.set(true); }
+      s.exists() ? (fRef.remove(), iRef.remove()) : (fRef.set(true), iRef.set(true));
       viewProfile(t);
     }
 
@@ -326,20 +346,16 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
       const now = Date.now();
       if (!url.includes("top4top")) return msg("Hanya URL Top4Top!");
       if (userData.role !== atob("YWRtaW4=") && now - (userData.lastUpload || 0) < 3600000) return msg("Cooldown 1 Jam!");
-
       const check = new Audio(url);
       check.onloadedmetadata = async () => {
         if (check.duration > 7200) return msg("Durasi Max 2 Jam!");
-        await db.ref('songs').push({
-          title, url, by: userData.username, uid: auth.currentUser.uid, timestamp: now
-        });
+        await db.ref('songs').push({ title, url, by: userData.username, uid: auth.currentUser.uid, timestamp: now });
         await db.ref('users/' + auth.currentUser.uid).update({ lastUpload: now });
         document.getElementById('modalReq').style.display = 'none';
         msg("Lagu Berhasil!");
       };
     }
 
-    // ADMIN PRO
     function openAdmin() {
       document.getElementById('modalAdmin').style.display = 'block';
       const list = document.getElementById('adminSongList');
@@ -347,8 +363,7 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
         <div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #222">
           <span style="font-size:12px">${s.title}</span>
           <button onclick="deleteSong('${s.fbId}')" style="background:none; border:none; color:red">Hapus</button>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
 
     function toggle() { audio.paused ? (audio.play(), playBtn.textContent = "❚❚", eq.classList.add('playing')) : (audio.pause(), playBtn.textContent = "▶", eq.classList.remove('playing')); }
@@ -376,8 +391,7 @@ const _x0z = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVza
         <div class="song-item">
           <div style="flex:1" onclick="setup(${songs.indexOf(s)})"><b>${s.title}</b><br><small>${s.by}</small></div>
           <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
-        </div>
-      `).join('');
+        </div>`).join('');
       document.getElementById('modalList').style.display='block';
     }
     function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
