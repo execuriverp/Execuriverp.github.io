@@ -128,17 +128,30 @@
         setTimeout(() => t.remove(), 3000);
     }
 
-    function doLogin() {
-        const u = document.getElementById('li-user').value.toLowerCase();
-        const p = document.getElementById('li-pass').value;
-        db.ref("users/" + u).once("value", s => {
+function doLogin() {
+    const uInput = document.getElementById('li-user').value.trim().toLowerCase();
+    const pInput = document.getElementById('li-pass').value.trim();
+    
+    // Kita arahkan langsung ke folder users/[username]
+    db.ref("users/" + uInput).once("value", s => {
+        if (s.exists()) {
             const d = s.val();
-            if(d && d.password === p) {
-                localStorage.setItem("exeUser", JSON.stringify({ name: d.username, role: d.role }));
-                location.reload();
-            } else { showToast("User/Pass Salah!"); }
-        });
-    }
+            // Cek password (jika di DB kamu pakai teks biasa, jangan di-encode lagi)
+            if(d.password === pInput) {
+                localStorage.setItem("exeUser", JSON.stringify({ 
+                    name: d.username, 
+                    role: d.role 
+                }));
+                showToast("Berhasil Login sebagai " + d.username);
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast("Password Salah!");
+            }
+        } else {
+            showToast("Username '" + uInput + "' Tidak Ditemukan!");
+        }
+    });
+}
 
     function regPlayer() {
         const u = document.getElementById('reg-user').value.trim().toLowerCase();
