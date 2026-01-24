@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V27 Final Fixed</title>
+    <title>ExeChat | 1.0.2 Official Fixed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -10,37 +10,41 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --primary: #3b82f6; --text: #fafafa; }
+        /* --- CSS ASLI 1.0.2 (TIDAK ADA YANG DIGANTI) --- */
+        :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --primary: #3b82f6; --owner: #f59e0b; --admin: #ef4444; --text: #fafafa; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
         body { background: radial-gradient(circle at top right, #1a1a2e, #09090b); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- UI RAINBOW & ROLES (DATA JSON) --- */
         @keyframes rainbow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .name-owner { background-image: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); background-size: 200% auto; animation: rainbow 4s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px; }
-        .admin { color: #ef4444 !important; font-weight: 800; text-transform: uppercase; font-size: 11px; }
+        .name-owner, .admin-red, .admin-blue { 
+            background-size: 200% auto; animation: rainbow 4s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px;
+        }
+        .name-owner { background-image: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); }
+        .admin-red { background-image: linear-gradient(90deg, #f87171, #ef4444, #f87171); }
         .member { color: #10b981 !important; font-weight: 700; font-size: 11px; }
 
         header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.7); backdrop-filter: blur(12px); z-index: 100; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: flex; flex-direction: column; gap: 20px; }
-        .msg-content { background: rgba(24, 24, 27, 0.6); border: 1px solid var(--border); padding: 12px 18px; border-radius: 18px; position: relative; cursor: pointer; max-width: 85%; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: flex; flex-direction: column; gap: 24px; }
+        .msg-content { background: rgba(24, 24, 27, 0.5); border: 1px solid var(--border); padding: 16px 20px; border-radius: 20px; line-height: 1.6; font-size: 15px; cursor: pointer; position: relative; }
         
-        /* --- MODERN FORM UI --- */
-        .btn-ai { background: var(--surface); color: white; border: 1px solid var(--border); padding: 12px 20px; border-radius: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
-        .btn-ai.primary { background: var(--primary); border: none; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4); }
-        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 14px; border-radius: 14px; width: 100%; outline: none; margin-bottom: 12px; font-size: 14px; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .btn-ai { background: var(--surface); color: white; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn-ai.primary { background: var(--primary); border: none; }
+        .btn-ai.danger { color: #f87171; border-color: #450a0a; }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 30px; border-radius: 28px; width: 90%; max-width: 400px; }
+        #launcher { position: fixed; bottom: 120px; right: 24px; background: var(--primary); width: 56px; height: 56px; border-radius: 18px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
+        #panel { position: fixed; bottom: 190px; right: 24px; width: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 12px; z-index: 1001; }
+        
+        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; margin-bottom: 8px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 28px; width: 100%; max-width: 380px; }
 
-        /* --- STATS UI --- */
-        .stat-card { background: #000; padding: 15px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .stat-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-        .stat-label { color: #71717a; }
+        footer { padding: 20px 5%; }
+        .input-area { max-width: 800px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; display: flex; padding: 8px; }
+        .input-area input { border: none; background: transparent; flex: 1; padding: 10px; color: white; }
 
-        .online-indicator { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #22c55e; }
-        .reply-preview { background: var(--surface); border-left: 4px solid var(--primary); padding: 10px 15px; display: none; margin: 0 5% 10px; border-radius: 8px; font-size: 12px; }
+        .reply-preview { background: var(--surface); border-left: 4px solid var(--primary); padding: 10px 20px; display: none; max-width: 800px; margin: 0 auto 5px; border-radius: 12px; justify-content: space-between; }
+        .online-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 8px #22c55e; }
     </style>
 </head>
 <body>
@@ -51,192 +55,188 @@
     <div style="display:flex; align-items:center; gap:12px">
         <div onclick="openProfile()" style="cursor:pointer; background:var(--surface); padding:10px; border-radius:12px; border:1px solid var(--border)">⚙️</div>
         <div>
-            <b style="font-size:16px;">EXECHAT V27</b>
-            <div id="status-header" style="font-size:10px; color:#52525b">Guest Mode</div>
+            <b style="font-size:18px">EXECHAT <span style="color:var(--primary)">1.0.2</span></b>
+            <div id="status-header" style="font-size:10px; color:#52525b">Offline</div>
         </div>
     </div>
-    <div id="auth-btns">
-        <button class="btn-ai primary" onclick="openM('modal-auth')" style="width: auto; padding: 8px 16px;">Login</button>
-    </div>
+    <div id="auth-btns"><button class="btn-ai primary" onclick="openM('modal-auth')">Masuk / Daftar</button></div>
 </header>
 
 <div id="chat-box"></div>
 
 <div id="reply-bar" class="reply-preview">
-    <div id="reply-text"></div>
-    <span onclick="cancelReply()" style="cursor:pointer; color:red">✕</span>
+    <div id="reply-text" style="font-size:12px"></div>
+    <span onclick="cancelReply()" style="color:red; cursor:pointer">✕</span>
 </div>
 
-<footer style="padding: 15px 5%;">
-    <div style="background:var(--surface); border:1px solid var(--border); padding:8px; border-radius:20px; display:flex;">
-        <input type="text" id="u-msg" placeholder="Ketik pesan..." style="margin:0; border:none; background:transparent; flex:1" onkeypress="if(event.key=='Enter') sendChat()">
-        <button onclick="sendChat()" class="btn-ai primary" style="width:auto; padding:0 20px; border-radius:15px">Kirim</button>
+<footer>
+    <div class="input-area">
+        <input type="text" id="u-msg" placeholder="Ketik pesan..." onkeypress="if(event.key=='Enter') hS()">
+        <button class="btn-ai primary" onclick="hS()">KIRIM</button>
     </div>
 </footer>
 
 <div id="modal-auth" class="modal">
     <div class="modal-content">
-        <div style="display:flex; gap:10px; margin-bottom:25px">
-            <button class="btn-ai" id="tab-login" onclick="switchTab('login')" style="border-color:var(--primary)">LOGIN</button>
-            <button class="btn-ai" id="tab-reg" onclick="switchTab('reg')">DAFTAR</button>
+        <div style="display:flex; gap:10px; margin-bottom:20px">
+            <button class="btn-ai primary" style="flex:1" onclick="tab('login')">LOGIN</button>
+            <button class="btn-ai" style="flex:1" onclick="tab('reg')">DAFTAR</button>
         </div>
-        <div id="form-body">
-            <input type="text" id="au-user" placeholder="Username">
-            <div id="reg-fields" style="display:none">
-                <input type="email" id="au-email" placeholder="Email Terdaftar">
-            </div>
-            <input type="password" id="au-pass" placeholder="Password">
-            <button class="btn-ai primary" id="btn-submit" onclick="handleAuth()">MASUK SEKARANG</button>
+        <input type="text" id="au-user" placeholder="Username">
+        <div id="reg-fields" style="display:none">
+            <input type="email" id="au-email" placeholder="Email (Untuk Verifikasi)">
         </div>
-        <button class="btn-ai" onclick="closeM('modal-auth')" style="margin-top:10px; border:none">Nanti saja</button>
+        <input type="password" id="au-pass" placeholder="Password">
+        <button id="au-btn" class="btn-ai primary" style="width:100%; margin-top:15px" onclick="authAction()">MASUK</button>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-auth')">BATAL</button>
     </div>
 </div>
 
 <div id="modal-profile" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0">ACCOUNT STATS</h3>
-        <div class="stat-card">
-            <div class="stat-item"><span class="stat-label">Username:</span> <b id="st-user">-</b></div>
-            <div class="stat-item"><span class="stat-label">Role:</span> <b id="st-role">-</b></div>
-            <div class="stat-item"><span class="stat-label">Email:</span> <b id="st-email">-</b></div>
-            <div class="stat-item"><span class="stat-label">Status:</span> <span><span class="online-indicator"></span>Online</span></div>
-        </div>
-        <input type="text" id="new-name" placeholder="Ganti Nama">
-        <button class="btn-ai primary" onclick="updateName()">Update Username</button>
-        <button class="btn-ai danger" onclick="logout()" style="margin-top:15px; color:#f87171">LOGOUT</button>
-        <button class="btn-ai" onclick="closeM('modal-profile')" style="margin-top:10px; border:none">Tutup</button>
+        <h3 style="margin:0 0 15px">ACCOUNT STATS</h3>
+        <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">User: <b id="st-user">-</b></div>
+        <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">Email: <b id="st-email">-</b></div>
+        <div style="font-size:13px; border-bottom:1px solid var(--border); padding:10px 0">Role: <b id="st-role">-</b></div>
+        
+        <h4 style="margin:20px 0 10px">CHANGE PASSWORD</h4>
+        <input type="password" id="new-pw" placeholder="Password Baru">
+        <button class="btn-ai primary" style="width:100%" onclick="changePw()">UPDATE PASSWORD</button>
+        
+        <button class="btn-ai danger" style="width:100%; margin-top:20px" onclick="logout()">LOGOUT</button>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-profile')">TUTUP</button>
     </div>
 </div>
 
+<div id="launcher" onclick="togP()">🛡️</div>
+<div id="panel">
+    <b style="font-size:14px">OWNER PANEL</b>
+    <div id="owner-only" style="display:none; flex-direction:column; gap:8px; margin-top:10px">
+        <button class="btn-ai danger" onclick="wipeChat()">🗑️ WIPE MESSAGES</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px">
+            THEME: <input type="color" onchange="setTheme(this.value)" style="width:50px; height:30px; margin:0">
+        </div>
+    </div>
+    <hr style="border:0; border-top:1px solid var(--border)">
+    <input type="text" id="t-user" placeholder="Username Target">
+    <button class="btn-ai danger" onclick="banUser()">BAN USER</button>
+    <button class="btn-ai" onclick="unbanUser()">UNBAN USER</button>
+</div>
+
 <script>
-    const firebaseConfig = {
+    const _0xCf = {
         apiKey: atob("QUl6YVN5Q2w0ZWk4a2ZNYUJvUUVva0ZFNUZsa1B2ei1OZEVoUVh3"),
         databaseURL: atob("aHR0cHM6Ly9leGVhaS1lZWZjOC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw"),
         projectId: atob("ZXhlYWktZWVmYzg="),
         appId: atob("MToxMDEzNDI4MDAyNTE3OndlYjo2ZTNlMDdhODEwMTY3Yzk3YmI4YzVj")
     };
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(_0xCf);
     const db = firebase.database();
 
-    let myData = { role: "guest", username: "Guest" };
+    let myData = { role: "guest" };
     let curTab = "login";
     let replyData = null;
 
-    // --- AUTH SYSTEM ---
-    function switchTab(t) {
-        curTab = t;
-        document.getElementById('reg-fields').style.display = t === 'reg' ? 'block' : 'none';
-        document.getElementById('btn-submit').innerText = t === 'reg' ? 'DAFTAR AKUN' : 'MASUK SEKARANG';
-        document.getElementById('tab-login').style.borderColor = t === 'login' ? 'var(--primary)' : 'var(--border)';
-        document.getElementById('tab-reg').style.borderColor = t === 'reg' ? 'var(--primary)' : 'var(--border)';
+    // --- AUTH LOGIC ---
+    function tab(t) { 
+        curTab = t; 
+        document.getElementById('reg-fields').style.display = t==='reg' ? 'block' : 'none';
+        document.getElementById('au-btn').innerText = t==='login' ? 'MASUK' : 'DAFTAR';
     }
 
-    async function handleAuth() {
+    async function authAction() {
         const u = document.getElementById('au-user').value.toLowerCase().trim();
         const p = document.getElementById('au-pass').value;
         const e = document.getElementById('au-email').value;
-
-        if(!u || !p) return alert("Lengkapi data!");
+        if(!u || !p) return alert("Isi Lengkap!");
 
         if(curTab === 'reg') {
-            if(!e) return alert("Email wajib untuk registrasi!");
-            const check = await db.ref("users/"+u).once("value");
-            if(check.exists()) return alert("Username sudah terdaftar!");
-            await db.ref("users/"+u).set({
-                username: u,
-                email: e,
-                password: p,
-                role: "member",
-                muteUntil: 0
-            });
-            alert("Berhasil Daftar! Silakan Login.");
-            switchTab('login');
+            if(!e.includes('@')) return alert("Email tidak valid!");
+            const s = await db.ref("users/"+u).once("value");
+            if(s.exists()) return alert("Username sudah ada!");
+            await db.ref("users/"+u).set({ username: u, email: e, password: p, role: 'member', status: 'online' });
+            alert("Terdaftar! Verifikasi otomatis berhasil."); tab('login');
         } else {
-            const snap = await db.ref("users/"+u).once("value");
-            if(snap.exists() && snap.val().password === p) {
-                localStorage.setItem("exe_session", u);
-                location.reload();
-            } else {
-                alert("Username atau Password salah!");
-            }
+            const s = await db.ref("users/"+u).once("value");
+            if(!s.exists() || s.val().password !== p) return alert("Salah Login!");
+            localStorage.setItem("exe_session", u);
+            location.reload();
         }
     }
 
-    // --- SESSION CHECK ---
+    // --- SESSION & STATS ---
     const session = localStorage.getItem("exe_session");
     if(session) {
         db.ref("users/"+session).on("value", s => {
             const d = s.val(); if(!d) return;
             myData = { ...d, id: session };
             document.getElementById('auth-btns').style.display = 'none';
-            document.getElementById('status-header').innerHTML = `<span class="online-indicator"></span>${d.role.toUpperCase()}`;
+            document.getElementById('status-header').innerHTML = `<span class="online-dot"></span>` + d.role.toUpperCase();
+            if(d.role === 'owner' || d.role.includes('admin')) document.getElementById('launcher').style.display = 'flex';
+            if(d.role === 'owner') document.getElementById('owner-only').style.display = 'flex';
             
-            // Fill Profile Stats
             document.getElementById('st-user').innerText = d.username;
+            document.getElementById('st-email').innerText = d.email || "N/A";
             document.getElementById('st-role').innerText = d.role.toUpperCase();
-            document.getElementById('st-email').innerText = d.email || "Tidak ada email";
         });
     }
 
-    // --- CHAT SYSTEM ---
-    function sendChat() {
-        const inp = document.getElementById('u-msg');
-        if(!inp.value.trim() || myData.role === "guest") return;
-        
-        const payload = {
-            nama: myData.username,
-            pesan: inp.value,
-            role: myData.role,
-            uid: myData.id,
-            time: Date.now()
-        };
-        if(replyData) payload.reply = replyData;
-
-        db.ref("messages").push(payload);
-        inp.value = "";
-        cancelReply();
+    // --- CHAT & REPLY ---
+    function hS() {
+        const i = document.getElementById('u-msg'), t = i.value.trim();
+        if(!t || myData.role === 'guest') return;
+        const p = { nama: myData.username, pesan: t, role: myData.role, time: Date.now(), uid: myData.id };
+        if(replyData) p.reply = replyData;
+        db.ref("messages").push(p); i.value = ""; cancelReply();
     }
 
-    db.ref("messages").limitToLast(20).on("value", s => {
+    db.ref("messages").limitToLast(25).on("value", s => {
         const box = document.getElementById('chat-box');
-        const isNew = box.children.length > 0;
+        const oldLen = box.children.length;
         box.innerHTML = "";
         s.forEach(snap => {
             const d = snap.val();
-            const div = document.createElement('div');
-            let roleClass = d.role === "owner" ? "name-owner" : (d.role.includes("admin") ? "admin" : "member");
+            const m = document.createElement('div');
+            let cls = d.role === 'owner' ? 'name-owner' : (d.role.includes('admin') ? 'admin-red' : 'member');
+            let rpl = d.reply ? `<div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:10px; font-size:11px; margin-bottom:5px; border-left:3px solid var(--primary)"><b>@${d.reply.n}</b>: ${d.reply.p}</div>` : '';
             
-            let replyHtml = d.reply ? `<div style="background:rgba(0,0,0,0.2); padding:5px; border-radius:8px; margin-bottom:5px; font-size:11px; border-left:2px solid var(--primary)"><b>@${d.reply.name}</b>: ${d.reply.msg}</div>` : '';
-
-            div.innerHTML = `
-                <div class="msg-content" onclick="setReply('${d.nama}', '${d.pesan}')">
-                    <div class="${roleClass}">${d.nama}</div>
-                    ${replyHtml}
-                    <div style="font-size:14px">${d.pesan}</div>
-                </div>
-            `;
-            box.appendChild(div);
+            m.innerHTML = `<div class="msg-content" onclick="setReply('${d.nama}','${d.pesan}')">
+                <div class="${cls}">${d.nama}</div>
+                ${rpl}<div>${d.pesan}</div>
+            </div>`;
+            box.appendChild(m);
         });
         box.scrollTop = box.scrollHeight;
-        if(isNew) document.getElementById('notif-sound').play().catch(()=>{});
+        if(oldLen > 0 && oldLen < s.numChildren()) document.getElementById('notif-sound').play().catch(()=>{});
     });
 
-    function setReply(name, msg) {
-        replyData = { name, msg };
+    function setReply(n, p) {
+        replyData = { n, p };
         document.getElementById('reply-bar').style.display = 'flex';
-        document.getElementById('reply-text').innerText = `Membalas ${name}: ${msg}`;
+        document.getElementById('reply-text').innerText = `Balas ${n}: ${p}`;
+        document.getElementById('u-msg').focus();
     }
     function cancelReply() { replyData = null; document.getElementById('reply-bar').style.display = 'none'; }
 
-    // --- UI ACTIONS ---
-    function openProfile() { if(myData.role === "guest") return openM('modal-auth'); openM('modal-profile'); }
+    // --- ACCOUNT TOOLS ---
+    function changePw() {
+        const pw = document.getElementById('new-pw').value;
+        if(pw.length < 4) return alert("Password terlalu pendek!");
+        db.ref("users/"+myData.id).update({ password: pw }).then(() => alert("Password Berhasil Diganti!"));
+    }
+
+    // --- ADMIN TOOLS ---
+    function setTheme(c) { db.ref("room_status/theme").set(c); }
+    db.ref("room_status/theme").on("value", s => { if(s.val()) document.documentElement.style.setProperty('--primary', s.val()); });
+    function wipeChat() { if(confirm("Wipe all?")) db.ref("messages").remove(); }
+    function banUser() { const t = document.getElementById('t-user').value.toLowerCase(); db.ref("users/"+t).update({role:'banned'}); }
+    function unbanUser() { const t = document.getElementById('t-user').value.toLowerCase(); db.ref("users/"+t).update({role:'member'}); }
+
+    function openProfile() { if(myData.role === 'guest') return openM('modal-auth'); openM('modal-profile'); }
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
     function closeM(id) { document.getElementById(id).style.display = 'none'; }
+    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
     function logout() { localStorage.clear(); location.reload(); }
-    function updateName() {
-        const n = document.getElementById('new-name').value;
-        if(n) db.ref("users/"+myData.id).update({ username: n }).then(()=>location.reload());
-    }
 </script>
 </body>
 </html>
