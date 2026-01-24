@@ -2,22 +2,25 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V24 Account System</title>
+    <title>ExeChat | V24.1 Final Account</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050507; --panel: rgba(22, 22, 28, 0.98); --main: #3b82f6; --admin: #ef4444; --member: #10b981; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: 0.2s; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s; }
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Name Styles */
+        /* Admin/Member Styles */
         .name-admin { background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 800; }
-        .name-member { color: var(--member) !important; font-weight: 800; text-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        .name-member { color: var(--member) !important; font-weight: 800; text-shadow: 0 0 8px rgba(16, 185, 129, 0.3); }
         @keyframes rb { to { background-position: 200% center; } }
 
-        /* UI Elements */
+        /* Custom Modal UI */
+        #custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 30000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--panel); border: 1px solid #333; padding: 25px; border-radius: 24px; width: 90%; max-width: 320px; text-align: center; }
+
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; width: 85%; max-width: 320px; }
         .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px; border-radius: 12px; text-align: center; font-size: 12px; font-weight: 600; box-shadow: 0 10px 30px #000; }
         
@@ -25,14 +28,13 @@
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
 
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 14px; background: #16161a; border: 1px solid #222; align-self: flex-start; }
+        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 18px; margin-bottom: 10px; font-size: 13px; }
         
-        /* Modal & Panel */
-        .card-ui { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid #333; padding: 25px; border-radius: 24px; z-index: 9999; width: 90%; max-width: 320px; display: none; box-shadow: 0 20px 60px #000; }
         #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
         #panel { position: fixed; bottom: 210px; right: 20px; width: 280px; background: var(--panel); border: 1px solid #333; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 70vh; overflow-y: auto; }
 
         .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; outline: none; }
 
         .footer-area { background: #000; border-top: 1px solid #222; padding: 15px 20px calc(20px + env(safe-area-inset-bottom)); }
         .disclaimer { font-size: 10px; color: #555; text-align: center; margin-top: 10px; }
@@ -41,14 +43,21 @@
 <body onkeydown="if(event.key.toLowerCase()==='t' && document.activeElement.tagName!=='INPUT') { event.preventDefault(); document.getElementById('u-msg').focus(); }">
 
 <div id="toast-box"></div>
+<div id="maint-screen" style="display:none; position:fixed; inset:0; background:#000; z-index:25000; align-items:center; justify-content:center; flex-direction:column;">
+    <h1 style="color:var(--admin)">🚧 MAINTENANCE</h1>
+</div>
 
-<div id="modal-login" class="card-ui">
-    <h3 style="margin-top:0">Account Login</h3>
-    <input type="text" id="li-user" placeholder="Username" style="margin-bottom:8px">
-    <input type="password" id="li-pass" placeholder="Password">
-    <div style="display:flex; gap:10px; margin-top:15px">
-        <button class="p-btn" style="background:#333" onclick="closeLogin()">GUEST</button>
-        <button class="p-btn" style="background:var(--main)" onclick="doLogin()">LOGIN</button>
+<div id="modal-login" style="display:none;" class="modal-content">
+    <div id="custom-modal" style="display:flex;">
+        <div class="modal-content">
+            <h3 style="margin-top:0">Account Login</h3>
+            <input type="text" id="li-user" placeholder="Username" style="margin-bottom:8px">
+            <input type="password" id="li-pass" placeholder="Password">
+            <div style="display:flex; gap:10px; margin-top:15px">
+                <button class="p-btn" style="background:#333" onclick="document.getElementById('modal-login').style.display='none'">CANCEL</button>
+                <button class="p-btn" style="background:var(--main)" onclick="doLogin()">LOGIN</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -57,28 +66,38 @@
         <span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span>
         <div id="my-name" style="font-size:10px; color:#666">Guest Mode</div>
     </div>
-    <button id="btn-login-trig" class="p-btn" style="width:auto; padding:8px 15px" onclick="openLogin()">LOGIN</button>
+    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="document.getElementById('modal-login').style.display='block'">LOGIN</button>
 </header>
+
+<div id="static-area" style="padding:10px 20px 0;">
+    <div id="anno-box"></div>
+    <div id="link-box"></div>
+</div>
 
 <div id="chat-box"></div>
 
 <div id="launcher" onclick="togP()">⚙️</div>
 <div id="panel">
-    <h4 style="margin:0">Admin Control</h4>
-    <button class="p-btn" style="background:var(--admin)" onclick="wCh()">WIPE CHAT</button>
-    <hr style="border:0; border-top:1px solid #333">
-    <h4 style="margin:0">Add New Player</h4>
+    <h4 style="margin:0">Admin Tools</h4>
+    <input type="text" id="a-ann" placeholder="Announcement (5m)">
+    <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
+    <button class="p-btn" style="background:#059669" onclick="openVote()">START VOTE</button>
+    <button class="p-btn" onclick="db.ref('room_status/maint').set(!iM)" id="mtBtn">MAINTENANCE</button>
+    <hr style="border-top:1px solid #333">
+    <h4 style="margin:0">Player Management</h4>
     <input type="text" id="reg-user" placeholder="Username Baru">
-    <input type="text" id="reg-pass" placeholder="Password">
-    <button class="p-btn" style="background:var(--member)" onclick="regPlayer()">REGISTER PLAYER</button>
+    <input type="text" id="reg-pass" placeholder="Password Baru">
+    <button class="p-btn" style="background:var(--member)" onclick="regPlayer()">ADD PLAYER</button>
+    <hr style="border-top:1px solid #333">
+    <button class="p-btn" style="background:var(--admin)" onclick="wCh()">WIPE ALL CHAT</button>
 </div>
 
 <div class="footer-area">
-    <div style="display:flex; gap:10px;">
+    <div style="display:flex; gap:10px; max-width:800px; margin:0 auto;">
         <input type="text" id="u-msg" placeholder="Ketik pesan... (T)" onkeypress="if(event.key=='Enter') hS()">
         <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button>
     </div>
-    <div class="disclaimer">Dilarang keras toxic! ExeChat V24 Account System.</div>
+    <div class="disclaimer">Dilarang toxic! ExeChat V24.1 Account System.</div>
 </div>
 
 <script>
@@ -92,12 +111,15 @@
     const db = firebase.database();
 
     let myData = { name: "User_" + Math.floor(Math.random()*9000), role: "guest" };
-    
-    // Auto Login dari Session
+    let iM = false;
+
+    // Login Check
     const saved = localStorage.getItem("exeUser");
     if(saved) {
         myData = JSON.parse(saved);
-        updateUI();
+        if(myData.role === 'admin') document.getElementById('launcher').style.display = 'flex';
+        document.getElementById('my-name').innerText = myData.name;
+        document.getElementById('btn-login').style.display = 'none';
     }
 
     function showToast(m) {
@@ -106,23 +128,15 @@
         setTimeout(() => t.remove(), 3000);
     }
 
-    function openLogin() { document.getElementById('modal-login').style.display='block'; }
-    function closeLogin() { document.getElementById('modal-login').style.display='none'; }
-
     function doLogin() {
         const u = document.getElementById('li-user').value.toLowerCase();
         const p = document.getElementById('li-pass').value;
-        
         db.ref("users/" + u).once("value", s => {
             const d = s.val();
             if(d && d.password === p) {
-                myData = { name: d.username, role: d.role };
-                localStorage.setItem("exeUser", JSON.stringify(myData));
-                showToast("Welcome back, " + d.username);
+                localStorage.setItem("exeUser", JSON.stringify({ name: d.username, role: d.role }));
                 location.reload();
-            } else {
-                showToast("User/Pass Salah!");
-            }
+            } else { showToast("User/Pass Salah!"); }
         });
     }
 
@@ -132,50 +146,50 @@
         if(u && p) {
             db.ref("users/" + u).set({ username: u, password: p, role: "member" });
             showToast("Player " + u + " Registered!");
-            document.getElementById('reg-user').value = "";
-            document.getElementById('reg-pass').value = "";
-        }
-    }
-
-    function updateUI() {
-        document.getElementById('my-name').innerText = myData.name;
-        if(myData.role === 'admin') {
-            document.getElementById('launcher').style.display = 'flex';
-            document.getElementById('btn-login-trig').innerText = "ADMIN LOGGED";
-        } else if(myData.role === 'member') {
-            document.getElementById('btn-login-trig').innerText = "MEMBER";
+            document.getElementById('reg-user').value = ""; document.getElementById('reg-pass').value = "";
         }
     }
 
     function hS() {
         const i = document.getElementById('u-msg'), t = i.value.trim();
-        if(!t) return;
-        db.ref("messages").push({ 
-            nama: myData.name, 
-            pesan: t, 
-            role: myData.role,
-            ts: Date.now() 
-        });
+        if(!t || (iM && myData.role !== 'admin')) return;
+        db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role, ts: Date.now() });
         i.value = "";
     }
 
+    // Dynamic Listeners
     db.ref("messages").on("value", s => {
         const b = document.getElementById('chat-box'); b.innerHTML = "";
         s.forEach(c => {
             const d = c.val(), v = document.createElement('div');
             v.className = "msg";
-            let nameClass = "";
-            if(d.role === 'admin') nameClass = "name-admin";
-            else if(d.role === 'member') nameClass = "name-member";
-
-            v.innerHTML = `<span class="${nameClass}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
+            let nC = (d.role === 'admin') ? "name-admin" : (d.role === 'member' ? "name-member" : "");
+            v.innerHTML = `<span class="${nC}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
             b.appendChild(v);
         });
         b.scrollTop = b.scrollHeight;
     });
 
-    function wCh() { if(confirm("Hapus semua chat?")) db.ref("messages").set(null); }
+    db.ref("announcement").on("value", s => {
+        const d = s.val(), box = document.getElementById('anno-box');
+        if(d && Date.now() < d.exp) box.innerHTML = `<div class="anno-card">📢 <b>INFO = ADMIN :</b> ${d.txt}</div>`;
+        else box.innerHTML = "";
+    });
+
+    function sendAnn() {
+        const t = document.getElementById('a-ann').value;
+        if(t) db.ref("announcement").set({ txt: t, exp: Date.now() + 300000 });
+        document.getElementById('a-ann').value = ""; togP();
+    }
+
+    function wCh() { if(confirm("Hapus semua chat?")) db.ref("messages").set(null); togP(); }
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
+    
+    db.ref("room_status/maint").on("value", s => {
+        iM = s.val();
+        document.getElementById('maint-screen').style.display = (iM && myData.role !== 'admin') ? "flex" : "none";
+        document.getElementById('mtBtn').innerText = iM ? "MT: ON" : "MT: OFF";
+    });
 </script>
 </body>
 </html>
