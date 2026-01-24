@@ -92,17 +92,16 @@
 </div>
 
 <script>
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCl4ei8kfMaBoQEokFE5FlkPvz-NdEhQXw",
-  authDomain: "exeai-eefc8.firebaseapp.com",
-  databaseURL: "https://exeai-eefc8-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "exeai-eefc8",
-  storageBucket: "exeai-eefc8.firebasestorage.app",
-  messagingSenderId: "1013428002517",
-  appId: "1:1013428002517:web:6e3e07a810167c97bb8c5c",
-  measurementId: "G-D48XD4ZT6Q"
-};
+    // === 1. CONFIG FIREBASE ===
+    const firebaseConfig = {
+        apiKey: "AIzaSyCl4ei8kfMaBoQEokFE5FlkPvz-NdEhQXw",
+        authDomain: "exeai-eefc8.firebaseapp.com",
+        databaseURL: "https://exeai-eefc8-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "exeai-eefc8",
+        storageBucket: "exeai-eefc8.firebasestorage.app",
+        messagingSenderId: "1013428002517",
+        appId: "1:1013428002517:web:6e3e07a810167c97bb8c5c"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
