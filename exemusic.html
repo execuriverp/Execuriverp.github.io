@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.0 - Final Features</title>
+  <title>ExeMusic v3.0 - Perfect Edition</title>
+  <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <style>
-    /* --- CSS LAYOUT (PERFECT FIT) --- */
     :root {
       --accent: #1db954;
       --text: #ffffff;
@@ -54,7 +54,6 @@
       z-index: 1; 
     }
 
-    /* EQ ANIMATION */
     .eq { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
     .eq span { width: 5px; background: var(--accent); border-radius: 10px; height: 8px; }
     .playing span { animation: wave 0.8s infinite ease-in-out; }
@@ -96,20 +95,17 @@
       cursor: pointer; transition: transform 0.1s;
     }
     .btn-play:active { transform: scale(0.95); }
-    
     .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 10px; }
 
     .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; flex-shrink: 0; z-index: 10; }
     .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; padding: 5px; }
     
-    /* Active State untuk Shuffle & Repeat */
     .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px rgba(29,185,84,0.6); }
 
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; }
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 25px 25px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
     .song-item { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
     
-    /* TOAST MODERN */
     #toast { 
       position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); 
       background: rgba(29, 185, 84, 0.95); color: #000; 
@@ -141,10 +137,10 @@
 
     <div class="sys-container">
       <div class="sys-tools">
-        <button onclick="copyRawUrl()">📋</button>
-        <button onclick="shareLink()">🔗</button>
-        <button onclick="downloadSong()">⬇️</button>
-        <button onclick="openReq()">➕</button>
+        <button onclick="copyRawUrl()" title="Copy Link">📋</button>
+        <button onclick="shareLink()" title="Share Player">🔗</button>
+        <button onclick="downloadSong()" title="Download">⬇️</button>
+        <button onclick="openReq()" title="Request WA">➕</button>
       </div>
       <div class="vol-row">
         <span>🔈</span>
@@ -190,7 +186,7 @@
   </div>
 
   <script>
-    let songs = [], i = 0, isShuf = true, isRepeat = false; // Tambah variabel Repeat
+    let songs = [], i = 0, isShuf = true, isRepeat = false;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
     const playBtn = document.getElementById('playBtn');
@@ -199,7 +195,6 @@
     fetch("data/urlbb.json").then(r => r.json()).then(data => {
       songs = data;
       if(songs.length > 0) {
-        // Cek ID di URL untuk fitur Share Player
         const params = new URLSearchParams(window.location.search);
         let sharedId = parseInt(params.get('id'));
         if (!isNaN(sharedId) && sharedId >= 0 && sharedId < songs.length) {
@@ -214,9 +209,9 @@
       i = idx;
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
-      document.getElementById('by').textContent = "Req: " + songs[i].by;
+      // UBAH REQ MENJADI REQUEST BY
+      document.getElementById('by').textContent = "Request by " + songs[i].by;
       
-      // Update URL browser untuk Share
       const newUrl = window.location.pathname + '?id=' + i;
       window.history.replaceState(null, '', newUrl);
 
@@ -233,15 +228,25 @@
       }
     }
 
-    // --- FITUR UTAMA ---
+    // KEYBOARD CONTROLS
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement.tagName === 'INPUT') return; // Jangan trigger jika sedang ngetik
+      
+      if (e.code === "Space") {
+        e.preventDefault();
+        toggle();
+      } else if (e.code === "ArrowRight") {
+        next();
+      } else if (e.code === "ArrowLeft") {
+        prev();
+      }
+    });
 
-    // 1. COPY RAW URL (Data JSON)
     function copyRawUrl() { 
       navigator.clipboard.writeText(songs[i].url); 
-      msg("Copy Url berhasil di salin"); // Sesuai Request
+      msg("Copy Url berhasil di salin"); 
     }
 
-    // 2. SHARE PLAYER LINK (Web + ID)
     function shareLink() { 
       const shareUrl = window.location.origin + window.location.pathname + '?id=' + i;
       if(navigator.share) { 
@@ -252,31 +257,24 @@
       } 
     }
 
-    // 3. DOWNLOAD
     function downloadSong() { 
-      msg("Downloading..."); // Sesuai Request
+      msg("Downloading..."); 
       window.open(songs[i].url); 
     }
 
-    // 4. REPEAT SYSTEM
     function toggleRepeat() {
       isRepeat = !isRepeat;
       document.getElementById('rep').classList.toggle('active', isRepeat);
-      msg(isRepeat ? "Repeat : ON" : "Repeat : OFF"); // Sesuai Request
+      msg(isRepeat ? "Repeat : ON" : "Repeat : OFF");
     }
 
-    // 5. SHUFFLE SYSTEM
     function toggleShuffle() { 
       isShuf = !isShuf; 
       document.getElementById('shuf').classList.toggle('active', isShuf); 
-      msg(isShuf ? "Shuffle : ON" : "Shuffle : OFF"); // Notif Modern
+      msg(isShuf ? "Shuffle : ON" : "Shuffle : OFF");
     }
 
-    // Volume
-    document.getElementById('vol').oninput = (e) => {
-        audio.volume = e.target.value;
-        // msg("Volume: " + Math.round(e.target.value*100) + "%"); // Opsional
-    };
+    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
 
     function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
     function prev() { setup((i-1+songs.length)%songs.length); }
@@ -288,7 +286,6 @@
     };
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
     
-    // LOGIKA REPEAT DI SINI
     audio.onended = () => {
       if (isRepeat) {
         audio.currentTime = 0;
@@ -304,12 +301,10 @@
       return m+":"+(sec<10?"0"+sec:sec); 
     }
 
-    // TOAST NOTIFICATION MODERN
     function msg(m) { 
       const t = document.getElementById('toast'); 
       t.textContent = m; 
       t.classList.add('show'); 
-      // Reset timer jika dipencet cepat
       if(t.timeout) clearTimeout(t.timeout);
       t.timeout = setTimeout(() => t.classList.remove('show'), 2000); 
     }
