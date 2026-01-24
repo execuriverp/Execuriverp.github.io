@@ -2,88 +2,126 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V21 Ultimate</title>
+    <title>ExeChat | V22 Masterpiece</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050507; --panel: rgba(20, 20, 25, 0.98); --main: #3b82f6; --admin: #ef4444; }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #050507; --panel: rgba(20, 20, 25, 0.98); --main: #3b82f6; --admin: #ef4444; --glass: rgba(255, 255, 255, 0.03); }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; transition: all 0.2s ease; }
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Admin Colors */
-        .name-rainbow { background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 900; }
-        .name-gold { color: #ffd700 !important; font-weight: 900; text-shadow: 0 0 5px rgba(255,215,0,0.5); }
-        .name-neon { color: #00f2ff !important; font-weight: 900; text-shadow: 0 0 5px rgba(0,242,255,0.5); }
+        /* Admin Name Styles */
+        .name-rainbow { background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 800; }
+        .name-gold { color: #ffd700 !important; font-weight: 800; text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        .name-neon { color: #00f2ff !important; font-weight: 800; text-shadow: 0 0 10px rgba(0,242,255,0.4); }
         @keyframes rb { to { background-position: 200% center; } }
 
-        header { background: #000; padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; padding-bottom: 100px; }
+        /* Toast UI */
+        #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; width: 85%; max-width: 320px; }
+        .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px 20px; border-radius: 14px; text-align: center; font-size: 12px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.6); animation: tIn 0.3s forwards; }
+        @keyframes tIn { from { transform: translate(-50%, -30px); opacity: 0; } to { transform: translate(0, 0); opacity: 1; } }
 
-        /* Announcement Card */
-        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 15px; border-left: 5px solid #fff; margin: 10px 0; animation: slideIn 0.3s ease; }
+        header { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+
+        /* Permanent Areas */
+        #static-area { padding: 0 20px; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .anno-card { background: linear-gradient(135deg, #1d4ed8, #3b82f6); padding: 15px; border-radius: 16px; font-size: 13px; border: 1px solid rgba(255,255,255,0.2); }
+        .link-card { background: var(--glass); border: 1px solid #333; padding: 10px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
 
         /* Chat Bubbles */
-        .msg { padding: 12px; border-radius: 15px; max-width: 85%; font-size: 14px; background: #16161a; align-self: flex-start; border: 1px solid #222; position: relative; }
-        .msg-admin { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 14px; background: #16161a; align-self: flex-start; border: 1px solid #222; position: relative; }
+        .msg-admin { border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.03); }
 
         /* Admin Context Menu */
-        #ctx-menu { position: fixed; background: #1c1c22; border: 1px solid #333; border-radius: 10px; padding: 5px; z-index: 10000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .ctx-item { padding: 10px 20px; font-size: 13px; cursor: pointer; border-radius: 5px; }
+        #ctx-menu { position: fixed; background: #1c1c22; border: 1px solid #333; border-radius: 12px; padding: 6px; z-index: 10000; display: none; box-shadow: 0 10px 30px #000; min-width: 140px; }
+        .ctx-item { padding: 10px 15px; font-size: 12px; cursor: pointer; border-radius: 8px; font-weight: 600; }
         .ctx-item:hover { background: var(--main); }
 
-        /* Floating UI */
-        #launcher { position: fixed; bottom: 130px; right: 20px; background: var(--admin); width: 50px; height: 50px; border-radius: 12px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
-        #panel { position: fixed; bottom: 190px; right: 20px; width: 280px; background: var(--panel); border: 1px solid #333; border-radius: 20px; padding: 15px; display: none; flex-direction: column; gap: 8px; z-index: 101; }
+        /* Admin Controls */
+        #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3); }
+        #panel { position: fixed; bottom: 210px; right: 20px; width: 300px; background: var(--panel); border: 1px solid #333; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 65vh; overflow-y: auto; }
+        
+        .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
+        .p-btn:active { scale: 0.96; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; font-size: 13px; }
 
-        /* Gemini Style Footer */
-        .footer-area { background: #000; border-top: 1px solid #222; padding: 10px 15px calc(15px + env(safe-area-inset-bottom)); }
-        .disclaimer { font-size: 10px; color: #666; text-align: center; margin-top: 8px; line-height: 1.4; }
-        
-        .p-btn { background: #222; color: #fff; border: none; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
-        input { background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; }
-        
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* Vote Card In Chat */
+        .vote-card { background: #111; border: 1px solid var(--main); padding: 15px; border-radius: 18px; width: 100%; margin: 10px 0; }
+
+        /* Footer */
+        .footer-area { background: #000; border-top: 1px solid #222; padding: 15px 20px calc(20px + env(safe-area-inset-bottom)); }
+        .disclaimer { font-size: 10px; color: #555; text-align: center; margin-top: 10px; line-height: 1.5; }
+
+        #maint-screen { position: fixed; inset: 0; background: #000; z-index: 20000; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="maint-screen" style="display:none; position:fixed; inset:0; background:#000; z-index:20000; flex-direction:column; align-items:center; justify-content:center;"><h1>🚧 MAINTENANCE</h1></div>
+<div id="maint-screen">
+    <h1 style="color:var(--admin); margin:0;">🚧 MAINTENANCE</h1>
+    <p style="color:#666">Server sedang dioptimalkan oleh Admin Hexky.</p>
+</div>
 
+<div id="toast-box"></div>
 <div id="ctx-menu">
-    <div class="ctx-item" onclick="copyMsg()">Copy Text</div>
-    <div class="ctx-item" onclick="pinMsg()">Sematkan (30s)</div>
+    <div class="ctx-item" onclick="copyMsg()">📋 Copy Chat</div>
+    <div class="ctx-item" onclick="pinMsg()">📌 Sematkan (30s)</div>
 </div>
 
 <header>
-    <span style="font-weight:900; color:var(--main); letter-spacing:1px;">EXECHAT</span>
-    <div id="pin-area" style="font-size: 11px; color: #ffd700;"></div>
+    <span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span>
+    <div id="pin-area" style="font-size:11px; color:#ffd700; font-weight:600;"></div>
 </header>
+
+<div id="static-area">
+    <div id="anno-box"></div>
+    <div id="link-box"></div>
+</div>
 
 <div id="chat-box"></div>
 
+<div id="modal-vote" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--panel); border:1px solid #333; padding:25px; border-radius:24px; z-index:9999; width:90%; max-width:320px;">
+    <h3 style="margin:0 0 15px;">🗳️ New Vote</h3>
+    <input type="text" id="v-title" placeholder="Judul Voting" style="margin-bottom:8px">
+    <input type="number" id="v-target" placeholder="Target Suara (2-100)" style="margin-bottom:8px">
+    <input type="number" id="v-time" placeholder="Durasi (Detik, Max 500)">
+    <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="p-btn" style="background:#333" onclick="this.parentElement.parentElement.style.display='none'">CANCEL</button>
+        <button class="p-btn" style="background:var(--main)" onclick="startV()">LAUNCH</button>
+    </div>
+</div>
+
 <div id="launcher" onclick="togP()">⚙️</div>
 <div id="panel">
+    <h4 style="margin:0 0 5px;">Settings</h4>
     <select id="sel-color" onchange="setCol(this.value)">
-        <option value="name-rainbow">Style: Rainbow</option>
-        <option value="name-gold">Style: Gold</option>
-        <option value="name-neon">Style: Neon Blue</option>
+        <option value="name-rainbow">Rainbow Style</option>
+        <option value="name-gold">Gold Style</option>
+        <option value="name-neon">Neon Blue Style</option>
     </select>
-    <input type="text" id="a-ann" placeholder="Isi Pengumuman...">
+    <hr style="border:0; border-top:1px solid #333; margin:5px 0;">
+    <input type="text" id="a-ann" placeholder="Tulis Pengumuman...">
     <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM ANNOUNCEMENT</button>
-    <button class="p-btn" style="background:#059669" onclick="sLi()">PUBLISH LINK</button>
-    <button class="p-btn" onclick="preMT()" id="mtBtn">MAINTENANCE</button>
-    <button class="p-btn" style="background:var(--admin)" onclick="wCh()">CLEAR ALL CHAT</button>
+    <input type="text" id="a-link" placeholder="Share Link URL...">
+    <button class="p-btn" style="background:#059669" onclick="sLi()">PUBLISH LINK (5M)</button>
+    <button class="p-btn" onclick="document.getElementById('modal-vote').style.display='block'; togP();">CREATE VOTE</button>
+    <hr style="border:0; border-top:1px solid #333; margin:5px 0;">
+    <button class="p-btn" onclick="preMT()" id="mtBtn">MAINTENANCE: OFF</button>
+    <button class="p-btn" onclick="togL()" id="lockBtn">LOCK CHAT: OFF</button>
+    <button class="p-btn" style="background:var(--admin)" onclick="wCh()">WIPE ALL MESSAGES</button>
 </div>
 
 <div class="footer-area">
-    <div style="display:flex; gap:10px;">
-        <input type="text" id="u-msg" placeholder="Tulis pesan..." onkeypress="if(event.key=='Enter') hS()">
-        <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button>
+    <div style="display:flex; gap:10px; max-width:800px; margin:0 auto;">
+        <input type="text" id="u-msg" placeholder="Ketik pesan di sini..." onkeypress="if(event.key=='Enter') hS()">
+        <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:14px; color:#fff; font-weight:800;">SEND</button>
     </div>
     <div class="disclaimer">
         ExeChat dapat membuat kesalahan. Periksa kembali responsnya.<br>
-        <b>Dilarang keras untuk toxic di ExeChat!</b>
+        <b>Dilarang keras untuk menggunakan kata kasar (Toxic) di ExeChat!</b>
     </div>
 </div>
 
@@ -97,7 +135,7 @@
     firebase.initializeApp({ apiKey: _0xCf.k, databaseURL: _0xCf.d, projectId: _0xCf.p, appId: _0xCf.a });
     const db = firebase.database();
     
-    let iA = false, iM = false, curCol = "name-rainbow", selectedMsg = "";
+    let iA = false, iL = false, iM = false, curCol = "name-rainbow", selectedMsg = "";
     let mN = "User_" + Math.floor(Math.random() * 9000);
 
     if (localStorage.getItem("hexAdm") === "true") {
@@ -105,77 +143,113 @@
         document.getElementById('launcher').style.display = "flex";
     }
 
-    // Fix Clear Chat History (Reactive Listener)
-    db.ref("messages").on("value", snapshot => {
-        const b = document.getElementById('chat-box');
-        b.innerHTML = ""; 
-        if (!snapshot.exists()) return;
-        
-        snapshot.forEach(child => {
-            const d = child.val();
-            const v = document.createElement('div');
-            if (d.type === 'anno') {
-                v.className = "anno-card";
-                v.innerHTML = `<small style="opacity:0.8">📢 PENGUMUMAN ADMIN</small><br><b>${d.pesan}</b>`;
-            } else {
-                v.className = d.role === 'admin' ? "msg msg-admin" : "msg";
-                const c = d.role === 'admin' ? d.color : '';
-                v.innerHTML = `<span class="${c}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
-                // Context Menu Event
-                if(iA) {
-                    v.oncontextmenu = (e) => {
-                        e.preventDefault();
-                        selectedMsg = d.pesan;
-                        const m = document.getElementById('ctx-menu');
-                        m.style.display = "block";
-                        m.style.left = e.pageX + "px";
-                        m.style.top = e.pageY + "px";
-                    };
-                }
+    function showToast(m) {
+        const b = document.getElementById('toast-box'), t = document.createElement('div');
+        t.className = 'toast'; t.innerText = m; b.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
+
+    // Context Menu Logic
+    window.onclick = () => document.getElementById('ctx-menu').style.display = "none";
+    function copyMsg() { navigator.clipboard.writeText(selectedMsg); showToast("Chat Berhasil Disalin!"); }
+    function pinMsg() { db.ref("pinned").set({ txt: selectedMsg, exp: Date.now() + 30000 }); showToast("Pesan Disematkan!"); }
+
+    // Database Listeners
+    db.ref("messages").on("value", s => {
+        const b = document.getElementById('chat-box'); b.innerHTML = "";
+        s.forEach(c => {
+            const d = c.val(), v = document.createElement('div');
+            v.className = d.role === 'admin' ? "msg msg-admin" : "msg";
+            const cl = d.role === 'admin' ? d.color : '';
+            v.innerHTML = `<span class="${cl}" style="font-size:10px; display:block; margin-bottom:2px;">${d.nama}</span>${d.pesan}`;
+            if(iA) {
+                v.oncontextmenu = (e) => {
+                    e.preventDefault(); selectedMsg = d.pesan;
+                    const m = document.getElementById('ctx-menu');
+                    m.style.display = "block"; m.style.left = e.pageX + "px"; m.style.top = e.pageY + "px";
+                };
             }
             b.appendChild(v);
         });
         b.scrollTop = b.scrollHeight;
     });
 
-    // Close Context Menu
-    window.onclick = () => document.getElementById('ctx-menu').style.display = "none";
+    db.ref("announcement").on("value", s => {
+        const d = s.val(), box = document.getElementById('anno-box');
+        box.innerHTML = d ? `<div class="anno-card">📢 <b>INFO:</b> ${d.txt}</div>` : "";
+    });
 
-    function copyMsg() { navigator.clipboard.writeText(selectedMsg); alert("Copied!"); }
-    function pinMsg() { db.ref("pinned").set({ txt: selectedMsg, expire: Date.now() + 30000 }); }
+    db.ref("admin_links").on("value", s => {
+        const d = s.val(), box = document.getElementById('link-box');
+        if(d && Date.now() < d.expire) {
+            box.innerHTML = `<div class="link-card"><span>🔗 ${d.url.substring(0,25)}...</span><button class="p-btn" style="width:auto; padding:5px 10px;" onclick="window.open('${d.url}')">OPEN</button></div>`;
+        } else { box.innerHTML = ""; }
+    });
 
     db.ref("pinned").on("value", s => {
         const d = s.val(), a = document.getElementById('pin-area');
-        if(d && Date.now() < d.expire) {
-            a.innerText = "📌 Pinned: " + d.txt;
-            setTimeout(() => db.ref("pinned").set(null), d.expire - Date.now());
-        } else { a.innerText = ""; }
+        if(d && Date.now() < d.exp) { a.innerText = "📌 " + d.txt; } else { a.innerText = ""; }
     });
 
+    db.ref("vote").on("value", s => {
+        const d = s.val();
+        if (d && d.active) {
+            let left = Math.round((d.end - Date.now())/1000);
+            if (left <= 0 || (d.yes + d.no) >= d.target) {
+                db.ref("vote/active").set(false);
+                db.ref("messages").push({ nama: "SYSTEM", pesan: `📊 Hasil Vote [${d.title}]: YES(${d.yes}) - NO(${d.no})`, role: "sys" });
+                return;
+            }
+            if(!document.getElementById('v-ui')){
+                const div = document.createElement('div'); div.id='v-ui'; div.className='vote-card';
+                div.innerHTML = `<b id="vt"></b><div style="display:flex;gap:10px;margin-top:10px"><button class="p-btn" onclick="castV('yes')">YES</button><button class="p-btn" onclick="castV('no')">NO</button></div>`;
+                document.getElementById('chat-box').appendChild(div);
+            }
+            document.getElementById('vt').innerText = `VOTE: ${d.title} (${d.yes+d.no}/${d.target}) | ${left}s`;
+        } else { if(document.getElementById('v-ui')) document.getElementById('v-ui').remove(); }
+    });
+
+    // Control Functions
     function hS() {
         const i = document.getElementById('u-msg'), t = i.value.trim();
-        if (!t || (iM && !iA)) return;
-        if (t === "/admin") { localStorage.setItem("hexAdm", "true"); location.reload(); return; }
-        db.ref("messages").push({ nama: mN, pesan: t, role: iA?"admin":"user", color: iA?curCol:'', ts: firebase.database.ServerValue.TIMESTAMP });
+        if(!t || ((iL || iM) && !iA)) return;
+        if(t === "/admin") { iA = true; localStorage.setItem("hexAdm","true"); location.reload(); return; }
+        db.ref("messages").push({ nama: mN, pesan: t, role: iA?"admin":"user", color: iA?curCol:'', ts: Date.now() });
         i.value = "";
     }
 
-    function sendAnn() {
-        const t = document.getElementById('a-ann').value;
-        if(t) db.ref("messages").push({ type: 'anno', pesan: t, ts: Date.now() });
-        document.getElementById('a-ann').value = ""; togP();
+    function startV() {
+        const t = document.getElementById('v-title').value, tg = document.getElementById('v-target').value, tm = document.getElementById('v-time').value;
+        if(t && tg) db.ref("vote").set({ title: t, target: parseInt(tg), active: true, yes: 0, no: 0, end: Date.now() + (tm*1000) });
+        document.getElementById('modal-vote').style.display='none'; localStorage.removeItem("voted"); showToast("Voting Dimulai!");
     }
 
-    function wCh() { if(confirm("Bersihkan database?")) db.ref("messages").set(null); togP(); }
-    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
-    function setCol(v) { curCol = v; db.ref("admin_config/color").set(v); }
-    function preMT() { db.ref("room_status/maint").set(!iM); }
+    function castV(type) {
+        if(localStorage.getItem("voted")) { showToast("Kamu sudah memilih!"); return; }
+        db.ref("vote").transaction(d => { if(d && d.active) { d[type]++; localStorage.setItem("voted","true"); } return d; });
+    }
 
-    db.ref("room_status/maint").on("value", s => {
-        iM = s.val();
+    function sendAnn() { const t = document.getElementById('a-ann').value; if(t) db.ref("announcement").set({ txt: t }); document.getElementById('a-ann').value = ""; togP(); showToast("Pengumuman Terkirim!"); }
+    function sLi() { const u = document.getElementById('a-link').value; if(u) db.ref("admin_links").set({ url: u, expire: Date.now() + 300000 }); document.getElementById('a-link').value = ""; togP(); showToast("Link Dibagikan!"); }
+    function wCh() { if(confirm("Hapus semua pesan?")) db.ref("messages").set(null); togP(); showToast("Chat Bersih!"); }
+    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
+    function setCol(v) { curCol = v; db.ref("admin_config/color").set(v); showToast("Style Diubah!"); }
+    function preMT() { db.ref("room_status/maint").set(!iM); }
+    function togL() { db.ref("room_status/locked").set(!iL); }
+
+    db.ref("room_status").on("value", s => {
+        const d = s.val() || {}; iL = d.locked; iM = d.maint;
         document.getElementById('maint-screen').style.display = (iM && !iA) ? "flex" : "none";
-        document.getElementById('mtBtn').innerText = iM ? "MT: ON" : "MT: OFF";
+        document.getElementById('mtBtn').innerText = iM ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
+        document.getElementById('lockBtn').innerText = iL ? "LOCK CHAT: ON" : "LOCK CHAT: OFF";
     });
+
+    // Auto-clean Link
+    setInterval(() => {
+        db.ref("admin_links").once("value", s => {
+            if(s.exists() && Date.now() > s.val().expire) db.ref("admin_links").set(null);
+        });
+    }, 10000);
 </script>
 </body>
 </html>
