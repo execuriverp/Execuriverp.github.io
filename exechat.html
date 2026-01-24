@@ -2,91 +2,81 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | Sovereign Fixed</title>
+    <title>ExeChat | V20 Final</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { --bg: #050507; --panel: rgba(20, 20, 25, 0.98); --main: #3b82f6; --admin: #ef4444; }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.2s; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Admin Styles */
-        .name-rainbow { background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 900; }
-        .name-gold { color: #ffd700; text-shadow: 0 0 10px #ffaa00; font-weight: 900; }
-        .name-neon { color: #00f2ff; text-shadow: 0 0 10px #00f2ff; font-weight: 900; }
+        /* Color Styles - Fixed Priority */
+        .name-rainbow { background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200%; animation: rb 2s linear infinite; font-weight: 900 !important; }
+        .name-gold { color: #ffd700 !important; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); font-weight: 900 !important; -webkit-text-fill-color: initial !important; background: none !important; }
+        .name-neon { color: #00f2ff !important; text-shadow: 0 0 8px rgba(0, 242, 255, 0.5); font-weight: 900 !important; -webkit-text-fill-color: initial !important; background: none !important; }
         @keyframes rb { to { background-position: 200% center; } }
 
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; width: 80%; max-width: 300px; }
-        .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px; border-radius: 12px; font-weight: 600; text-align: center; font-size: 13px; animation: tIn 0.4s forwards; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        
-        .card-ui { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid #333; padding: 25px; border-radius: 20px; z-index: 9999; width: 90%; max-width: 350px; display: none; text-align: center; box-shadow: 0 0 100px #000; }
+        .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         
         header { background: #000; padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
 
-        .link-container { background: #111; border: 1px solid var(--main); padding: 10px; margin: 10px 20px; border-radius: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .link-container { background: #111; border: 1px solid var(--main); padding: 10px; margin: 10px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s; }
         .msg { padding: 12px; border-radius: 15px; max-width: 85%; font-size: 14px; background: #16161a; align-self: flex-start; border: 1px solid #222; }
 
-        #launcher { position: fixed; bottom: 110px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 15px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
-        #panel { position: fixed; bottom: 180px; right: 20px; width: 320px; background: var(--panel); border: 1px solid #333; border-radius: 20px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 70vh; overflow-y: auto; }
+        #launcher { position: fixed; bottom: 110px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 15px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
+        #panel { position: fixed; bottom: 180px; right: 20px; width: 300px; background: var(--panel); border: 1px solid #333; border-radius: 20px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 101; }
 
         .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
-        .p-btn:active { scale: 0.95; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; width: 100%; outline: none; }
-
-        @keyframes tIn { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="maint-screen" style="display:none; position:fixed; inset:0; background:#000; z-index:20000; flex-direction:column; align-items:center; justify-content:center; text-align: center;">
-    <h1 style="color:var(--admin)">🚧 UNDER MAINTENANCE</h1>
-    <p>Maaf, admin sedang melakukan perbaikan sistem.</p>
+<div id="maint-screen" style="display:none; position:fixed; inset:0; background:#000; z-index:20000; flex-direction:column; align-items:center; justify-content:center;">
+    <h1 style="color:var(--admin)">🚧 MAINTENANCE</h1>
 </div>
 
 <div id="toast-box"></div>
-<header><span style="font-weight:900; color:var(--main)">EXECHAT</span><button id="loginBtn" class="p-btn" style="width:auto" onclick="openL()">ADMIN LOGIN</button></header>
+<header><span style="font-weight:900; color:var(--main)">EXECHAT V20</span><button id="loginBtn" class="p-btn" style="width:auto" onclick="openLogin()">ADMIN LOGIN</button></header>
 <div id="link-area"></div>
 <div id="chat-box"></div>
 
-<div id="modal-vote" class="card-ui">
+<div id="modal-vote" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--panel); border:1px solid #333; padding:20px; border-radius:20px; z-index:9999; width:90%; max-width:320px;">
     <h3>Setup Voting</h3>
-    <input type="text" id="v-title" placeholder="Judul Vote" style="margin-bottom:8px">
-    <input type="number" id="v-target" placeholder="Target (2-100)" style="margin-bottom:8px">
+    <input type="text" id="v-title" placeholder="Judul" style="margin-bottom:8px">
+    <input type="number" id="v-target" placeholder="Target" style="margin-bottom:8px">
     <input type="number" id="v-time" placeholder="Durasi (Detik)">
-    <div style="display:flex; gap:10px; margin-top:10px">
-        <button class="p-btn" style="background:#444" onclick="this.parentElement.parentElement.style.display='none'">BATAL</button>
-        <button class="p-btn" style="background:var(--main)" onclick="startV()">LAUNCH</button>
-    </div>
+    <button class="p-btn" style="margin-top:10px; background:var(--main)" onclick="startV()">LAUNCH</button>
 </div>
 
 <div id="launcher" onclick="togP()">⚙️</div>
 <div id="panel">
-    <select id="sel-color" onchange="setCol(this.value)" style="margin-bottom:5px">
-        <option value="name-rainbow">Mode: Rainbow</option>
-        <option value="name-gold">Mode: Gold</option>
-        <option value="name-neon">Mode: Neon Blue</option>
+    <select id="sel-color" onchange="setCol(this.value)">
+        <option value="name-rainbow">Rainbow</option>
+        <option value="name-gold">Gold</option>
+        <option value="name-neon">Neon Blue</option>
     </select>
     <button class="p-btn" onclick="document.getElementById('modal-vote').style.display='block'">START VOTE</button>
-    <hr style="border:0; border-top:1px solid #333; width:100%">
     <input type="text" id="a-link" placeholder="Share URL...">
-    <button class="p-btn" style="background:#059669" onclick="sLi()">PUBLISH LINK</button>
-    <hr style="border:0; border-top:1px solid #333; width:100%">
-    <button class="p-btn" onclick="preMT()" id="mtBtn">MAINTENANCE: OFF</button>
-    <button class="p-btn" onclick="togL()" id="lockBtn">LOCK CHAT: OFF</button>
-    <button class="p-btn" style="background:var(--admin)" onclick="db.ref('messages').remove()">WIPE MESSAGES</button>
+    <button class="p-btn" style="background:#059669" onclick="sLi()">PUBLISH LINK (5M)</button>
+    <button class="p-btn" onclick="preMT()" id="mtBtn">MAINTENANCE</button>
+    <button class="p-btn" onclick="togL()" id="lockBtn">LOCK CHAT</button>
+    <button class="p-btn" style="background:var(--admin)" onclick="wCh()">WIPE CHAT</button>
 </div>
 
-<div id="card-login" class="card-ui">
-    <h3>Admin Verify</h3>
+<div id="card-login" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--panel); border:1px solid #333; padding:20px; border-radius:20px; z-index:9999;">
+    <h3>Verify</h3>
     <input type="password" id="a-pass" placeholder="Password">
-    <button class="p-btn" style="margin-top:10px; background:var(--main)" onclick="doL()">LOGIN</button>
+    <button class="p-btn" style="margin-top:10px" onclick="doL()">LOGIN</button>
 </div>
 
-<div style="padding: 15px; background: #000; border-top: 1px solid #222;">
+<div style="padding:15px; background:#000; border-top:1px solid #222;">
     <div style="display:flex; gap:10px;">
-        <input type="text" id="u-msg" placeholder="Tulis pesan..." onkeypress="if(event.key=='Enter') hS()">
+        <input type="text" id="u-msg" placeholder="Pesan..." onkeypress="if(event.key=='Enter') hS()">
         <button onclick="hS()" style="background:var(--main); border:none; padding:10px 20px; border-radius:10px; color:#fff; font-weight:800;">SEND</button>
     </div>
 </div>
@@ -119,47 +109,79 @@
     db.ref("admin_config/password").on("value", s => rP = s.val());
     db.ref("admin_config/color").on("value", s => curCol = s.val() || "name-rainbow");
 
-    function openL() { document.getElementById('card-login').style.display = 'block'; }
+    function openLogin() { document.getElementById('card-login').style.display = 'block'; }
     function doL() {
         if (btoa(document.getElementById('a-pass').value) === rP.trim()) {
             localStorage.setItem("hexAdm", "true"); location.reload();
-        } else { showNotif("Password Salah!"); }
+        } else { showNotif("Salah!"); }
     }
 
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
-    function setCol(v) { db.ref("admin_config/color").set(v); showNotif("Style Updated!"); }
+    function setCol(v) { db.ref("admin_config/color").set(v); showNotif("Color Updated"); }
 
     function sLi() {
         const u = document.getElementById('a-link').value;
-        if(u) db.ref("admin_links").set({ url: u, ts: Date.now() });
+        if(u) {
+            const exp = Date.now() + 300000; // 5 Menit
+            db.ref("admin_links").set({ url: u, expire: exp });
+        }
         document.getElementById('a-link').value = ""; togP();
     }
 
     function startV() {
         const t = document.getElementById('v-title').value, tg = document.getElementById('v-target').value, tm = document.getElementById('v-time').value;
-        if(t && tg && tm) db.ref("vote").set({ title: t, target: parseInt(tg), active: true, yes: 0, no: 0, end: Date.now() + (tm*1000) });
+        if(t && tg) db.ref("vote").set({ title: t, target: parseInt(tg), active: true, yes: 0, no: 0, end: Date.now() + (tm*1000) });
         document.getElementById('modal-vote').style.display='none'; togP();
+        localStorage.removeItem("voted"); // Reset status vote lokal admin agar bisa ngetes
+    }
+
+    function castV(type) {
+        if(localStorage.getItem("voted")) { showNotif("Sudah Vote!"); return; }
+        db.ref("vote").transaction(d => {
+            if(d && d.active) { d[type]++; localStorage.setItem("voted", "true"); }
+            return d;
+        });
+    }
+
+    function wCh() {
+        db.ref("messages").set(null); // Menghapus total
+        db.ref("messages").push({ nama: "SYSTEM", pesan: "🧹 Chat telah dibersihkan oleh Admin.", role: "sys" });
+        togP();
     }
 
     function hS() {
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if (!t || (iL && !iA) || (iM && !iA)) return;
-        if (t === "/admin") { openL(); i.value=""; return; }
-        db.ref("messages").push({ nama: mN, pesan: t, role: iA?"admin":"user", color: iA?curCol:'', ts: firebase.database.ServerValue.TIMESTAMP });
+        db.ref("messages").push({ 
+            nama: mN, pesan: t, 
+            role: iA?"admin":"user", 
+            color: iA?curCol:'', 
+            ts: firebase.database.ServerValue.TIMESTAMP 
+        });
         i.value = "";
     }
 
-    // Listeners Utama
     db.ref("messages").limitToLast(30).on("child_added", s => {
         const d = s.val(), b = document.getElementById('chat-box'), v = document.createElement('div');
         v.className = "msg";
-        v.innerHTML = `<span class="${d.role==='admin'?d.color:''}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
+        const c = d.role === 'admin' ? d.color : '';
+        v.innerHTML = `<span class="${c}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
         b.appendChild(v); b.scrollTop = b.scrollHeight;
     });
 
+    // Perbaikan Admin Link Auto-Hide & Auto-Delete
     db.ref("admin_links").on("value", s => {
         const d = s.val(), a = document.getElementById('link-area');
-        a.innerHTML = d ? `<div class="link-container">🔗 LINK: <button class="p-btn" style="width:auto; background:var(--main)" onclick="window.open('${d.url}')">BUKA</button></div>` : "";
+        if (d) {
+            if (Date.now() > d.expire) {
+                db.ref("admin_links").set(null); // Hapus dari DB jika kadaluarsa
+                a.innerHTML = "";
+            } else {
+                a.innerHTML = `<div class="link-container">🔗 LINK: <button class="p-btn" style="width:auto; background:var(--main)" onclick="window.open('${d.url}')">OPEN</button></div>`;
+                // Set timer untuk hapus tampilan otomatis
+                setTimeout(() => { a.innerHTML = ""; }, d.expire - Date.now());
+            }
+        } else { a.innerHTML = ""; }
     });
 
     db.ref("vote").on("value", s => {
@@ -168,30 +190,29 @@
             let left = Math.round((d.end - Date.now())/1000);
             if (left <= 0 || (d.yes + d.no) >= d.target) {
                 db.ref("vote/active").set(false);
-                db.ref("messages").push({ nama: "SYSTEM", pesan: `📊 Vote Selesai: ${d.title} | YES: ${d.yes} - NO: ${d.no}` });
+                db.ref("messages").push({ nama: "SYSTEM", pesan: `📊 Vote Result: ${d.title} (Y:${d.yes} N:${d.no})`, role: 'sys' });
                 return;
             }
             if(!document.getElementById('v-ui')){
-                const div = document.createElement('div'); div.id='v-ui'; div.style.background='#111'; div.style.padding='15px'; div.style.borderRadius='15px'; div.style.border='1px solid var(--main)';
-                div.innerHTML = `<b id="vt" style="color:var(--main)"></b><div style="display:flex; gap:10px; margin-top:10px"><button class="p-btn" onclick="db.ref('vote/yes').transaction(v=>(v||0)+1)">YES</button><button class="p-btn" onclick="db.ref('vote/no').transaction(v=>(v||0)+1)">NO</button></div>`;
+                const div = document.createElement('div'); div.id='v-ui'; div.className='msg'; div.style.width='100%'; div.style.background='#111';
+                div.innerHTML = `<b id="vt"></b><div style="display:flex;gap:10px;margin-top:10px"><button class="p-btn" onclick="castV('yes')">YES</button><button class="p-btn" onclick="castV('no')">NO</button></div>`;
                 document.getElementById('chat-box').appendChild(div);
             }
-            document.getElementById('vt').innerText = `VOTE: ${d.title} (${d.yes+d.no}/${d.target}) | ${left}s`;
+            document.getElementById('vt').innerText = `${d.title} (${d.yes+d.no}/${d.target}) | ${left}s`;
         } else { if(document.getElementById('v-ui')) document.getElementById('v-ui').remove(); }
     });
 
     db.ref("room_status").on("value", s => {
         const d = s.val() || {}; iL = d.locked; iM = d.maint;
         document.getElementById('maint-screen').style.display = (iM && !iA) ? "flex" : "none";
-        document.getElementById('mtBtn').innerText = iM ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
-        document.getElementById('lockBtn').innerText = iL ? "LOCK CHAT: ON" : "LOCK CHAT: OFF";
+        document.getElementById('mtBtn').innerText = iM ? "MT: ON" : "MT: OFF";
+        document.getElementById('lockBtn').innerText = iL ? "LOCK: ON" : "LOCK: OFF";
     });
 
     function preMT() {
-        if(iM) { db.ref("room_status/maint").set(false); showNotif("MT OFF"); return; }
-        showNotif("Maintenance in...");
-        [3,2,1].forEach((n, i) => setTimeout(() => showNotif(n), (i+1)*1000));
-        setTimeout(() => db.ref("room_status/maint").set(true), 4000);
+        if(iM) { db.ref("room_status/maint").set(false); return; }
+        showNotif("Maintenance...");
+        setTimeout(() => db.ref("room_status/maint").set(true), 3000);
     }
     function togL() { db.ref("room_status/locked").set(!iL); }
 </script>
