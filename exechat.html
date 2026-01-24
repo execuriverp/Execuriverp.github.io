@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V33 Ultimate Fixed</title>
+    <title>ExeChat | V34 Color & Wipe Fixed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -15,21 +15,22 @@
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s; }
         body { background: var(--bg); color: #fff; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* SCREENS */
-        #mt-screen, #banned-screen { position: fixed; inset: 0; background: #000; z-index: 9999999; display: none; align-items: center; justify-content: center; text-align: center; flex-direction: column; padding: 20px; }
-        .gear { font-size: 50px; animation: spin 3s linear infinite; display: block; margin-bottom: 20px; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* ADMIN & OWNER NAMES */
+        /* --- FIX WARNA NAMA --- */
         @keyframes rb { to { background-position: 200% center; } }
         .name-owner { background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); background-size: 200%; animation: rb 2s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        .name-admin-red { color: #ff4d4d !important; font-weight: 800; }
-        .name-admin-blue { color: #00d2ff !important; font-weight: 800; }
-        .name-admin-purple { color: #a29bfe !important; font-weight: 800; }
-        .name-admin-green { color: #55efc4 !important; font-weight: 800; }
-        .name-member { color: var(--member) !important; font-weight: 800; }
+        
+        /* Pastikan selector class ini sesuai dengan value di database */
+        .admin-red { color: #ff4d4d !important; font-weight: 800; text-shadow: 0 0 8px rgba(255,77,77,0.4); }
+        .admin-blue { color: #00d2ff !important; font-weight: 800; text-shadow: 0 0 8px rgba(0,210,255,0.4); }
+        .admin-purple { color: #a29bfe !important; font-weight: 800; text-shadow: 0 0 8px rgba(162,155,254,0.4); }
+        .admin-green { color: #55efc4 !important; font-weight: 800; text-shadow: 0 0 8px rgba(85,239,196,0.4); }
+        .member { color: var(--member) !important; font-weight: 800; }
+        .guest { color: #888 !important; }
 
-        /* UI */
+        /* SCREENS */
+        #mt-screen, #banned-screen { position: fixed; inset: 0; background: #000; z-index: 9999999; display: none; align-items: center; justify-content: center; text-align: center; flex-direction: column; padding: 20px; }
+        
+        /* UI BOXES */
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; width: 85%; max-width: 320px; pointer-events: none; }
         .toast { background: var(--panel); border: 1px solid var(--main); padding: 12px; border-radius: 12px; text-align: center; font-size: 11px; box-shadow: 0 10px 30px #000; pointer-events: auto; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 30000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
@@ -38,32 +39,29 @@
         header { background: #000; padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 12px 16px; border-radius: 18px; max-width: 85%; font-size: 14px; background: #16161a; border: 1px solid #222; align-self: flex-start; }
-        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 18px; margin: 10px 20px; font-size: 12px; font-weight: 600; }
-        .vote-card { background: #111; border: 1px solid var(--main); padding: 15px; border-radius: 18px; width: 100%; margin: 10px 0; }
+        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 12px; margin: 10px 20px; font-size: 11px; }
 
         #launcher { position: fixed; bottom: 140px; right: 20px; background: var(--owner); width: 55px; height: 55px; border-radius: 18px; display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
         #panel { position: fixed; bottom: 210px; right: 20px; width: 280px; background: var(--panel); border: 1px solid #333; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 101; max-height: 70vh; overflow-y: auto; }
-        .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 5px; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; outline: none; margin-bottom: 8px; }
+        .p-btn { background: #222; color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; font-size: 13px; outline: none; margin-bottom: 5px; }
         .footer-area { background: #000; border-top: 1px solid #222; padding: 15px 20px calc(20px + env(safe-area-inset-bottom)); }
     </style>
 </head>
 <body>
 
-<div id="mt-screen"><div class="gear">⚙️</div><h1 style="color:var(--owner)">MAINTENANCE</h1><p style="color:#666">Kami sedang mengupgrade fitur...</p></div>
-<div id="banned-screen"><h1 style="color:var(--admin)">BANNED</h1><div id="ban-info" style="color:#aaa; font-size:12px; margin:20px 0"></div><button class="p-btn" onclick="location.reload()">REFRESH</button></div>
+<div id="mt-screen"><h1>⚙️ MT MODE</h1><p>Owner sedang merapikan sesuatu...</p></div>
+<div id="banned-screen"><h1 style="color:var(--admin)">ACCESS DENIED</h1><div id="ban-info"></div></div>
 
 <div id="toast-box"></div>
 
-<div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="Username"><input type="password" id="li-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doLogin()">SIGN IN</button><p style="font-size:10px;color:#666">Baru? <span onclick="closeM('modal-login');openM('modal-reg')" style="color:var(--main);cursor:pointer">Daftar</span></p><button class="p-btn" onclick="closeM('modal-login')">BATAL</button></div></div>
-<div id="modal-reg" class="modal"><div class="modal-content"><h3>Daftar</h3><input type="text" id="re-user" placeholder="Username"><input type="email" id="re-email" placeholder="Email"><input type="password" id="re-pass" placeholder="Password"><button class="p-btn" style="background:var(--main)" onclick="doRegister()">DAFTAR & VERIFIKASI</button><button class="p-btn" onclick="closeM('modal-reg')">BATAL</button></div></div>
-<div id="modal-profile" class="modal"><div class="modal-content"><h3>Settings</h3><input type="text" id="p-name" placeholder="Nama Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('name')">GANTI NAMA</button><hr style="border-top:1px solid #333; margin:15px 0"><input type="password" id="p-pass" placeholder="Password Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('pass')">GANTI PASSWORD</button><button class="p-btn" style="background:var(--admin); margin-top:10px" onclick="logout()">LOGOUT</button><button class="p-btn" onclick="closeM('modal-profile')">TUTUP</button></div></div>
-<div id="modal-vote" class="modal"><div class="modal-content"><h3>Buat Vote</h3><input type="text" id="v-title" placeholder="Judul Vote"><input type="number" id="v-target" placeholder="Target Suara"><button class="p-btn" style="background:var(--main)" onclick="startV()">MULAI</button><button class="p-btn" onclick="closeM('modal-vote')">BATAL</button></div></div>
+<div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="Username"><input type="password" id="li-pass" placeholder="Password"><button class="p-btn" style="background:var(--main); margin-bottom:10px" onclick="doLogin()">SIGN IN</button><button class="p-btn" onclick="closeM('modal-login')">CLOSE</button></div></div>
+<div id="modal-profile" class="modal"><div class="modal-content"><h3>Account</h3><input type="text" id="p-name" placeholder="New Name"><button class="p-btn" style="background:var(--main); margin-bottom:10px" onclick="updateProfile('name')">SAVE NAME</button><input type="password" id="p-pass" placeholder="New Pass"><button class="p-btn" style="background:var(--main); margin-bottom:10px" onclick="updateProfile('pass')">SAVE PASS</button><button class="p-btn" style="background:var(--admin)" onclick="logout()">LOGOUT</button></div></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:10px">
         <div onclick="openProfile()" style="cursor:pointer; background:#222; padding:8px; border-radius:10px">⚙️</div>
-        <div><span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span><div id="my-name" style="font-size:10px; color:#666">Guest Mode</div></div>
+        <div><span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span><div id="my-name" style="font-size:10px; color:#666">Guest</div></div>
     </div>
     <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN</button>
 </header>
@@ -73,30 +71,41 @@
 
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
-    <h4 id="p-title" style="margin:0; color:var(--owner)">PANEL</h4>
+    <h4 id="p-title" style="margin:0; color:var(--owner)">ADMIN PANEL</h4>
     <div id="admin-tools">
-        <button class="p-btn" id="guestChatBtn" onclick="toggleGC()">GUEST CHAT: OFF</button>
-        <button class="p-btn" id="mtBtn" onclick="toggleMT()">MT: OFF</button>
-        <button class="p-btn" onclick="openM('modal-vote');togP()">BUAT VOTE</button>
-        <input type="text" id="a-ann" placeholder="Announcement...">
-        <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">KIRIM INFO</button>
+        <button class="p-btn" id="gcBtn" onclick="toggleGC()" style="margin-bottom:5px">GUEST CHAT: OFF</button>
+        <button class="p-btn" id="mtBtn" onclick="toggleMT()" style="margin-bottom:5px">MT MODE: OFF</button>
+        <input type="text" id="a-ann" placeholder="Announcement text...">
+        <button class="p-btn" style="background:var(--main); margin-bottom:5px" onclick="sendAnn()">SEND INFO</button>
     </div>
     <div id="owner-tools" style="display:none; border-top:1px solid #333; padding-top:10px;">
-        <p style="font-size:10px; color:var(--owner)">OWNER SYSTEM</p>
-        <input type="text" id="target-user" placeholder="Target Username">
-        <input type="text" id="target-reason" placeholder="Alasan">
-        <input type="number" id="target-mute" placeholder="Menit Mute">
-        <div style="display:flex; gap:5px">
-            <button class="p-btn" style="background:var(--admin); flex:1" onclick="executePower('banned')">BAN</button>
-            <button class="p-btn" style="background:var(--owner); flex:1" onclick="executePower('mute')">MUTE</button>
+        <p style="font-size:10px; color:var(--owner)">OWNER ONLY</p>
+        <button class="p-btn" style="background:var(--admin); margin-bottom:10px" onclick="clearChat()">🗑️ WIPE ALL CHAT</button>
+        <input type="text" id="t-user" placeholder="Username Target">
+        <input type="text" id="t-reason" placeholder="Reason">
+        <input type="number" id="t-mute" placeholder="Mute Min">
+        <div style="display:flex; gap:5px; margin-bottom:5px">
+            <button class="p-btn" style="background:var(--admin); flex:1" onclick="exec('banned')">BAN</button>
+            <button class="p-btn" style="background:var(--owner); flex:1" onclick="exec('mute')">MUTE</button>
         </div>
-        <select id="target-role"><option value="member">MEMBER</option><option value="admin-red">ADMIN RED</option><option value="admin-blue">ADMIN BLUE</option><option value="admin-purple">ADMIN PURPLE</option><option value="admin-green">ADMIN GREEN</option></select>
-        <button class="p-btn" style="background:var(--main)" onclick="setRole()">UPDATE ROLE</button>
-        <button class="p-btn" style="background:#444" onclick="executePower('member')">UNBAN/UNMUTE</button>
+        <select id="t-role">
+            <option value="member">MEMBER</option>
+            <option value="admin-red">ADMIN RED</option>
+            <option value="admin-blue">ADMIN BLUE</option>
+            <option value="admin-purple">ADMIN PURPLE</option>
+            <option value="admin-green">ADMIN GREEN</option>
+        </select>
+        <button class="p-btn" style="background:var(--main); margin-bottom:5px" onclick="setR()">SET ROLE</button>
+        <button class="p-btn" style="background:#444" onclick="exec('member')">UNBAN/UNMUTE</button>
     </div>
 </div>
 
-<div class="footer-area"><div style="display:flex; gap:10px; max-width:800px; margin:0 auto;"><input type="text" id="u-msg" placeholder="Ketik pesan..." onkeypress="if(event.key=='Enter') hS()"><button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button></div></div>
+<div class="footer-area">
+    <div style="display:flex; gap:10px; max-width:800px; margin:0 auto;">
+        <input type="text" id="u-msg" placeholder="Type..." onkeypress="if(event.key=='Enter') hS()">
+        <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button>
+    </div>
+</div>
 
 <script>
     const _0xCf = { k: atob("QUl6YVN5Q2w0ZWk4a2ZNYUJvUUVva0ZFNUZsa1B2ei1OZEVoUVh3"), d: atob("aHR0cHM6Ly9leGVhaS1lZWZjOC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw"), p: atob("ZXhlYWktZWVmYzg="), a: atob("MToxMDEzNDI4MDAyNTE3OndlYjo2ZTNlMDdhODEwMTY3Yzk3YmI4YzVj") };
@@ -106,11 +115,11 @@
     let myData = { name: "Guest", role: "guest", id: "" };
     let isMT = false, isGC = false;
 
-    // --- SYSTEM CHECK ---
+    // --- SYSTEM ---
     db.ref("room_status").on("value", s => {
         const d = s.val() || {}; isMT = d.maint; isGC = d.guest_chat;
-        document.getElementById('mtBtn').innerText = isMT ? "MT: ON" : "MT: OFF";
-        document.getElementById('guestChatBtn').innerText = isGC ? "GUEST CHAT: ON" : "GUEST CHAT: OFF";
+        document.getElementById('mtBtn').innerText = isMT ? "MT MODE: ON" : "MT MODE: OFF";
+        document.getElementById('gcBtn').innerText = isGC ? "GUEST CHAT: ON" : "GUEST CHAT: OFF";
         if(isMT && myData.role !== 'owner') document.getElementById('mt-screen').style.display = 'flex';
         else document.getElementById('mt-screen').style.display = 'none';
     });
@@ -122,11 +131,11 @@
         document.getElementById('btn-login').style.display = 'none';
         db.ref("users/"+myData.id).on("value", s => {
             const d = s.val(); if(!d) return;
-            if(d.role === 'banned') { document.getElementById('ban-info').innerHTML = `BY: ${d.bannedBy}<br>REASON: ${d.reason}<br>DATE: ${d.banDate}`; document.getElementById('banned-screen').style.display = 'flex'; }
+            if(d.role === 'banned') { document.getElementById('ban-info').innerText = d.reason; document.getElementById('banned-screen').style.display = 'flex'; }
             myData.role = d.role; myData.muteUntil = d.muteUntil || 0;
             if(d.role === 'owner' || d.role.includes('admin')) {
                 document.getElementById('launcher').style.display = 'flex';
-                if(d.role === 'owner') { document.getElementById('owner-tools').style.display = 'block'; document.getElementById('p-title').innerText = "OWNER PANEL"; }
+                if(d.role === 'owner') { document.getElementById('owner-tools').style.display = 'block'; document.getElementById('p-title').innerText = "OWNER CONTROL"; }
             }
         });
     }
@@ -135,58 +144,68 @@
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
     function closeM(id) { document.getElementById(id).style.display = 'none'; }
 
-    // --- AUTH ---
-    async function doRegister() {
-        const u = document.getElementById('re-user').value.toLowerCase().trim(), e = document.getElementById('re-email').value.trim(), p = document.getElementById('re-pass').value.trim();
-        try { const cred = await auth.createUserWithEmailAndPassword(e, p); await cred.user.sendEmailVerification(); await db.ref("users/"+u).set({ username:u, email:e, role:"member", uid:cred.user.uid }); showToast("Cek Email!"); closeM('modal-reg'); } catch (e) { showToast(e.message); }
-    }
-    async function doLogin() {
-        const u = document.getElementById('li-user').value.toLowerCase().trim(), p = document.getElementById('li-pass').value.trim();
-        try { const snap = await db.ref("users/"+u).once("value"); const d = snap.val(); const cred = await auth.signInWithEmailAndPassword(d.email, p); if(!cred.user.emailVerified) return showToast("Verif Email!"); localStorage.setItem("exeUser", JSON.stringify({name:d.username, role:d.role, id:u})); location.reload(); } catch (e) { showToast("Gagal!"); }
-    }
-    function logout() { localStorage.removeItem("exeUser"); auth.signOut(); location.reload(); }
-    function updateProfile(t) {
-        if(t === 'name') { const n = document.getElementById('p-name').value; db.ref("users/"+myData.id).update({username:n}); myData.name = n; localStorage.setItem("exeUser", JSON.stringify(myData)); location.reload(); }
-        else { auth.currentUser.updatePassword(document.getElementById('p-pass').value).then(() => showToast("OK!")).catch(e => showToast(e.message)); }
-    }
-
-    // --- CHAT & VOTE ---
+    // --- CHAT LOGIC ---
     function hS() {
         if(myData.role === 'guest' && !isGC) return showToast("Guest Chat OFF!");
-        if(isMT && myData.role !== 'owner') return;
-        if(myData.muteUntil > Date.now()) return showToast("Dilarang Chat (Muted)!");
-        const i = document.getElementById('u-msg'), t = i.value.trim(); if(!t) return;
-        db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role }); i.value = "";
+        if(myData.muteUntil > Date.now()) return showToast("Muted!");
+        const i = document.getElementById('u-msg'), t = i.value.trim();
+        if(!t) return;
+        db.ref("messages").push({ nama: myData.name, pesan: t, role: myData.role });
+        i.value = "";
     }
+
     db.ref("messages").limitToLast(40).on("value", s => {
         const b = document.getElementById('chat-box'); b.innerHTML = "";
-        s.forEach(c => { const d = c.val(), v = document.createElement('div'); v.className = "msg"; let rC = d.role === 'owner' ? "name-owner" : (d.role.includes('admin') ? "name-"+d.role : "name-member"); v.innerHTML = `<span class="${rC}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`; b.appendChild(v); });
+        s.forEach(c => {
+            const d = c.val();
+            const v = document.createElement('div');
+            v.className = "msg";
+            // FIX: Gunakan d.role sebagai nama class CSS secara langsung
+            let nameClass = d.role === 'owner' ? "name-owner" : d.role;
+            v.innerHTML = `<span class="${nameClass}" style="font-size:10px; display:block;">${d.nama}</span>${d.pesan}`;
+            b.appendChild(v);
+        });
         b.scrollTop = b.scrollHeight;
     });
-    db.ref("vote").on("value", s => {
-        const d = s.val(); if(d && d.active) { if(!document.getElementById('v-ui')){const v=document.createElement('div');v.id='v-ui';v.className='vote-card';v.innerHTML=`<b id="v-t"></b><div style="display:flex;gap:10px;margin-top:10px"><button class="p-btn" onclick="castV('yes')">YES</button><button class="p-btn" onclick="castV('no')">NO</button></div>`;document.getElementById('chat-box').appendChild(v);}document.getElementById('v-t').innerText=`${d.title} (${d.yes+d.no}/${d.target})`;} else if(document.getElementById('v-ui')) document.getElementById('v-ui').remove();
-    });
-    function castV(t) { if(localStorage.getItem("voted")) return; db.ref("vote").transaction(d => { if(d) d[t]++; return d; }); localStorage.setItem("voted", "1"); }
-    function startV() { db.ref("vote").set({ title:document.getElementById('v-title').value, target:parseInt(document.getElementById('v-target').value), active:true, yes:0, no:0 }); closeM('modal-vote'); localStorage.removeItem("voted"); }
 
-    // --- POWERS ---
+    // --- ADMIN & OWNER POWERS ---
+    function clearChat() { if(confirm("Hapus semua chat?")) db.ref("messages").remove(); }
     function toggleMT() { db.ref("room_status/maint").set(!isMT); }
     function toggleGC() { db.ref("room_status/guest_chat").set(!isGC); }
-    function sendAnn() { db.ref("announcement").set({ txt:document.getElementById('a-ann').value, exp:Date.now()+300000 }); togP(); }
-    db.ref("announcement").on("value", s => { const d = s.val(), box = document.getElementById('anno-box'); if(d && Date.now() < d.exp) box.innerHTML=`<div class="anno-card">📢 ${d.txt}</div>`; else box.innerHTML=""; });
-    function setRole() { db.ref("users/"+document.getElementById('target-user').value.toLowerCase().trim()).update({role:document.getElementById('target-role').value}); showToast("Role Updated!"); }
-    function executePower(t) {
-        const target = document.getElementById('target-user').value.toLowerCase().trim();
+    function sendAnn() { db.ref("announcement").set({ txt: document.getElementById('a-ann').value, exp: Date.now() + 300000 }); togP(); }
+    db.ref("announcement").on("value", s => { const d = s.val(); if(d && Date.now() < d.exp) document.getElementById('anno-box').innerHTML = `<div class="anno-card">📢 ${d.txt}</div>`; else document.getElementById('anno-box').innerHTML = ""; });
+
+    function setR() { db.ref("users/"+document.getElementById('t-user').value.toLowerCase().trim()).update({ role: document.getElementById('t-role').value }); showToast("Role Updated!"); }
+    
+    function exec(t) {
+        const target = document.getElementById('t-user').value.toLowerCase().trim();
         db.ref("users/"+target).once("value").then(s => {
-            const d = s.val(); if(!d || d.role === 'owner') return showToast("Gagal!");
+            const d = s.val(); if(!d || d.role === 'owner') return;
             let upd = { role: t };
-            if(t === 'banned') { upd.reason=document.getElementById('target-reason').value; upd.bannedBy=myData.name; upd.banDate=new Date().toLocaleString(); }
-            if(t === 'mute') { upd.muteUntil=Date.now()+(parseInt(document.getElementById('target-mute').value)*60000); upd.role=d.role; }
+            if(t === 'banned') { upd.reason = document.getElementById('t-reason').value; upd.bannedBy = myData.name; }
+            if(t === 'mute') { upd.muteUntil = Date.now() + (parseInt(document.getElementById('t-mute').value) * 60000); upd.role = d.role; }
             if(t === 'member') upd.muteUntil = 0;
-            db.ref("users/"+target).update(upd); showToast("Selesai!");
+            db.ref("users/"+target).update(upd); showToast("Done!");
         });
     }
+
+    // --- PROFILE ---
     function openProfile() { if(myData.role !== 'guest') openM('modal-profile'); }
+    async function doLogin() {
+        const u = document.getElementById('li-user').value.toLowerCase().trim(), p = document.getElementById('li-pass').value.trim();
+        try {
+            const snap = await db.ref("users/"+u).once("value");
+            const d = snap.val();
+            await auth.signInWithEmailAndPassword(d.email, p);
+            localStorage.setItem("exeUser", JSON.stringify({name: d.username, role: d.role, id: u}));
+            location.reload();
+        } catch (e) { showToast("Error Login"); }
+    }
+    function logout() { localStorage.removeItem("exeUser"); auth.signOut(); location.reload(); }
+    function updateProfile(type) {
+        if(type==='name') { db.ref("users/"+myData.id).update({username: document.getElementById('p-name').value}); location.reload(); }
+        else { auth.currentUser.updatePassword(document.getElementById('p-pass').value).then(()=>showToast("Success")); }
+    }
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
 </script>
 </body>
