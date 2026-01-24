@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | Admin Console</title>
+    <title>ExeChat | Stealth Console</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -10,169 +10,157 @@
         :root { --bg: #09090b; --panel: #111114; --main: #3b82f6; --admin: #ef4444; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #e4e4e7; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: fixed; width: 100%; }
-        
         header { background: #0f0f14; padding: 15px; border-bottom: 2px solid #222; text-align: center; font-weight: 900; color: var(--main); font-size: 1.4rem; letter-spacing: 2px; }
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-
-        /* Bubbles */
         .msg { padding: 12px 16px; border-radius: 16px; max-width: 85%; font-size: 14px; line-height: 1.5; animation: fadeIn 0.3s ease; }
         .warga { background: var(--panel); align-self: flex-start; border: 1px solid #27272a; border-bottom-left-radius: 2px; }
-        .admin-msg { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--admin); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .adm-m { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--admin); align-self: flex-start; border-bottom-left-radius: 2px; }
         .tag { font-size: 10px; font-weight: 800; display: block; margin-bottom: 4px; text-transform: uppercase; }
-
-        /* Announcement & System Notif */
-        .anno-card { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 16px; border-radius: 12px; border-left: 6px solid #fff; margin: 10px 0; }
-        .sys-notif { text-align: center; font-size: 11px; color: #71717a; margin: 5px 0; font-style: italic; }
-
-        /* Admin Console UI */
-        #admin-launcher { position: fixed; bottom: 100px; right: 20px; background: var(--admin); width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); font-size: 24px; z-index: 100; }
-        #admin-panel { position: fixed; bottom: 160px; right: 20px; width: 280px; background: #1c1c21; border: 1px solid #333; border-radius: 15px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 99; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .panel-btn { background: #333; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .panel-btn:hover { background: #444; }
-        .btn-red { background: #7f1d1d; color: #fca5a5; }
-
-        /* Login Card */
-        #login-card { background: var(--panel); border: 1px solid var(--main); padding: 20px; border-radius: 15px; margin: 10px 0; display: none; }
-        
+        .tag-u { color: var(--main); } .tag-a { color: var(--admin); }
+        .anno { background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 16px; border-radius: 12px; border-left: 6px solid #fff; margin: 10px 0; }
+        .sys { text-align: center; font-size: 11px; color: #71717a; margin: 5px 0; font-style: italic; }
+        #launcher { position: fixed; bottom: 100px; right: 20px; background: var(--admin); width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); font-size: 24px; z-index: 100; }
+        #panel { position: fixed; bottom: 160px; right: 20px; width: 280px; background: #1c1c21; border: 1px solid #333; border-radius: 15px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 99; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .p-btn { background: #333; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        #l-card { background: var(--panel); border: 1px solid var(--main); padding: 20px; border-radius: 15px; margin: 10px 0; display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 90%; max-width: 350px; }
         .footer { background: #0c0c0e; border-top: 1px solid #222; padding: 12px 12px 30px; }
-        .input-row { display: flex; gap: 10px; max-width: 900px; margin: 0 auto; }
+        .i-row { display: flex; gap: 10px; max-width: 900px; margin: 0 auto; }
         input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; outline: none; font-size: 16px; }
-        button#btnSend { background: var(--main); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 800; cursor: pointer; }
-
+        button#btnS { background: var(--main); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 800; cursor: pointer; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<header id="chat-title">ExeChat</header>
+<header id="c-title">ExeChat</header>
 <div id="chat-box"></div>
 
-<div id="login-area" style="padding: 0 20px;">
-    <div id="login-card">
-        <div style="font-weight:900; color:var(--main); margin-bottom:10px;">ADMIN VERIFICATION</div>
-        <input type="password" id="adminPass" placeholder="Enter Password..." style="width:100%; margin-bottom:10px;">
-        <button class="panel-btn" style="width:100%; background:var(--main)" onclick="doLogin()">VERIFY ACCESS</button>
-    </div>
+<div id="l-card">
+    <div style="font-weight:900; color:var(--main); margin-bottom:10px; text-align: center;">SECURE LOGIN</div>
+    <input type="password" id="a-pass" placeholder="Password..." style="width:100%; margin-bottom:10px; background: #111;">
+    <button class="p-btn" style="width:100%; background:var(--main)" onclick="doL()">VERIFY</button>
 </div>
 
-<div id="admin-launcher" onclick="togglePanel()">⚙️</div>
-<div id="admin-panel">
-    <div style="font-weight:900; font-size:12px; color:var(--admin); border-bottom:1px solid #333; padding-bottom:5px;">ADMIN CONSOLE</div>
-    <input type="text" id="annoText" placeholder="Announcement text..." style="font-size:12px; padding:8px;">
-    <button class="panel-btn" onclick="sendAnno()" style="background:var(--main)">POST ANNOUNCEMENT</button>
-    <button class="panel-btn" onclick="toggleLock()" id="lockBtn">STOP CHAT</button>
-    <button class="panel-btn btn-red" onclick="clearChat()">CLEAR ALL CHAT</button>
-    <button class="panel-btn" onclick="togglePanel()" style="background:transparent; border:1px solid #444;">CLOSE PANEL</button>
+<div id="launcher" onclick="togP()">⚙️</div>
+<div id="panel">
+    <input type="text" id="a-txt" placeholder="Announcement..." style="font-size:12px; padding:8px; background: #000;">
+    <button class="p-btn" onclick="sAn()" style="background:var(--main)">POST ANNOUNCEMENT</button>
+    <button class="p-btn" onclick="togL()" id="lockB">STOP CHAT</button>
+    <button class="p-btn" style="background: #7f1d1d;" onclick="cCh()">CLEAR CHAT</button>
+    <button class="p-btn" onclick="togP()" style="background:transparent; border:1px solid #444;">CLOSE</button>
 </div>
 
 <div class="footer">
-    <div class="input-row">
-        <input type="text" id="userMsg" placeholder="Tulis pesan..." autocomplete="off">
-        <button id="btnSend" onclick="handleSend()">SEND</button>
+    <div class="i-row">
+        <input type="text" id="u-msg" placeholder="Tulis pesan..." autocomplete="off">
+        <button id="btnS" onclick="hS()">SEND</button>
     </div>
 </div>
 
 <script>
-    // === CONFIG FIREBASE ===
-    const firebaseConfig = { apiKey: "AIzaSyCl4ei8kfMaBoQEokFE5FlkPvz-NdEhQXw", authDomain: "exeai-eefc8.firebaseapp.com", databaseURL: "https://exeai-eefc8-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "exeai-eefc8", storageBucket: "exeai-eefc8.firebasestorage.app", messagingSenderId: "1013428002517", appId: "1:1013428002517:web:6e3e07a810167c97bb8c5c" };
-    firebase.initializeApp(firebaseConfig);
+    // --- KONFIGURASI (GANTI DI SINI) ---
+    const _0xCf = {
+        k: atob("SVNJX0FQSV9LRVlfQkFTRTY0"), 
+        d: atob("SVNJX0RBVEFCQVNFX1VSTF9CQVNFNjQ="),
+        p: atob("SVNJX1BST0pFQ1RfSURfQkFTRTY0"),
+        a: atob("SVNJX0FQUF9JRF9CQVNFNjQ=")
+    };
+
+    firebase.initializeApp({ apiKey: _0xCf.k, databaseURL: _0xCf.d, projectId: _0xCf.p, appId: _0xCf.a });
     const db = firebase.database();
+    
+    // --- VARIABLE ---
+    let rP = "";
+    let mN = "someone" + Math.floor(Math.random() * 9000);
+    let iA = false;
+    let iL = false;
 
-    let remotePW = "";
-    let myName = "someone" + Math.floor(1000 + Math.random() * 9000);
-    let isAdmin = false;
-    let isLocked = false;
+    // Ambil Pass Admin
+    db.ref(atob("YWRtaW5fY29uZmlnL3Bhc3N3b3Jk")).on(atob("dmFsdWU="), (s) => rP = s.val());
 
-    db.ref("admin_config/password").on("value", (s) => remotePW = s.val());
-
-    // --- HANDLE LOGIN ---
-    function doLogin() {
-        const pass = document.getElementById('adminPass').value;
-        if (btoa(pass) === remotePW.trim()) {
-            isAdmin = true;
-            myName = "Admin Hexky";
-            document.getElementById('login-card').style.display = "none";
-            document.getElementById('admin-launcher').style.display = "flex";
-            alert("👑 Welcome Back, Admin Hexky!");
-        } else { alert("❌ Wrong Password!"); }
+    // --- LOGIN ---
+    function doL() {
+        const p = document.getElementById('a-pass').value;
+        if (btoa(p) === rP.trim()) {
+            iA = true; mN = atob("QWRtaW4gSGV4a3k=");
+            document.getElementById('l-card').style.display = "none";
+            document.getElementById('launcher').style.display = "flex";
+            alert(atob("QWtzZXMgRGl0ZXJp bWEh"));
+        } else { alert(atob("UGFzc3dvcmQgU2FsYWgh")); }
     }
 
-    function togglePanel() {
-        const p = document.getElementById('admin-panel');
+    function togP() {
+        const p = document.getElementById('panel');
         p.style.display = p.style.display === "flex" ? "none" : "flex";
     }
 
-    // --- ADMIN ACTIONS ---
-    function sendAnno() {
-        const txt = document.getElementById('annoText').value;
-        if (!txt) return;
-        db.ref("messages").push({ type: "anno", nama: "Admin Hexky", pesan: txt, timestamp: firebase.database.ServerValue.TIMESTAMP });
-        document.getElementById('annoText').value = "";
-    }
+    // --- CHAT SYSTEM ---
+    function hS() {
+        const i = document.getElementById('u-msg');
+        const t = i.value.trim();
+        if (!t) return;
 
-    function clearChat() {
-        if (!confirm("Hapus semua chat?")) return;
-        db.ref("messages").remove();
-        // Kirim Notif Clear
-        db.ref("messages").push({ type: "sys", pesan: `[i] Admin Hexky telah membersihkan semua chat.` });
-    }
-
-    function toggleLock() {
-        db.ref("room_status").set({ locked: !isLocked });
-    }
-
-    // --- HANDLE SEND ---
-    function handleSend() {
-        const input = document.getElementById('userMsg');
-        const text = input.value.trim();
-        if (!text) return;
-
-        if (text === "/admin") {
-            document.getElementById('login-card').style.display = "block";
-            input.value = ""; return;
+        if (t === atob("L2FkbWlu")) {
+            document.getElementById('l-card').style.display = "block";
+            i.value = ""; return;
         }
 
-        if (isLocked && !isAdmin) { alert("⚠️ Chat Locked!"); return; }
-        if (!isAdmin && text.includes("http")) { alert("❌ No Links!"); return; }
+        if (iL && !iA) { alert(atob("Q2hhdCBUZXJrdW5jaQ==")); return; }
+        if (!iA && t.includes(atob("aHR0cA=="))) { alert(atob("RGlsYXJhbmcga2lyaW0gbGluaw==")); return; }
 
-        db.ref("messages").push({
-            nama: myName,
-            pesan: text,
-            role: isAdmin ? "admin" : "user",
+        db.ref(atob("bWVzc2FnZXM=")).push({
+            nama: mN, pesan: t, role: iA ? atob("YWRtaW4=") : atob("dXNlcg=="),
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
-        input.value = "";
+        i.value = "";
     }
 
-    // --- LISTENERS ---
-    db.ref("messages").limitToLast(50).on("child_added", (snap) => {
-        const data = snap.val();
-        const box = document.getElementById('chat-box');
-        const div = document.createElement('div');
+    // --- ADMIN DASHBOARD ---
+    function sAn() {
+        const x = document.getElementById('a-txt').value;
+        if (!x) return;
+        db.ref(atob("bWVzc2FnZXM=")).push({ type: atob("YW5ubw=="), pesan: x, timestamp: firebase.database.ServerValue.TIMESTAMP });
+        document.getElementById('a-txt').value = "";
+    }
 
-        if (data.type === "anno") {
-            div.className = "anno-card";
-            div.innerHTML = `<span style="font-size:10px; font-weight:900; opacity:0.8">📢 ANNOUNCEMENT</span><br><b>${data.pesan}</b>`;
-        } else if (data.type === "sys") {
-            div.className = "sys-notif";
-            div.innerText = data.pesan;
+    function cCh() {
+        if (!confirm(atob("SGFwdXMgc2VtdWEgY2hhdD8="))) return;
+        db.ref(atob("bWVzc2FnZXM=")).remove();
+        db.ref(atob("bWVzc2FnZXM=")).push({ type: atob("c3lz"), pesan: atob("W2ldIEFkbWluIEhleGt5IHRlbGFoIG1lbWJlcnNpaGthbiBzZW11YSBjaGF0Lg==") });
+        togP();
+    }
+
+    function togL() {
+        db.ref(atob("cm9vbV9zdGF0dXM=")).set({ locked: !iL });
+    }
+
+    // --- REALTIME LISTENER ---
+    db.ref(atob("bWVzc2FnZXM=")).limitToLast(50).on(atob("Y2hpbGRfYWRkZWQ="), (s) => {
+        const d = s.val();
+        const b = document.getElementById('chat-box');
+        const v = document.createElement('div');
+
+        if (d.type === atob("YW5ubw==")) {
+            v.className = "anno";
+            v.innerHTML = `<span style="font-size:10px;font-weight:900;opacity:0.7">📢 BROADCAST</span><br><b>${d.pesan}</b>`;
+        } else if (d.type === atob("c3lz")) {
+            v.className = "sys"; v.innerText = d.pesan;
         } else {
-            const isAdm = data.role === 'admin';
-            div.className = `msg ${isAdm ? 'admin-msg' : 'warga'}`;
-            div.innerHTML = `<span class="tag ${isAdm ? 'tag-admin' : 'tag-warga'}">${isAdm ? '👑 ' : ''}${data.nama}</span>${data.pesan}`;
+            const a = d.role === atob("YWRtaW4=");
+            v.className = `msg ${a ? 'adm-m' : 'warga'}`;
+            v.innerHTML = `<span class="tag ${a ? 'tag-a' : 'tag-u'}">${a ? '👑 ' : ''}${d.nama}</span>${d.pesan}`;
         }
-        box.appendChild(div);
-        box.scrollTop = box.scrollHeight;
+        b.appendChild(v); b.scrollTop = b.scrollHeight;
     });
 
-    db.ref("room_status/locked").on("value", (s) => {
-        isLocked = s.val() || false;
-        document.getElementById('chat-title').innerText = isLocked ? "ExeChat (LOCKED)" : "ExeChat";
-        document.getElementById('lockBtn').innerText = isLocked ? "RESUME CHAT" : "STOP CHAT";
+    db.ref(atob("cm9vbV9zdGF0dXMvbG9ja2Vk")).on(atob("dmFsdWU="), (s) => {
+        iL = s.val() || false;
+        document.getElementById('c-title').innerText = iL ? "ExeChat (LOCKED)" : "ExeChat";
+        document.getElementById('lockB').innerText = iL ? "OPEN CHAT" : "STOP CHAT";
     });
 
-    db.ref("messages").on("child_removed", () => { document.getElementById('chat-box').innerHTML = ""; });
-    document.getElementById('userMsg').addEventListener("keypress", (e) => { if(e.key === 'Enter') handleSend(); });
+    db.ref(atob("bWVzc2FnZXM=")).on(atob("Y2hpbGRfcmVtb3ZlZA=="), () => { document.getElementById('chat-box').innerHTML = ""; });
+    document.getElementById('u-msg').addEventListener("keypress", (e) => { if(e.key === 'Enter') hS(); });
 </script>
 </body>
 </html>
