@@ -2,106 +2,99 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | Ultra Authority</title>
+    <title>ExeChat | Commander</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        :root { --bg: #09090b; --panel: rgba(24, 24, 27, 0.9); --main: #3b82f6; --admin: #ef4444; --text: #fafafa; --glass: rgba(255, 255, 255, 0.03); }
+        :root { --bg: #09090b; --panel: rgba(24, 24, 27, 0.95); --main: #3b82f6; --admin: #ef4444; --text: #fafafa; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         body { background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: fixed; width: 100%; }
 
-        /* Maintenance Overlay */
-        #maint-screen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: none; align-items: center; justify-content: center; text-align: center; flex-direction: column; padding: 20px; }
-        #maint-screen h1 { color: var(--main); font-size: 2rem; margin-bottom: 10px; }
+        /* Rainbow Admin Name */
+        .admin-name { font-weight: 900; background: linear-gradient(to right, #ef4444, #f59e0b, #10b981, #3b82f6, #6366f1, #a855f7, #ef4444); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 2s linear infinite; }
+        @keyframes rainbow { to { background-position: 200% center; } }
 
-        /* Toast & Card System */
+        /* Maintenance Overlay */
+        #maint-screen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: none; align-items: center; justify-content: center; text-align: center; flex-direction: column; }
+
+        /* Toast & Card */
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
         .toast { background: var(--panel); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.4s forwards; }
         
         .custom-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel); backdrop-filter: blur(20px); border: 1px solid var(--main); padding: 25px; border-radius: 24px; z-index: 5000; width: 90%; max-width: 380px; display: none; box-shadow: 0 0 50px rgba(0,0,0,0.8); text-align: center; }
 
         header { background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; }
-        header span { font-weight: 900; color: var(--main); letter-spacing: 1px; font-size: 1.2rem; }
-        .btn-header { font-size: 11px; background: var(--glass); border: 1px solid #3f3f46; color: #a1a1aa; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
-
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .msg { padding: 12px 16px; border-radius: 18px; max-width: 80%; font-size: 14px; border: 1px solid rgba(255,255,255,0.05); animation: msgIn 0.3s ease; }
-        .warga { background: #18181b; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .adm-m { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.2); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .tag { font-size: 9px; font-weight: 800; display: block; margin-bottom: 3px; text-transform: uppercase; color: var(--main); }
-
-        .anno { background: linear-gradient(135deg, #1d4ed8, #3b82f6); padding: 20px; border-radius: 20px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.2); }
-        .sys { text-align: center; font-size: 11px; color: #71717a; margin: 10px 0; font-style: italic; }
-
-        /* Floating UI */
-        #launcher { position: fixed; bottom: 110px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 20px; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); z-index: 100; font-size: 24px; transform: rotate(-10deg); }
-        #launcher:hover { transform: rotate(0deg) scale(1.1); }
-        #panel { position: fixed; bottom: 180px; right: 20px; width: 300px; background: var(--panel); backdrop-filter: blur(20px); border: 1px solid #3f3f46; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 99; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         
-        .p-btn { background: #27272a; color: white; border: none; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
-        .p-btn:hover { background: #3f3f46; }
-        .btn-red { background: #450a0a !important; color: #f87171 !important; }
+        /* Bubbles & Cards */
+        .msg { padding: 12px 16px; border-radius: 18px; max-width: 80%; font-size: 14px; border: 1px solid rgba(255,255,255,0.05); }
+        .warga { background: #18181b; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .adm-m { background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); align-self: flex-start; border-bottom-left-radius: 2px; }
+        
+        .anno, .link-card, .vote-card { background: linear-gradient(135deg, #1d4ed8, #3b82f6); padding: 20px; border-radius: 20px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2); }
+        .btn-action { background: white; color: var(--main); border: none; padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer; margin-top: 10px; width: 100%; text-transform: uppercase; }
 
+        /* Floating Panel */
+        #launcher { position: fixed; bottom: 110px; right: 20px; background: var(--admin); width: 55px; height: 55px; border-radius: 20px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 100; font-size: 24px; box-shadow: 0 10px 20px rgba(239,68,68,0.3); }
+        #panel { position: fixed; bottom: 180px; right: 20px; width: 320px; background: var(--panel); backdrop-filter: blur(20px); border: 1px solid #3f3f46; border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 8px; z-index: 99; max-height: 70vh; overflow-y: auto; }
+        
+        .p-btn { background: #27272a; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
         .footer { background: #09090b; padding: 15px 15px 35px; border-top: 1px solid #18181b; }
         .i-row { display: flex; gap: 10px; max-width: 800px; margin: 0 auto; }
-        input { flex: 1; padding: 14px; border-radius: 14px; border: 1px solid #27272a; background: #111; color: white; outline: none; }
-        input:focus { border-color: var(--main); }
-        button#btnS { background: var(--main); border: none; padding: 0 25px; border-radius: 14px; color: white; font-weight: 800; cursor: pointer; }
+        input { flex: 1; padding: 14px; border-radius: 14px; border: 1px solid #27272a; background: #111; color: white; outline: none; font-size: 14px; }
 
-        @keyframes toastIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes msgIn { from { opacity: 0; scale: 0.95; } to { opacity: 1; scale: 1; } }
+        @keyframes toastIn { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="maint-screen">
-    <h1>🚧 Maintenance</h1>
-    <p>Mohon maaf, server sedang dalam perbaikan.<br>Silakan kembali lagi nanti.</p>
-</div>
-
+<div id="maint-screen"><h1>🚧 Maintenance Mode</h1><p>Server sedang dalam perbaikan.</p></div>
 <div id="toast-box"></div>
 
 <div id="card-confirm" class="custom-card">
-    <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
-    <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 10px;">Bersihkan Database?</div>
-    <p style="font-size: 13px; color: #a1a1aa; margin-bottom: 20px;">Tindakan ini akan menghapus semua pesan secara permanen.</p>
-    <div style="display: flex; gap: 10px;">
-        <button class="p-btn" style="flex:1" onclick="closeConfirm()">BATAL</button>
-        <button class="p-btn btn-red" style="flex:1" onclick="executeClear()">HAPUS SEMUA</button>
+    <div style="font-size: 40px;">⚠️</div>
+    <div style="font-weight: 800;">Bersihkan Chat?</div>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="p-btn" style="flex:1" onclick="closeC()">BATAL</button>
+        <button class="p-btn" style="flex:1; background:#450a0a; color:#f87171" onclick="execClear()">HAPUS</button>
     </div>
 </div>
 
 <header>
     <span id="c-title">ExeChat</span>
-    <button class="btn-header" id="loginBtn" onclick="openLogin()">LOGIN AS ADMIN</button>
+    <button id="loginBtn" class="p-btn" onclick="openL()">LOGIN ADMIN</button>
 </header>
 
 <div id="chat-box"></div>
 
 <div id="card-login" class="custom-card">
     <div style="font-weight:900; color:var(--main); margin-bottom:15px;">ADMIN AUTH</div>
-    <input type="password" id="a-pass" placeholder="Master Password" style="width:100%; margin-bottom:15px; text-align: center;">
+    <input type="password" id="a-pass" placeholder="Password" style="width:100%; text-align:center; margin-bottom:10px;">
     <button class="p-btn" style="width:100%; background:var(--main)" onclick="doL()">VERIFY</button>
-    <button class="p-btn" style="width:100%; background:transparent; margin-top:5px;" onclick="closeLogin()">CLOSE</button>
 </div>
 
 <div id="launcher" onclick="togP()">⚙️</div>
 <div id="panel">
-    <div style="font-size: 10px; font-weight: 800; color: #71717a; margin-bottom: 2px;">BROADCAST ANNOUNCEMENT</div>
-    <input type="text" id="a-txt" placeholder="Ketik pesan..." style="background: #000; font-size: 12px; margin-bottom: 5px;">
-    <button class="p-btn" onclick="sAn()" style="background:var(--main)">KIRIM PENGUMUMAN</button>
-    <div style="height: 1px; background: #27272a; margin: 8px 0;"></div>
-    <button class="p-btn" onclick="togM()" id="maintBtn">MAINTENANCE: OFF</button>
-    <button class="p-btn" onclick="togL()" id="lockB">STOP CHAT: OFF</button>
-    <button class="p-btn btn-red" onclick="openConfirm()">CLEAR ALL MESSAGES</button>
-    <button class="p-btn" onclick="togP()" style="background:transparent; border:1px solid #27272a;">CLOSE PANEL</button>
+    <input type="text" id="a-txt" placeholder="Announcement / Vote Title" style="margin-bottom:5px;">
+    <button class="p-btn" style="background:var(--main)" onclick="sAn()">KIRIM PENGUMUMAN</button>
+    
+    <input type="text" id="a-link" placeholder="Link URL (https://...)" style="margin-top:10px;">
+    <button class="p-btn" style="background:#059669" onclick="sLi()">SHARE LINK</button>
+
+    <input type="number" id="v-target" placeholder="Target Vote (Misal: 10)" style="margin-top:10px;">
+    <button class="p-btn" style="background:#7c3aed" onclick="sVo()">START VOTE</button>
+
+    <hr style="width:100%; border:0; border-top:1px solid #333; margin:10px 0;">
+    <button class="p-btn" onclick="preMT()" id="mtBtn">MAINTENANCE MODE</button>
+    <button class="p-btn" onclick="togL()" id="lockB">LOCK CHAT</button>
+    <button class="p-btn" style="background:#450a0a" onclick="openC()">CLEAR DATABASE</button>
 </div>
 
 <div class="footer">
     <div class="i-row">
         <input type="text" id="u-msg" placeholder="Ketik pesan..." autocomplete="off">
-        <button id="btnS" onclick="hS()">SEND</button>
+        <button id="btnS" style="background:var(--main); border:none; padding:0 20px; border-radius:14px; color:white; font-weight:800;" onclick="hS()">SEND</button>
     </div>
 </div>
 
@@ -119,15 +112,11 @@
     
     let rP = "", iA = false, iL = false, iM = false;
     let mN = "User_" + Math.floor(Math.random() * 9000);
+    const swoosh = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
 
-    // Persist Admin Status
-    if (localStorage.getItem("isHexkyAdmin") === "true") {
+    if (localStorage.getItem("hexkyAdm") === "true") {
         iA = true; mN = "Admin Hexky";
-        setTimeout(() => {
-            document.getElementById('launcher').style.display = "flex";
-            document.getElementById('loginBtn').innerText = "ADMIN LOGGED IN";
-            showNotif("👑 Admin access restored");
-        }, 1000);
+        setTimeout(() => { document.getElementById('launcher').style.display = "flex"; document.getElementById('loginBtn').innerText = "ADMIN MODE"; }, 1000);
     }
 
     function showNotif(m) {
@@ -140,92 +129,119 @@
 
     db.ref(atob("YWRtaW5fY29uZmlnL3Bhc3N3b3Jk")).on("value", (s) => rP = s.val());
 
-    // Login logic
-    function openLogin() { if(!iA) document.getElementById('card-login').style.display = "block"; }
-    function closeLogin() { document.getElementById('card-login').style.display = "none"; }
+    function openL() { if(!iA) document.getElementById('card-login').style.display = "block"; }
+    function openC() { document.getElementById('card-confirm').style.display = "block"; }
+    function closeC() { document.getElementById('card-confirm').style.display = "none"; }
     
     function doL() {
         const p = document.getElementById('a-pass').value;
         if (btoa(p) === rP.trim()) {
             iA = true; mN = "Admin Hexky";
-            localStorage.setItem("isHexkyAdmin", "true");
-            closeLogin();
+            localStorage.setItem("hexkyAdm", "true");
+            document.getElementById('card-login').style.display = "none";
             document.getElementById('launcher').style.display = "flex";
-            document.getElementById('loginBtn').innerText = "ADMIN LOGGED IN";
-            showNotif("👑 Welcome, Admin Hexky!");
-        } else { showNotif("❌ Wrong Password!"); }
+            showNotif("👑 Admin Verified");
+        }
     }
 
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display === "flex" ? "none" : "flex"; }
-    
-    // Custom Confirm Actions
-    function openConfirm() { document.getElementById('card-confirm').style.display = "block"; }
-    function closeConfirm() { document.getElementById('card-confirm').style.display = "none"; }
-    function executeClear() {
+
+    function execClear() {
         db.ref("messages").remove();
-        db.ref("messages").push({ type: "sys", pesan: "[i] Admin telah membersihkan riwayat chat." });
-        closeConfirm(); togP();
-        showNotif("🗑️ All messages wiped");
+        db.ref("messages").push({ type: "sys", pesan: "🧹 Admin Hexky telah membersihkan semua chat." });
+        swoosh.play();
+        showNotif("🧹 Database Cleared!");
+        closeC(); togP();
+    }
+
+    // Maintenance Countdown
+    function preMT() {
+        if (iM) { db.ref("room_status/maint").set(false); return; }
+        togP();
+        showNotif("⚠️ Website maintenance in...");
+        setTimeout(() => showNotif("3"), 1000);
+        setTimeout(() => showNotif("2"), 2000);
+        setTimeout(() => showNotif("1"), 3000);
+        setTimeout(() => db.ref("room_status/maint").set(true), 4000);
     }
 
     function hS() {
         const i = document.getElementById('u-msg');
         const t = i.value.trim();
-        if (!t) return;
-        if (iL && !iA) { showNotif("⚠️ Chat locked by Admin"); return; }
-        if (iM && !iA) return;
-        if (!iA && t.includes("http")) { showNotif("🚫 No links allowed"); return; }
-
+        if (!t || (iL && !iA) || (iM && !iA)) return;
         db.ref("messages").push({ nama: mN, pesan: t, role: iA ? "admin" : "user", timestamp: firebase.database.ServerValue.TIMESTAMP });
         i.value = "";
     }
 
     function sAn() {
         const x = document.getElementById('a-txt').value;
-        if (!x) return;
-        db.ref("messages").push({ type: "anno", pesan: x, timestamp: firebase.database.ServerValue.TIMESTAMP });
-        document.getElementById('a-txt').value = "";
-        showNotif("📢 Announcement posted");
+        if (x) db.ref("messages").push({ type: "anno", pesan: x });
+        document.getElementById('a-txt').value = ""; togP();
     }
 
-    function togL() { db.ref("room_status/locked").set(!iL); }
-    function togM() { db.ref("room_status/maint").set(!iM); }
+    function sLi() {
+        const url = document.getElementById('a-link').value;
+        if (url) db.ref("messages").push({ type: "link", url: url });
+        document.getElementById('a-link').value = ""; togP();
+    }
 
-    // Listeners
-    db.ref("messages").limitToLast(40).on("child_added", (s) => {
+    function sVo() {
+        const t = document.getElementById('a-txt').value;
+        const v = document.getElementById('v-target').value;
+        if (t && v) db.ref("vote").set({ title: t, target: parseInt(v), yes: 0, no: 0, active: true, users: {} });
+        togP();
+    }
+
+    function castVote(type) {
+        db.ref("vote").transaction(data => {
+            if (data && data.active) {
+                data[type]++;
+                if (data.yes + data.no >= data.target) {
+                    data.active = false;
+                    const res = data.yes > data.no ? "YES" : "NO";
+                    db.ref("messages").push({ type: "sys", pesan: `📊 Vote Selesai: ${data.title} | Hasil: ${res} (${data.yes} vs ${data.no})` });
+                }
+            }
+            return data;
+        });
+    }
+
+    db.ref("messages").limitToLast(30).on("child_added", (s) => {
         const d = s.val(), b = document.getElementById('chat-box'), v = document.createElement('div');
         if (d.type === "anno") {
-            v.className = "anno"; v.innerHTML = `<span style="font-size:10px;font-weight:900;color:white;opacity:0.8">📢 ADMIN BROADCAST</span><br><b style="color:white">${d.pesan}</b>`;
+            v.className = "anno"; v.innerHTML = `<small>📢 ANNOUNCEMENT</small><br><b>${d.pesan}</b>`;
+        } else if (d.type === "link") {
+            v.className = "link-card"; v.innerHTML = `<small>🔗 SHARE LINK</small><br>Admin Hexky berbagi link.<button class="btn-action" onclick="window.open('${d.url}')">GOTO LINK</button>`;
         } else if (d.type === "sys") {
-            v.className = "sys"; v.innerText = d.pesan;
+            v.className = "sys"; v.style.textAlign="center"; v.style.fontSize="11px"; v.style.color="#71717a"; v.innerText = d.pesan;
         } else {
             const a = d.role === "admin";
             v.className = `msg ${a ? 'adm-m' : 'warga'}`;
-            v.innerHTML = `<span class="tag">${a ? '👑 ' : ''}${d.nama}</span>${d.pesan}`;
+            v.innerHTML = `<span style="font-size:9px; font-weight:800;" class="${a?'admin-name':'tag'}">${a?'Admin Hexky':d.nama}</span>${d.pesan}`;
         }
         b.appendChild(v); b.scrollTop = b.scrollHeight;
     });
 
-    db.ref("room_status").on("value", (s) => {
-        const data = s.val() || {};
-        iL = data.locked || false;
-        iM = data.maint || false;
-        
-        document.getElementById('c-title').innerText = iL ? "ExeChat (LOCKED)" : "ExeChat";
-        document.getElementById('lockB').innerText = iL ? "STOP CHAT: ON" : "STOP CHAT: OFF";
-        document.getElementById('maintBtn').innerText = iM ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
-        document.getElementById('maintBtn').style.color = iM ? "var(--admin)" : "#fff";
+    db.ref("vote").on("value", s => {
+        const d = s.val();
+        if (d && d.active) {
+            if (!document.getElementById('v-card')) {
+                const vc = document.createElement('div'); vc.id = 'v-card'; vc.className = 'vote-card';
+                vc.innerHTML = `<small>🗳️ LIVE VOTE</small><br><b id="v-title"></b><div style="display:flex;gap:10px;"><button class="btn-action" onclick="castVote('yes')">YES</button><button class="btn-action" onclick="castVote('no')">NO</button></div>`;
+                document.getElementById('chat-box').appendChild(vc);
+            }
+            document.getElementById('v-title').innerText = d.title + ` (${d.yes + d.no}/${d.target})`;
+        } else if (document.getElementById('v-card')) { document.getElementById('v-card').remove(); }
+    });
 
-        // Handle Maintenance Mode Overlay
-        if (iM && !iA) {
-            document.getElementById('maint-screen').style.display = "flex";
-        } else {
-            document.getElementById('maint-screen').style.display = "none";
-        }
+    db.ref("room_status").on("value", s => {
+        const d = s.val() || {};
+        iL = d.locked; iM = d.maint;
+        document.getElementById('maint-screen').style.display = (iM && !iA) ? "flex" : "none";
+        document.getElementById('lockB').innerText = iL ? "UNLOCK CHAT" : "LOCK CHAT";
     });
 
     db.ref("messages").on("child_removed", () => { document.getElementById('chat-box').innerHTML = ""; });
-    document.getElementById('u-msg').addEventListener("keypress", (e) => { if(e.key === 'Enter') hS(); });
 </script>
 </body>
 </html>
