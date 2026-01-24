@@ -1,294 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExeChat V27 - Premium</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>ExeChat | V27 Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --main: #007bff;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
+        :root { 
+            --bg: #09090b; 
+            --surface: #18181b; 
+            --border: #27272a; 
+            --primary: #3b82f6; 
+            --text: #fafafa;
+            --owner: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-
-        /* --- LOGIN & REGISTER UI --- */
-        #auth-container {
-            background: var(--card);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .input-group { margin-bottom: 1rem; text-align: left; }
-        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; opacity: 0.8; }
-        .input-group input {
-            width: 100%; padding: 12px; border-radius: 8px; border: none;
-            background: #334155; color: white; outline: none;
-        }
-
-        .btn-auth {
-            width: 100%; padding: 12px; border-radius: 8px; border: none;
-            background: var(--main); color: white; font-weight: bold;
-            cursor: pointer; transition: 0.3s; margin-top: 10px;
-        }
-
-        .btn-auth:hover { opacity: 0.9; transform: translateY(-2px); }
-        .toggle-auth { margin-top: 15px; font-size: 0.85rem; cursor: pointer; color: var(--main); }
-
-        /* --- CHAT UI --- */
-        #chat-app { display: none; width: 100%; height: 100vh; flex-direction: column; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        header {
-            background: var(--card);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+        body { background: radial-gradient(circle at top right, #1a1a2e, #09090b); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        #chat-box {
-            flex: 1; overflow-y: auto; padding: 15px;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-
-        /* Message Styles */
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; position: relative; animation: fadeIn 0.3s; }
-        .msg.sent { align-self: flex-end; background: var(--main); }
-        .msg.received { align-self: flex-start; background: #334155; }
+        /* --- ANIMATIONS --- */
+        @keyframes rainbow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        .sender { font-size: 0.75rem; font-weight: bold; margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
-        .online-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; }
-
-        /* Reply Preview */
-        .reply-box {
-            background: rgba(0,0,0,0.2);
-            border-left: 3px solid var(--main);
-            padding: 5px 10px;
-            margin-bottom: 5px;
-            font-size: 0.8rem;
-            border-radius: 4px;
+        .name-owner { 
+            background: var(--owner); background-size: 200% auto; animation: rainbow 4s linear infinite; 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px;
         }
+        .admin-red { color: #ef4444 !important; font-weight: 800; text-transform: uppercase; font-size: 11px; }
+        .admin-blue { color: #3b82f6 !important; font-weight: 800; text-transform: uppercase; font-size: 11px; }
+        .member { color: #10b981 !important; font-weight: 700; font-size: 11px; }
 
-        /* Input Area */
-        .input-area { background: var(--card); padding: 15px; display: flex; gap: 10px; }
-        #msg-input { flex: 1; padding: 12px; border-radius: 25px; border: none; background: #334155; color: white; }
+        /* --- HEADER --- */
+        header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.7); backdrop-filter: blur(12px); z-index: 100; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
 
-        /* Admin Panel Custom Theme */
-        #admin-panel {
-            position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
-            background: var(--card); transition: 0.3s; padding: 20px; z-index: 100;
-        }
-        #admin-panel.active { right: 0; }
+        /* --- CHAT BOX --- */
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
+        .msg { max-width: 85%; width: fit-content; animation: slideUp 0.3s ease forwards; }
+        .msg-content { background: rgba(24, 24, 27, 0.6); border: 1px solid var(--border); padding: 12px 18px; border-radius: 18px; position: relative; cursor: pointer; }
+        .msg-content:hover { border-color: var(--primary); }
+        
+        /* --- REPLY SYSTEM --- */
+        .reply-preview { background: var(--surface); border-left: 4px solid var(--primary); padding: 12px 20px; display: none; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+        .reply-bubble { background: rgba(0,0,0,0.3); border-left: 3px solid var(--primary); padding: 6px 12px; margin-bottom: 8px; border-radius: 8px; font-size: 13px; opacity: 0.8; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- UI COMPONENTS --- */
+        .btn-ai { background: var(--surface); color: white; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-ai.primary { background: var(--primary); border: none; }
+        .btn-ai.danger { color: #f87171; border-color: #450a0a; }
+
+        #panel { position: fixed; bottom: 100px; right: 24px; width: 280px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 12px; z-index: 1001; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
+        
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 30px; border-radius: 28px; width: 90%; max-width: 360px; }
+
+        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 14px; border-radius: 14px; width: 100%; outline: none; }
+        input:focus { border-color: var(--primary); }
+
+        footer { padding: 15px 5%; background: rgba(9,9,11,0.8); }
+        .input-area { max-width: 800px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; display: flex; padding: 6px; align-items: center; }
+        .input-area input { border: none; background: transparent; flex: 1; padding: 10px 15px; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .full-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
-    <audio id="notif-sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
 
-    <div id="auth-container">
-        <h2 id="auth-title">Welcome Back</h2>
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" id="email" placeholder="example@exe.com">
-        </div>
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" id="password" placeholder="••••••••">
-        </div>
-        <div id="reg-fields" style="display: none;">
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="NickName">
-            </div>
-        </div>
-        <button class="btn-auth" id="btn-action" onclick="handleAuth()">Login</button>
-        <p class="toggle-auth" onclick="toggleAuth()">Don't have an account? Register</p>
-    </div>
+<div id="mt-screen" class="full-screen"><h1>⚙️ MAINTENANCE</h1><p>Sistem sedang dioptimalkan.</p></div>
 
-    <div id="chat-app">
-        <header>
-            <div>
-                <span id="display-name" style="font-weight: bold;">User</span>
-                <span class="online-dot"></span>
-            </div>
-            <button onclick="toggleAdmin()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fas fa-cog"></i></button>
-        </header>
-
-        <div id="chat-box"></div>
-
-        <div id="reply-preview" style="display:none; background:#1e293b; padding:10px; border-top:2px solid var(--main);">
-            <small id="reply-text"></small>
-            <button onclick="cancelReply()" style="float:right; color:red; border:none; background:none;">X</button>
-        </div>
-
-        <div class="input-area">
-            <input type="text" id="msg-input" placeholder="Type a message...">
-            <button onclick="sendMessage()" style="background:var(--main); border:none; color:white; padding:10px 20px; border-radius:25px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+<header>
+    <div style="display:flex; align-items:center; gap:12px">
+        <div onclick="openProfile()" style="cursor:pointer; background:var(--surface); padding:10px; border-radius:12px; border:1px solid var(--border)">👤</div>
+        <div>
+            <b style="font-size:16px;">EXECHAT V27</b>
+            <div id="status-display" style="font-size:10px; color:#52525b"><span class="status-dot online"></span>CONNECTED</div>
         </div>
     </div>
-
-    <div id="admin-panel">
-        <h3>Admin Panel</h3>
-        <hr>
-        <label>Custom Theme Color:</label><br>
-        <input type="color" id="theme-color" onchange="changeTheme(this.value)" style="width:100%; height:40px; margin-top:10px;">
-        <br><br>
-        <button onclick="clearChat()" style="width:100%; padding:10px; background:red; border:none; color:white; border-radius:5px;">Wipe All Chat</button>
-        <br><br>
-        <button onclick="logout()" style="width:100%; padding:10px; background:#475569; border:none; color:white; border-radius:5px;">Logout</button>
+    <div id="auth-btns">
+        <button class="btn-ai primary" onclick="openM('modal-auth')">MASUK / DAFTAR</button>
     </div>
+</header>
 
-    <script>
-        // --- CONFIGURASI FIREBASE ---
-        const firebaseConfig = {
-            apiKey: "AIzaSy...",
-            databaseURL: "https://your-project.firebaseio.com",
-            projectId: "your-project",
-            authDomain: "your-project.firebaseapp.com"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const auth = firebase.auth();
+<div id="chat-box"></div>
 
-        let isRegister = false;
-        let currentUser = null;
-        let replyData = null;
+<div id="reply-bar" class="reply-preview">
+    <div id="reply-msg-text" style="font-size:12px; color:#a1a1aa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+    <div onclick="cancelReply()" style="color:#ef4444; cursor:pointer; font-weight:800; padding:5px">✕</div>
+</div>
 
-        // --- AUTH LOGIC ---
-        function toggleAuth() {
-            isRegister = !isRegister;
-            document.getElementById('auth-title').innerText = isRegister ? "Create Account" : "Welcome Back";
-            document.getElementById('btn-action').innerText = isRegister ? "Register" : "Login";
-            document.getElementById('reg-fields').style.display = isRegister ? "block" : "none";
+<footer>
+    <div class="input-area">
+        <input type="text" id="u-msg" placeholder="Ketik pesan (Klik pesan untuk balas)..." onkeypress="if(event.key=='Enter') sendChat()">
+        <button class="btn-ai primary" onclick="sendChat()" style="border-radius:20px">KIRIM</button>
+    </div>
+</footer>
+
+<div id="modal-auth" class="modal">
+    <div class="modal-content">
+        <h2 id="auth-title" style="margin-top:0">Login</h2>
+        <div id="auth-tabs" style="display:flex; gap:10px; margin-bottom:20px">
+            <button class="btn-ai primary" style="flex:1" onclick="setAuthTab('login')">LOGIN</button>
+            <button class="btn-ai" style="flex:1" onclick="setAuthTab('reg')">DAFTAR</button>
+        </div>
+        <input type="text" id="au-user" placeholder="Username" style="margin-bottom:10px">
+        <input type="password" id="au-pass" placeholder="Password">
+        <button id="au-btn" class="btn-ai primary" style="width:100%; margin-top:20px" onclick="performAuth()">MASUK</button>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-auth')">BATAL</button>
+    </div>
+</div>
+
+<div id="modal-profile" class="modal">
+    <div class="modal-content">
+        <h3>PENGATURAN AKUN</h3>
+        <p id="prof-id" style="font-size:12px; color:#71717a"></p>
+        <input type="text" id="new-name" placeholder="Ganti Nama" style="margin-bottom:10px">
+        <button class="btn-ai primary" style="width:100%" onclick="updateAcc('username')">SIMPAN NAMA</button>
+        <button class="btn-ai danger" style="width:100%; margin-top:30px" onclick="logout()">LOGOUT</button>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-profile')">TUTUP</button>
+    </div>
+</div>
+
+<div id="launcher" onclick="togP()" style="position:fixed; bottom:100px; right:24px; background:var(--primary); width:50px; height:50px; border-radius:15px; display:none; align-items:center; justify-content:center; cursor:pointer; z-index:1000">🛡️</div>
+<div id="panel">
+    <b style="font-size:14px">ADMIN CONTROLS</b>
+    <hr style="border:0; border-top:1px solid var(--border)">
+    <div id="owner-only" style="display:none; flex-direction:column; gap:8px">
+        <button class="btn-ai danger" onclick="wipe()">🗑️ WIPE MESSAGES</button>
+        <button class="btn-ai" onclick="toggleMT()">⚙️ TOGGLE MAINTENANCE</button>
+        <div style="display:flex; align-items:center; justify-content:space-between; font-size:12px">
+            TEMA: <input type="color" id="color-p" onchange="setTheme(this.value)">
+        </div>
+    </div>
+    <input type="text" id="t-user" placeholder="Username Target">
+    <button class="btn-ai danger" onclick="banUser()">BAN USER</button>
+    <button class="btn-ai" onclick="unbanUser()">UNBAN USER</button>
+</div>
+
+<script>
+    // --- CONFIGURASI FIREBASE ---
+    const config = {
+        apiKey: atob("QUl6YVN5Q2w0ZWk4a2ZNYUJvUUVva0ZFNUZsa1B2ei1OZEVoUVh3"),
+        databaseURL: atob("aHR0cHM6Ly9leGVhaS1lZWZjOC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw"),
+        projectId: atob("ZXhlYWktZWVmYzg="),
+        appId: atob("MToxMDEzNDI4MDAyNTE3OndlYjo2ZTNlMDdhODEwMTY3Yzk3YmI4YzVj")
+    };
+    firebase.initializeApp(config);
+    const db = firebase.database();
+
+    let myData = { name: "Guest", role: "guest", id: "" };
+    let authTab = 'login';
+    let replyTarget = null;
+
+    // --- AUTH ---
+    function setAuthTab(t) { 
+        authTab = t; 
+        document.getElementById('auth-title').innerText = t === 'login' ? 'Login' : 'Daftar Baru';
+        document.getElementById('au-btn').innerText = t === 'login' ? 'MASUK' : 'DAFTAR';
+    }
+
+    async function performAuth() {
+        const u = document.getElementById('au-user').value.toLowerCase().trim();
+        const p = document.getElementById('au-pass').value;
+        if(!u || !p) return alert("Isi lengkap!");
+
+        const s = await db.ref("users/"+u).once("value");
+        if(authTab === 'reg') {
+            if(s.exists()) return alert("Username sudah terpakai!");
+            await db.ref("users/"+u).set({ username: u, password: p, role: 'member', status: 'online' });
+            alert("Terdaftar! Silakan Login.");
+            setAuthTab('login');
+        } else {
+            if(!s.exists() || s.val().password !== p) return alert("Salah login!");
+            localStorage.setItem("exe_session", JSON.stringify({id: u}));
+            location.reload();
         }
+    }
 
-        function handleAuth() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const user = document.getElementById('username').value;
-
-            if(isRegister) {
-                auth.createUserWithEmailAndPassword(email, pass).then((res) => {
-                    db.ref('users/' + res.user.uid).set({ username: user, role: 'member', status: 'online' });
-                    alert("Account Created!");
-                    location.reload();
-                }).catch(e => alert(e.message));
-            } else {
-                auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+    // --- SYSTEM SESSION ---
+    const session = localStorage.getItem("exe_session");
+    if(session) {
+        const sid = JSON.parse(session).id;
+        db.ref("users/"+sid).on("value", s => {
+            const d = s.val(); if(!d) return;
+            myData = { ...d, id: sid };
+            document.getElementById('auth-btns').style.display = 'none';
+            if(d.role === 'owner' || d.role.includes('admin')) {
+                document.getElementById('launcher').style.display = 'flex';
+                if(d.role === 'owner') document.getElementById('owner-only').style.display = 'flex';
             }
-        }
-
-        auth.onAuthStateChanged(user => {
-            if(user) {
-                currentUser = user;
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('chat-app').style.display = 'flex';
-                
-                // Set Online Status
-                db.ref('users/' + user.uid).update({ status: 'online' });
-                db.ref('users/' + user.uid + '/username').once('value', s => {
-                    document.getElementById('display-name').innerText = s.val();
-                });
-                loadMessages();
-                listenTheme();
-            }
+            if(d.role === 'banned') document.body.innerHTML = "<h1 style='color:white;text-align:center;padding-top:100px'>AKUN ANDA DIBANNED</h1>";
+            
+            // Set Online
+            db.ref("users/"+sid).update({ status: 'online' });
         });
+    }
 
-        // --- CHAT LOGIC ---
-        function sendMessage() {
-            const text = document.getElementById('msg-input').value;
-            if(!text) return;
+    // --- THEME & MT ---
+    db.ref("room_status").on("value", s => {
+        const val = s.val() || {};
+        if(val.maint && myData.role !== 'owner') document.getElementById('mt-screen').style.display = 'flex';
+        if(val.theme) document.documentElement.style.setProperty('--primary', val.theme);
+    });
 
-            db.ref('users/' + currentUser.uid + '/username').once('value', s => {
-                const msgData = {
-                    uid: currentUser.uid,
-                    sender: s.val(),
-                    text: text,
-                    replyTo: replyData,
-                    timestamp: Date.now()
-                };
-                db.ref('messages').push(msgData);
-                document.getElementById('msg-input').value = '';
-                cancelReply();
-            });
+    function setTheme(c) { db.ref("room_status/theme").set(c); }
+    function toggleMT() { db.ref("room_status/maint").transaction(m => !m); }
+
+    // --- CHAT LOGIC ---
+    function sendChat() {
+        const i = document.getElementById('u-msg'), t = i.value.trim();
+        if(!t || myData.role === 'guest') return;
+
+        const msgData = {
+            nama: myData.username,
+            pesan: t,
+            role: myData.role,
+            uid: myData.id,
+            time: Date.now()
+        };
+
+        if(replyTarget) {
+            msgData.reply = replyTarget;
         }
 
-        function loadMessages() {
-            db.ref('messages').limitToLast(50).on('child_added', snap => {
-                const data = snap.val();
-                const chatBox = document.getElementById('chat-box');
-                const isMine = data.uid === currentUser.uid;
-                
-                const div = document.createElement('div');
-                div.className = `msg ${isMine ? 'sent' : 'received'}`;
-                
-                let replyHtml = data.replyTo ? `<div class="reply-box"><b>${data.replyTo.user}</b><br>${data.replyTo.msg}</div>` : '';
-                
-                div.innerHTML = `
-                    <div class="sender">${data.sender}</div>
-                    ${replyHtml}
-                    <div class="text">${data.text}</div>
-                `;
-                
-                div.onclick = () => setReply(data.sender, data.text);
-                chatBox.appendChild(div);
-                chatBox.scrollTop = chatBox.scrollHeight;
+        db.ref("messages").push(msgData);
+        i.value = "";
+        cancelReply();
+    }
 
-                // Sound Notif for received
-                if(!isMine) document.getElementById('notif-sound').play();
-            });
-        }
+    function prepReply(n, p) {
+        replyTarget = { name: n, msg: p };
+        document.getElementById('reply-bar').style.display = 'flex';
+        document.getElementById('reply-msg-text').innerText = `Balas ${n}: ${p}`;
+        document.getElementById('u-msg').focus();
+    }
+    function cancelReply() { replyTarget = null; document.getElementById('reply-bar').style.display = 'none'; }
 
-        // --- REPLY SYSTEM ---
-        function setReply(user, msg) {
-            replyData = { user, msg };
-            document.getElementById('reply-preview').style.display = 'block';
-            document.getElementById('reply-text').innerText = `Replying to ${user}: ${msg}`;
-        }
-        function cancelReply() {
-            replyData = null;
-            document.getElementById('reply-preview').style.display = 'none';
-        }
+    // --- LISTEN MESSAGES ---
+    db.ref("messages").limitToLast(40).on("value", s => {
+        const box = document.getElementById('chat-box');
+        const oldSize = box.children.length;
+        box.innerHTML = "";
+        
+        s.forEach(snap => {
+            const d = snap.val();
+            const m = document.createElement('div');
+            m.className = "msg";
+            let roleCls = d.role === 'owner' ? 'name-owner' : (d.role.includes('admin') ? d.role : 'member');
+            
+            let replyMarkup = d.reply ? `<div class="reply-bubble"><b>@${d.reply.name}</b>: ${d.reply.msg}</div>` : '';
 
-        // --- THEME & ADMIN ---
-        function toggleAdmin() { document.getElementById('admin-panel').classList.toggle('active'); }
-
-        function changeTheme(color) {
-            db.ref('settings/theme').set(color);
+            m.innerHTML = `
+                <div class="msg-content" onclick="prepReply('${d.nama}', '${d.pesan}')">
+                    <div class="${roleCls}">${d.nama}</div>
+                    ${replyMarkup}
+                    <div style="margin-top:4px; word-break:break-word">${d.pesan}</div>
+                </div>
+            `;
+            box.appendChild(m);
+        });
+        box.scrollTop = box.scrollHeight;
+        
+        if(oldSize > 0 && oldSize < s.numChildren()) {
+            const last = Object.values(s.val()).pop();
+            if(last.uid !== myData.id) document.getElementById('notif-sound').play().catch(()=>{});
         }
+    });
 
-        function listenTheme() {
-            db.ref('settings/theme').on('value', s => {
-                if(s.val()) {
-                    document.documentElement.style.setProperty('--main', s.val());
-                }
-            });
-        }
+    // --- ADMIN TOOLS ---
+    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
+    function wipe() { if(confirm("Hapus semua chat?")) db.ref("messages").remove(); }
+    function banUser() { db.ref("users/"+document.getElementById('t-user').value.toLowerCase()).update({role:'banned'}); }
+    function unbanUser() { db.ref("users/"+document.getElementById('t-user').value.toLowerCase()).update({role:'member'}); }
 
-        function logout() {
-            db.ref('users/' + currentUser.uid).update({ status: 'offline' });
-            auth.signOut().then(() => location.reload());
-        }
+    // --- PROFILE ---
+    function openProfile() {
+        if(myData.role === 'guest') return openM('modal-auth');
+        document.getElementById('prof-id').innerText = `ID: ${myData.id} | Role: ${myData.role}`;
+        openM('modal-profile');
+    }
+    function updateAcc(f) {
+        const v = document.getElementById('new-name').value;
+        if(v) db.ref("users/"+myData.id).update({username: v}).then(()=>location.reload());
+    }
+    function logout() { localStorage.clear(); location.reload(); }
+    function openM(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeM(id) { document.getElementById(id).style.display = 'none'; }
 
-        function clearChat() {
-            if(confirm("Wipe all messages?")) db.ref('messages').remove();
-        }
-    </script>
+    // Auto Offline
+    window.addEventListener('beforeunload', () => {
+        if(myData.id) db.ref("users/"+myData.id).update({status: 'offline'});
+    });
+</script>
 </body>
 </html>
