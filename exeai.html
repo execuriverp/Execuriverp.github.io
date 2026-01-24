@@ -143,7 +143,7 @@
 </div>
 
 <script>
-    // 1. PASTIKAN API KEY BARU KAMU DI SINI
+    // 1. Masukkan API KEY baru kamu di sini
     const KEY = "AIzaSyBb9EfBehi1faJuA5qZ_gjGlYLYZAdXZSc"; 
 
     const chatWindow = document.getElementById('chat-window');
@@ -158,8 +158,8 @@
         inputField.value = "";
         typingUI.style.display = "block";
 
-        // URL INI PALING SERING BERHASIL UNTUK GOOGLE AI STUDIO
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`;
+        // MENGGUNAKAN MODEL GEMINI-PRO DI JALUR V1 (Paling Stabil)
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${KEY}`;
 
         try {
             const response = await fetch(url, {
@@ -167,7 +167,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{ text: "Kamu adalah ExeAI, asisten resmi Execurive Roleplay SAMP. IP: 31.58.143.71:7008. Jawab dengan ramah: " + msg }]
+                        parts: [{ text: "Kamu adalah ExeAI asisten SAMP. Jawab: " + msg }]
                     }]
                 })
             });
@@ -177,12 +177,12 @@
             if (data.candidates && data.candidates[0].content) {
                 renderMsg(data.candidates[0].content.parts[0].text, 'ai');
             } else if (data.error) {
-                // Biar kita tau error pastinya apa
-                renderMsg("Info Sistem: " + data.error.message, 'ai');
-                console.log("Detail Error:", data.error);
+                // Jika masih error, tampilkan pesan aslinya di sini
+                renderMsg("Google Error: " + data.error.message, 'ai');
+                console.log("Full Error:", data);
             }
         } catch (e) {
-            renderMsg("Koneksi terputus, coba lagi nanti.", 'ai');
+            renderMsg("Koneksi gagal, coba lagi.", 'ai');
         } finally {
             typingUI.style.display = "none";
             chatWindow.scrollTo(0, chatWindow.scrollHeight);
