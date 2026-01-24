@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ExeMusic v3.0 - Perfect Edition</title>
+  <link rel="icon" type="image/png" href="exemusicicon.png">
+  
+  <style>
+    :root {
+      --accent: #1db954;
+      --text: #ffffff;
+      --text-dim: #b3b3b3;
+      --bg: #090909;
+      --glass: rgba(255, 255, 255, 0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      overflow: hidden;
+    }
+
+    .app {
+      background: rgba(18, 18, 18, 0.85);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 35px;
+      width: 92%; max-width: 380px; 
+      height: 94vh;
+      display: flex; flex-direction: column; 
+      padding: 20px; 
+      position: relative;
+    }
+
+    .header { text-align: center; flex-shrink: 0; margin-bottom: 10px; }
+    .header img { width: 100px; max-width: 30%; }
+
+    .cover-box {
+      flex: 1; 
+      width: 100%; 
+      border-radius: 20px;
+      background: #151515;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden; 
+      position: relative;
+      z-index: 1; 
+    }
+
+    .eq { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
+    .eq span { width: 5px; background: var(--accent); border-radius: 10px; height: 8px; }
+    .playing span { animation: wave 0.8s infinite ease-in-out; }
+    .playing span:nth-child(1) { animation-delay: 0.1s; }
+    .playing span:nth-child(2) { animation-delay: 0.3s; }
+    .playing span:nth-child(3) { animation-delay: 0.2s; }
+    .playing span:nth-child(4) { animation-delay: 0.4s; }
+    @keyframes wave { 0%, 100% { height: 8px; } 50% { height: 40px; } }
+
+    .track-info { margin-bottom: 10px; flex-shrink: 0; text-align: left; }
+    #title { font-size: 20px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #by { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+
+    .sys-container {
+      background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; z-index: 5;
+    }
+    .sys-tools { display: flex; justify-content: space-around; margin-bottom: 5px; }
+    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 16px; opacity: 0.8; padding: 5px; }
+    
+    .vol-row { display: flex; align-items: center; gap: 8px; padding: 0 5px; }
+    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
+
+    .prog-area { margin-bottom: 15px; flex-shrink: 0; z-index: 5; }
+    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; }
+    .time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+    .main-ctrl { 
+      display: flex; justify-content: space-between; align-items: center; 
+      padding: 0 15px; margin-bottom: 15px; flex-shrink: 0;
+      position: relative; z-index: 100;
+    }
+    
+    .btn-play { 
+      width: 60px; height: 60px; 
+      background: var(--accent); border: none; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; 
+      color: black; font-size: 22px; 
+      box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
+      cursor: pointer; transition: transform 0.1s;
+    }
+    .btn-play:active { transform: scale(0.95); }
+    .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 10px; }
+
+    .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; flex-shrink: 0; z-index: 10; }
+    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; padding: 5px; }
+    
+    .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px rgba(29,185,84,0.6); }
+
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; }
+    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 25px 25px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
+    .song-item { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+    
+    #toast { 
+      position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); 
+      background: rgba(29, 185, 84, 0.95); color: #000; 
+      padding: 10px 20px; border-radius: 30px; 
+      font-size: 13px; font-weight: bold; 
+      opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      z-index: 3000; pointer-events: none; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div id="toast">Notif</div>
+
+  <div class="app">
+    <div class="header"><img src="exemusic.png" alt="Logo"></div>
+
+    <div class="cover-box">
+      <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="track-info">
+      <div id="title">Loading...</div>
+      <div id="by">Please wait</div>
+    </div>
+
+    <div class="sys-container">
+      <div class="sys-tools">
+        <button onclick="copyRawUrl()" title="Copy Link">📋</button>
+        <button onclick="shareLink()" title="Share Player">🔗</button>
+        <button onclick="downloadSong()" title="Download">⬇️</button>
+        <button onclick="openReq()" title="Request WA">➕</button>
+      </div>
+      <div class="vol-row">
+        <span>🔈</span>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8">
+        <span>🔊</span>
+      </div>
+    </div>
+
+    <div class="prog-area">
+      <input type="range" id="seek" value="0">
+      <div class="time">
+        <span id="cur">0:00</span>
+        <span id="dur">0:00</span>
+      </div>
+    </div>
+
+    <div class="main-ctrl">
+      <button class="btn-sec" onclick="prev()">⏮</button>
+      <button class="btn-play" onclick="toggle()" id="playBtn">▶</button>
+      <button class="btn-sec" onclick="next()">⏭</button>
+    </div>
+
+    <div class="footer">
+      <button id="shuf" onclick="toggleShuffle()">🔀</button>
+      <button onclick="openList(false)">☰</button>
+      <button onclick="openList(true)">⭐</button>
+      <button id="rep" onclick="toggleRepeat()">🔁</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:15px">Request Lagu</h3>
+      <input id="rNama" placeholder="Nama" style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px">
+      <input id="rLagu" placeholder="Judul Lagu" style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px">
+      <input id="rUrl" placeholder="URL/Link" style="width:100%; padding:12px; margin-bottom:15px; background:#222; color:white; border:none; border-radius:10px">
+      <button onclick="sendReq()" style="width:100%; padding:14px; background:var(--accent); border:none; border-radius:10px; font-weight:bold; color:black">KIRIM</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet"><div id="songContainer"></div></div>
+  </div>
+
+  <script>
+    let songs = [], i = 0, isShuf = true, isRepeat = false;
+    let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    const audio = new Audio();
+    const playBtn = document.getElementById('playBtn');
+    const eq = document.getElementById('eq');
+
+    fetch("data/urlbb.json").then(r => r.json()).then(data => {
+      songs = data;
+      if(songs.length > 0) {
+        const params = new URLSearchParams(window.location.search);
+        let sharedId = parseInt(params.get('id'));
+        if (!isNaN(sharedId) && sharedId >= 0 && sharedId < songs.length) {
+          setup(sharedId, false);
+        } else {
+          setup(0, false);
+        }
+      }
+    });
+
+    function setup(idx, play = true) {
+      i = idx;
+      audio.src = songs[i].url;
+      document.getElementById('title').textContent = songs[i].title;
+      // UBAH REQ MENJADI REQUEST BY
+      document.getElementById('by').textContent = "Request by " + songs[i].by;
+      
+      const newUrl = window.location.pathname + '?id=' + i;
+      window.history.replaceState(null, '', newUrl);
+
+      if(play) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
+    }
+
+    function toggle() {
+      if(audio.paused) { 
+        audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); 
+        msg("Playing");
+      } else { 
+        audio.pause(); playBtn.textContent = "▶"; eq.classList.remove('playing'); 
+        msg("Paused");
+      }
+    }
+
+    // KEYBOARD CONTROLS
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement.tagName === 'INPUT') return; // Jangan trigger jika sedang ngetik
+      
+      if (e.code === "Space") {
+        e.preventDefault();
+        toggle();
+      } else if (e.code === "ArrowRight") {
+        next();
+      } else if (e.code === "ArrowLeft") {
+        prev();
+      }
+    });
+
+    function copyRawUrl() { 
+      navigator.clipboard.writeText(songs[i].url); 
+      msg("Copy Url berhasil di salin"); 
+    }
+
+    function shareLink() { 
+      const shareUrl = window.location.origin + window.location.pathname + '?id=' + i;
+      if(navigator.share) { 
+        navigator.share({ title: 'ExeMusic', text: 'Dengerin: ' + songs[i].title, url: shareUrl }); 
+      } else { 
+        navigator.clipboard.writeText(shareUrl);
+        msg("Link Player Disalin");
+      } 
+    }
+
+    function downloadSong() { 
+      msg("Downloading..."); 
+      window.open(songs[i].url); 
+    }
+
+    function toggleRepeat() {
+      isRepeat = !isRepeat;
+      document.getElementById('rep').classList.toggle('active', isRepeat);
+      msg(isRepeat ? "Repeat : ON" : "Repeat : OFF");
+    }
+
+    function toggleShuffle() { 
+      isShuf = !isShuf; 
+      document.getElementById('shuf').classList.toggle('active', isShuf); 
+      msg(isShuf ? "Shuffle : ON" : "Shuffle : OFF");
+    }
+
+    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
+
+    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
+    function prev() { setup((i-1+songs.length)%songs.length); }
+
+    audio.ontimeupdate = () => {
+      document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
+      document.getElementById('cur').textContent = fmt(audio.currentTime);
+      document.getElementById('dur').textContent = fmt(audio.duration);
+    };
+    document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
+    
+    audio.onended = () => {
+      if (isRepeat) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        next();
+      }
+    };
+
+    function fmt(s) { 
+      if(isNaN(s)) return "0:00";
+      let m=Math.floor(s/60),sec=Math.floor(s%60); 
+      return m+":"+(sec<10?"0"+sec:sec); 
+    }
+
+    function msg(m) { 
+      const t = document.getElementById('toast'); 
+      t.textContent = m; 
+      t.classList.add('show'); 
+      if(t.timeout) clearTimeout(t.timeout);
+      t.timeout = setTimeout(() => t.classList.remove('show'), 2000); 
+    }
+
+    function openList(f) {
+      const c = document.getElementById('songContainer');
+      const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
+      c.innerHTML = l.map(s => `
+        <div class="song-item" onclick="setup(${songs.indexOf(s)})">
+          <div style="flex:1"><b>${s.title}</b><br><small>${s.by}</small></div>
+          <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
+        </div>
+      `).join('');
+      document.getElementById('modalList').style.display='block';
+    }
+
+    function toggleFav(u, e) {
+      e.stopPropagation();
+      fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u];
+      localStorage.setItem("exeFav", JSON.stringify(fav));
+      openList(false);
+      msg("Favorite Updated");
+    }
+
+    function openReq() { document.getElementById('modalReq').style.display='block'; }
+    function sendReq() {
+      const n = document.getElementById('rNama').value, l = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
+      const text = `Format Req Lagu\n\nNama : ${n}\nUrl : ${u}\nNama Lagu : ${l}`;
+      window.open("https://wa.me/62895329018240?text=" + encodeURIComponent(text));
+    }
+  </script>
+</body>
+</html>
