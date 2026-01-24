@@ -2,55 +2,48 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | Next-Gen Hub</title>
+    <title>ExeChat | Admin Control</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        :root { --primary: #3b82f6; --admin: #ef4444; --ai: #10b981; --bg: #09090b; --panel: #16161a; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #e4e4e7; font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: fixed; width: 100%; }
+        :root { --main: #3b82f6; --admin: #ef4444; --bg: #09090b; --panel: #16161a; }
+        * { box-sizing: border-box; }
+        body { background: var(--bg); color: #eee; font-family: sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { background: rgba(18, 18, 22, 0.8); backdrop-filter: blur(10px); padding: 15px; border-bottom: 1px solid #27272a; text-align: center; font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; }
-        
+        /* Layout */
+        header { padding: 15px; background: #111; border-bottom: 2px solid #222; text-align: center; color: var(--main); font-weight: 800; font-size: 1.3rem; }
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* Message Bubbles */
-        .msg { padding: 12px 16px; border-radius: 16px; max-width: 85%; word-wrap: break-word; font-size: 14px; line-height: 1.5; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .warga { background: var(--panel); align-self: flex-start; border: 1px solid #27272a; border-bottom-left-radius: 2px; }
-        .nama-anonim { font-size: 10px; color: var(--primary); display: block; margin-bottom: 4px; font-weight: 700; opacity: 0.8; }
+        /* Announcement Card */
+        .anno-card { background: linear-gradient(45deg, #1e3a8a, #3b82f6); padding: 15px; border-radius: 12px; border-left: 5px solid white; margin-bottom: 10px; animation: slideIn 0.5s ease; }
+        .anno-title { font-weight: 900; font-size: 12px; text-transform: uppercase; color: #bfdbfe; }
         
-        /* Admin & AI Style */
-        .admin { background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%); border: 1px solid var(--admin); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .nama-admin { font-size: 11px; color: #fca5a5; display: block; margin-bottom: 4px; font-weight: 900; }
-        
-        .ai-bubble { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--ai); align-self: flex-start; color: #d1fae5; border-bottom-left-radius: 2px; }
-        .nama-ai { font-size: 11px; color: var(--ai); display: block; margin-bottom: 4px; font-weight: 900; text-transform: uppercase; }
-        
-        /* Input Area */
-        .input-area { padding: 15px 15px 30px; background: var(--panel); border-top: 1px solid #27272a; display: flex; flex-direction: column; gap: 10px; }
-        .input-row { display: flex; gap: 10px; }
-        input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #3f3f46; background: #09090b; color: white; outline: none; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-        button { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.3s; }
-        button:active { transform: scale(0.95); }
-        button:disabled { background: #27272a; color: #52525b; }
+        /* Bubbles */
+        .msg { padding: 12px; border-radius: 15px; max-width: 85%; font-size: 14px; position: relative; }
+        .warga { background: var(--panel); align-self: flex-start; border: 1px solid #333; }
+        .admin { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--admin); align-self: flex-start; color: #fecaca; }
+        .tag { font-size: 10px; font-weight: bold; display: block; margin-bottom: 4px; }
 
-        #cooldown-txt { font-size: 11px; color: var(--admin); display: none; text-align: center; font-weight: bold; }
-        .notif-bar { font-size: 10px; color: #71717a; text-align: center; padding: 8px; background: #000; border-top: 1px solid #27272a; letter-spacing: 0.5px; }
+        /* Input area */
+        .footer { padding: 15px; background: #111; border-top: 1px solid #222; }
+        .input-wrap { display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #000; color: white; outline: none; }
+        button { background: var(--main); color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #333; cursor: not-allowed; }
+
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-<header>ExeChat</header>
+<header id="chat-title">ExeChat</header>
 <div id="chat-box"></div>
-<div class="notif-bar" id="notif-text">Sistem Diinisialisasi...</div>
 
-<div class="input-area">
-    <div id="cooldown-txt">COOLDOWN: Mohon tunggu 5 detik...</div>
-    <div class="input-row">
-        <input type="text" id="userMsg" placeholder="Tulis pesan..." autocomplete="off">
-        <button id="btnKirim" onclick="kirimChat()">SEND</button>
+<div class="footer">
+    <div class="input-wrap">
+        <input type="text" id="userMsg" placeholder="Ketik pesan..." autocomplete="off">
+        <button id="btnSend" onclick="handleSend()">SEND</button>
     </div>
 </div>
 
@@ -65,105 +58,112 @@
         messagingSenderId: "1013428002517",
         appId: "1:1013428002517:web:6e3e07a810167c97bb8c5c"
     };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const BRIDGE_URL = "ISI_LINK_EXEC_GOOGLE_SCRIPT_KAMU"; // LINK DARI GOOGLE APPS SCRIPT
-    const ADMIN_PASSWORD = "hexky123";
 
-    // Nama Guest (someone + 3-5 angka random)
-    const digits = Math.floor(Math.random() * (99999 - 100 + 1) + 100);
-    let myName = "someone" + digits;
+    // === SETTINGS ===
+    const PW_B64 = "aGV4a3kxMjM="; // Ini adalah "hexky123" dalam Base64 agar tidak terbaca jelas
+    let myName = "someone" + Math.floor(1000 + Math.random() * 9000);
     let isAdmin = false;
+    let isChatStopped = false;
 
-    // Notifikasi Rolling
-    const notices = [
-        "Jaringan mungkin delay beberapa detik.",
-        "Ketik !ask [pertanyaan] untuk ExeAI.",
-        "Sistem ini tidak menyediakan chat realtime penuh.",
-        "Gunakan bahasa yang sopan di ExeChat."
-    ];
-    let nIdx = 0;
-    setInterval(() => {
-        document.getElementById('notif-text').innerText = notices[nIdx];
-        nIdx = (nIdx + 1) % notices.length;
-    }, 20000);
-
-    let canSend = true;
-
-    function kirimChat() {
+    // --- LOGIKA KIRIM ---
+    function handleSend() {
         const input = document.getElementById('userMsg');
         const text = input.value.trim();
-        if (!text || !canSend) return;
+        if (!text) return;
 
-        // Login Admin
-        if(text === "/admin " + ADMIN_PASSWORD) {
-            isAdmin = true; myName = "Admin Hexky";
-            alert("👑 Akses Admin Diterima!");
+        // 1. Fitur Login
+        if (text.startsWith("/login ")) {
+            if (btoa(text.replace("/login ", "")) === PW_B64) {
+                isAdmin = true; myName = "Admin Hexky";
+                alert("👑 Admin Activated!");
+            } else { alert("❌ Wrong Password!"); }
             input.value = ""; return;
         }
 
+        // 2. Cek Lock Chat (Untuk Warga)
+        if (isChatStopped && !isAdmin) {
+            alert("⚠️ Chat sedang dihentikan oleh Admin!");
+            return;
+        }
+
+        // 3. Block Link (Untuk Warga)
+        if (!isAdmin && (text.includes("http://") || text.includes("https://"))) {
+            alert("❌ Dilarang mengirim link!");
+            return;
+        }
+
+        // --- COMMAND ADMIN ---
+        if (isAdmin) {
+            if (text === "/clearchat") {
+                db.ref("messages").remove();
+                input.value = ""; return;
+            }
+            if (text.startsWith("/announcement ")) {
+                db.ref("messages").push({
+                    type: "anno",
+                    nama: "Admin Hexky",
+                    pesan: text.replace("/announcement ", ""),
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+                input.value = ""; return;
+            }
+            if (text === "/stopchat") {
+                isChatStopped = !isChatStopped;
+                db.ref("room_status").set({ locked: isChatStopped });
+                alert(isChatStopped ? "Chat Stopped" : "Chat Resumed");
+                input.value = ""; return;
+            }
+        }
+
+        // Kirim Chat Biasa
         db.ref("messages").push({
-            nama: myName, pesan: text,
+            nama: myName,
+            pesan: text,
             role: isAdmin ? "admin" : "user",
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
 
-        // Logika AI Pintar
-        const lower = text.toLowerCase();
-        const triggerAI = lower.includes("ip owner") || lower.includes("cara register") || lower.startsWith("!ask ");
-        
-        if (triggerAI) {
-            tanyaAI(text.replace("!ask ", ""));
-        }
-
-        canSend = false;
-        document.getElementById('btnKirim').disabled = true;
-        document.getElementById('cooldown-txt').style.display = "block";
         input.value = "";
-        setTimeout(() => {
-            canSend = true;
-            document.getElementById('btnKirim').disabled = false;
-            document.getElementById('cooldown-txt').style.display = "none";
-        }, 5000);
+        applyCooldown();
     }
 
+    // --- LISTENER REALTIME ---
     db.ref("messages").limitToLast(50).on("child_added", (snapshot) => {
         const data = snapshot.val();
         const box = document.getElementById('chat-box');
         const div = document.createElement('div');
-        
-        if (data.type === "ai") {
-            div.className = "msg ai-bubble";
-            div.innerHTML = `<span class="nama-ai">🛡️ ExeAI</span>${data.pesan}`;
-        } else if (data.role === "admin") {
-            div.className = "msg admin";
-            div.innerHTML = `<span class="nama-admin">👑 ${data.nama}</span>${data.pesan}`;
+
+        if (data.type === "anno") {
+            div.className = "anno-card";
+            div.innerHTML = `<div class="anno-title">📢 Announcement</div><div><b>${data.nama}:</b> ${data.pesan}</div>`;
         } else {
-            div.className = "msg warga";
-            div.innerHTML = `<span class="nama-anonim">${data.nama}</span>${data.pesan}`;
+            div.className = `msg ${data.role === 'admin' ? 'admin' : 'warga'}`;
+            div.innerHTML = `<span class="tag" style="color:${data.role === 'admin' ? '#f87171' : '#3b82f6'}">${data.role === 'admin' ? '👑 ' : ''}${data.nama}</span>${data.pesan}`;
         }
+        
         box.appendChild(div);
         box.scrollTop = box.scrollHeight;
     });
 
-    db.ref("messages").on("child_removed", () => location.reload());
+    // Listener Status Room
+    db.ref("room_status/locked").on("value", (snap) => {
+        isChatStopped = snap.val() || false;
+        document.getElementById('chat-title').innerText = isChatStopped ? "ExeChat (LOCKED)" : "ExeChat";
+    });
 
-    function tanyaAI(prompt) {
-        const script = document.createElement('script');
-        script.src = `${BRIDGE_URL}?prompt=${encodeURIComponent(prompt)}&callback=handleAI`;
-        document.body.appendChild(script);
-        script.onload = () => document.body.removeChild(script);
+    // Clear UI saat data dihapus
+    db.ref("messages").on("child_removed", () => {
+        document.getElementById('chat-box').innerHTML = "";
+    });
+
+    function applyCooldown() {
+        if (isAdmin) return;
+        const btn = document.getElementById('btnSend');
+        btn.disabled = true;
+        setTimeout(() => btn.disabled = false, 5000);
     }
 
-    function handleAI(data) {
-        db.ref("messages").push({ 
-            nama: "ExeAI", pesan: data.reply, type: "ai", 
-            timestamp: firebase.database.ServerValue.TIMESTAMP 
-        });
-    }
-
-    document.getElementById('userMsg').addEventListener("keypress", (e) => { if(e.key === 'Enter') kirimChat(); });
+    document.getElementById('userMsg').addEventListener("keypress", (e) => { if(e.key === 'Enter') handleSend(); });
 </script>
 </body>
 </html>
