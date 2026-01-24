@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat V28 | Official</title>
+    <title>ExeChat V28 | Official Fixed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -12,103 +12,154 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --primary: #3b82f6; --text: #fafafa; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { background: radial-gradient(circle at top right, #1a1a2e, #09090b); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.8); backdrop-filter: blur(10px); z-index: 100; }
+        /* --- ROLE STYLES --- */
+        @keyframes rainbow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .name-owner { background-image: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); background-size: 200% auto; animation: rainbow 4s linear infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-transform: uppercase; font-size: 11px; }
+        .admin-red { color: #ef4444 !important; font-weight: 800; text-transform: uppercase; font-size: 11px; }
+        .member { color: #10b981 !important; font-weight: 700; font-size: 11px; }
+
+        header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.7); backdrop-filter: blur(12px); z-index: 100; }
         
-        /* WA STYLE CHAT */
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-attachment: fixed; }
-        .msg { display: flex; flex-direction: column; max-width: 75%; position: relative; animation: fadeIn 0.3s ease; }
-        .msg.me { align-self: flex-end; align-items: flex-end; }
-        .msg.other { align-self: flex-start; align-items: flex-start; }
+        /* --- CHAT UI KIRI KANAN --- */
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px 5%; display: none; flex-direction: column; gap: 15px; }
+        .msg-wrapper { display: flex; flex-direction: column; width: 100%; }
+        .msg-wrapper.me { align-items: flex-end; }
+        .msg-wrapper.other { align-items: flex-start; }
+
+        .msg-content { 
+            background: rgba(24, 24, 27, 0.6); 
+            border: 1px solid var(--border); 
+            padding: 12px 16px; 
+            border-radius: 20px; 
+            max-width: 80%; 
+            position: relative;
+            cursor: pointer;
+        }
+        .me .msg-content { border-bottom-right-radius: 4px; border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+        .other .msg-content { border-bottom-left-radius: 4px; }
+        .msg-owner { border: 1.5px solid #f59e0b !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+
+        /* --- UI COMPONENTS --- */
+        .btn-ai { background: var(--surface); color: white; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn-ai.primary { background: var(--primary); border: none; }
         
-        .bubble { padding: 10px 15px; border-radius: 18px; font-size: 14px; position: relative; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; }
-        .me .bubble { background: #056162; color: white; border-bottom-right-radius: 4px; }
-        .other .bubble { background: #262d31; color: white; border-bottom-left-radius: 4px; }
-        .bubble:active { transform: scale(0.98); opacity: 0.8; }
+        #launcher { position: fixed; bottom: 120px; right: 24px; background: var(--primary); width: 56px; height: 56px; border-radius: 18px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; }
+        #panel { position: fixed; bottom: 190px; right: 24px; width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 1001; max-height: 60vh; overflow-y: auto; }
+        
+        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 12px; width: 100%; outline: none; margin-bottom: 5px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); padding: 30px; border-radius: 28px; width: 90%; max-width: 400px; }
 
-        .name-tag { font-size: 11px; font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
-        .time-tag { font-size: 9px; opacity: 0.6; margin-top: 4px; }
+        footer { padding: 20px 5%; display: none; }
+        .input-area { max-width: 800px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; display: flex; padding: 8px; }
+        .input-area input { border: none; background: transparent; flex: 1; padding: 10px; color: white; margin: 0; }
 
-        /* MUTE NOTIF */
-        #mute-card { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #ef4444; padding: 15px 25px; border-radius: 15px; display: none; z-index: 1000; text-align: center; box-shadow: 0 10px 30px rgba(239,68,68,0.3); }
-
-        /* CONTEXT MENU */
-        #context-menu { position: fixed; background: #27272a; border: 1px solid #3f3f46; border-radius: 12px; display: none; z-index: 2000; min-width: 150px; overflow: hidden; }
-        .menu-item { padding: 12px 15px; font-size: 13px; cursor: pointer; transition: 0.2; }
+        /* MUTE CARD & NOTIF */
+        #mute-card { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: #ef4444; padding: 15px 30px; border-radius: 20px; z-index: 2000; display: none; text-align: center; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
+        
+        #context-menu { position: fixed; background: #27272a; border: 1px solid var(--border); border-radius: 15px; display: none; z-index: 3000; min-width: 160px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .menu-item { padding: 12px 20px; font-size: 14px; cursor: pointer; }
         .menu-item:hover { background: var(--primary); }
 
-        footer { padding: 15px; border-top: 1px solid var(--border); background: var(--surface); }
-        .input-area { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; }
-        input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px 18px; border-radius: 25px; flex: 1; outline: none; }
-        
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--surface); padding: 30px; border-radius: 25px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
-        .btn { padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-primary { background: var(--primary); color: white; }
-        
-        .stat-box { background: #000; padding: 15px; border-radius: 15px; font-size: 11px; color: #a1a1aa; line-height: 1.6; margin-bottom: 15px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .lock-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .full-screen { position: fixed; inset: 0; background: #000; z-index: 999999; display: none; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
+<audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+<div id="mt-screen" class="full-screen"><h1>⚙️ MAINTENANCE</h1><p>Owner sedang melakukan perbaikan...</p></div>
+
 <header>
-    <div style="display:flex; align-items:center; gap:10px">
-        <div onclick="openM('modal-profile')" style="cursor:pointer; font-size:20px">⚙️</div>
-        <b>EXECHAT V28</b>
+    <div style="display:flex; align-items:center; gap:12px">
+        <div onclick="openProfile()" style="cursor:pointer; background:var(--surface); padding:10px; border-radius:12px; border:1px solid var(--border)">⚙️</div>
+        <div>
+            <b style="font-size:18px">EXECHAT <span id="ver-ui" style="color:var(--primary)">1.0.2</span></b>
+            <div id="status-header" style="font-size:10px; color:#52525b">Guest Mode</div>
+        </div>
     </div>
-    <div id="user-info">Memuat...</div>
+    <div id="auth-btns"><button class="btn-ai primary" onclick="openM('modal-auth')">Sign In</button></div>
 </header>
 
 <div id="mute-card">
-    <b id="mute-reason">ANDA DIMUTE: SPAM</b>
-    <div id="mute-timer" style="font-size: 20px; font-weight: 800;">05:00</div>
+    <b id="mute-reason">MUTED: SPAM</b>
+    <div id="mute-timer" style="font-size: 24px; font-weight: 800;">05:00</div>
+</div>
+
+<div id="guest-lock" class="lock-screen">
+    <div style="font-size: 60px;">🔒</div>
+    <h2>Chat Locked</h2>
+    <p style="color:#71717a">Verifikasi email untuk melihat chat.</p>
 </div>
 
 <div id="chat-box"></div>
 
-<footer id="chat-ui">
+<footer id="main-footer">
+    <div id="reply-bar" style="display:none; background:rgba(255,255,255,0.05); padding:8px 15px; border-radius:12px; margin-bottom:8px; justify-content:space-between; font-size:12px; border-left:3px solid var(--primary)">
+        <div id="reply-text"></div>
+        <span onclick="cancelReply()" style="color:#ef4444; cursor:pointer">✕</span>
+    </div>
     <div class="input-area">
-        <input type="text" id="u-msg" placeholder="Ketik pesan..." onkeypress="if(event.key=='Enter') sendChat()">
-        <button class="btn-primary" onclick="sendChat()" style="width: 80px; border-radius: 25px;">Kirim</button>
+        <input type="text" id="u-msg" placeholder="Type a message..." onkeypress="if(event.key=='Enter') hS()">
+        <button class="btn-ai primary" onclick="hS()" style="border-radius:15px">SEND</button>
     </div>
 </footer>
+
+<div id="launcher" onclick="togP()">🛡️</div>
+<div id="panel">
+    <b>ADMIN PANEL</b>
+    <div id="owner-tools" style="display:none; flex-direction:column; gap:8px;">
+        <button class="btn-ai danger" onclick="wipeChat()">🗑️ WIPE MESSAGES</button>
+        <button class="btn-ai" id="mt-btn" onclick="toggleMT()">⚙️ MT: OFF</button>
+        <button class="btn-ai" id="gc-btn" onclick="toggleGC()">🔒 GUEST: ON</button>
+        <input type="color" onchange="setTheme(this.value)" style="height:35px">
+    </div>
+    <hr style="border-color:var(--border)">
+    <input type="text" id="t-user" placeholder="Target Username">
+    <button class="btn-ai danger" onclick="exec('banned')">BAN USER</button>
+    <button class="btn-ai" onclick="exec('member')">UNBAN / RESET</button>
+</div>
 
 <div id="modal-auth" class="modal">
     <div class="modal-content">
         <h2 id="auth-title">Login</h2>
+        <input type="text" id="au-user" placeholder="Username (ex: hexky)">
         <input type="email" id="au-email" placeholder="Email">
         <input type="password" id="au-pass" placeholder="Password">
-        <button class="btn btn-primary" onclick="handleAuth()">Lanjutkan</button>
-        <p style="font-size:12px; text-align:center; cursor:pointer" onclick="toggleAuthMode()">Belum punya akun? Daftar</p>
+        <button class="btn-ai primary" id="au-btn" style="width:100%; margin-top:10px" onclick="authAction()">LANJUT</button>
+        <p style="font-size:12px; text-align:center; cursor:pointer; margin-top:15px" onclick="tabAuth()">Belum punya akun? Daftar</p>
+        <button class="btn-ai" style="width:100%; margin-top:10px; border:none" onclick="closeM('modal-auth')">BATAL</button>
     </div>
 </div>
 
 <div id="modal-profile" class="modal">
     <div class="modal-content">
-        <h3>User Info (Verified Only)</h3>
-        <div class="stat-box" id="auth-stats">
-            ID: <span id="uid-val">-</span><br>
-            Provider: <span id="prov-val">-</span><br>
-            Created: <span id="creat-val">-</span><br>
-            Signed In: <span id="sign-val">-</span>
+        <h3>USER STATS</h3>
+        <div style="background:#000; padding:15px; border-radius:15px; font-size:11px; color:#a1a1aa; line-height:1.8">
+            <b>UID:</b> <span id="st-uid">-</span><br>
+            <b>Provider:</b> <span id="st-prov">password</span><br>
+            <b>Created:</b> <span id="st-creat">-</span><br>
+            <b>Signed In:</b> <span id="st-sign">-</span>
         </div>
-        <button class="btn" onclick="firebase.auth().signOut().then(()=>location.reload())" style="background: #ef4444;">Logout</button>
-        <button class="btn" onclick="closeM('modal-profile')">Tutup</button>
+        <h4 style="margin:15px 0 5px">CHANGE PASSWORD</h4>
+        <input type="password" id="new-pw" placeholder="New Password">
+        <button class="btn-ai primary" style="width:100%" onclick="changePw()">UPDATE</button>
+        <button class="btn-ai danger" style="width:100%; margin-top:15px" onclick="logout()">LOGOUT</button>
+        <button class="btn-ai" style="width:100%; margin-top:10px" onclick="closeM('modal-profile')">CLOSE</button>
     </div>
 </div>
 
 <div id="context-menu">
-    <div class="menu-item" onclick="menuAction('reply')">Reply</div>
-    <div class="menu-item" onclick="menuAction('copy')">Copy Text</div>
-    <div class="menu-item" onclick="menuAction('tag')">Tag User</div>
-    <div class="menu-item" onclick="menuAction('share')">Share</div>
+    <div class="menu-item" onclick="menuAct('reply')">Reply</div>
+    <div class="menu-item" onclick="menuAct('copy')">Copy Text</div>
+    <div class="menu-item" onclick="menuAct('tag')">Tag User</div>
+    <div class="menu-item" onclick="menuAct('share')">Share</div>
 </div>
 
 <script>
-    // Config Bos (Pastikan Auth di Firebase Console AKTIF)
     const firebaseConfig = {
         apiKey: atob("QUl6YVN5Q2w0ZWk4a2ZNYUJvUUVva0ZFNUZsa1B2ei1OZEVoUVh3"),
         databaseURL: atob("aHR0cHM6Ly9leGVhaS1lZWZjOC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw"),
@@ -116,179 +167,172 @@
         appId: atob("MToxMDEzNDI4MDAyNTE3OndlYjo2ZTNlMDdhODEwMTY3Yzk3YmI4YzVj")
     };
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const auth = firebase.auth();
+    const db = firebase.database(), auth = firebase.auth();
 
-    let myUser = null;
-    let authMode = 'login';
-    let lastMsgTime = 0;
-    let msgHistory = [];
-    let isMuted = false;
-    let selectedMsg = null;
+    let myData = { role: "guest" }, curTab = "login", replyData = null, lastMsg = 0, msgStack = [];
 
-    // --- AUTH LOGIC ---
-    function toggleAuthMode() {
-        authMode = authMode === 'login' ? 'register' : 'login';
-        document.getElementById('auth-title').innerText = authMode === 'login' ? 'Login' : 'Register';
+    // --- AUTH SYSTEM ---
+    function tabAuth() {
+        curTab = curTab === 'login' ? 'reg' : 'login';
+        document.getElementById('auth-title').innerText = curTab==='reg' ? 'Register' : 'Login';
+        document.getElementById('au-user').style.display = curTab==='reg' ? 'block' : 'none';
+        document.getElementById('au-btn').innerText = curTab==='reg' ? 'DAFTAR SEKARANG' : 'MASUK';
     }
 
-    async function handleAuth() {
-        const email = document.getElementById('au-email').value;
-        const pass = document.getElementById('au-pass').value;
+    async function authAction() {
+        const u = document.getElementById('au-user').value.toLowerCase().trim();
+        const e = document.getElementById('au-email').value;
+        const p = document.getElementById('au-pass').value;
+
         try {
-            if(authMode === 'register') {
-                const res = await auth.createUserWithEmailAndPassword(email, pass);
+            if(curTab === 'reg') {
+                if(!u) return alert("Username wajib!");
+                const res = await auth.createUserWithEmailAndPassword(e, p);
                 await res.user.sendEmailVerification();
-                alert("Verifikasi dikirim ke email! Klik link di email baru bisa login.");
+                await db.ref("users/"+u).set({ username: u, email: e, uid: res.user.uid, role: 'member', muteUntil: 0 });
+                alert("Verifikasi terkirim! Klik link di email baru bisa login.");
                 auth.signOut();
             } else {
-                const res = await auth.signInWithEmailAndPassword(email, pass);
+                const res = await auth.signInWithEmailAndPassword(e, p);
                 if(!res.user.emailVerified) {
-                    alert("Email belum diverifikasi! Cek inbox/spam.");
+                    alert("Email belum diverifikasi!");
                     auth.signOut();
-                } else {
-                    location.reload();
-                }
+                } else { location.reload(); }
             }
-        } catch(e) { alert(e.message); }
+        } catch(err) { alert(err.message); }
     }
 
     auth.onAuthStateChanged(user => {
-        if (user && user.emailVerified) {
-            myUser = user;
-            document.getElementById('user-info').innerText = user.email.split('@')[0];
-            document.getElementById('uid-val').innerText = user.uid;
-            document.getElementById('prov-val').innerText = user.providerData[0].providerId;
-            document.getElementById('creat-val').innerText = user.metadata.creationTime;
-            document.getElementById('sign-val').innerText = user.metadata.lastSignInTime;
-            closeM('modal-auth');
-        } else {
-            openM('modal-auth');
+        if(user && user.emailVerified) {
+            db.ref("users").orderByChild("uid").equalTo(user.uid).on("value", s => {
+                s.forEach(child => {
+                    myData = { ...child.val(), id: child.key };
+                    document.getElementById('auth-btns').style.display = 'none';
+                    document.getElementById('status-header').innerHTML = `<span style="color:#22c55e">●</span> ` + myData.role.toUpperCase();
+                    if(myData.role==='owner' || myData.role.includes('admin')) document.getElementById('launcher').style.display = 'flex';
+                    if(myData.role==='owner') document.getElementById('owner-tools').style.display = 'flex';
+                    
+                    // Stats
+                    document.getElementById('st-uid').innerText = user.uid;
+                    document.getElementById('st-creat').innerText = user.metadata.creationTime;
+                    document.getElementById('st-sign').innerText = user.metadata.lastSignInTime;
+                    updateUI();
+                });
+            });
         }
     });
 
-    // --- CHAT LOGIC ---
-    function sendChat() {
-        if(isMuted || !myUser) return;
-        const input = document.getElementById('u-msg');
-        const text = input.value.trim();
-        if(!text) return;
-
-        // 1. Jeda 5 Detik
-        const now = Date.now();
-        if(now - lastMsgTime < 5000) return alert("Sabar Bos! Tunggu 5 detik.");
-
-        // 2. Anti-Spam (5x Chat Sama / 5x Full Kapital)
-        msgHistory.push(text);
-        if(msgHistory.length > 5) msgHistory.shift();
-
-        const isFullCap = text === text.toUpperCase() && text.length > 3;
-        const capsCount = msgHistory.filter(m => m === m.toUpperCase() && m.length > 3).length;
-        const sameCount = msgHistory.filter(m => m === text).length;
-
-        if(sameCount >= 5 || capsCount >= 5) {
-            startMute(sameCount >= 5 ? "SPAM CHAT" : "FULL KAPITAL");
-            return;
-        }
-
-        db.ref("messages").push({
-            uid: myUser.uid,
-            name: myUser.email.split('@')[0],
-            text: text,
-            time: now
-        });
-
-        lastMsgTime = now;
-        input.value = "";
+    function updateUI() {
+        const logged = myData.role !== 'guest';
+        document.getElementById('chat-box').style.display = logged ? 'flex' : 'none';
+        document.getElementById('main-footer').style.display = logged ? 'block' : 'none';
+        document.getElementById('guest-lock').style.display = logged ? 'none' : 'flex';
     }
 
-    // --- MUTE SYSTEM ---
-    function startMute(reason) {
-        isMuted = true;
-        document.getElementById('chat-ui').style.display = 'none';
-        document.getElementById('mute-card').style.display = 'block';
-        document.getElementById('mute-reason').innerText = "DIMUTE: " + reason;
+    // --- CHAT LOGIC ---
+    function hS() {
+        if(Date.now() < myData.muteUntil) return;
+        const i = document.getElementById('u-msg'), t = i.value.trim();
+        if(!t || myData.role === 'guest') return;
+
+        // Anti Spam & Jeda 5s
+        if(Date.now() - lastMsg < 5000) return alert("Tunggu 5 detik!");
+        msgStack.push(t); if(msgStack.length > 5) msgStack.shift();
         
-        let timeLeft = 300; // 5 Menit
-        const timer = setInterval(() => {
-            timeLeft--;
-            let min = Math.floor(timeLeft/60);
-            let sec = timeLeft % 60;
-            document.getElementById('mute-timer').innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
-            if(timeLeft <= 0) {
-                clearInterval(timer);
-                isMuted = false;
-                document.getElementById('chat-ui').style.display = 'block';
-                document.getElementById('mute-card').style.display = 'none';
-                msgHistory = [];
-            }
+        const isSpam = msgStack.filter(m => m === t).length >= 5;
+        const isCaps = msgStack.filter(m => m === m.toUpperCase() && m.length > 3).length >= 5;
+
+        if(isSpam || isCaps) return startAutoMute(isSpam ? "SPAM" : "CAPS");
+
+        const p = { 
+            nama: myData.username, 
+            pesan: t, 
+            role: myData.role, 
+            uid: myData.uid, 
+            time: Date.now() 
+        };
+        if(replyData) p.reply = replyData;
+
+        db.ref("messages").push(p);
+        i.value = ""; lastMsg = Date.now(); cancelReply();
+    }
+
+    db.ref("messages").limitToLast(50).on("value", s => {
+        const box = document.getElementById('chat-box'); box.innerHTML = "";
+        s.forEach(snap => {
+            const d = snap.val();
+            const isMe = d.uid === myUserUID();
+            const wrap = document.createElement('div');
+            wrap.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
+            
+            let isOwn = d.role === 'owner';
+            let cls = isOwn ? 'name-owner' : (d.role.includes('admin') ? 'admin-red' : 'member');
+            let rpl = d.reply ? `<div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:12px; font-size:11px; margin-bottom:5px; border-left:3px solid var(--primary)"><b>@${d.reply.n}</b>: ${d.reply.p}</div>` : '';
+            
+            wrap.innerHTML = `
+                <div class="msg-content ${isOwn?'msg-owner':''}" 
+                     oncontextmenu="showCtx(event, '${d.nama}', '${d.pesan}')" 
+                     ondblclick="showCtx(event, '${d.nama}', '${d.pesan}')">
+                    <div class="${cls}">${d.nama}</div>
+                    ${rpl}<div>${d.pesan}</div>
+                </div>
+            `;
+            box.appendChild(wrap);
+        });
+        box.scrollTop = box.scrollHeight;
+        if(s.numChildren() >= 50) { /* auto delete logic handled by limit */ }
+    });
+
+    // --- AUTO MUTE & TIMER ---
+    function startAutoMute(reason) {
+        db.ref("users/"+myData.id).update({ muteUntil: Date.now() + 300000 });
+        document.getElementById('main-footer').style.display = 'none';
+        document.getElementById('mute-card').style.display = 'block';
+        document.getElementById('mute-reason').innerText = "MUTED: " + reason;
+        let sec = 300;
+        const t = setInterval(() => {
+            sec--;
+            let m = Math.floor(sec/60), s = sec%60;
+            document.getElementById('mute-timer').innerText = `${m}:${s<10?'0'+s:s}`;
+            if(sec<=0) { clearInterval(t); location.reload(); }
         }, 1000);
     }
 
-    // --- REALTIME DATABASE ---
-    db.ref("messages").limitToLast(50).on("value", snap => {
-        const box = document.getElementById('chat-box');
-        box.innerHTML = "";
-        
-        // Auto Delete jika > 50 (Server Side)
-        if(snap.numChildren() >= 50) {
-            const firstKey = Object.keys(snap.val())[0];
-            // db.ref("messages/" + firstKey).remove(); // Opsional: Hapus dari DB permanen
-        }
-
-        snap.forEach(msgSnap => {
-            const d = msgSnap.val();
-            const isMe = d.uid === myUser?.uid;
-            const div = document.createElement('div');
-            div.className = `msg ${isMe ? 'me' : 'other'}`;
-            div.innerHTML = `
-                <div class="name-tag" style="color:${isMe ? '#34d399' : '#3b82f6'}">${d.name}</div>
-                <div class="bubble" id="${msgSnap.key}">
-                    ${d.text}
-                </div>
-                <div class="time-tag">${new Date(d.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-            `;
-
-            // Interaksi klik kanan / double click
-            const bubble = div.querySelector('.bubble');
-            bubble.oncontextmenu = (e) => showMenu(e, d);
-            bubble.ondblclick = (e) => showMenu(e, d);
-            
-            box.appendChild(div);
-        });
-        box.scrollTop = box.scrollHeight;
-    });
-
-    // --- CONTEXT MENU ---
-    function showMenu(e, data) {
+    // --- CONTROLS ---
+    function showCtx(e, n, p) {
         e.preventDefault();
-        selectedMsg = data;
-        const menu = document.getElementById('context-menu');
-        menu.style.display = 'block';
-        menu.style.left = e.pageX + 'px';
-        menu.style.top = e.pageY + 'px';
+        const m = document.getElementById('context-menu');
+        m.style.display = 'block';
+        m.style.left = e.pageX + 'px'; m.style.top = e.pageY + 'px';
+        window.tempMsg = { n, p };
     }
-
     window.onclick = () => document.getElementById('context-menu').style.display = 'none';
 
-    function menuAction(act) {
-        if(!selectedMsg) return;
-        if(act === 'copy') {
-            navigator.clipboard.writeText(selectedMsg.text);
-            alert("Teks dicopy!");
-        } else if(act === 'reply') {
-            document.getElementById('u-msg').value = `@${selectedMsg.name} [REPLY]: `;
-            document.getElementById('u-msg').focus();
-        } else if(act === 'tag') {
-            document.getElementById('u-msg').value += `@${selectedMsg.name} `;
-            document.getElementById('u-msg').focus();
-        } else if(act === 'share') {
-            alert("Shared to: " + selectedMsg.text);
+    function menuAct(a) {
+        const d = window.tempMsg;
+        if(a==='copy') navigator.clipboard.writeText(d.p);
+        if(a==='reply') {
+            replyData = { n: d.n, p: d.p };
+            document.getElementById('reply-bar').style.display = 'flex';
+            document.getElementById('reply-text').innerText = `Reply to ${d.n}`;
         }
+        if(a==='tag') document.getElementById('u-msg').value += `@${d.n} `;
     }
 
+    function myUserUID() { return auth.currentUser ? auth.currentUser.uid : 'guest'; }
+    function cancelReply() { replyData = null; document.getElementById('reply-bar').style.display = 'none'; }
+    function openProfile() { if(myData.role==='guest') return openM('modal-auth'); openM('modal-profile'); }
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
     function closeM(id) { document.getElementById(id).style.display = 'none'; }
+    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
+    function logout() { auth.signOut().then(()=>location.reload()); }
+    
+    // Additional Room Logic
+    db.ref("room_status").on("value", s => {
+        const r = s.val();
+        if(r.maint && myData.role !== 'owner') document.getElementById('mt-screen').style.display = 'flex';
+        if(r.theme) document.documentElement.style.setProperty('--primary', r.theme);
+    });
 </script>
 </body>
 </html>
