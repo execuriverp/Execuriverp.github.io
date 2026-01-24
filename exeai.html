@@ -143,14 +143,12 @@
 </div>
 
 <script>
-    // MASUKKAN API KEY KAMU DI SINI
+    // 1. PASTIKAN API KEY BARU KAMU DI SINI
     const KEY = "AIzaSyBb9EfBehi1faJuA5qZ_gjGlYLYZAdXZSc"; 
 
     const chatWindow = document.getElementById('chat-window');
     const inputField = document.getElementById('userInput');
     const typingUI = document.getElementById('typing');
-
-    const PROMPT = "Nama kamu ExeAI. Kamu asisten Execurive Roleplay (SAMP). IP: 31.58.143.71:7008. Starter Pack: 100jt, Sultan, Lvl 4. Jawab dengan gaya keren & ramah.";
 
     async function askAI() {
         const msg = inputField.value.trim();
@@ -160,15 +158,17 @@
         inputField.value = "";
         typingUI.style.display = "block";
 
-        // URL "SAKTI" - Menggunakan -latest agar tidak 404
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${KEY}`;
+        // URL INI PALING SERING BERHASIL UNTUK GOOGLE AI STUDIO
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`;
 
         try {
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: PROMPT + "\nUser: " + msg }] }]
+                    contents: [{
+                        parts: [{ text: "Kamu adalah ExeAI, asisten resmi Execurive Roleplay SAMP. IP: 31.58.143.71:7008. Jawab dengan ramah: " + msg }]
+                    }]
                 })
             });
             
@@ -176,12 +176,13 @@
             
             if (data.candidates && data.candidates[0].content) {
                 renderMsg(data.candidates[0].content.parts[0].text, 'ai');
-            } else {
-                // Jika masih error, kita tampilkan pesan dari Google-nya
-                renderMsg("Google bilang: " + (data.error ? data.error.message : "Model tidak merespon"), 'ai');
+            } else if (data.error) {
+                // Biar kita tau error pastinya apa
+                renderMsg("Info Sistem: " + data.error.message, 'ai');
+                console.log("Detail Error:", data.error);
             }
         } catch (e) {
-            renderMsg("Waduh, koneksi ke otak ExeAI terputus.", 'ai');
+            renderMsg("Koneksi terputus, coba lagi nanti.", 'ai');
         } finally {
             typingUI.style.display = "none";
             chatWindow.scrollTo(0, chatWindow.scrollHeight);
