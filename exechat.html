@@ -2,10 +2,13 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat | V26 Final Fix</title>
+    <title>ExeChat | V28.1 Ultimate Auth</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050507; --panel: rgba(22, 22, 28, 0.98); --main: #3b82f6; --admin: #ef4444; --member: #10b981; }
@@ -43,17 +46,38 @@
 
 <div id="toast-box"></div>
 
-<div id="modal-login" class="modal"><div class="modal-content"><h3>Login</h3><input type="text" id="li-user" placeholder="User"><input type="password" id="li-pass" placeholder="Pass"><button class="p-btn" style="background:var(--main)" onclick="doLogin()">MASUK</button><button class="p-btn" onclick="closeM('modal-login')">BATAL</button></div></div>
+<div id="modal-login" class="modal">
+    <div class="modal-content">
+        <h3>Login Account</h3>
+        <input type="text" id="li-user" placeholder="Username">
+        <input type="password" id="li-pass" placeholder="Password">
+        <button class="p-btn" style="background:var(--main)" onclick="doLogin()">SIGN IN</button>
+        <p style="font-size:10px; color:#666">Belum punya akun? <span style="color:var(--main); cursor:pointer" onclick="closeM('modal-login'); openM('modal-reg')">Daftar</span></p>
+        <button class="p-btn" onclick="closeM('modal-login')">BATAL</button>
+    </div>
+</div>
+
+<div id="modal-reg" class="modal">
+    <div class="modal-content">
+        <h3>Register</h3>
+        <input type="text" id="re-user" placeholder="Username (Unik)">
+        <input type="email" id="re-email" placeholder="Email Aktif">
+        <input type="password" id="re-pass" placeholder="Password">
+        <button class="p-btn" style="background:var(--main)" onclick="doRegister()">REGISTER & VERIFY</button>
+        <button class="p-btn" onclick="closeM('modal-reg')">BATAL</button>
+    </div>
+</div>
+
+<div id="modal-profile" class="modal"><div class="modal-content"><h3>Profil</h3><p id="p-status" style="font-size:10px"></p><input type="text" id="p-user" placeholder="Nama Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('username')">GANTI NAMA</button><input type="password" id="p-pass" placeholder="Pass Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('password')">GANTI PASS</button><button class="p-btn" style="background:var(--admin)" onclick="logout()">LOGOUT</button><button class="p-btn" onclick="closeM('modal-profile')">TUTUP</button></div></div>
+<div id="modal-wipe" class="modal"><div class="modal-content"><h3>Wipe Chat?</h3><button class="p-btn" style="background:var(--admin)" onclick="confirmWipe()">HAPUS SEMUA</button><button class="p-btn" onclick="closeM('modal-wipe')">BATAL</button></div></div>
 <div id="modal-vote" class="modal"><div class="modal-content"><h3>Buat Vote</h3><input type="text" id="v-title" placeholder="Judul"><input type="number" id="v-target" placeholder="Target"><button class="p-btn" style="background:var(--main)" onclick="startV()">MULAI</button><button class="p-btn" onclick="closeM('modal-vote')">BATAL</button></div></div>
-<div id="modal-profile" class="modal"><div class="modal-content"><h3>Profil</h3><p id="p-status" style="font-size:10px"></p><input type="text" id="p-user" placeholder="Nama Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('username')">GANTI NAMA</button><input type="password" id="p-pass" placeholder="Pass Baru"><button class="p-btn" style="background:var(--main)" onclick="updateProfile('password')">GANTI PASS</button><button class="p-btn" style="background:var(--admin)" onclick="localStorage.removeItem('exeUser'); location.reload();">LOGOUT</button><button class="p-btn" onclick="closeM('modal-profile')">TUTUP</button></div></div>
-<div id="modal-wipe" class="modal"><div class="modal-content"><h3>Wipe Chat?</h3><button class="p-btn" style="background:var(--admin)" onclick="confirmWipe()">YA, HAPUS</button><button class="p-btn" onclick="closeM('modal-wipe')">BATAL</button></div></div>
 
 <header>
     <div style="display:flex; align-items:center; gap:10px">
         <div onclick="openProfile()" style="cursor:pointer; background:#222; padding:8px; border-radius:10px">⚙️</div>
         <div><span style="font-weight:900; color:var(--main); font-size:18px;">EXECHAT</span><div id="my-name" style="font-size:10px; color:#666">Guest Mode</div></div>
     </div>
-    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN</button>
+    <button id="btn-login" class="p-btn" style="width:auto; padding:8px 15px" onclick="openM('modal-login')">LOGIN / REG</button>
 </header>
 
 <div id="static-area" style="padding:10px 20px 0;"><div id="anno-box"></div></div>
@@ -61,28 +85,36 @@
 
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
-    <h4 style="margin:0">Admin Tools</h4>
-    <input type="text" id="a-ann" placeholder="Announcement">
-    <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">INFO</button>
-    <input type="text" id="a-link" placeholder="https://link.com">
-    <button class="p-btn" style="background:var(--main)" onclick="sendL()">LINK</button>
-    <button class="p-btn" style="background:#059669" onclick="openM('modal-vote'); togP();">VOTE</button>
-    <button class="p-btn" id="mtBtn" onclick="toggleMT()">MAINTENANCE: OFF</button>
-    <hr style="border-top:1px solid #333">
-    <h4 style="margin:0">User Tools</h4>
-    <input type="text" id="reg-user" placeholder="Target User">
-    <input type="text" id="reg-pass" placeholder="Pass (Add Player)">
-    <div style="display:flex; gap:5px">
-        <button class="p-btn" style="background:var(--member)" onclick="regPlayer()">ADD PLAYER</button>
-        <button class="p-btn" style="background:var(--admin)" onclick="setRole('admin')">PROMOTE</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+        <h4 style="margin:0; color:var(--admin)">🛡️ ADMIN PANEL</h4>
+        <span onclick="togP()" style="cursor:pointer; opacity:0.5">✕</span>
     </div>
+
+    <input type="text" id="a-ann" placeholder="Announcement...">
+    <button class="p-btn" style="background:var(--main)" onclick="sendAnn()">INFO</button>
+    
+    <input type="text" id="a-link" placeholder="https://link.com">
+    <button class="p-btn" style="background:var(--main)" onclick="sendL()">LINK CARD</button>
+    
+    <button class="p-btn" style="background:#059669" onclick="openM('modal-vote'); togP();">VOTE SYSTEM</button>
+    <button class="p-btn" id="mtBtn" onclick="toggleMT()">MAINTENANCE: OFF</button>
+    
     <hr style="border-top:1px solid #333">
-    <button class="p-btn" style="background:var(--admin)" onclick="openM('modal-wipe'); togP();">WIPE CHAT</button>
+    <p style="font-size:10px; color:#666; margin:0 0 5px 0">MANAGE USER</p>
+    <input type="text" id="target-user" placeholder="Username Target">
+    <div style="display:flex; gap:5px">
+        <button class="p-btn" style="background:var(--admin); flex:1" onclick="setRole('admin')">PROMOTE</button>
+        <button class="p-btn" style="background:var(--member); flex:1" onclick="setRole('member')">DEMOTE</button>
+    </div>
+    <button class="p-btn" style="background:#f59e0b" onclick="bannedUser()">BANNED USER</button>
+    
+    <hr style="border-top:1px solid #333">
+    <button class="p-btn" style="background:var(--admin)" onclick="openM('modal-wipe'); togP();">WIPE ALL CHAT</button>
 </div>
 
 <div class="footer-area">
     <div style="display:flex; gap:10px; max-width:800px; margin:0 auto;">
-        <input type="text" id="u-msg" placeholder="Pesan... (T)" onkeypress="if(event.key=='Enter') hS()">
+        <input type="text" id="u-msg" placeholder="Pesan... (Login to chat)" onkeypress="if(event.key=='Enter') hS()">
         <button onclick="hS()" style="background:var(--main); border:none; padding:0 20px; border-radius:12px; color:#fff; font-weight:800;">SEND</button>
     </div>
 </div>
@@ -95,16 +127,18 @@
     };
     firebase.initializeApp({ apiKey: _0xCf.k, databaseURL: _0xCf.d, projectId: _0xCf.p, appId: _0xCf.a });
     const db = firebase.database();
+    const auth = firebase.auth();
 
-    let myData = { name: "Guest_" + Math.floor(Math.random()*900), role: "guest", id: "" };
+    let myData = { name: "Guest", role: "guest", id: "" };
     let isMT = false;
 
+    // Persist Login Check
     const saved = localStorage.getItem("exeUser");
     if(saved) {
         myData = JSON.parse(saved);
-        if(myData.role === 'admin') document.getElementById('launcher').style.display = 'flex';
         document.getElementById('my-name').innerText = myData.name;
         document.getElementById('btn-login').style.display = 'none';
+        if(myData.role === 'admin') document.getElementById('launcher').style.display = 'flex';
     }
 
     function showToast(m) {
@@ -116,49 +150,48 @@
     function openM(id) { document.getElementById(id).style.display = 'flex'; }
     function closeM(id) { document.getElementById(id).style.display = 'none'; }
 
-    // --- MAINTENANCE SYSTEM ---
-    db.ref("room_status/maint").on("value", s => {
-        isMT = s.val() || false;
-        const btn = document.getElementById('mtBtn');
-        btn.innerText = isMT ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
-        btn.style.background = isMT ? "var(--admin)" : "#222";
-    });
-
-    function toggleMT() { db.ref("room_status/maint").set(!isMT); }
-
-    function doLogin() {
-        const u = document.getElementById('li-user').value.trim().toLowerCase();
-        const p = document.getElementById('li-pass').value.trim();
-        db.ref("users/" + u).once("value").then(s => {
-            if (s.exists()) {
-                const d = s.val();
-                if(d.password === p) {
-                    localStorage.setItem("exeUser", JSON.stringify({ name: d.username, role: d.role, id: u }));
-                    location.reload();
-                } else showToast("Password Salah!");
-            } else showToast("User tidak ditemukan!");
-        });
+    // --- AUTH LOGIC ---
+    async function doRegister() {
+        const u = document.getElementById('re-user').value.trim().toLowerCase();
+        const e = document.getElementById('re-email').value.trim();
+        const p = document.getElementById('re-pass').value.trim();
+        if(!u || !e || !p) return showToast("Lengkapi data!");
+        try {
+            const snap = await db.ref("users/" + u).once("value");
+            if(snap.exists()) return showToast("Username sudah ada!");
+            const cred = await auth.createUserWithEmailAndPassword(e, p);
+            await cred.user.sendEmailVerification();
+            await db.ref("users/" + u).set({ username: u, email: e, role: "member", isVerified: false, uid: cred.user.uid });
+            showToast("Berhasil! Cek Email verifikasi.");
+            closeM('modal-reg');
+        } catch (err) { showToast(err.message); }
     }
 
-    function regPlayer() {
-        const u = document.getElementById('reg-user').value.trim().toLowerCase();
-        const p = document.getElementById('reg-pass').value.trim();
-        if(!u || !p) return showToast("Isi data!");
-        db.ref("users/" + u).set({ username: u, password: p, role: "member" });
-        showToast("Player Registered!");
+    async function doLogin() {
+        const uIn = document.getElementById('li-user').value.trim().toLowerCase();
+        const pIn = document.getElementById('li-pass').value.trim();
+        try {
+            const snap = await db.ref("users/" + uIn).once("value");
+            if(!snap.exists()) return showToast("User tidak ada!");
+            const userData = snap.val();
+            if(userData.role === 'banned') return showToast("Akun Anda di-BANNED!");
+            const cred = await auth.signInWithEmailAndPassword(userData.email, pIn);
+            if(!cred.user.emailVerified) {
+                await auth.signOut();
+                return showToast("Email belum diverifikasi!");
+            }
+            await db.ref("users/" + uIn).update({ isVerified: true });
+            localStorage.setItem("exeUser", JSON.stringify({ name: userData.username, role: userData.role, id: uIn }));
+            location.reload();
+        } catch (err) { showToast("Login Gagal!"); }
     }
 
-    function setRole(newRole) {
-        const u = document.getElementById('reg-user').value.trim().toLowerCase();
-        db.ref("users/" + u).once("value").then(s => {
-            if(s.exists()){
-                db.ref("users/" + u + "/role").set(newRole);
-                showToast(u + " promoted!");
-            } else showToast("User tidak ditemukan!");
-        });
-    }
+    function logout() { localStorage.removeItem("exeUser"); auth.signOut(); location.reload(); }
 
+    // --- MESSAGE SYSTEM ---
     function hS() {
+        if(myData.role === 'guest') return showToast("Login & Verif dulu!");
+        if(myData.role === 'banned') return showToast("Akun Anda Banned!");
         const i = document.getElementById('u-msg'), t = i.value.trim();
         if(!t) return;
         if(isMT && myData.role !== 'admin') return showToast("Maintenance Aktif!");
@@ -166,15 +199,7 @@
         i.value = "";
     }
 
-    function sendL() {
-        const l = document.getElementById('a-link').value.trim();
-        if(l) {
-            db.ref("messages").push({ nama: myData.name, pesan: l, role: myData.role, type: "link" });
-            document.getElementById('a-link').value = ""; togP();
-        }
-    }
-
-    db.ref("messages").on("value", s => {
+    db.ref("messages").limitToLast(50).on("value", s => {
         const b = document.getElementById('chat-box'); b.innerHTML = "";
         s.forEach(c => {
             const d = c.val(), v = document.createElement('div');
@@ -187,8 +212,17 @@
         b.scrollTop = b.scrollHeight;
     });
 
-    function confirmWipe() { db.ref("messages").set(null); closeM('modal-wipe'); showToast("Chat Wiped!"); }
-    
+    // --- ADMIN LOGIC ---
+    db.ref("room_status/maint").on("value", s => {
+        isMT = s.val() || false;
+        const btn = document.getElementById('mtBtn');
+        if(btn) {
+            btn.innerText = isMT ? "MAINTENANCE: ON" : "MAINTENANCE: OFF";
+            btn.style.background = isMT ? "var(--admin)" : "#222";
+        }
+    });
+
+    function toggleMT() { if(myData.role === 'admin') db.ref("room_status/maint").set(!isMT); }
     function sendAnn() {
         const t = document.getElementById('a-ann').value;
         if(t) db.ref("announcement").set({ txt: t, exp: Date.now() + 300000 });
@@ -201,6 +235,29 @@
         else box.innerHTML = "";
     });
 
+    function setRole(role) {
+        const u = document.getElementById('target-user').value.trim().toLowerCase();
+        db.ref("users/" + u).once("value").then(s => {
+            if(s.exists()) { db.ref("users/" + u + "/role").set(role); showToast("Success!"); }
+            else showToast("User Not Found!");
+        });
+    }
+
+    function bannedUser() {
+        const u = document.getElementById('target-user').value.trim().toLowerCase();
+        if(u && confirm(`Banned ${u}?`)) {
+            db.ref("users/" + u + "/role").set("banned");
+            showToast("User Banned!");
+        }
+    }
+
+    function confirmWipe() { db.ref("messages").set(null); closeM('modal-wipe'); showToast("Chat Wiped!"); }
+    function sendL() {
+        const l = document.getElementById('a-link').value.trim();
+        if(l) { db.ref("messages").push({ nama: myData.name, pesan: l, role: myData.role, type: "link" }); togP(); }
+    }
+
+    // --- VOTE & PROFILE ---
     function startV() {
         const t = document.getElementById('v-title').value, tg = document.getElementById('v-target').value;
         db.ref("vote").set({ title: t, target: parseInt(tg), active: true, yes: 0, no: 0 });
@@ -231,13 +288,12 @@
         if(!val) return;
         if(type === 'username') {
             db.ref("users/" + myData.id + "/lastChange").once("value").then(s => {
-                const now = Date.now();
-                if(s.exists() && (now - s.val() < 259200000)) return showToast("Tunggu 3 hari!");
-                db.ref("users/" + myData.id).update({ username: val, lastChange: now });
+                if(s.exists() && (Date.now() - s.val() < 259200000)) return showToast("Tunggu 3 hari!");
+                db.ref("users/" + myData.id).update({ username: val, lastChange: Date.now() });
                 myData.name = val; localStorage.setItem("exeUser", JSON.stringify(myData));
                 location.reload();
             });
-        } else { db.ref("users/" + myData.id).update({ password: val }); showToast("Pass diganti!"); }
+        } else { auth.currentUser.updatePassword(val).then(() => showToast("Pass diganti!")).catch(e => showToast(e.message)); }
     }
 
     function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
