@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v2.0 - Premium Player</title>
+  <title>ExeMusic v3.0 - Premium Player</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <style>
@@ -11,20 +11,22 @@
       --accent: #1db954;
       --accent-hover: #1ed760;
       --text: #ffffff;
-      --text-dim: #b3b3b3;
+      --text-dim: #a7a7a7;
       --bg-dark: #090909;
-      --glass: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --card: #181818;
+      --danger: #ff4444;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: var(--bg-dark);
       background-image: 
         radial-gradient(circle at top left, rgba(29, 185, 84, 0.15), transparent 40%),
-        radial-gradient(circle at bottom right, rgba(29, 185, 84, 0.05), transparent 40%);
+        radial-gradient(circle at bottom right, rgba(29, 185, 84, 0.08), transparent 40%);
       color: var(--text);
       height: 100vh;
       display: flex;
@@ -33,7 +35,15 @@
       overflow: hidden;
     }
 
-    /* APP CONTAINER */
+    /* LOADING SCREEN */
+    .loading-screen {
+      position: fixed; inset: 0; background: #000; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; transition: opacity 0.5s ease;
+    }
+    .loading-screen.hidden { opacity: 0; visibility: hidden; }
+
+    /* MAIN APP CONTAINER */
     .app {
       background: rgba(18, 18, 18, 0.7);
       backdrop-filter: blur(25px);
@@ -41,220 +51,263 @@
       border: 1px solid var(--glass-border);
       border-radius: 40px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       height: 92vh;
       display: flex;
       flex-direction: column;
       padding: 24px;
       position: relative;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
     }
 
-    .header { text-align: center; margin-bottom: 15px; }
-    .header img { width: 100px; filter: drop-shadow(0 0 10px rgba(29,185,84,0.3)); }
+    .header { text-align: center; margin-bottom: 10px; }
+    .header img { width: 120px; filter: drop-shadow(0 0 10px rgba(29,185,84,0.3)); }
+    .version-tag { 
+        font-size: 10px; color: var(--accent); background: rgba(29, 185, 84, 0.1); 
+        padding: 4px 12px; border-radius: 20px; display: inline-block; margin-top: 5px;
+    }
 
-    /* COVER & FIX EQ */
+    /* COVER ART & FIX EQ */
     .cover {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 24px;
+      width: 100%; aspect-ratio: 1; border-radius: 28px;
       background: linear-gradient(145deg, #1e1e1e, #121212);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; margin: 15px 0;
       box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     }
 
-    .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; }
-    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 8px; transition: height 0.2s ease; }
-
-    /* Animasi EQ yang stabil di HP */
-    @keyframes eq-play {
-      0%, 100% { height: 8px; }
+    /* FIX: EQ Animation using Height for Mobile Stability */
+    .eq { display: flex; align-items: flex-end; gap: 6px; height: 60px; }
+    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease; }
+    
+    @keyframes eq-wave {
+      0%, 100% { height: 10px; }
       50% { height: 50px; }
     }
-    .eq.playing span { animation: eq-play 0.8s infinite ease-in-out; }
+    .eq.playing span { animation: eq-wave 0.8s infinite ease-in-out; }
     .eq span:nth-child(1) { animation-delay: 0.1s; }
     .eq span:nth-child(2) { animation-delay: 0.3s; }
     .eq span:nth-child(3) { animation-delay: 0.2s; }
     .eq span:nth-child(4) { animation-delay: 0.4s; }
+    .eq span:nth-child(5) { animation-delay: 0.15s; }
 
-    /* INFO */
-    .track-info { margin-top: 20px; }
-    #title { font-size: 22px; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    #by { color: var(--text-dim); font-size: 14px; }
+    /* TRACK INFO */
+    .track-info { text-align: left; margin-top: 10px; }
+    #title { font-size: 24px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #by { color: var(--text-dim); font-size: 14px; margin-bottom: 15px; }
 
-    /* PROGRESS */
-    .progress-section { margin-top: 20px; }
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--accent);
-      height: 5px;
-      cursor: pointer;
+    /* URL WRAPPER */
+    .url-wrap {
+      display: flex; align-items: center; gap: 8px; padding: 12px;
+      background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 15px;
+    }
+    .url-text { flex: 1; font-size: 10px; color: var(--accent); opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; }
+    .action-mini { cursor: pointer; opacity: 0.6; font-size: 16px; transition: 0.2s; }
+    .action-mini:hover { opacity: 1; color: var(--accent); }
+
+    /* PROGRESS BAR */
+    .progress-area { margin: 10px 0; }
+    .progress-area input {
+      width: 100%; height: 6px; -webkit-appearance: none;
+      background: rgba(255,255,255,0.1); border-radius: 10px; outline: none;
+    }
+    .progress-area input::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--accent);
     }
 
     /* CONTROLS */
-    .controls { display: flex; justify-content: space-around; align-items: center; margin-top: 25px; }
-    .btn-icon { background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; }
-    .play-btn { 
-        width: 65px; height: 65px; background: var(--accent); border-radius: 50%; 
-        display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px;
+    .main-controls { display: flex; justify-content: space-around; align-items: center; margin-top: 15px; }
+    .btn-ctrl { background: none; border: none; color: #fff; font-size: 30px; cursor: pointer; opacity: 0.8; transition: 0.2s; }
+    .btn-play { 
+      width: 75px; height: 75px; background: var(--accent); border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; 
+      color: #000; font-size: 26px; box-shadow: 0 10px 25px rgba(29,185,84,0.4);
     }
+    .btn-ctrl:active, .btn-play:active { transform: scale(0.9); }
 
     /* FOOTER ACTIONS */
-    .actions {
-      margin-top: auto;
-      display: flex;
-      justify-content: space-around;
-      background: rgba(255,255,255,0.05);
-      padding: 12px;
-      border-radius: 20px;
+    .footer-actions {
+      margin-top: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+      background: rgba(255,255,255,0.05); padding: 15px; border-radius: 25px;
     }
-    .btn-action { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; opacity: 0.7; }
-    .btn-action.active { color: var(--accent); opacity: 1; }
+    .btn-act { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; opacity: 0.5; transition: 0.3s; }
+    .btn-act.active { color: var(--accent); opacity: 1; }
 
-    /* POPUP & LIST (Sistem Lama) */
+    /* POPUPS (Sheet Style) */
     .popup {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
       display: none; z-index: 1000;
     }
     .sheet {
-      position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%);
-      background: #181818; border-radius: 30px 30px 0 0; padding: 20px; max-height: 80vh; overflow-y: auto;
+      position: absolute; bottom: 0; width: 100%; max-width: 420px; left: 50%; transform: translateX(-50%);
+      background: #121212; border-radius: 35px 35px 0 0; padding: 30px 20px;
+      max-height: 85vh; overflow-y: auto; border: 1px solid var(--glass-border);
     }
     .song-item {
-      display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; cursor: pointer;
+      display: flex; align-items: center; gap: 15px; padding: 14px;
+      border-radius: 15px; cursor: pointer; margin-bottom: 8px; transition: 0.2s;
     }
-    .song-item.active { background: rgba(29, 185, 84, 0.1); color: var(--accent); }
+    .song-item:hover { background: rgba(255,255,255,0.05); }
+    .song-item.playing { background: rgba(29,185,84,0.1); border-left: 4px solid var(--accent); }
 
-    /* MODAL REQUEST */
-    .modal-req {
-      padding: 20px; display: flex; flex-direction: column; gap: 10px;
+    /* NOTIFICATION & TOAST */
+    .toast {
+      position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #000; padding: 10px 25px;
+      border-radius: 25px; font-weight: 700; font-size: 14px;
+      opacity: 0; transition: 0.3s; z-index: 2000;
     }
-    .modal-req input {
-      padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: #fff;
-    }
-    .btn-send { background: var(--accent); padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .toast.show { opacity: 1; bottom: 130px; }
 
-    /* NOTIFIKASI */
-    #notif {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      padding: 10px 20px; border-radius: 10px; z-index: 2000; display: none;
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <div id="notif"></div>
+  <div class="loading-screen" id="loadingScreen">
+    <div style="width: 50px; height: 50px; border: 5px solid rgba(29,185,84,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+    <span style="color: var(--text-dim); font-size: 14px;">Optimasi Sistem...</span>
+  </div>
 
   <div class="app">
     <div class="header">
       <img src="exemusic.png" alt="Logo">
+      <br><span class="version-tag">EXE MUSIC V3.0 PREMIUM</span>
     </div>
 
     <div class="cover">
-      <div class="eq" id="eqVisual">
+      <div class="eq" id="eqVisualizer">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
     </div>
 
     <div class="track-info">
-      <div id="title">Loading...</div>
-      <div id="by">Memasukkan data sistem...</div>
+      <div id="title">Loading System...</div>
+      <div id="by">Please wait</div>
     </div>
 
-    <div class="progress-section">
-      <input type="range" id="seek" value="0">
-      <div style="display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px; color: var(--text-dim);">
+    <div class="url-wrap">
+      <div class="url-text" id="urlText">https://exemusic.storage.link</div>
+      <span class="action-mini" onclick="copyURL()">📋</span>
+      <span class="action-mini" onclick="shareCurrentSong()">🔗</span>
+      <span class="action-mini" onclick="downloadAudio()">⬇</span>
+    </div>
+
+    <div class="progress-area">
+      <input type="range" id="seek" value="0" min="0" max="100">
+      <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 8px;">
         <span id="cur">0:00</span>
         <span id="dur">0:00</span>
       </div>
     </div>
 
-    <div class="controls">
-      <button class="btn-icon" onclick="prev()">⏮</button>
-      <div class="play-btn" onclick="toggle()" id="playIcon">▶</div>
-      <button class="btn-icon" onclick="next()">⏭</button>
+    <div class="main-controls">
+      <button class="btn-ctrl" onclick="prev()">⏮</button>
+      <div class="btn-play" onclick="toggle()" id="playBtn">▶</div>
+      <button class="btn-ctrl" onclick="next()">⏭</button>
     </div>
 
-    <div class="actions">
-      <button class="btn-action" onclick="toggleShuffle()" id="shufBtn">🔀</button>
-      <button class="btn-action" onclick="openList(false)">☰</button>
-      <button class="btn-action" onclick="openList(true)">⭐</button>
-      <button class="btn-action" onclick="openReq()">➕</button>
+    <div class="footer-actions">
+      <button class="btn-act" id="shufBtn" onclick="toggleShuffle()">🔀</button>
+      <button class="btn-act" id="repBtn" onclick="toggleRepeat()">🔁</button>
+      <button class="btn-act" onclick="openList(false)">☰</button>
+      <button class="btn-act" onclick="openList(true)">⭐</button>
+      <button class="btn-act" onclick="openReq()">➕</button>
     </div>
   </div>
 
   <div class="popup" id="popupList" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <input type="text" id="searchInput" placeholder="Cari lagu..." oninput="filterSongs()" 
-             style="width: 100%; padding: 12px; border-radius: 10px; background: #222; color: #fff; border: none; margin-bottom: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>Daftar Lagu</h3>
+        <span onclick="document.getElementById('popupList').style.display='none'" style="cursor:pointer; color:var(--danger)">Tutup</span>
+      </div>
+      <input type="text" id="searchInput" placeholder="Cari judul atau pengirim..." oninput="filterSongs()" 
+             style="width: 100%; padding: 14px; border-radius: 12px; background: #222; border: none; color: #fff; margin-bottom: 15px;">
       <div id="songContainer"></div>
     </div>
   </div>
 
   <div class="popup" id="reqPopup" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align: center; margin-bottom: 15px;">Request Lagu</h3>
-      <div class="modal-req">
-        <input type="text" id="rNama" placeholder="Nama Kamu">
-        <input type="text" id="rLagu" placeholder="Judul Lagu">
-        <input type="text" id="rUrl" placeholder="Link (YouTube/MP3)">
-        <button class="btn-send" onclick="sendReq()">Kirim ke WhatsApp</button>
+      <h3 style="text-align: center; margin-bottom: 20px;">Request Lagu Baru</h3>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="text" id="rNama" placeholder="Nama Anda" style="padding: 14px; border-radius: 12px; background: #222; border: none; color: #fff;">
+        <input type="text" id="rLagu" placeholder="Judul Lagu" style="padding: 14px; border-radius: 12px; background: #222; border: none; color: #fff;">
+        <input type="text" id="rUrl" placeholder="Link (YouTube/MP3)" style="padding: 14px; border-radius: 12px; background: #222; border: none; color: #fff;">
+        <button onclick="sendReq()" style="padding: 15px; border-radius: 12px; background: var(--accent); border: none; font-weight: bold; cursor: pointer; color: #000;">Kirim ke WhatsApp</button>
       </div>
     </div>
   </div>
 
+  <div class="toast" id="toast">Notifikasi</div>
+
   <script>
-    // --- INTEGRASI SISTEM LAMA KAMU ---
-    let songs = [], i = 0, isShuffle = false;
+    // ===== SYSTEM LOGIC (Original from your HTML) =====
+    let songs = [], i = 0, shuffle = true, repeat = false;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
-    const playIcon = document.getElementById('playIcon');
-    const eq = document.getElementById('eqVisual');
+    const eq = document.getElementById('eqVisualizer');
+    const playBtn = document.getElementById('playBtn');
 
-    // Fetch sistem lama
+    // LOAD DATA (Original Fetch)
     fetch("data/urlbb.json")
       .then(r => r.json())
       .then(data => {
         songs = data;
         if(songs.length > 0) loadTrack(0, false);
+        document.getElementById('loadingScreen').classList.add('hidden');
+      })
+      .catch(e => {
+        document.getElementById('title').textContent = "Error loading data";
+        console.error(e);
       });
 
-    function loadTrack(index, auto) {
+    function loadTrack(index, autoPlay = true) {
       i = index;
       const s = songs[i];
       audio.src = s.url;
       document.getElementById('title').textContent = s.title;
-      document.getElementById('by').textContent = "Req by: " + s.by;
-      if(auto) { audio.play(); playIcon.textContent = "❚❚"; eq.classList.add('playing'); }
+      document.getElementById('by').textContent = "Requested by " + s.by;
+      document.getElementById('urlText').textContent = s.url;
+
+      if(autoPlay) {
+        audio.play();
+        playBtn.textContent = "❚❚";
+        eq.classList.add('playing');
+        showToast("Memutar: " + s.title);
+      } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+        eq.classList.remove('playing');
+      }
     }
 
     function toggle() {
       if(audio.paused) {
         audio.play();
-        playIcon.textContent = "❚❚";
+        playBtn.textContent = "❚❚";
         eq.classList.add('playing');
       } else {
         audio.pause();
-        playIcon.textContent = "▶";
+        playBtn.textContent = "▶";
         eq.classList.remove('playing');
       }
     }
 
     function next() {
-      let idx = isShuffle ? Math.floor(Math.random() * songs.length) : (i + 1) % songs.length;
-      loadTrack(idx, true);
+      let nextIdx = shuffle ? Math.floor(Math.random() * songs.length) : (i + 1) % songs.length;
+      loadTrack(nextIdx);
     }
 
     function prev() {
-      let idx = (i - 1 + songs.length) % songs.length;
-      loadTrack(idx, true);
+      let prevIdx = (i - 1 + songs.length) % songs.length;
+      loadTrack(prevIdx);
     }
 
-    // Progress
+    // Original Progress & Sync
     audio.ontimeupdate = () => {
       const p = (audio.currentTime / audio.duration) * 100;
       document.getElementById('seek').value = p || 0;
@@ -266,60 +319,79 @@
       audio.currentTime = (e.target.value / 100) * audio.duration;
     };
 
-    audio.onended = () => next();
+    audio.onended = () => repeat ? audio.play() : next();
 
     function formatTime(s) {
+      if(isNaN(s)) return "0:00";
       let m = Math.floor(s/60), sec = Math.floor(s%60);
       return m + ":" + (sec < 10 ? "0"+sec : sec);
     }
 
-    // Sistem Request WA (Sesuai kode asli kamu)
+    // Original WhatsApp System
     function openReq() { document.getElementById('reqPopup').style.display = 'block'; }
     function sendReq() {
-      const n = document.getElementById('rNama').value;
-      const l = document.getElementById('rLagu').value;
-      const u = document.getElementById('rUrl').value;
-      if(!n || !l || !u) return alert("Isi semua data!");
+      const n = document.getElementById('rNama').value, l = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
+      if(!n || !l || !u) return showToast("Mohon isi semua field!");
       const text = `Format Req Lagu\n\nNama : ${n}\nNama Lagu : ${l}\nUrl : ${u}`;
       window.open("https://wa.me/62895329018240?text=" + encodeURIComponent(text));
     }
 
-    // Sistem List & Favorite (Sesuai kode asli kamu)
+    // Original List & Fav System
     function openList(favOnly) {
       const container = document.getElementById('songContainer');
       let list = favOnly ? songs.filter(s => fav.includes(s.url)) : songs;
-      
-      container.innerHTML = list.map(s => `
-        <div class="song-item ${songs.indexOf(s) === i ? 'active' : ''}" onclick="loadTrack(${songs.indexOf(s)}, true)">
-          <div style="flex:1">
-            <div style="font-weight:600">${s.title}</div>
-            <div style="font-size:12px; opacity:0.6">${s.by}</div>
-          </div>
-          <span onclick="toggleFav('${s.url}', event)">${fav.includes(s.url) ? '⭐' : '☆'}</span>
-        </div>
-      `).join('');
+      container.innerHTML = list.map((s) => {
+          const idx = songs.indexOf(s);
+          return `
+            <div class="song-item ${idx === i ? 'playing' : ''}" onclick="loadTrack(${idx})">
+              <div style="flex:1">
+                <div style="font-weight:600; font-size:14px;">${s.title}</div>
+                <div style="font-size:12px; color:var(--text-dim)">${s.by}</div>
+              </div>
+              <span onclick="toggleFav('${s.url}', event)" style="color: ${fav.includes(s.url) ? '#1db954' : '#555'}; font-size: 20px;">⭐</span>
+            </div>
+          `;
+      }).join('');
       document.getElementById('popupList').style.display = 'block';
     }
 
     function toggleFav(url, e) {
       e.stopPropagation();
-      if(fav.includes(url)) fav = fav.filter(x => x !== url);
-      else fav.push(url);
+      fav = fav.includes(url) ? fav.filter(x => x !== url) : [...fav, url];
       localStorage.setItem("exeFav", JSON.stringify(fav));
-      openList(false);
+      showToast(fav.includes(url) ? "Ditambahkan ke Favorit" : "Dihapus dari Favorit");
+      openList(document.querySelectorAll('.song-item').length < songs.length);
     }
 
-    function toggleShuffle() {
-      isShuffle = !isShuffle;
-      document.getElementById('shufBtn').classList.toggle('active', isShuffle);
+    function toggleShuffle() { shuffle = !shuffle; document.getElementById('shufBtn').classList.toggle('active', shuffle); showToast(shuffle ? "Shuffle Aktif" : "Shuffle Mati"); }
+    function toggleRepeat() { repeat = !repeat; document.getElementById('repBtn').classList.toggle('active', repeat); showToast(repeat ? "Repeat Aktif" : "Repeat Mati"); }
+
+    function copyURL() {
+      navigator.clipboard.writeText(songs[i].url);
+      showToast("URL disalin!");
+    }
+
+    function shareCurrentSong() {
+        const text = `Dengarkan lagu keren ini di ExeMusic: ${songs[i].title} oleh ${songs[i].by}`;
+        if(navigator.share) navigator.share({ title: 'ExeMusic', text: text, url: window.location.href });
+        else copyURL();
+    }
+
+    function downloadAudio() {
+        window.open(songs[i].url, '_blank');
+        showToast("Membuka link download...");
+    }
+
+    function showToast(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
     }
 
     function filterSongs() {
       const q = document.getElementById('searchInput').value.toLowerCase();
-      const items = document.querySelectorAll('.song-item');
-      items.forEach(item => {
-        const text = item.innerText.toLowerCase();
-        item.style.display = text.includes(q) ? 'flex' : 'none';
+      document.querySelectorAll('.song-item').forEach(el => {
+        el.style.display = el.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
       });
     }
   </script>
