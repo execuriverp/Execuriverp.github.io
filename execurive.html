@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Execurive Community | Forum</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lc0slUsAAAAAMhzmDihECU_HE64DJYNh6DlNOcz"></script>
+    
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcM11UsAAAAABIgzvy_AXQeott1lqSxqlhiVn6w"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Config Firebase kamu sudah benar
         const firebaseConfig = {
           apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
           authDomain: "execuriverp.firebaseapp.com",
@@ -24,91 +25,89 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Fungsi Kirim OTP
-        window.onSubmit = (token) => {
+        window.onSubmit = async (token) => {
             const phoneNumber = document.getElementById('phone').value;
-            if(!phoneNumber.startsWith('+')) {
-                alert("Gunakan format internasional! Contoh: +628123...");
+            
+            if(!phoneNumber.startsWith('+62')) {
+                alert("Gunakan format Indonesia! Contoh: +628123456789");
                 return;
             }
+
+            // Cek Blacklist
+            try {
+                const blacklistRef = doc(db, "blacklist", phoneNumber);
+                const blacklistSnap = await getDoc(blacklistRef);
+                if (blacklistSnap.exists()) {
+                    alert("ACCESS DENIED: Nomor ini telah di-blacklist.");
+                    return; 
+                }
+            } catch (e) { console.error(e); }
             
-            const appVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
-                'size': 'invisible'
-            });
+            // Firebase Recaptcha
+            const appVerifier = new RecaptchaVerifier(auth, 'sign-in-button', { 'size': 'invisible' });
 
             signInWithPhoneNumber(auth, phoneNumber, appVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
-                    alert("OTP Berhasil Dikirim!");
-                    document.getElementById('otp-section').classList.remove('hidden');
+                    alert("OTP Berhasil Dikirim ke WhatsApp/SMS!");
+                    document.getElementById('otp-section').style.display = 'block';
                 }).catch((error) => {
-                    alert("Gagal Kirim OTP: " + error.message);
+                    alert("Gagal: " + error.message);
                 });
         };
 
-        // Fungsi Verifikasi OTP
         window.verifikasiOTP = () => {
             const code = document.getElementById('otp-code').value;
-            window.confirmationResult.confirm(code).then((result) => {
-                const user = result.user;
-                alert("Login Berhasil! Selamat datang di Execurive.");
-                // Arahkan ke halaman forum utama setelah login
-                window.location.href = "dashboard.html"; 
-            }).catch((error) => {
-                alert("Kode OTP Salah!");
-            });
+            window.confirmationResult.confirm(code).then(() => {
+                alert("Selamat datang di Execurive!");
+                window.location.href = "forum.html"; 
+            }).catch(() => alert("Kode OTP Salah!"));
         };
     </script>
 </head>
-<body class="bg-[#0b0e14] text-gray-200 font-sans">
+<body class="bg-[#0b0e11] text-white font-sans selection:bg-blue-500">
 
-    <nav class="p-5 bg-[#161b22] border-b border-blue-900 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-black tracking-widest text-blue-500">EXECURIVE <span class="text-white">RP</span></h1>
-            <div class="hidden md:block space-x-6 text-xs font-bold text-gray-400">
-                <a href="#" class="hover:text-blue-400">HOME</a>
-                <a href="#" class="hover:text-blue-400">GUIDE</a>
-                <a href="#" class="hover:text-blue-400">COMMUNITY</a>
+    <div class="min-h-screen flex flex-col items-center justify-center px-4">
+        <div class="mb-8 text-center">
+            <h1 class="text-4xl font-black tracking-[0.2em] text-blue-600">EXECURIVE</h1>
+            <p class="text-xs tracking-[0.5em] text-gray-500 uppercase">Community Forum</p>
+        </div>
+
+        <div class="bg-[#151921] border border-gray-800 p-8 rounded-lg w-full max-w-[400px] shadow-2xl">
+            <h2 class="text-lg font-bold mb-6 border-l-4 border-blue-600 pl-3 uppercase tracking-tighter text-gray-300">Member Login</h2>
+            
+            <div class="mb-5">
+                <input id="phone" type="text" placeholder="+628123..." 
+                    class="w-full bg-[#0b0e11] border border-gray-700 p-4 rounded text-white focus:outline-none focus:border-blue-600 transition-all font-mono">
+                <p class="text-[10px] text-gray-600 mt-2">*Gunakan kode negara (Contoh: +628...)</p>
             </div>
-        </div>
-    </nav>
-
-    <div class="flex flex-col items-center justify-center min-h-[80vh] px-4">
-        <div class="bg-blue-600/10 text-blue-400 px-4 py-1 rounded-full text-xs font-bold mb-4 border border-blue-600/20">
-            OFFICIAL FORUM COMMUNITY
-        </div>
-
-        <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-2 text-center">WELCOME TO <span class="text-blue-600 font-black">EXECURIVE</span></h2>
-        <p class="text-gray-500 mb-10 text-center max-w-lg">Gunakan nomor WhatsApp aktif kamu untuk masuk ke dalam forum komunitas Execurive Roleplay.</p>
-
-        <div class="bg-[#161b22] p-8 rounded-2xl border border-gray-800 w-full max-w-md shadow-2xl">
-            <label class="block text-sm font-semibold text-gray-400 mb-2 text-center uppercase tracking-widest">Phone Number</label>
-            <input id="phone" type="text" placeholder="+62 8xx xxxx xxxx" 
-                class="w-full p-4 rounded-xl bg-[#0b0e14] border border-gray-700 focus:border-blue-500 mb-6 text-white text-center text-xl font-mono focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
             
             <button 
-                class="g-recaptcha w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl transition duration-300 shadow-lg shadow-blue-600/20 uppercase tracking-widest"
-                data-sitekey="6Lc0slUsAAAAAMhzmDihECU_HE64DJYNh6DlNOcz"
+                class="g-recaptcha w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 rounded transition-all shadow-lg"
+                data-sitekey="6LcM11UsAAAAABIgzvy_AXQeott1lqSxqlhiVn6w"
                 data-callback='onSubmit'
                 data-action='submit'
                 id="sign-in-button">
-                Login via WhatsApp
+                LOGIN TO FORUM
             </button>
 
-            <div id="otp-section" class="mt-8 pt-8 border-t border-gray-800 hidden animate-pulse">
-                <p class="text-center text-blue-400 text-sm mb-4 font-bold">MASUKKAN KODE OTP</p>
-                <input id="otp-code" type="text" placeholder="000000" 
-                    class="w-full p-4 rounded-xl bg-gray-900 border border-blue-900 mb-4 text-center text-2xl tracking-[0.5em] font-black text-white focus:border-blue-400 outline-none">
-                <button onclick="verifikasiOTP()" class="w-full bg-green-600 py-4 rounded-xl font-black hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                    KONFIRMASI
-                </button>
+            <div id="otp-section" class="mt-8 hidden animate-in fade-in duration-500">
+                <div class="border-t border-gray-800 pt-6">
+                    <input id="otp-code" type="text" placeholder="OTP CODE" 
+                        class="w-full bg-black border border-blue-900 p-4 rounded text-center text-2xl tracking-[0.5em] font-black text-blue-500 mb-4 focus:outline-none">
+                    <button onclick="verifikasiOTP()" class="w-full bg-green-700 hover:bg-green-600 py-3 rounded font-bold uppercase text-xs tracking-widest">
+                        Verify Identity
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="mt-8 flex items-center gap-2 text-gray-600 text-[10px] uppercase font-bold tracking-widest">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            Secured by Firebase & ReCAPTCHA Enterprise
+        <div class="mt-8 flex gap-6 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+            <a href="#" class="hover:text-blue-500 transition">UCP System</a>
+            <a href="#" class="hover:text-blue-500 transition">Rules</a>
+            <a href="#" class="hover:text-blue-500 transition">Community</a>
         </div>
     </div>
 
