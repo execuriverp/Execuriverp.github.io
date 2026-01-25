@@ -12,7 +12,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+    
         const firebaseConfig = {
           apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
           authDomain: "execuriverp.firebaseapp.com",
@@ -22,76 +22,70 @@
           messagingSenderId: "672894448184",
           appId: "1:672894448184:web:2d9635ca19ea94c3e7eccd",
         };
-
+    
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        window.onSubmit = async (token) => {
+    
+        // Inisialisasi Recaptcha Bawaan Firebase (Lebih Stabil)
+        window.onload = () => {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    // reCAPTCHA solved, biarkan fungsi login berjalan
+                }
+            });
+        };
+    
+        window.prosesLogin = async () => {
             const phoneNumber = document.getElementById('phone').value;
             
             if(!phoneNumber.startsWith('+62')) {
-                alert("Gunakan format Indonesia! Contoh: +628123456789");
+                alert("Gunakan format Indonesia! (+628...)");
                 return;
             }
-
+    
             // Cek Blacklist
             try {
                 const blacklistRef = doc(db, "blacklist", phoneNumber);
                 const blacklistSnap = await getDoc(blacklistRef);
                 if (blacklistSnap.exists()) {
-                    alert("ACCESS DENIED: Nomor ini telah di-blacklist.");
+                    alert("NOMOR DIBLOKIR!");
                     return; 
                 }
             } catch (e) { console.error(e); }
-            
-            // Firebase Recaptcha
-            const appVerifier = new RecaptchaVerifier(auth, 'sign-in-button', { 'size': 'invisible' });
-
+    
+            const appVerifier = window.recaptchaVerifier;
+    
             signInWithPhoneNumber(auth, phoneNumber, appVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
-                    alert("OTP Berhasil Dikirim ke WhatsApp/SMS!");
-                    document.getElementById('otp-section').style.display = 'block';
+                    alert("OTP Terkirim!");
+                    document.getElementById('otp-section').classList.remove('hidden');
                 }).catch((error) => {
                     alert("Gagal: " + error.message);
+                    // Reset recaptcha jika gagal agar bisa klik lagi
+                    window.recaptchaVerifier.render().then(widgetId => {
+                        grecaptcha.reset(widgetId);
+                    });
                 });
         };
-
+    
         window.verifikasiOTP = () => {
             const code = document.getElementById('otp-code').value;
             window.confirmationResult.confirm(code).then(() => {
-                alert("Selamat datang di Execurive!");
+                alert("Login Berhasil!");
                 window.location.href = "forum.html"; 
-            }).catch(() => alert("Kode OTP Salah!"));
+            }).catch(() => alert("OTP SALAH!"));
         };
     </script>
-</head>
-<body class="bg-[#0b0e11] text-white font-sans selection:bg-blue-500">
-
-    <div class="min-h-screen flex flex-col items-center justify-center px-4">
-        <div class="mb-8 text-center">
-            <h1 class="text-4xl font-black tracking-[0.2em] text-blue-600">EXECURIVE</h1>
-            <p class="text-xs tracking-[0.5em] text-gray-500 uppercase">Community Forum</p>
-        </div>
-
-        <div class="bg-[#151921] border border-gray-800 p-8 rounded-lg w-full max-w-[400px] shadow-2xl">
-            <h2 class="text-lg font-bold mb-6 border-l-4 border-blue-600 pl-3 uppercase tracking-tighter text-gray-300">Member Login</h2>
-            
-            <div class="mb-5">
-                <input id="phone" type="text" placeholder="+628123..." 
-                    class="w-full bg-[#0b0e11] border border-gray-700 p-4 rounded text-white focus:outline-none focus:border-blue-600 transition-all font-mono">
-                <p class="text-[10px] text-gray-600 mt-2">*Gunakan kode negara (Contoh: +628...)</p>
-            </div>
-            
-            <button 
-                class="g-recaptcha w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 rounded transition-all shadow-lg"
-                data-sitekey="6LcM11UsAAAAABIgzvy_AXQeott1lqSxqlhiVn6w"
-                data-callback='onSubmit'
-                data-action='submit'
-                id="sign-in-button">
-                LOGIN TO FORUM
-            </button>
+    
+    <button 
+        onclick="prosesLogin()"
+        id="sign-in-button"
+        class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 rounded transition-all shadow-lg uppercase">
+        LOGIN TO FORUM
+    </button>
 
             <div id="otp-section" class="mt-8 hidden animate-in fade-in duration-500">
                 <div class="border-t border-gray-800 pt-6">
