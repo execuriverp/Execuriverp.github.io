@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Community | Forum</title>
+    <title>Executive Community | Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lc0slUsAAAAAMhzmDihECU_HE64DJYNh6DlNOcz"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
@@ -22,65 +25,61 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Fungsi Login
-        window.setupRecaptcha = () => {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
+        // Fungsi yang dipanggil setelah reCAPTCHA lolos
+        window.onSubmit = (token) => {
+            const phoneNumber = document.getElementById('phone').value;
+            if(!phoneNumber) {
+                alert("Masukkan nomor HP dulu!");
+                return;
+            }
+            
+            // Setup Firebase Recaptcha (Hidden)
+            const appVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
                 'size': 'invisible'
             });
-        };
-
-        window.kirimOTP = () => {
-            const phoneNumber = document.getElementById('phone').value;
-            setupRecaptcha();
-            const appVerifier = window.recaptchaVerifier;
 
             signInWithPhoneNumber(auth, phoneNumber, appVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
-                    alert("OTP Terkirim ke WhatsApp/SMS!");
+                    alert("OTP Terkirim!");
                     document.getElementById('otp-section').classList.remove('hidden');
                 }).catch((error) => {
-                    alert("Error: " + error.message);
+                    alert("Gagal: " + error.message);
                 });
         };
     </script>
 </head>
 <body class="bg-gray-900 text-white font-sans">
 
-    <nav class="bg-black p-4 border-b border-blue-600">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-tighter text-blue-500">EXECUTIVE <span class="text-white">COMMUNITY</span></h1>
-            <div class="space-x-4 text-sm">
-                <a href="#" class="hover:text-blue-400">HOME</a>
-                <a href="#" class="hover:text-blue-400">FORUMS</a>
-                <a href="#" class="hover:text-blue-400">UCP</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <h2 class="text-4xl md:text-6xl font-extrabold mb-4">THE NEXT GENERATION OF <span class="text-blue-600">ROLEPLAY</span></h2>
-        <p class="text-gray-400 mb-8 max-w-2xl">Selamat datang di forum Executive Roleplay. Tempat berkumpulnya komunitas player WhatsApp Roleplay terbesar.</p>
+    <div class="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+        <h1 class="text-3xl font-bold mb-8 text-blue-500 underline">EXECUTIVE COMMUNITY</h1>
         
-        <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 w-full max-w-md">
-            <h3 class="text-xl mb-4 font-semibold">Login Member</h3>
-            <input id="phone" type="text" placeholder="+62812345xxx" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 mb-4 text-white">
+        <div class="bg-gray-800 p-8 rounded-xl border border-gray-700 w-full max-w-md shadow-2xl">
+            <h3 class="text-xl mb-6 font-semibold">Login via WhatsApp</h3>
             
-            <button id="sign-in-button" onclick="kirimOTP()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition">
-                Masuk via WhatsApp
+            <input id="phone" type="text" placeholder="+62812345678" 
+                class="w-full p-4 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 mb-6 text-white text-center text-lg">
+            
+            <button 
+                class="g-recaptcha w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg transition duration-300"
+                data-sitekey="6Lc0slUsAAAAAMhzmDihECU_HE64DJYNh6DlNOcz"
+                data-callback='onSubmit'
+                data-action='submit'
+                id="sign-in-button">
+                VERIFIKASI & KIRIM OTP
             </button>
 
-            <div id="otp-section" class="mt-4 hidden text-left">
-                <p class="text-sm text-gray-400 mb-2">Masukkan Kode OTP:</p>
-                <input id="otp-code" type="text" class="w-full p-3 rounded bg-gray-700 border border-gray-600 mb-2">
-                <button onclick="verifikasiOTP()" class="w-full bg-green-600 py-2 rounded font-bold">Verifikasi</button>
+            <div id="otp-section" class="mt-8 pt-6 border-t border-gray-700 hidden">
+                <input id="otp-code" type="text" placeholder="Masukkan 6 Digit OTP" 
+                    class="w-full p-4 rounded bg-gray-900 border border-blue-500 mb-4 text-center tracking-[1em] font-bold">
+                <button onclick="verifikasiOTP()" class="w-full bg-green-600 py-3 rounded-lg font-bold hover:bg-green-700">
+                    KONFIRMASI LOGIN
+                </button>
             </div>
         </div>
+        
+        <p class="mt-6 text-gray-500 text-sm italic">"Don't just play, be an Executive."</p>
     </div>
-
-    <footer class="mt-10 p-10 bg-black text-center text-gray-500 text-xs">
-        &copy; 2026 Executive Community. Inspired by JGRP.
-    </footer>
 
 </body>
 </html>
