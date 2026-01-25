@@ -1,78 +1,142 @@
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execurive Community | Forum Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
-      authDomain: "execuriverp.firebaseapp.com",
-      databaseURL: "https://execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "execuriverp",
-      storageBucket: "execuriverp.firebasestorage.app",
-      messagingSenderId: "672894448184",
-      appId: "1:672894448184:web:2d9635ca19ea94c3e7eccd",
-    };
+    <script type="module">
+        // Import Firebase SDK langsung dari CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        // Konfigurasi Firebase Execurive RP
+        const firebaseConfig = {
+          apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
+          authDomain: "execuriverp.firebaseapp.com",
+          databaseURL: "https://execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "execuriverp",
+          storageBucket: "execuriverp.firebasestorage.app",
+          messagingSenderId: "672894448184",
+          appId: "1:672894448184:web:2d9635ca19ea94c3e7eccd",
+        };
 
-    // Inisialisasi Recaptcha Bawaan Firebase (Lebih Stabil)
-    window.onload = () => {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
-            'size': 'invisible',
-            'callback': (response) => {
-                // reCAPTCHA solved, biarkan fungsi login berjalan
-            }
-        });
-    };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    window.prosesLogin = async () => {
-        const phoneNumber = document.getElementById('phone').value;
-        
-        if(!phoneNumber.startsWith('+62')) {
-            alert("Gunakan format Indonesia! (+628...)");
-            return;
-        }
-
-        // Cek Blacklist
-        try {
-            const blacklistRef = doc(db, "blacklist", phoneNumber);
-            const blacklistSnap = await getDoc(blacklistRef);
-            if (blacklistSnap.exists()) {
-                alert("NOMOR DIBLOKIR!");
-                return; 
-            }
-        } catch (e) { console.error(e); }
-
-        const appVerifier = window.recaptchaVerifier;
-
-        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-            .then((confirmationResult) => {
-                window.confirmationResult = confirmationResult;
-                alert("OTP Terkirim!");
-                document.getElementById('otp-section').classList.remove('hidden');
-            }).catch((error) => {
-                alert("Gagal: " + error.message);
-                // Reset recaptcha jika gagal agar bisa klik lagi
-                window.recaptchaVerifier.render().then(widgetId => {
-                    grecaptcha.reset(widgetId);
-                });
+        // Inisialisasi Recaptcha saat halaman dimuat
+        window.onload = () => {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    console.log("reCAPTCHA solved");
+                }
             });
-    };
+        };
 
-    window.verifikasiOTP = () => {
-        const code = document.getElementById('otp-code').value;
-        window.confirmationResult.confirm(code).then(() => {
-            alert("Login Berhasil!");
-            window.location.href = "forum.html"; 
-        }).catch(() => alert("OTP SALAH!"));
-    };
-</script>
+        // Fungsi Utama Login
+        window.prosesLogin = async () => {
+            const phoneNumber = document.getElementById('phone').value;
+            
+            if(!phoneNumber.startsWith('+62')) {
+                alert("Harus pakai +62! Contoh: +628123456789");
+                return;
+            }
 
-<button 
-    onclick="prosesLogin()"
-    id="sign-in-button"
-    class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 rounded transition-all shadow-lg uppercase">
-    LOGIN TO FORUM
-</button>
+            // 1. Cek Blacklist di Database Firestore
+            try {
+                const blacklistRef = doc(db, "blacklist", phoneNumber);
+                const blacklistSnap = await getDoc(blacklistRef);
+                if (blacklistSnap.exists()) {
+                    alert("AKSES DITOLAK: Nomor ini diblokir dari Execurive.");
+                    return; 
+                }
+            } catch (e) {
+                console.error("Cek database gagal:", e);
+            }
+
+            // 2. Jalankan Firebase Phone Auth
+            const appVerifier = window.recaptchaVerifier;
+
+            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    alert("OTP Berhasil Dikirim ke WhatsApp/SMS!");
+                    document.getElementById('otp-section').classList.remove('hidden');
+                }).catch((error) => {
+                    alert("Error: " + error.message);
+                    // Reset recaptcha jika terjadi kesalahan
+                    if (window.recaptchaVerifier) {
+                        window.recaptchaVerifier.render().then(widgetId => {
+                            grecaptcha.reset(widgetId);
+                        });
+                    }
+                });
+        };
+
+        // Fungsi Verifikasi Kode OTP
+        window.verifikasiOTP = () => {
+            const code = document.getElementById('otp-code').value;
+            window.confirmationResult.confirm(code).then((result) => {
+                alert("Login Berhasil! Selamat datang di komunitas.");
+                window.location.href = "forum.html"; 
+            }).catch((error) => {
+                alert("Kode OTP Salah atau Kadaluarsa!");
+            });
+        };
+    </script>
+</head>
+<body class="bg-[#0b0e11] text-gray-200 font-sans min-h-screen flex flex-col items-center justify-center px-4">
+
+    <div class="mb-10 text-center">
+        <h1 class="text-5xl font-black tracking-tighter text-white italic">
+            EXECURIVE <span class="text-blue-600">RP</span>
+        </h1>
+        <div class="h-1 w-20 bg-blue-600 mx-auto mt-2"></div>
+    </div>
+
+    <div class="bg-[#151921] border border-gray-800 p-8 rounded-2xl w-full max-w-[420px] shadow-2xl">
+        <h2 class="text-xl font-bold mb-6 text-gray-100 flex items-center gap-2">
+            <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+            MEMBER LOGIN
+        </h2>
+        
+        <div class="mb-6">
+            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2">Nomor WhatsApp</label>
+            <input id="phone" type="text" placeholder="+628123456789" 
+                class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white text-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all font-mono">
+        </div>
+        
+        <button 
+            id="sign-in-button"
+            onclick="prosesLogin()"
+            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-900/20 uppercase tracking-widest text-sm">
+            Kirim Kode OTP
+        </button>
+
+        <div id="otp-section" class="mt-8 pt-8 border-t border-gray-800 hidden">
+            <label class="block text-center text-xs font-bold text-blue-400 uppercase mb-4">Masukkan 6 Digit Kode</label>
+            <input id="otp-code" type="text" placeholder="000000" 
+                class="w-full bg-black border border-blue-900 p-4 rounded-xl text-center text-3xl tracking-[0.4em] font-black text-white focus:outline-none focus:border-blue-400 mb-4">
+            <button onclick="verifikasiOTP()" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all">
+                Konfirmasi Login
+            </button>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center">
+        <p class="text-gray-600 text-[10px] uppercase tracking-widest leading-loose">
+            Belum punya akun? Login otomatis mendaftarkan nomor Anda.<br>
+            Patuhi <span class="text-blue-800">Server Rules</span> & <span class="text-blue-800">Community Guidelines</span>.
+        </p>
+    </div>
+
+    <div class="fixed bottom-4 right-4 text-[9px] text-gray-700 font-mono">
+        EXECURIVE-WEB-V1.0.2
+    </div>
+
+</body>
+</html>
