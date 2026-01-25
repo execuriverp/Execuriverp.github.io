@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ExeMusic v5.0 - Ultimate Stable</title>
+    <title>ExeMusic v5.1 - Connected</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -12,15 +12,15 @@
     <style>
         :root {
             --primary: #1db954;
-            --dark: #121212;
+            --dark: #000000;
             --glass: rgba(255, 255, 255, 0.1);
-            --border: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background: #000;
+            background: var(--dark);
             color: white;
             height: 100vh;
             display: flex; justify-content: center; align-items: center;
@@ -30,106 +30,113 @@
 
         .container {
             width: 100%; max-width: 400px; height: 100%;
-            background: rgba(18, 18, 18, 0.8);
+            background: rgba(18, 18, 18, 0.85);
             backdrop-filter: blur(20px);
             display: flex; flex-direction: column;
             padding: 25px;
             position: relative;
         }
 
-        /* Header & Visuals */
+        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; height: 50px; }
-        .badge { background: #333; padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; }
+        .logo { font-weight: bold; font-size: 18px; letter-spacing: 1px; }
+        .status { font-size: 11px; padding: 5px 12px; background: rgba(255,255,255,0.1); border-radius: 20px; cursor: pointer; border: 1px solid transparent; transition: 0.3s; }
+        .status.active { color: var(--primary); border-color: var(--primary); background: rgba(29, 185, 84, 0.1); }
         
-        .album-art {
+        /* Album Art */
+        .art-box {
             flex: 1; margin: 20px 0;
-            background: #222; border-radius: 20px;
+            background: #111; border-radius: 25px;
             border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             position: relative; overflow: hidden;
         }
-
-        /* Animasi Visualizer */
-        .bars { display: flex; gap: 5px; align-items: flex-end; height: 50px; }
-        .bar { width: 8px; background: var(--primary); border-radius: 5px; animation: bounce 1s infinite; }
-        .paused .bar { animation: none; height: 5px !important; transition: 0.5s; }
-        .bar:nth-child(1) { animation-duration: 0.8s; }
-        .bar:nth-child(2) { animation-duration: 1.2s; }
-        .bar:nth-child(3) { animation-duration: 1.0s; }
+        
+        /* Visualizer */
+        .bars { display: flex; gap: 6px; align-items: flex-end; height: 60px; }
+        .bar { width: 8px; background: var(--primary); border-radius: 5px; animation: bounce 1s infinite ease-in-out; }
+        .paused .bar { animation: none; height: 5px !important; transition: 0.5s; opacity: 0.3; }
+        .bar:nth-child(1) { animation-duration: 0.8s; } .bar:nth-child(2) { animation-duration: 1.2s; } .bar:nth-child(3) { animation-duration: 1.0s; }
         @keyframes bounce { 0%, 100% { height: 10px; } 50% { height: 100%; } }
 
+        /* Info & Progress */
+        .info { text-align: center; margin-bottom: 25px; }
+        .info h2 { font-size: 22px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info p { color: #b3b3b3; font-size: 14px; cursor: pointer; }
+
+        .progress { margin-bottom: 10px; }
+        input[type=range] { width: 100%; accent-color: var(--primary); height: 4px; border-radius: 5px; cursor: pointer; background: #333; outline: none; }
+        .times { display: flex; justify-content: space-between; font-size: 11px; color: #777; margin-top: 8px; }
+
         /* Controls */
-        .info { text-align: center; margin-bottom: 20px; }
-        .info h2 { font-size: 20px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .info p { color: #888; font-size: 13px; cursor: pointer; }
-
-        .progress-area { margin-bottom: 20px; }
-        input[type=range] { width: 100%; accent-color: var(--primary); height: 4px; border-radius: 5px; cursor: pointer; }
-        .times { display: flex; justify-content: space-between; font-size: 11px; color: #777; margin-top: 5px; }
-
-        .controls { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
-        .btn-ctrl { background: none; border: none; color: white; font-size: 24px; cursor: pointer; opacity: 0.8; }
+        .controls { display: flex; justify-content: space-evenly; align-items: center; margin-bottom: 20px; }
+        .btn-icon { background: none; border: none; color: white; font-size: 28px; cursor: pointer; opacity: 0.8; transition: 0.2s; }
+        .btn-icon:active { transform: scale(0.9); }
         .btn-play { 
-            width: 65px; height: 65px; border-radius: 50%; 
-            background: var(--primary); color: black; 
+            width: 70px; height: 70px; border-radius: 50%; 
+            background: var(--primary); color: black; border: none;
             display: flex; justify-content: center; align-items: center; 
-            font-size: 28px; box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
+            font-size: 30px; box-shadow: 0 8px 20px rgba(29, 185, 84, 0.3);
+            cursor: pointer; transition: 0.2s;
         }
+        .btn-play:active { transform: scale(0.95); }
 
         .footer { 
             background: var(--glass); padding: 15px; border-radius: 20px;
             display: flex; justify-content: space-around; 
         }
+        .footer button { background: none; border: none; color: white; font-size: 20px; opacity: 0.6; cursor: pointer; }
         
-        /* Modals & Popups */
+        /* Popups */
         .modal { 
             position: fixed; inset: 0; z-index: 100; 
             background: rgba(0,0,0,0.9); display: none; 
             justify-content: center; align-items: flex-end; 
         }
         .sheet { 
-            width: 100%; max-width: 400px; background: #1a1a1a; 
-            border-radius: 25px 25px 0 0; padding: 25px; 
-            max-height: 70vh; overflow-y: auto; 
+            width: 100%; max-width: 400px; background: #1e1e1e; 
+            border-radius: 30px 30px 0 0; padding: 30px; 
+            max-height: 75vh; overflow-y: auto; 
             animation: slideUp 0.3s ease;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        input.inp { width: 100%; padding: 15px; background: #333; border: none; color: white; border-radius: 10px; margin-bottom: 10px; }
-        button.btn-act { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        input.inp { width: 100%; padding: 16px; background: #2a2a2a; border: none; color: white; border-radius: 12px; margin-bottom: 12px; font-size: 14px; }
+        button.btn-act { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; color: black; }
         
-        .toast {
+        #toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #333; color: white; padding: 10px 20px; border-radius: 50px;
-            font-size: 12px; z-index: 200; display: none; border: 1px solid #444;
+            background: var(--primary); color: black; padding: 10px 25px; border-radius: 50px;
+            font-size: 12px; font-weight: bold; z-index: 200; display: none; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
-        #adminBtn { display: none; color: gold; }
+        #adminIcon { display: none; color: #f1c40f !important; opacity: 1 !important; }
     </style>
 </head>
 <body>
 
-    <div class="toast" id="toast">Notifikasi System</div>
+    <div id="toast">Notifikasi</div>
 
     <div class="container">
         <div class="header">
-            <span class="badge">LIVE</span>
-            <span class="badge" id="statusBadge" onclick="handleAuth()">Not Logged In</span>
+            <div class="logo">ExeMusic</div>
+            <div class="status" id="loginStatus" onclick="authAction()">Login</div>
         </div>
 
-        <div class="album-art">
+        <div class="art-box">
             <div class="bars paused" id="visualizer">
                 <div class="bar"></div><div class="bar"></div><div class="bar"></div>
             </div>
         </div>
 
         <div class="info">
-            <h2 id="title">Memuat Data...</h2>
-            <p id="artist">@exemusic</p>
+            <h2 id="title">Menghubungkan...</h2>
+            <p id="artist">System</p>
         </div>
 
-        <div class="progress-area">
+        <div class="progress">
             <input type="range" id="seek" value="0">
             <div class="times">
                 <span id="cur">0:00</span>
@@ -138,15 +145,15 @@
         </div>
 
         <div class="controls">
-            <button class="btn-ctrl" onclick="prev()">⏮</button>
+            <button class="btn-icon" onclick="prev()">⏮</button>
             <button class="btn-play" onclick="togglePlay()" id="playBtn">▶</button>
-            <button class="btn-ctrl" onclick="next()">⏭</button>
+            <button class="btn-icon" onclick="next()">⏭</button>
         </div>
 
         <div class="footer">
-            <button class="btn-ctrl" onclick="openList()">☰</button>
-            <button class="btn-ctrl" onclick="openAdd()">➕</button>
-            <button class="btn-ctrl" id="adminBtn" onclick="openAdmin()">🛡️</button>
+            <button onclick="openList()">☰</button>
+            <button onclick="openAdd()">➕</button>
+            <button id="adminIcon" onclick="openAdmin()">🛡️</button>
         </div>
     </div>
 
@@ -155,112 +162,110 @@
     </div>
 
     <script>
-        // --- KONFIGURASI ---
-        // Ganti String di bawah ini dengan Config kamu jika perlu.
-        // Saya pakai String langsung untuk menghindari error decode base64
+        // --- KONFIGURASI KAMU (SUDAH DISESUAIKAN) ---
+        // Ini adalah config dari data yang kamu kirim barusan
         const config = {
-            apiKey: atob("QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ="), 
+            apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
             authDomain: "exemusic-execuriverp.firebaseapp.com",
             databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "exemusic-execuriverp"
+            projectId: "exemusic-execuriverp",
+            storageBucket: "exemusic-execuriverp.firebasestorage.app",
+            messagingSenderId: "722057744401",
+            appId: "1:722057744401:web:cd6a6a103692059bda61b0",
+            measurementId: "G-2P56Y7QQ18"
         };
 
-        // --- INIT FIREBASE ---
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(config);
         }
         const auth = firebase.auth();
         const db = firebase.database();
         
-        // --- VARIABLES ---
         let songs = [];
         let index = 0;
-        let userData = null;
-        const audio = new Audio();
+        let user = null;
+        let audio = new Audio();
 
-        // --- AUTH SYSTEM (FIX STABILITAS) ---
-        // Paksa simpan sesi agar tidak logout sendiri
-        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .then(() => {
-                // Monitor Perubahan Auth
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        const statusBadge = document.getElementById('statusBadge');
-                        statusBadge.textContent = "Checking...";
-                        statusBadge.style.color = "yellow";
-
-                        db.ref('users/' + user.uid).on('value', (snapshot) => {
-                            if (snapshot.exists()) {
-                                userData = snapshot.val();
-                                statusBadge.textContent = "@" + userData.username;
-                                statusBadge.style.color = "#1db954";
-                                
-                                // Cek Admin
-                                if (userData.role === 'admin') {
-                                    document.getElementById('adminBtn').style.display = 'block';
-                                    toast("Mode Admin Aktif");
-                                }
-                            } else {
-                                // Jika user ada di Auth tapi tidak ada di DB (User Baru)
-                                openRegis();
-                            }
-                        });
+        // --- SISTEM LOGIN (PERSISTENT) ---
+        auth.onAuthStateChanged((u) => {
+            if (u) {
+                // User sedang login
+                const btn = document.getElementById('loginStatus');
+                btn.textContent = "Memuat...";
+                
+                db.ref('users/' + u.uid).on('value', snap => {
+                    if (snap.exists()) {
+                        user = snap.val();
+                        btn.textContent = "@" + user.username;
+                        btn.classList.add('active');
+                        
+                        // Cek Admin
+                        if (user.role === 'admin') {
+                            document.getElementById('adminIcon').style.display = 'block';
+                            showToast("Admin Mode Aktif");
+                        }
                     } else {
-                        document.getElementById('statusBadge').textContent = "Login";
-                        document.getElementById('statusBadge').style.color = "white";
-                        document.getElementById('adminBtn').style.display = 'none';
-                        userData = null;
+                        // User login tapi belum punya data di DB
+                        openRegis();
                     }
                 });
-            })
-            .catch((error) => {
-                console.error("Auth Error:", error);
-            });
-
-        function handleAuth() {
-            if (!auth.currentUser) {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider).catch(e => toast(e.message));
             } else {
-                if(confirm("Logout akun?")) auth.signOut().then(() => window.location.reload());
-            }
-        }
-
-        // --- MUSIC PLAYER ENGINE ---
-        db.ref('songs').on('value', (snap) => {
-            const data = snap.val();
-            if (data) {
-                songs = Object.keys(data).map(key => ({ ...data[key], id: key }));
-                if (!audio.src) loadSong(0, false);
-            } else {
-                document.getElementById('title').textContent = "Tidak ada lagu";
+                // User belum login / Logout
+                user = null;
+                const btn = document.getElementById('loginStatus');
+                btn.textContent = "Login";
+                btn.classList.remove('active');
+                document.getElementById('adminIcon').style.display = 'none';
             }
         });
 
-        function loadSong(idx, autoPlay = true) {
-            if (!songs[idx]) return;
-            index = idx;
+        function authAction() {
+            if (!auth.currentUser) {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                auth.signInWithPopup(provider).catch(e => alert(e.message));
+            } else {
+                if(confirm("Logout dari " + user.username + "?")) {
+                    auth.signOut().then(() => location.reload());
+                }
+            }
+        }
+
+        // --- MUSIK ENGINE ---
+        db.ref('songs').on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                songs = Object.keys(val).map(key => ({ ...val[key], id: key }));
+                if (!audio.src) loadSong(0, false);
+            } else {
+                document.getElementById('title').textContent = "Belum ada lagu";
+            }
+        });
+
+        function loadSong(i, play = true) {
+            if (!songs[i]) return;
+            index = i;
             audio.src = songs[index].url;
             document.getElementById('title').textContent = songs[index].title;
             document.getElementById('artist').textContent = "@" + songs[index].by;
             
-            if (autoPlay) {
+            if (play) {
                 audio.play();
-                updatePlayBtn(true);
+                updateUI(true);
             }
         }
 
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
-                updatePlayBtn(true);
+                updateUI(true);
             } else {
                 audio.pause();
-                updatePlayBtn(false);
+                updateUI(false);
             }
         }
 
-        function updatePlayBtn(isPlaying) {
+        function updateUI(isPlaying) {
             const btn = document.getElementById('playBtn');
             const vis = document.getElementById('visualizer');
             if (isPlaying) {
@@ -274,120 +279,108 @@
 
         function next() { loadSong((index + 1) % songs.length); }
         function prev() { loadSong((index - 1 + songs.length) % songs.length); }
-
+        
+        audio.onended = next;
+        
+        // Progress Bar Update
         audio.ontimeupdate = () => {
             const seek = document.getElementById('seek');
-            const cur = document.getElementById('cur');
-            const dur = document.getElementById('dur');
-            
-            if (!isNaN(audio.duration)) {
+            if(!isNaN(audio.duration)) {
                 seek.value = (audio.currentTime / audio.duration) * 100;
-                cur.textContent = formatTime(audio.currentTime);
-                dur.textContent = formatTime(audio.duration);
+                document.getElementById('cur').textContent = fmt(audio.currentTime);
+                document.getElementById('dur').textContent = fmt(audio.duration);
             }
         };
-        
         document.getElementById('seek').oninput = (e) => {
-            audio.currentTime = (e.target.value / 100) * audio.duration;
-        };
-
-        audio.onended = next;
-
-        function formatTime(s) {
-            let m = Math.floor(s / 60);
-            let sc = Math.floor(s % 60);
-            return m + ":" + (sc < 10 ? "0" + sc : sc);
+            audio.currentTime = (e.target.value/100) * audio.duration;
+        }
+        function fmt(s) {
+            let m = Math.floor(s/60), sc = Math.floor(s%60);
+            return m + ":" + (sc<10?"0"+sc:sc);
         }
 
-        // --- UI & MODALS ---
+        // --- MENU & FITUR ---
         function openList() {
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `<h3 style="margin-bottom:15px">Daftar Lagu</h3>` + 
-                songs.map((s, i) => `
-                <div onclick="loadSong(${i}); closeModal()" style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; cursor:pointer">
-                    <span>${s.title}</span>
-                    <small style="color:#666">${s.by}</small>
-                </div>`).join('');
+            const b = document.getElementById('modalContent');
+            b.innerHTML = `<h3 style="margin-bottom:15px">Daftar Lagu</h3>` + 
+            songs.map((s, idx) => `
+                <div onclick="loadSong(${idx}); closeModal()" style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid #333; cursor:pointer">
+                    <span>${s.title}</span> <small style="color:#666">${s.by}</small>
+                </div>
+            `).join('');
             document.getElementById('modalMain').style.display = 'flex';
         }
 
         function openAdd() {
-            if (!auth.currentUser) return handleAuth();
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `
-                <h3 style="margin-bottom:15px">Tambah Lagu</h3>
-                <input id="inTitle" class="inp" placeholder="Judul Lagu">
-                <input id="inUrl" class="inp" placeholder="URL Audio (Top4Top)">
-                <button onclick="submitSong()" class="btn-act">UPLOAD</button>
+            if(!auth.currentUser) return authAction();
+            const b = document.getElementById('modalContent');
+            b.innerHTML = `
+                <h3 style="margin-bottom:15px">Tambah Musik</h3>
+                <input id="tJudul" class="inp" placeholder="Judul Lagu">
+                <input id="tUrl" class="inp" placeholder="URL Audio (Top4Top)">
+                <button onclick="saveSong()" class="btn-act">UPLOAD</button>
             `;
             document.getElementById('modalMain').style.display = 'flex';
         }
 
         function openRegis() {
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `
-                <h3 style="margin-bottom:15px">Buat Username</h3>
-                <input id="regName" class="inp" placeholder="Nama Panggilan (4-10 huruf)">
-                <button onclick="submitReg()" class="btn-act">SIMPAN</button>
+            const b = document.getElementById('modalContent');
+            b.innerHTML = `
+                <h3 style="margin-bottom:15px">Buat Akun</h3>
+                <input id="tUser" class="inp" placeholder="Username (4-10 Huruf)">
+                <button onclick="saveUser()" class="btn-act">DAFTAR</button>
             `;
             document.getElementById('modalMain').style.display = 'flex';
         }
 
         function openAdmin() {
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `<h3 style="margin-bottom:15px; color:gold">ADMIN PANEL</h3>` + 
-                songs.map((s) => `
-                <div style="padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center">
-                    <span style="font-size:12px">${s.title}</span>
-                    <button onclick="delSong('${s.id}')" style="background:red; border:none; color:white; padding:5px 10px; border-radius:5px">Hapus</button>
-                </div>`).join('');
+            const b = document.getElementById('modalContent');
+            b.innerHTML = `<h3 style="margin-bottom:15px; color:#f1c40f">Hapus Lagu</h3>` + 
+            songs.map((s) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #333">
+                    <span>${s.title}</span> 
+                    <button onclick="delSong('${s.id}')" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px">Hapus</button>
+                </div>
+            `).join('');
             document.getElementById('modalMain').style.display = 'flex';
         }
 
-        // --- ACTIONS ---
-        function submitSong() {
-            const t = document.getElementById('inTitle').value;
-            const u = document.getElementById('inUrl').value;
-            if (t && u) {
+        // --- DATABASE ACTIONS ---
+        function saveSong() {
+            const t = document.getElementById('tJudul').value;
+            const u = document.getElementById('tUrl').value;
+            if(t && u) {
                 db.ref('songs').push({
-                    title: t, url: u, by: userData.username, uid: auth.currentUser.uid, date: Date.now()
+                    title: t, url: u, by: user.username, uid: auth.currentUser.uid, date: Date.now()
                 });
                 closeModal();
-                toast("Lagu Berhasil Ditambah!");
-            } else {
-                toast("Isi semua kolom!");
+                showToast("Berhasil Upload!");
             }
         }
 
-        function submitReg() {
-            const u = document.getElementById('regName').value;
-            if (u.length >= 4) {
+        function saveUser() {
+            const u = document.getElementById('tUser').value;
+            if(u.length >= 4) {
                 db.ref('users/' + auth.currentUser.uid).set({
                     username: u, role: 'user', joined: Date.now()
                 });
                 closeModal();
-                toast("Akun Dibuat!");
-            } else {
-                toast("Username minimal 4 huruf");
-            }
+                showToast("Selamat Datang!");
+            } else { alert("Minimal 4 huruf"); }
         }
 
         function delSong(id) {
-            if(confirm("Hapus lagu ini permanen?")) {
-                db.ref('songs/' + id).remove();
-                openAdmin(); // Refresh list
+            if(confirm("Hapus Permanen?")) {
+                db.ref('songs/'+id).remove();
+                openAdmin();
             }
         }
 
-        function closeModal() {
-            document.getElementById('modalMain').style.display = 'none';
-        }
-
-        function toast(msg) {
+        function closeModal() { document.getElementById('modalMain').style.display = 'none'; }
+        function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
+            t.textContent = msg; t.style.display = 'block';
+            setTimeout(()=>t.style.display='none', 3000);
         }
 
     </script>
