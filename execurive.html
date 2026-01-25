@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execurive Community | Forum Login</title>
+    <title>Execurive RP | Portal Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        // PAKAI DATABASE, BUKAN FIRESTORE
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-    
+
+        // Konfigurasi Firebase Realtime Database
         const firebaseConfig = {
           apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
           authDomain: "execuriverp.firebaseapp.com",
@@ -21,85 +21,115 @@
           messagingSenderId: "672894448184",
           appId: "1:672894448184:web:2d9635ca19ea94c3e7eccd",
         };
-    
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getDatabase(app); // Inisialisasi Realtime Database
-    
+        const db = getDatabase(app);
+
+        // --- FUNGSI REGISTER ---
         window.prosesRegister = async () => {
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
             const phone = document.getElementById('reg-phone').value;
-    
-            if(!email || !pass || !phone) return alert("Isi semua data!");
-    
+
+            if(!email || !pass || !phone) return alert("Harap isi semua kolom!");
+
             try {
-                // 1. Cek Blacklist (di Realtime Database)
+                // 1. Cek apakah nomor HP kena blacklist
                 const dbRef = ref(db);
                 const snapshot = await get(child(dbRef, `blacklist/${phone.replace('+', '')}`));
-                
                 if (snapshot.exists()) {
-                    alert("NOMOR HP INI DIBLOKIR!");
+                    alert("MAAF: Nomor HP Anda telah di-blacklist dari komunitas.");
                     return;
                 }
-    
-                // 2. Proses Buat Akun
+
+                // 2. Buat Akun Baru
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
-    
-                // 3. Simpan data ke Realtime Database (Bukan Firestore)
+
+                // 3. Simpan data tambahan ke Realtime Database
                 await set(ref(db, 'users/' + user.uid), {
                     email: email,
                     phone: phone,
                     role: "Member",
-                    joinedAt: new Date().toISOString()
+                    joinedAt: new Date().toLocaleString()
                 });
-    
-                alert("Pendaftaran Berhasil!");
+
+                alert("Pendaftaran Berhasil! Selamat datang.");
                 window.location.href = "forum.html";
             } catch (error) {
-                // Jika error 'client is offline', biasanya karena databaseURL salah atau rules belum dipublish
                 alert("Gagal Daftar: " + error.message);
             }
         };
-    
-        // Fungsi Login
+
+        // --- FUNGSI LOGIN ---
         window.prosesLogin = async () => {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
+
+            if(!email || !pass) return alert("Isi Email & Password!");
+
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
                 alert("Login Berhasil!");
                 window.location.href = "forum.html";
             } catch (error) {
-                alert("Email atau Password Salah!");
+                alert("Login Gagal: Email atau Password salah.");
+            }
+        };
+
+        // UI Switcher
+        window.togglePanel = (panel) => {
+            const loginBox = document.getElementById('login-box');
+            const registerBox = document.getElementById('register-box');
+            if (panel === 'reg') {
+                loginBox.classList.add('hidden');
+                registerBox.classList.remove('hidden');
+            } else {
+                registerBox.classList.add('hidden');
+                loginBox.classList.remove('hidden');
             }
         };
     </script>
-    
 </head>
-<body class="bg-[#0b0e11] text-gray-200 font-sans min-h-screen flex flex-col items-center justify-center px-4">
+<body class="bg-[#0b0e11] text-gray-100 font-sans min-h-screen flex flex-col items-center justify-center p-6">
 
-    <div class="mb-8 text-center">
-        <h1 class="text-4xl font-black tracking-tighter text-white italic">EXECURIVE <span class="text-blue-600">RP</span></h1>
-        <p class="text-[10px] text-gray-500 tracking-[0.3em] uppercase mt-2">Community Forum Access</p>
+    <div class="text-center mb-10">
+        <h1 class="text-5xl font-black italic tracking-tighter text-white">EXECURIVE <span class="text-blue-600">RP</span></h1>
+        <p class="text-gray-500 text-xs uppercase tracking-[0.4em] mt-2 font-bold">Community Portal</p>
     </div>
 
-    <div id="login-box" class="bg-[#151921] border border-gray-800 p-8 rounded-2xl w-full max-w-[400px] shadow-2xl">
-        <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><span class="w-1 h-5 bg-blue-600"></span> LOGIN</h2>
-        <input id="login-email" type="email" placeholder="Email" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-blue-600">
-        <input id="login-pass" type="password" placeholder="Password" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-6 outline-none focus:border-blue-600">
-        <button onclick="prosesLogin()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all mb-4">Masuk</button>
-        <p class="text-center text-xs text-gray-500">Belum punya akun? <span onclick="showRegister()" class="text-blue-500 cursor-pointer hover:underline">Daftar Sekarang</span></p>
+    <div id="login-box" class="w-full max-w-md bg-[#161b22] border border-gray-800 p-8 rounded-2xl shadow-2xl">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+            <span class="w-2 h-8 bg-blue-600 rounded-full"></span> Login Member
+        </h2>
+        <div class="space-y-4">
+            <input id="login-email" type="email" placeholder="Email Address" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl focus:border-blue-500 outline-none transition-all">
+            <input id="login-pass" type="password" placeholder="Password" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl focus:border-blue-500 outline-none transition-all">
+            <button onclick="prosesLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm shadow-lg">Sign In</button>
+        </div>
+        <p class="mt-6 text-center text-sm text-gray-500">
+            Belum punya akun? <button onclick="togglePanel('reg')" class="text-blue-500 font-bold hover:underline cursor-pointer">Daftar Sekarang</button>
+        </p>
     </div>
 
-    <div id="register-box" class="bg-[#151921] border border-gray-800 p-8 rounded-2xl w-full max-w-[400px] shadow-2xl hidden">
-        <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><span class="w-1 h-5 bg-green-600"></span> REGISTER</h2>
-        <input id="reg-email" type="email" placeholder="Email" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-blue-600">
-        <input id="reg-phone" type="text" placeholder="Nomor HP (+628...)" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-blue-600">
-        <input id="reg-pass" type="password" placeholder="Buat Password" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-6 outline-none focus:border-blue-600">
-        <button onclick="prosesRegister()" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all mb-4">Buat Akun</button>
-        <p class="text-center text-xs text-gray-500">Sudah punya akun? <span onclick="showLogin()" class="text-blue-500 cursor-pointer hover:underline">Login</span></p>
+    <div id="register-box" class="w-full max-w-md bg-[#161b22] border border-gray-800 p-8 rounded-2xl shadow-2xl hidden">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+            <span class="w-2 h-8 bg-green-600 rounded-full"></span> Register Akun
+        </h2>
+        <div class="space-y-4">
+            <input id="reg-email" type="email" placeholder="Email Address" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl focus:border-green-500 outline-none">
+            <input id="reg-phone" type="text" placeholder="Nomor WhatsApp (+62...)" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl focus:border-green-500 outline-none font-mono">
+            <input id="reg-pass" type="password" placeholder="Buat Password" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl focus:border-green-500 outline-none">
+            <button onclick="prosesRegister()" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm shadow-lg">Create Account</button>
+        </div>
+        <p class="mt-6 text-center text-sm text-gray-500">
+            Sudah ada akun? <button onclick="togglePanel('login')" class="text-blue-500 font-bold hover:underline cursor-pointer">Login Disini</button>
+        </p>
+    </div>
+
+    <div class="mt-12 text-center text-gray-600 text-[10px] uppercase tracking-widest font-bold">
+        &copy; 2026 Execurive Community. No mod, No gain.
     </div>
 
 </body>
