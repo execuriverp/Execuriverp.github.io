@@ -6,6 +6,10 @@
   <title>ExeMusic v3.0 - Perfect Edition</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     :root {
       --accent: #1db954;
@@ -26,6 +30,15 @@
       overflow: hidden;
     }
 
+    /* loading card (sesuai request.) */
+    #loadingCard {
+      position: absolute; inset: 0; background: #090909; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 35px; transition: 0.5s;
+    }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .app {
       background: rgba(18, 18, 18, 0.85);
       backdrop-filter: blur(25px);
@@ -38,24 +51,25 @@
       position: relative;
     }
 
-    .header { text-align: center; flex-shrink: 0; margin-bottom: 10px; }
+    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 10px; }
     .header img { width: 100px; max-width: 30%; }
-
-    .cover-box {
-      flex: 1; 
-      width: 100%; 
-      border-radius: 20px;
-      background: #151515;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.05);
-      overflow: hidden; 
-      position: relative;
-      z-index: 1; 
+    
+    /* Tombol Login/Profile Kanan Atas */
+    #topLoginBtn { 
+      background: var(--glass); border: 1px solid rgba(255,255,255,0.1); 
+      color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
     }
 
+    .cover-box {
+      flex: 1; width: 100%; border-radius: 20px;
+      background: #151515; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden; position: relative; z-index: 1; 
+    }
+
+    /* EQ LEBIH HALUS */
     .eq { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
-    .eq span { width: 5px; background: var(--accent); border-radius: 10px; height: 8px; }
+    .eq span { width: 5px; background: var(--accent); border-radius: 10px; height: 8px; transition: height 0.2s ease; }
     .playing span { animation: wave 0.8s infinite ease-in-out; }
     .playing span:nth-child(1) { animation-delay: 0.1s; }
     .playing span:nth-child(2) { animation-delay: 0.3s; }
@@ -65,66 +79,52 @@
 
     .track-info { margin-bottom: 10px; flex-shrink: 0; text-align: left; }
     #title { font-size: 20px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #by { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+    
+    .user-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+    #by { color: var(--accent); font-size: 13px; font-weight: bold; cursor: pointer; }
+    #btnFollow { font-size: 10px; background: var(--accent); color: black; border: none; padding: 2px 8px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none; }
 
-    .sys-container {
-      background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; z-index: 5;
-    }
+    .sys-container { background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; }
     .sys-tools { display: flex; justify-content: space-around; margin-bottom: 5px; }
     .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 16px; opacity: 0.8; padding: 5px; }
     
     .vol-row { display: flex; align-items: center; gap: 8px; padding: 0 5px; }
     #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
 
-    .prog-area { margin-bottom: 15px; flex-shrink: 0; z-index: 5; }
-    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; }
+    .prog-area { margin-bottom: 15px; flex-shrink: 0; }
+    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; }
     .time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
 
-    .main-ctrl { 
-      display: flex; justify-content: space-between; align-items: center; 
-      padding: 0 15px; margin-bottom: 15px; flex-shrink: 0;
-      position: relative; z-index: 100;
-    }
-    
-    .btn-play { 
-      width: 60px; height: 60px; 
-      background: var(--accent); border: none; border-radius: 50%; 
-      display: flex; align-items: center; justify-content: center; 
-      color: black; font-size: 22px; 
-      box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
-      cursor: pointer; transition: transform 0.1s;
-    }
-    .btn-play:active { transform: scale(0.95); }
-    .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 10px; }
+    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-bottom: 15px; }
+    .btn-play { width: 60px; height: 60px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 22px; cursor: pointer; }
+    .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; }
 
-    .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; flex-shrink: 0; z-index: 10; }
-    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; padding: 5px; }
+    .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; }
+    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; }
     
-    .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px rgba(29,185,84,0.6); }
+    .active { color: var(--accent) !important; opacity: 1 !important; }
 
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; }
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 25px 25px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
-    .song-item { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
     
-    #toast { 
-      position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); 
-      background: rgba(29, 185, 84, 0.95); color: #000; 
-      padding: 10px 20px; border-radius: 30px; 
-      font-size: 13px; font-weight: bold; 
-      opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-      z-index: 3000; pointer-events: none; 
-      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-      white-space: nowrap;
-    }
+    .inp-dark { width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px; }
+    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:10px; font-weight:bold; color:black; cursor: pointer; }
+
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--accent); color: #000; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
+  <div id="loadingCard"><div class="spinner"></div></div>
+
   <div id="toast">Notif</div>
 
   <div class="app">
-    <div class="header"><img src="exemusic.png" alt="Logo"></div>
+    <div class="header">
+      <img src="exemusic.png" alt="Logo">
+      <button id="topLoginBtn" onclick="openProfile()">Login</button>
+    </div>
 
     <div class="cover-box">
       <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
@@ -132,7 +132,10 @@
 
     <div class="track-info">
       <div id="title">Loading...</div>
-      <div id="by">Please wait</div>
+      <div class="user-row">
+        <div id="by" onclick="openProfile()">@system</div>
+        <button id="btnFollow" onclick="followUser()">FOLLOW</button>
+      </div>
     </div>
 
     <div class="sys-container">
@@ -140,7 +143,7 @@
         <button onclick="copyRawUrl()" title="Copy Link">📋</button>
         <button onclick="shareLink()" title="Share Player">🔗</button>
         <button onclick="downloadSong()" title="Download">⬇️</button>
-        <button onclick="openReq()" title="Request WA">➕</button>
+        <button onclick="openAddMusic()" title="Add Music">➕</button>
       </div>
       <div class="vol-row">
         <span>🔈</span>
@@ -167,17 +170,48 @@
       <button id="shuf" onclick="toggleShuffle()">🔀</button>
       <button onclick="openList(false)">☰</button>
       <button onclick="openList(true)">⭐</button>
+      <button id="adminBtn" style="display:none; color:gold" onclick="openAdmin()">🛡️</button>
       <button id="rep" onclick="toggleRepeat()">🔁</button>
     </div>
   </div>
 
-  <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:15px">Request Lagu</h3>
-      <input id="rNama" placeholder="Nama" style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px">
-      <input id="rLagu" placeholder="Judul Lagu" style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px">
-      <input id="rUrl" placeholder="URL/Link" style="width:100%; padding:12px; margin-bottom:15px; background:#222; color:white; border:none; border-radius:10px">
-      <button onclick="sendReq()" style="width:100%; padding:14px; background:var(--accent); border:none; border-radius:10px; font-weight:bold; color:black">KIRIM</button>
+      <h3 id="authTitle" style="text-align:center; margin-bottom:15px">Login</h3>
+      <input id="authUser" class="inp-dark" placeholder="Username (Hanya untuk Daftar)" style="display:none">
+      <input id="authEmail" class="inp-dark" placeholder="Email">
+      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
+      <button onclick="handleAuth()" id="authBtn" class="btn-act">MASUK</button>
+      <button onclick="toggleAuthMode()" id="authToggle" style="background:none; border:none; color:#888; width:100%; margin-top:10px">Belum punya akun? Daftar</button>
+      <button onclick="loginGoogle()" class="btn-act" style="background:white; margin-top:10px">Login with Google</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px">Profile</h3>
+      <div style="text-align:center; margin-bottom:20px">
+        <h2 id="profName">Guest</h2>
+        <p id="profFollowers" style="color:var(--accent); font-size:12px">0 Followers</p>
+      </div>
+      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#333; color:white">LOGOUT</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAdd" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:15px">Tambah Lagu</h3>
+      <input id="addTitle" class="inp-dark" placeholder="Judul Lagu">
+      <input id="addUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
+      <button onclick="saveMusic()" class="btn-act">POST LAGU</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAdmin" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="color:gold; margin-bottom:15px">Admin Logs & MT</h3>
+      <button onclick="toggleMT()" id="mtBtn" class="btn-act" style="background:#222; border:1px solid gold; color:gold; margin-bottom:15px">MT MODE: OFF</button>
+      <div id="logsBox" style="height:150px; overflow-y:auto; background:black; padding:10px; font-size:11px; color:#0f0; border-radius:10px"></div>
     </div>
   </div>
 
@@ -186,135 +220,203 @@
   </div>
 
   <script>
-    let songs = [], i = 0, isShuf = true, isRepeat = false;
+    // --- FIREBASE CONFIG (NORMAL) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQrd5g4",
+      authDomain: "exemusic-execuriverp.firebaseapp.com",
+      databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "exemusic-execuriverp"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
+    let userData = null, mtMode = false;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
-    const playBtn = document.getElementById('playBtn');
-    const eq = document.getElementById('eq');
 
-    fetch("data/urlbb.json").then(r => r.json()).then(data => {
-      songs = data;
-      if(songs.length > 0) {
-        const params = new URLSearchParams(window.location.search);
-        let sharedId = parseInt(params.get('id'));
-        if (!isNaN(sharedId) && sharedId >= 0 && sharedId < songs.length) {
-          setup(sharedId, false);
-        } else {
-          setup(0, false);
-        }
+    // --- AUTH MONITORING ---
+    auth.onAuthStateChanged(async (u) => {
+      if(u) {
+        const snap = await db.ref('users/' + u.uid).get();
+        userData = snap.val();
+        document.getElementById('topLoginBtn').textContent = userData?.username || "Profile";
+        if(userData?.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
+        document.getElementById('btnFollow').style.display = 'block';
+      } else {
+        userData = null;
+        document.getElementById('topLoginBtn').textContent = "Login";
+        document.getElementById('adminBtn').style.display = 'none';
+        document.getElementById('btnFollow').style.display = 'none';
       }
+      // loading card gaperlu
+      document.getElementById('loadingCard').style.opacity = '0';
+      setTimeout(() => document.getElementById('loadingCard').style.display = 'none', 500);
+    });
+
+    // --- AUTH LOGIC ---
+    function toggleAuthMode() {
+      isLoginMode = !isLoginMode;
+      document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Register";
+      document.getElementById('authUser').style.display = isLoginMode ? "none" : "block";
+      document.getElementById('authBtn').innerText = isLoginMode ? "MASUK" : "DAFTAR";
+      document.getElementById('authToggle').innerText = isLoginMode ? "Belum punya akun? Daftar" : "Sudah punya akun? Login";
+    }
+
+    function handleAuth() {
+      const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
+      if(isLoginMode) {
+        auth.signInWithEmailAndPassword(e, p).then(() => { closeModal(); msg("Login Berhasil!"); }).catch(err => msg(err.message));
+      } else {
+        const u = document.getElementById('authUser').value;
+        if(u.length < 3) return msg("Username terlalu pendek");
+        auth.createUserWithEmailAndPassword(e, p).then(res => {
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user' });
+          closeModal(); msg("Registrasi Berhasil!");
+        }).catch(err => msg(err.message));
+      }
+    }
+
+    function loginGoogle() {
+      auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(res => {
+        db.ref('users/' + res.user.uid).update({ username: res.user.displayName.split(' ')[0], role: 'user' });
+        closeModal();
+      });
+    }
+
+    // --- DATABASE & PLAYER ---
+    db.ref('songs').on('value', snap => {
+      const data = snap.val();
+      if(data) {
+        songs = Object.keys(data).map(k => ({...data[k], key: k}));
+        const urlParams = new URLSearchParams(window.location.search);
+        const qid = urlParams.get('id');
+        if(qid && songs[qid] && audio.src === "") setup(parseInt(qid), false);
+        else if(audio.src === "") setup(0, false);
+      }
+    });
+
+    db.ref('settings/mt').on('value', s => {
+      mtMode = s.val();
+      if(document.getElementById('mtBtn')) document.getElementById('mtBtn').innerText = "MT MODE: " + (mtMode ? "ON" : "OFF");
+      if(mtMode && userData?.role !== 'admin') document.body.innerHTML = "<h2 style='color:white; text-align:center; margin-top:50%'>MAINTENANCE</h2>";
     });
 
     function setup(idx, play = true) {
+      if(!songs[idx]) return;
       i = idx;
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
-      // UBAH REQ MENJADI REQUEST BY
-      document.getElementById('by').textContent = "Request by " + songs[i].by;
+      document.getElementById('by').textContent = "@" + (songs[i].by || "system");
       
-      const newUrl = window.location.pathname + '?id=' + i;
-      window.history.replaceState(null, '', newUrl);
+      // Update URL Sync
+      window.history.replaceState(null, null, "?id=" + i);
 
-      if(play) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
+      if(play) { audio.play(); document.getElementById('playBtn').textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); }
+      updateFollowUI();
     }
 
     function toggle() {
-      if(audio.paused) { 
-        audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); 
-        msg("Playing");
-      } else { 
-        audio.pause(); playBtn.textContent = "▶"; eq.classList.remove('playing'); 
-        msg("Paused");
-      }
+      if(audio.paused) { audio.play(); document.getElementById('playBtn').textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); msg("Playing"); }
+      else { audio.pause(); document.getElementById('playBtn').textContent = "▶"; document.getElementById('eq').classList.remove('playing'); msg("Paused"); }
     }
 
-    // KEYBOARD CONTROLS
-    window.addEventListener('keydown', (e) => {
-      if (document.activeElement.tagName === 'INPUT') return; // Jangan trigger jika sedang ngetik
-      
-      if (e.code === "Space") {
-        e.preventDefault();
-        toggle();
-      } else if (e.code === "ArrowRight") {
-        next();
-      } else if (e.code === "ArrowLeft") {
-        prev();
-      }
-    });
-
-    function copyRawUrl() { 
-      navigator.clipboard.writeText(songs[i].url); 
-      msg("Copy Url berhasil di salin"); 
+    // --- FOLLOW SYSTEM ---
+    async function followUser() {
+      if(!userData) return msg("Login untuk Follow!");
+      const target = songs[i].uid;
+      const ref = db.ref('follows/' + target + '/' + auth.currentUser.uid);
+      const s = await ref.get();
+      if(s.exists()) { ref.remove(); msg("Unfollowed"); }
+      else { ref.set(true); msg("Following @" + songs[i].by); }
+      updateFollowUI();
     }
 
-    function shareLink() { 
-      const shareUrl = window.location.origin + window.location.pathname + '?id=' + i;
-      if(navigator.share) { 
-        navigator.share({ title: 'ExeMusic', text: 'Dengerin: ' + songs[i].title, url: shareUrl }); 
-      } else { 
-        navigator.clipboard.writeText(shareUrl);
-        msg("Link Player Disalin");
-      } 
+    async function updateFollowUI() {
+      if(!auth.currentUser) return;
+      const s = await db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).get();
+      document.getElementById('btnFollow').innerText = s.exists() ? "FOLLOWED" : "FOLLOW";
     }
 
-    function downloadSong() { 
-      msg("Downloading..."); 
-      window.open(songs[i].url); 
+    // --- ADD MUSIC ---
+    function openAddMusic() {
+      if(!userData) return msg("Login dulu!");
+      document.getElementById('modalAdd').style.display = 'block';
     }
 
-    function toggleRepeat() {
-      isRepeat = !isRepeat;
-      document.getElementById('rep').classList.toggle('active', isRepeat);
-      msg(isRepeat ? "Repeat : ON" : "Repeat : OFF");
+    async function saveMusic() {
+      const t = document.getElementById('addTitle').value, u = document.getElementById('addUrl').value;
+      if(!t || !u.includes("top4top")) return msg("Link tidak valid!");
+      await db.ref('songs').push({ title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: Date.now() });
+      await db.ref('logs').push({ msg: userData.username + " added " + t, time: new Date().toLocaleString() });
+      closeModal(); msg("Berhasil diposting!");
     }
 
-    function toggleShuffle() { 
-      isShuf = !isShuf; 
-      document.getElementById('shuf').classList.toggle('active', isShuf); 
-      msg(isShuf ? "Shuffle : ON" : "Shuffle : OFF");
+    // --- ADMIN ---
+    function openAdmin() {
+      document.getElementById('modalAdmin').style.display = 'block';
+      db.ref('logs').limitToLast(10).on('value', s => {
+        let h = ""; s.forEach(x => { h = "<div>"+x.val().msg+"</div>" + h; });
+        document.getElementById('logsBox').innerHTML = h;
+      });
     }
+    function toggleMT() { db.ref('settings/mt').set(!mtMode); }
 
-    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
-
-    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
-    function prev() { setup((i-1+songs.length)%songs.length); }
-
+    // --- UTILS ---
+    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); msg("Next Track"); }
+    function prev() { setup((i-1+songs.length)%songs.length); msg("Prev Track"); }
+    
     audio.ontimeupdate = () => {
       document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
       document.getElementById('cur').textContent = fmt(audio.currentTime);
       document.getElementById('dur').textContent = fmt(audio.duration);
     };
-    document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
     
-    audio.onended = () => {
-      if (isRepeat) {
-        audio.currentTime = 0;
-        audio.play();
-      } else {
-        next();
-      }
-    };
+    document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
+    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
+    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
 
-    function fmt(s) { 
-      if(isNaN(s)) return "0:00";
-      let m=Math.floor(s/60),sec=Math.floor(s%60); 
-      return m+":"+(sec<10?"0"+sec:sec); 
-    }
-
-    function msg(m) { 
-      const t = document.getElementById('toast'); 
-      t.textContent = m; 
-      t.classList.add('show'); 
+    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
+    
+    function msg(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.classList.add('show');
       if(t.timeout) clearTimeout(t.timeout);
-      t.timeout = setTimeout(() => t.classList.remove('show'), 2000); 
+      t.timeout = setTimeout(() => t.classList.remove('show'), 2000);
     }
+
+    function openProfile() { 
+      if(userData) {
+        document.getElementById('profName').textContent = userData.username;
+        db.ref('follows/' + auth.currentUser.uid).on('value', s => {
+            document.getElementById('profFollowers').textContent = (s.numChildren() || 0) + " Followers";
+        });
+        document.getElementById('modalProfile').style.display='block'; 
+      } else { 
+        document.getElementById('modalAuth').style.display='block'; 
+      }
+    }
+
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+    
+    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); msg(isShuf?"Shuffle ON":"Shuffle OFF"); }
+    
+    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); msg(isRepeat?"Repeat ON":"Repeat OFF"); }
+    
+    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("URL Copied"); }
+    
+    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Copied"); }
+    
+    function downloadSong() { window.open(songs[i].url); }
 
     function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
-      c.innerHTML = l.map(s => `
-        <div class="song-item" onclick="setup(${songs.indexOf(s)})">
-          <div style="flex:1"><b>${s.title}</b><br><small>${s.by}</small></div>
+      c.innerHTML = l.map((s, idx) => `
+        <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+          <div style="flex:1"><b>${s.title}</b><br><small>@${s.by}</small></div>
           <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
         </div>
       `).join('');
@@ -326,14 +428,6 @@
       fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u];
       localStorage.setItem("exeFav", JSON.stringify(fav));
       openList(false);
-      msg("Favorite Updated");
-    }
-
-    function openReq() { document.getElementById('modalReq').style.display='block'; }
-    function sendReq() {
-      const n = document.getElementById('rNama').value, l = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
-      const text = `Format Req Lagu\n\nNama : ${n}\nUrl : ${u}\nNama Lagu : ${l}`;
-      window.open("https://wa.me/62895329018240?text=" + encodeURIComponent(text));
     }
   </script>
 </body>
