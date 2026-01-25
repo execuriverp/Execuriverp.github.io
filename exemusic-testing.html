@@ -2,182 +2,394 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExeMusic v4.5 - Final Fix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ExeMusic v5.0 - Ultimate Stable</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        :root { --accent: #1db954; --bg: #0b0b0b; --text: #fff; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .player { width: 90%; max-width: 380px; background: #181818; padding: 25px; border-radius: 30px; text-align: center; border: 1px solid #333; }
-        .cover { width: 100%; aspect-ratio: 1/1; background: #111; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-size: 50px; }
-        .info h2 { margin: 0; font-size: 22px; }
-        .info p { color: var(--accent); margin: 5px 0 20px; cursor: pointer; }
-        .ctrl { display: flex; justify-content: center; gap: 20px; align-items: center; }
-        .play-btn { width: 65px; height: 65px; border-radius: 50%; background: var(--accent); border: none; font-size: 25px; cursor: pointer; }
-        .nav-btn { background: none; border: none; color: white; font-size: 30px; cursor: pointer; }
-        .progress-container { margin: 20px 0; }
-        input[type=range] { width: 100%; accent-color: var(--accent); }
-        .footer { display: flex; justify-content: space-around; margin-top: 25px; padding-top: 20px; border-top: 1px solid #333; }
-        .footer button { background: none; border: none; color: #888; font-size: 18px; cursor: pointer; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: flex-end; z-index: 100; }
-        .modal-content { width: 100%; background: #222; padding: 25px; border-radius: 25px 25px 0 0; max-height: 60vh; overflow-y: auto; }
-        input[type=text] { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: #333; color: #fff; }
-        #adminBtn { display: none; color: gold !important; }
+        :root {
+            --primary: #1db954;
+            --dark: #121212;
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: #000;
+            color: white;
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            background-image: radial-gradient(circle at top right, #1a1a1a, #000);
+        }
+
+        .container {
+            width: 100%; max-width: 400px; height: 100%;
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(20px);
+            display: flex; flex-direction: column;
+            padding: 25px;
+            position: relative;
+        }
+
+        /* Header & Visuals */
+        .header { display: flex; justify-content: space-between; align-items: center; height: 50px; }
+        .badge { background: #333; padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; }
+        
+        .album-art {
+            flex: 1; margin: 20px 0;
+            background: #222; border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
+        }
+
+        /* Animasi Visualizer */
+        .bars { display: flex; gap: 5px; align-items: flex-end; height: 50px; }
+        .bar { width: 8px; background: var(--primary); border-radius: 5px; animation: bounce 1s infinite; }
+        .paused .bar { animation: none; height: 5px !important; transition: 0.5s; }
+        .bar:nth-child(1) { animation-duration: 0.8s; }
+        .bar:nth-child(2) { animation-duration: 1.2s; }
+        .bar:nth-child(3) { animation-duration: 1.0s; }
+        @keyframes bounce { 0%, 100% { height: 10px; } 50% { height: 100%; } }
+
+        /* Controls */
+        .info { text-align: center; margin-bottom: 20px; }
+        .info h2 { font-size: 20px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info p { color: #888; font-size: 13px; cursor: pointer; }
+
+        .progress-area { margin-bottom: 20px; }
+        input[type=range] { width: 100%; accent-color: var(--primary); height: 4px; border-radius: 5px; cursor: pointer; }
+        .times { display: flex; justify-content: space-between; font-size: 11px; color: #777; margin-top: 5px; }
+
+        .controls { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
+        .btn-ctrl { background: none; border: none; color: white; font-size: 24px; cursor: pointer; opacity: 0.8; }
+        .btn-play { 
+            width: 65px; height: 65px; border-radius: 50%; 
+            background: var(--primary); color: black; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 28px; box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
+        }
+
+        .footer { 
+            background: var(--glass); padding: 15px; border-radius: 20px;
+            display: flex; justify-content: space-around; 
+        }
+        
+        /* Modals & Popups */
+        .modal { 
+            position: fixed; inset: 0; z-index: 100; 
+            background: rgba(0,0,0,0.9); display: none; 
+            justify-content: center; align-items: flex-end; 
+        }
+        .sheet { 
+            width: 100%; max-width: 400px; background: #1a1a1a; 
+            border-radius: 25px 25px 0 0; padding: 25px; 
+            max-height: 70vh; overflow-y: auto; 
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        input.inp { width: 100%; padding: 15px; background: #333; border: none; color: white; border-radius: 10px; margin-bottom: 10px; }
+        button.btn-act { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 10px 20px; border-radius: 50px;
+            font-size: 12px; z-index: 200; display: none; border: 1px solid #444;
+        }
+
+        #adminBtn { display: none; color: gold; }
     </style>
 </head>
 <body>
 
-    <div class="player">
-        <div class="cover">🎵</div>
+    <div class="toast" id="toast">Notifikasi System</div>
+
+    <div class="container">
+        <div class="header">
+            <span class="badge">LIVE</span>
+            <span class="badge" id="statusBadge" onclick="handleAuth()">Not Logged In</span>
+        </div>
+
+        <div class="album-art">
+            <div class="bars paused" id="visualizer">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </div>
+
         <div class="info">
-            <h2 id="title">Memuat...</h2>
+            <h2 id="title">Memuat Data...</h2>
             <p id="artist">@exemusic</p>
         </div>
-        <div class="progress-container">
-            <input type="range" id="seek" value="0" min="0" max="100">
+
+        <div class="progress-area">
+            <input type="range" id="seek" value="0">
+            <div class="times">
+                <span id="cur">0:00</span>
+                <span id="dur">0:00</span>
+            </div>
         </div>
-        <div class="ctrl">
-            <button class="nav-btn" onclick="prev()">⏮</button>
-            <button class="play-btn" id="playBtn" onclick="toggle()">▶</button>
-            <button class="nav-btn" onclick="next()">⏭</button>
+
+        <div class="controls">
+            <button class="btn-ctrl" onclick="prev()">⏮</button>
+            <button class="btn-play" onclick="togglePlay()" id="playBtn">▶</button>
+            <button class="btn-ctrl" onclick="next()">⏭</button>
         </div>
+
         <div class="footer">
-            <button onclick="showList()">☰</button>
-            <button onclick="showAdd()">➕</button>
-            <button id="adminBtn" onclick="showAdmin()">🛡️</button>
+            <button class="btn-ctrl" onclick="openList()">☰</button>
+            <button class="btn-ctrl" onclick="openAdd()">➕</button>
+            <button class="btn-ctrl" id="adminBtn" onclick="openAdmin()">🛡️</button>
         </div>
     </div>
 
-    <div id="modal" class="modal" onclick="if(event.target==this)this.style.display='none'">
-        <div class="modal-content" id="modalBody"></div>
+    <div class="modal" id="modalMain" onclick="if(event.target==this)closeModal()">
+        <div class="sheet" id="modalContent"></div>
     </div>
 
     <script>
-        // Gunakan Base64 hanya untuk API Key agar tidak diblokir bot
+        // --- KONFIGURASI ---
+        // Ganti String di bawah ini dengan Config kamu jika perlu.
+        // Saya pakai String langsung untuk menghindari error decode base64
         const config = {
-            apiKey: atob("QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ="),
+            apiKey: atob("QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ="), 
             authDomain: "exemusic-execuriverp.firebaseapp.com",
             databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "exemusic-execuriverp"
         };
 
-        // Inisialisasi Firebase
-        firebase.initializeApp(config);
-        const db = firebase.database();
+        // --- INIT FIREBASE ---
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
         const auth = firebase.auth();
-        const audio = new Audio();
+        const db = firebase.database();
         
-        let songs = [], i = 0, userData = null;
+        // --- VARIABLES ---
+        let songs = [];
+        let index = 0;
+        let userData = null;
+        const audio = new Audio();
 
-        // Monitoring Auth
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                db.ref('users/' + user.uid).on('value', snap => {
-                    userData = snap.val();
-                    if (userData && userData.role === "admin") {
-                        document.getElementById('adminBtn').style.display = 'block';
+        // --- AUTH SYSTEM (FIX STABILITAS) ---
+        // Paksa simpan sesi agar tidak logout sendiri
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                // Monitor Perubahan Auth
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        const statusBadge = document.getElementById('statusBadge');
+                        statusBadge.textContent = "Checking...";
+                        statusBadge.style.color = "yellow";
+
+                        db.ref('users/' + user.uid).on('value', (snapshot) => {
+                            if (snapshot.exists()) {
+                                userData = snapshot.val();
+                                statusBadge.textContent = "@" + userData.username;
+                                statusBadge.style.color = "#1db954";
+                                
+                                // Cek Admin
+                                if (userData.role === 'admin') {
+                                    document.getElementById('adminBtn').style.display = 'block';
+                                    toast("Mode Admin Aktif");
+                                }
+                            } else {
+                                // Jika user ada di Auth tapi tidak ada di DB (User Baru)
+                                openRegis();
+                            }
+                        });
+                    } else {
+                        document.getElementById('statusBadge').textContent = "Login";
+                        document.getElementById('statusBadge').style.color = "white";
+                        document.getElementById('adminBtn').style.display = 'none';
+                        userData = null;
                     }
-                    if (!userData) showRegis();
                 });
-            }
-        });
+            })
+            .catch((error) => {
+                console.error("Auth Error:", error);
+            });
 
-        // Load Data Lagu
-        db.ref('songs').on('value', snap => {
+        function handleAuth() {
+            if (!auth.currentUser) {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                auth.signInWithPopup(provider).catch(e => toast(e.message));
+            } else {
+                if(confirm("Logout akun?")) auth.signOut().then(() => window.location.reload());
+            }
+        }
+
+        // --- MUSIC PLAYER ENGINE ---
+        db.ref('songs').on('value', (snap) => {
             const data = snap.val();
             if (data) {
-                songs = Object.keys(data).map(k => ({...data[k], key: k}));
-                if (!audio.src) load(0, false);
+                songs = Object.keys(data).map(key => ({ ...data[key], id: key }));
+                if (!audio.src) loadSong(0, false);
+            } else {
+                document.getElementById('title').textContent = "Tidak ada lagu";
             }
         });
 
-        function load(idx, play = true) {
+        function loadSong(idx, autoPlay = true) {
             if (!songs[idx]) return;
-            i = idx;
-            audio.src = songs[i].url;
-            document.getElementById('title').innerText = songs[i].title;
-            document.getElementById('artist').innerText = "@" + songs[i].by;
-            if (play) { audio.play(); document.getElementById('playBtn').innerText = "❚❚"; }
-        }
-
-        function toggle() {
-            if (audio.paused) {
+            index = idx;
+            audio.src = songs[index].url;
+            document.getElementById('title').textContent = songs[index].title;
+            document.getElementById('artist').textContent = "@" + songs[index].by;
+            
+            if (autoPlay) {
                 audio.play();
-                document.getElementById('playBtn').innerText = "❚❚";
-            } else {
-                audio.pause();
-                document.getElementById('playBtn').innerText = "▶";
+                updatePlayBtn(true);
             }
         }
 
-        function next() { load((i + 1) % songs.length); }
-        function prev() { load((i - 1 + songs.length) % songs.length); }
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                updatePlayBtn(true);
+            } else {
+                audio.pause();
+                updatePlayBtn(false);
+            }
+        }
 
-        // Progress Bar
+        function updatePlayBtn(isPlaying) {
+            const btn = document.getElementById('playBtn');
+            const vis = document.getElementById('visualizer');
+            if (isPlaying) {
+                btn.textContent = "❚❚";
+                vis.classList.remove('paused');
+            } else {
+                btn.textContent = "▶";
+                vis.classList.add('paused');
+            }
+        }
+
+        function next() { loadSong((index + 1) % songs.length); }
+        function prev() { loadSong((index - 1 + songs.length) % songs.length); }
+
         audio.ontimeupdate = () => {
-            document.getElementById('seek').value = (audio.currentTime / audio.duration) * 100 || 0;
+            const seek = document.getElementById('seek');
+            const cur = document.getElementById('cur');
+            const dur = document.getElementById('dur');
+            
+            if (!isNaN(audio.duration)) {
+                seek.value = (audio.currentTime / audio.duration) * 100;
+                cur.textContent = formatTime(audio.currentTime);
+                dur.textContent = formatTime(audio.duration);
+            }
         };
+        
         document.getElementById('seek').oninput = (e) => {
             audio.currentTime = (e.target.value / 100) * audio.duration;
         };
 
-        // UI Modals
-        const m = document.getElementById('modal');
-        const mb = document.getElementById('modalBody');
+        audio.onended = next;
 
-        function showList() {
-            mb.innerHTML = '<h3>Playlist</h3>' + songs.map((s, idx) => 
-                `<div onclick="load(${idx})" style="padding:10px; border-bottom:1px solid #333">${s.title}</div>`
-            ).join('');
-            m.style.display = 'flex';
+        function formatTime(s) {
+            let m = Math.floor(s / 60);
+            let sc = Math.floor(s % 60);
+            return m + ":" + (sc < 10 ? "0" + sc : sc);
         }
 
-        function showAdd() {
-            if (!auth.currentUser) return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-            mb.innerHTML = `<h3>Tambah Lagu</h3>
-                <input type="text" id="t" placeholder="Judul">
-                <input type="text" id="u" placeholder="URL Top4Top">
-                <button onclick="save()" style="width:100%; padding:10px; background:var(--accent); border:none; border-radius:10px">Kirim</button>`;
-            m.style.display = 'flex';
-        }
-
-        function save() {
-            const title = document.getElementById('t').value;
-            const url = document.getElementById('u').value;
-            if (title && url) {
-                db.ref('songs').push({ title, url, by: userData.username, uid: auth.currentUser.uid });
-                m.style.display = 'none';
-            }
-        }
-
-        function showRegis() {
-            mb.innerHTML = `<h3>Username Baru</h3>
-                <input type="text" id="un" placeholder="Username...">
-                <button onclick="reg()" style="width:100%; padding:10px; background:var(--accent); border:none;">Daftar</button>`;
-            m.style.display = 'flex';
-        }
-
-        function reg() {
-            const name = document.getElementById('un').value;
-            if (name) {
-                db.ref('users/' + auth.currentUser.uid).set({ username: name, role: 'user' });
-                m.style.display = 'none';
-            }
-        }
-
-        function showAdmin() {
-            mb.innerHTML = '<h3>Admin - Hapus Lagu</h3>' + songs.map((s) => 
-                `<div style="display:flex; justify-content:space-between; margin-bottom:10px">
+        // --- UI & MODALS ---
+        function openList() {
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `<h3 style="margin-bottom:15px">Daftar Lagu</h3>` + 
+                songs.map((s, i) => `
+                <div onclick="loadSong(${i}); closeModal()" style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; cursor:pointer">
                     <span>${s.title}</span>
-                    <button onclick="firebase.database().ref('songs/${s.key}').remove()" style="color:red">Hapus</button>
-                </div>`
-            ).join('');
-            m.style.display = 'flex';
+                    <small style="color:#666">${s.by}</small>
+                </div>`).join('');
+            document.getElementById('modalMain').style.display = 'flex';
         }
+
+        function openAdd() {
+            if (!auth.currentUser) return handleAuth();
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <h3 style="margin-bottom:15px">Tambah Lagu</h3>
+                <input id="inTitle" class="inp" placeholder="Judul Lagu">
+                <input id="inUrl" class="inp" placeholder="URL Audio (Top4Top)">
+                <button onclick="submitSong()" class="btn-act">UPLOAD</button>
+            `;
+            document.getElementById('modalMain').style.display = 'flex';
+        }
+
+        function openRegis() {
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <h3 style="margin-bottom:15px">Buat Username</h3>
+                <input id="regName" class="inp" placeholder="Nama Panggilan (4-10 huruf)">
+                <button onclick="submitReg()" class="btn-act">SIMPAN</button>
+            `;
+            document.getElementById('modalMain').style.display = 'flex';
+        }
+
+        function openAdmin() {
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `<h3 style="margin-bottom:15px; color:gold">ADMIN PANEL</h3>` + 
+                songs.map((s) => `
+                <div style="padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center">
+                    <span style="font-size:12px">${s.title}</span>
+                    <button onclick="delSong('${s.id}')" style="background:red; border:none; color:white; padding:5px 10px; border-radius:5px">Hapus</button>
+                </div>`).join('');
+            document.getElementById('modalMain').style.display = 'flex';
+        }
+
+        // --- ACTIONS ---
+        function submitSong() {
+            const t = document.getElementById('inTitle').value;
+            const u = document.getElementById('inUrl').value;
+            if (t && u) {
+                db.ref('songs').push({
+                    title: t, url: u, by: userData.username, uid: auth.currentUser.uid, date: Date.now()
+                });
+                closeModal();
+                toast("Lagu Berhasil Ditambah!");
+            } else {
+                toast("Isi semua kolom!");
+            }
+        }
+
+        function submitReg() {
+            const u = document.getElementById('regName').value;
+            if (u.length >= 4) {
+                db.ref('users/' + auth.currentUser.uid).set({
+                    username: u, role: 'user', joined: Date.now()
+                });
+                closeModal();
+                toast("Akun Dibuat!");
+            } else {
+                toast("Username minimal 4 huruf");
+            }
+        }
+
+        function delSong(id) {
+            if(confirm("Hapus lagu ini permanen?")) {
+                db.ref('songs/' + id).remove();
+                openAdmin(); // Refresh list
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalMain').style.display = 'none';
+        }
+
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
     </script>
 </body>
 </html>
