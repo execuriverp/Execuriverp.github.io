@@ -1,226 +1,320 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.0 - Fixed Connection</title>
-  <link rel="icon" type="image/png" href="exemusicicon.png">
-  
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ExeMusic v4.0 - Modern Interface</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-  <style>
-    :root { --accent: #1db954; --text: #ffffff; --text-dim: #b3b3b3; --bg: #090909; --glass: rgba(255, 255, 255, 0.05); }
-    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
-    body { font-family: sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-    .app { background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; width: 92%; max-width: 380px; height: 94vh; display: flex; flex-direction: column; padding: 20px; position: relative; }
-    .header { text-align: center; flex-shrink: 0; margin-bottom: 10px; }
-    .header img { width: 100px; max-width: 30%; }
-    .cover-box { flex: 1; width: 100%; border-radius: 20px; background: #151515; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; z-index: 1; }
-    .eq { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
-    .eq span { width: 5px; background: var(--accent); border-radius: 10px; height: 8px; }
-    .playing span { animation: wave 0.8s infinite ease-in-out; }
-    @keyframes wave { 0%, 100% { height: 8px; } 50% { height: 40px; } }
-    .track-info { margin-bottom: 10px; flex-shrink: 0; text-align: left; }
-    #title { font-size: 20px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #by { color: var(--accent); font-size: 13px; margin-top: 2px; cursor: pointer; }
-    .sys-container { background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; }
-    .sys-tools { display: flex; justify-content: space-around; margin-bottom: 5px; }
-    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 16px; opacity: 0.8; }
-    .vol-row { display: flex; align-items: center; gap: 8px; padding: 0 5px; }
-    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
-    .prog-area { margin-bottom: 15px; flex-shrink: 0; }
-    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; }
-    .time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
-    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-bottom: 15px; }
-    .btn-play { width: 60px; height: 60px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 22px; cursor: pointer; }
-    .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; }
-    .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; }
-    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; }
-    .active { color: var(--accent) !important; opacity: 1 !important; }
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; }
-    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 25px 25px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
-    .song-item { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; }
-    #toast.show { opacity: 1; }
-    .btn-auth { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
-    .profile-info { text-align: center; padding: 10px; }
-    .follow-btn { background: var(--accent); color: black; border: none; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-  </style>
+    <style>
+        :root {
+            --accent: #1db954;
+            --bg: #0b0b0b;
+            --surface: #181818;
+            --text: #ffffff;
+            --text-dim: #a7a7a7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        .player-card {
+            width: 90%; max-width: 400px;
+            height: 90vh;
+            background: linear-gradient(180deg, #222 0%, #000 100%);
+            border-radius: 40px;
+            padding: 30px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header img { height: 30px; }
+
+        .art-work {
+            flex: 1;
+            background: #111;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            overflow: hidden; border: 1px solid #333;
+        }
+
+        /* Visualizer Sederhana */
+        .visualizer { display: flex; align-items: flex-end; gap: 5px; height: 60px; }
+        .visualizer div { width: 6px; background: var(--accent); border-radius: 3px; height: 10px; transition: 0.3s; }
+        .playing .visualizer div { animation: bounce 0.8s infinite alternate; }
+        @keyframes bounce { from { height: 10px; } to { height: 50px; } }
+
+        .info { margin-bottom: 20px; }
+        .info h1 { font-size: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info p { color: var(--accent); font-weight: 600; cursor: pointer; }
+
+        .controls-main { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .play-btn { 
+            width: 70px; height: 70px; background: var(--accent); 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: black; font-size: 30px; cursor: pointer; border: none;
+        }
+
+        .slider { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; margin-top: 10px; }
+        .time { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-top: 5px; }
+
+        .footer-nav { 
+            margin-top: auto; display: flex; justify-content: space-around; 
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px;
+        }
+        .footer-nav button { background: none; border: none; color: white; font-size: 20px; cursor: pointer; opacity: 0.6; }
+        .active { opacity: 1 !important; color: var(--accent) !important; }
+
+        /* Modal Modern */
+        .modal { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
+            display: none; z-index: 100; align-items: flex-end;
+        }
+        .modal-content { 
+            width: 100%; max-width: 400px; background: #1c1c1c; 
+            border-radius: 30px 30px 0 0; padding: 25px; max-height: 70vh; overflow-y: auto;
+            margin: 0 auto;
+        }
+
+        input { 
+            width: 100%; padding: 15px; margin-bottom: 10px; 
+            background: #252525; border: none; border-radius: 12px; color: white;
+        }
+        .btn-action { 
+            width: 100%; padding: 15px; background: var(--accent); 
+            border: none; border-radius: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        #toast {
+            position: fixed; top: 20px; background: var(--accent); color: black;
+            padding: 10px 25px; border-radius: 50px; font-weight: bold;
+            display: none; z-index: 1000;
+        }
+    </style>
 </head>
 <body>
 
-  <div id="toast">Notif</div>
+    <div id="toast">Notif</div>
 
-  <div class="app">
-    <div class="header"><img src="exemusic.png" alt="Logo"></div>
-    <div class="cover-box">
-      <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
-    </div>
-    <div class="track-info">
-      <div id="title">Menghubungkan...</div>
-      <div id="by" onclick="viewProfile(songs[i]?.uid)">Silakan Tunggu</div>
-    </div>
-    <div class="sys-container">
-      <div class="sys-tools">
-        <button onclick="copyRawUrl()">📋</button>
-        <button onclick="shareLink()">🔗</button>
-        <button onclick="downloadSong()">⬇️</button>
-        <button onclick="openReq()">➕</button>
-      </div>
-      <div class="vol-row"><span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.01" value="0.8"><span>🔊</span></div>
-    </div>
-    <div class="prog-area">
-      <input type="range" id="seek" value="0">
-      <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
-    </div>
-    <div class="main-ctrl">
-      <button class="btn-sec" onclick="prev()">⏮</button>
-      <button class="btn-play" onclick="toggle()" id="playBtn">▶</button>
-      <button class="btn-sec" onclick="next()">⏭</button>
-    </div>
-    <div class="footer">
-      <button id="shuf" onclick="toggleShuffle()">🔀</button>
-      <button onclick="openList(false)">☰</button>
-      <button onclick="openList(true)">⭐</button>
-      <button id="rep" onclick="toggleRepeat()">🔁</button>
-      <button id="adminBtn" style="display:none" onclick="openAdmin()">🛡️</button>
-    </div>
-  </div>
+    <div class="player-card" id="app">
+        <div class="header">
+            <img src="exemusic.png" alt="Logo">
+            <button id="adminBtn" style="display:none; background:none; border:none; font-size:20px;" onclick="openAdmin()">🛡️</button>
+        </div>
 
-  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'"><div class="sheet" id="profileDetail"></div></div>
-  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:15px">Login Member</h3>
-      <div id="authInitial"><button class="btn-auth" style="background:#fff" onclick="loginGoogle()">Login with Google</button></div>
-      <div id="authSetup" style="display:none">
-        <input id="newUsername" placeholder="Username (4-10 huruf)" maxlength="10" style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px">
-        <button onclick="finishRegistration()" class="btn-auth" style="background:var(--accent)">BUAT AKUN</button>
-      </div>
-    </div>
-  </div>
-  <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:15px">Tambah Musik</h3>
-      <input id="rLagu" placeholder="Judul Lagu" style="width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px">
-      <input id="rUrl" placeholder="URL Top4Top" style="width:100%; padding:12px; margin-bottom:15px; background:#222; color:white; border:none; border-radius:10px">
-      <button onclick="handleAddSong()" style="width:100%; padding:14px; background:var(--accent); border:none; border-radius:10px; font-weight:bold">UPLOAD</button>
-    </div>
-  </div>
-  <div class="modal" id="modalAdmin" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:15px">Admin Control</h3>
-      <button onclick="toggleMT()" class="btn-auth" style="background: #f39c12">Toggle MT Mode</button>
-      <div id="adminSongList" style="margin-top:15px; max-height:200px; overflow-y:auto"></div>
-    </div>
-  </div>
-  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'"><div class="sheet"><div id="songContainer"></div></div></div>
+        <div class="art-work" id="artContainer">
+            <div class="visualizer">
+                <div></div><div></div><div></div><div></div><div></div>
+            </div>
+        </div>
 
-  <script>
-    // Konfigurasi Tanpa Enkripsi (Gunakan String Langsung untuk Stabilitas)
-    const firebaseConfig = {
-      apiKey: atob("QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ="),
-      authDomain: "exemusic-execuriverp.firebaseapp.com",
-      databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "exemusic-execuriverp"
-    };
+        <div class="info">
+            <h1 id="trackTitle">Memuat Musik...</h1>
+            <p id="trackBy" onclick="viewProfile(songs[i]?.uid)">@system</p>
+        </div>
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth(), db = firebase.database();
-    let songs = [], i = 0, isShuf = true, isRepeat = false, fav = JSON.parse(localStorage.getItem("exeFav") || "[]"), userData = null, mtMode = false;
-    const audio = new Audio(), playBtn = document.getElementById('playBtn'), eq = document.getElementById('eq');
+        <div class="progress">
+            <input type="range" id="seek" class="slider" value="0">
+            <div class="time">
+                <span id="cur">0:00</span>
+                <span id="dur">0:00</span>
+            </div>
+        </div>
 
-    // Auth Logic
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const snap = await db.ref('users/' + user.uid).get();
-        if (snap.exists()) {
-          userData = snap.val();
-          if (userData.role === "admin") document.getElementById('adminBtn').style.display = 'block';
-          if (userData.isBanned) { msg("Banned!"); auth.signOut(); location.reload(); }
-        } else {
-          document.getElementById('modalAuth').style.display = 'block';
-          document.getElementById('authInitial').style.display = 'none';
-          document.getElementById('authSetup').style.display = 'block';
+        <div class="controls-main">
+            <button onclick="prev()" style="background:none; border:none; color:white; font-size:30px;">⏮</button>
+            <button class="play-btn" onclick="togglePlay()" id="playBtn">▶</button>
+            <button onclick="next()" style="background:none; border:none; color:white; font-size:30px;">⏭</button>
+        </div>
+
+        <div class="footer-nav">
+            <button onclick="openList()">☰</button>
+            <button onclick="openAdd()">➕</button>
+            <button id="shufBtn" onclick="toggleShuffle()">🔀</button>
+            <button id="repBtn" onclick="toggleRepeat()">🔁</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modalGeneric" onclick="if(event.target==this)this.style.display='none'">
+        <div class="modal-content" id="modalBody"></div>
+    </div>
+
+    <script>
+        // CONFIG - Ganti dengan milikmu jika ingin custom
+        const config = {
+            apiKey: atob("QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ="),
+            authDomain: "exemusic-execuriverp.firebaseapp.com",
+            databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "exemusic-execuriverp"
+        };
+
+        firebase.initializeApp(config);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        const audio = new Audio();
+
+        let songs = [], i = 0, isShuffle = false, isRepeat = false, userData = null;
+
+        // AUTH SYSTEM
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const snap = await db.ref('users/' + user.uid).get();
+                if (snap.exists()) {
+                    userData = snap.val();
+                    if(userData.role === "admin") document.getElementById('adminBtn').style.display = 'block';
+                } else {
+                    showRegisForm();
+                }
+            }
+        });
+
+        // LOAD DATA
+        db.ref('songs').on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                songs = Object.keys(val).map(k => ({...val[k], id: k}));
+                if(audio.src === "") loadSong(0, false);
+            }
+        });
+
+        function loadSong(idx, play = true) {
+            if(!songs[idx]) return;
+            i = idx;
+            audio.src = songs[i].url;
+            document.getElementById('trackTitle').textContent = songs[i].title;
+            document.getElementById('trackBy').textContent = "@" + songs[i].by;
+            if(play) { audio.play(); updateUI(true); }
         }
-      }
-    });
 
-    function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => msg("Error: " + e.message)); }
-    function logoutUser() { if(confirm("Logout?")) auth.signOut().then(() => location.reload()); }
-    async function finishRegistration() {
-      const u = document.getElementById('newUsername').value.trim();
-      if (u.length < 4) return msg("Min 4 Huruf!");
-      await db.ref('users/' + auth.currentUser.uid).set({ username: u, role: 'user', lastUpload: 0, isBanned: false });
-      location.reload();
-    }
+        function togglePlay() {
+            if(audio.paused) {
+                audio.play();
+                updateUI(true);
+            } else {
+                audio.pause();
+                updateUI(false);
+            }
+        }
 
-    // Data Sync
-    db.ref('songs').on('value', snap => {
-      const data = snap.val();
-      if (data) {
-        songs = Object.keys(data).map(k => ({...data[k], fbId: k}));
-        if(songs.length > 0 && audio.src === "") setup(0, false);
-      }
-    });
+        function updateUI(isPlaying) {
+            document.getElementById('playBtn').textContent = isPlaying ? "❚❚" : "▶";
+            isPlaying ? document.getElementById('app').classList.add('playing') : document.getElementById('app').classList.remove('playing');
+        }
 
-    function setup(idx, play = true) {
-      if (!songs[idx]) return;
-      i = idx; audio.src = songs[i].url;
-      document.getElementById('title').textContent = songs[i].title;
-      document.getElementById('by').textContent = "@" + songs[i].by;
-      if(play) { audio.play(); playBtn.textContent = "❚❚"; eq.classList.add('playing'); }
-    }
+        function next() {
+            let nextIdx = isShuffle ? Math.floor(Math.random()*songs.length) : (i + 1) % songs.length;
+            loadSong(nextIdx);
+        }
 
-    // Features
-    function toggle() { audio.paused ? (audio.play(), playBtn.textContent = "❚❚", eq.classList.add('playing')) : (audio.pause(), playBtn.textContent = "▶", eq.classList.remove('playing')); }
-    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
-    function prev() { setup((i-1+songs.length)%songs.length); }
-    function msg(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-    
-    async function viewProfile(uid) {
-      if(!uid) return;
-      const snap = await db.ref('users/' + uid).get();
-      if(!snap.exists()) return;
-      const u = snap.val();
-      const isMe = auth.currentUser && auth.currentUser.uid === uid;
-      document.getElementById('profileDetail').innerHTML = `
-        <div class="profile-info">
-          <h2>${u.username}</h2><p>${u.role}</p>
-          ${isMe ? `<button class="btn-auth" onclick="logoutUser()">LOGOUT</button>` : ''}
-        </div>`;
-      document.getElementById('modalProfile').style.display='block';
-    }
+        function prev() {
+            loadSong((i - 1 + songs.length) % songs.length);
+        }
 
-    async function handleAddSong() {
-      const title = document.getElementById('rLagu').value, url = document.getElementById('rUrl').value;
-      if (!url.includes("top4top")) return msg("Gunakan Top4Top!");
-      await db.ref('songs').push({ title, url, by: userData.username, uid: auth.currentUser.uid, timestamp: Date.now() });
-      document.getElementById('modalReq').style.display = 'none';
-      msg("Berhasil!");
-    }
+        // TIME & PROGRESS
+        audio.ontimeupdate = () => {
+            const seek = document.getElementById('seek');
+            seek.value = (audio.currentTime / audio.duration) * 100 || 0;
+            document.getElementById('cur').textContent = fmtTime(audio.currentTime);
+            document.getElementById('dur').textContent = fmtTime(audio.duration);
+        };
+        document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100) * audio.duration;
+        audio.onended = () => isRepeat ? loadSong(i) : next();
 
-    function openList(f) {
-      const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
-      document.getElementById('songContainer').innerHTML = l.map(s => `
-        <div class="song-item" onclick="setup(${songs.indexOf(s)})">
-          <div><b>${s.title}</b><br><small>${s.by}</small></div>
-        </div>`).join('');
-      document.getElementById('modalList').style.display='block';
-    }
+        function fmtTime(s) {
+            if(isNaN(s)) return "0:00";
+            let m = Math.floor(s/60), sc = Math.floor(s%60);
+            return m + ":" + (sc < 10 ? "0"+sc : sc);
+        }
 
-    // Audio Controls
-    audio.ontimeupdate = () => { document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0; document.getElementById('cur').textContent = fmt(audio.currentTime); document.getElementById('dur').textContent = fmt(audio.duration); };
-    document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
-    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
-    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
-    function fmt(s) { let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
-    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
-    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Disalin"); }
-    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Disalin"); }
-    function downloadSong() { window.open(songs[i].url); }
-  </script>
+        // MODAL FUNCTIONS
+        function openList() {
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `<h3>Playlist</h3><br>` + songs.map((s, idx) => `
+                <div onclick="loadSong(${idx})" style="padding:15px; border-bottom:1px solid #333; cursor:pointer">
+                    <b>${s.title}</b><br><small color="#888">${s.by}</small>
+                </div>
+            `).join('');
+            document.getElementById('modalGeneric').style.display = 'flex';
+        }
+
+        function openAdd() {
+            if(!auth.currentUser) return auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <h3>Tambah Lagu</h3><br>
+                <input id="inT" placeholder="Judul Lagu">
+                <input id="inU" placeholder="URL Audio (Top4Top)">
+                <button class="btn-action" onclick="saveSong()">UPLOAD</button>
+            `;
+            document.getElementById('modalGeneric').style.display = 'flex';
+        }
+
+        async function saveSong() {
+            const title = document.getElementById('inT').value;
+            const url = document.getElementById('inU').value;
+            if(!title || !url) return alert("Isi semua!");
+            await db.ref('songs').push({
+                title, url, by: userData.username, uid: auth.currentUser.uid, date: Date.now()
+            });
+            document.getElementById('modalGeneric').style.display = 'none';
+            showToast("Berhasil Menambah Lagu!");
+        }
+
+        function showRegisForm() {
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <h3>Buat Akun</h3><br>
+                <input id="regUser" placeholder="Username">
+                <button class="btn-action" onclick="finishReg()">DAFTAR</button>
+            `;
+            document.getElementById('modalGeneric').style.display = 'flex';
+        }
+
+        async function finishReg() {
+            const u = document.getElementById('regUser').value;
+            await db.ref('users/' + auth.currentUser.uid).set({
+                username: u, role: 'user', joined: Date.now()
+            });
+            location.reload();
+        }
+
+        function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('shufBtn').classList.toggle('active'); }
+        function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('repBtn').classList.toggle('active'); }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        // ADMIN
+        function openAdmin() {
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `<h3>Admin Panel</h3><br>` + songs.map((s) => `
+                <div style="display:flex; justify-content:space-between; padding:10px;">
+                    <span>${s.title}</span>
+                    <button onclick="delS('${s.id}')" style="color:red; background:none; border:none;">Hapus</button>
+                </div>
+            `).join('');
+            document.getElementById('modalGeneric').style.display = 'flex';
+        }
+
+        window.delS = (id) => { if(confirm('Hapus?')) db.ref('songs/'+id).remove(); };
+        window.viewProfile = (uid) => { alert("User ID: " + uid); };
+
+    </script>
 </body>
 </html>
