@@ -1,109 +1,78 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execurive Community | Forum</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcM11UsAAAAABIgzvy_AXQeott1lqSxqlhiVn6w"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    
-        const firebaseConfig = {
-          apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
-          authDomain: "execuriverp.firebaseapp.com",
-          databaseURL: "https://execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
-          projectId: "execuriverp",
-          storageBucket: "execuriverp.firebasestorage.app",
-          messagingSenderId: "672894448184",
-          appId: "1:672894448184:web:2d9635ca19ea94c3e7eccd",
-        };
-    
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-    
-        // Inisialisasi Recaptcha Bawaan Firebase (Lebih Stabil)
-        window.onload = () => {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
-                'size': 'invisible',
-                'callback': (response) => {
-                    // reCAPTCHA solved, biarkan fungsi login berjalan
-                }
-            });
-        };
-    
-        window.prosesLogin = async () => {
-            const phoneNumber = document.getElementById('phone').value;
-            
-            if(!phoneNumber.startsWith('+62')) {
-                alert("Gunakan format Indonesia! (+628...)");
-                return;
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
+      authDomain: "execuriverp.firebaseapp.com",
+      databaseURL: "https://execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "execuriverp",
+      storageBucket: "execuriverp.firebasestorage.app",
+      messagingSenderId: "672894448184",
+      appId: "1:672894448184:web:2d9635ca19ea94c3e7eccd",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Inisialisasi Recaptcha Bawaan Firebase (Lebih Stabil)
+    window.onload = () => {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
+            'size': 'invisible',
+            'callback': (response) => {
+                // reCAPTCHA solved, biarkan fungsi login berjalan
             }
-    
-            // Cek Blacklist
-            try {
-                const blacklistRef = doc(db, "blacklist", phoneNumber);
-                const blacklistSnap = await getDoc(blacklistRef);
-                if (blacklistSnap.exists()) {
-                    alert("NOMOR DIBLOKIR!");
-                    return; 
-                }
-            } catch (e) { console.error(e); }
-    
-            const appVerifier = window.recaptchaVerifier;
-    
-            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-                .then((confirmationResult) => {
-                    window.confirmationResult = confirmationResult;
-                    alert("OTP Terkirim!");
-                    document.getElementById('otp-section').classList.remove('hidden');
-                }).catch((error) => {
-                    alert("Gagal: " + error.message);
-                    // Reset recaptcha jika gagal agar bisa klik lagi
-                    window.recaptchaVerifier.render().then(widgetId => {
-                        grecaptcha.reset(widgetId);
-                    });
+        });
+    };
+
+    window.prosesLogin = async () => {
+        const phoneNumber = document.getElementById('phone').value;
+        
+        if(!phoneNumber.startsWith('+62')) {
+            alert("Gunakan format Indonesia! (+628...)");
+            return;
+        }
+
+        // Cek Blacklist
+        try {
+            const blacklistRef = doc(db, "blacklist", phoneNumber);
+            const blacklistSnap = await getDoc(blacklistRef);
+            if (blacklistSnap.exists()) {
+                alert("NOMOR DIBLOKIR!");
+                return; 
+            }
+        } catch (e) { console.error(e); }
+
+        const appVerifier = window.recaptchaVerifier;
+
+        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                alert("OTP Terkirim!");
+                document.getElementById('otp-section').classList.remove('hidden');
+            }).catch((error) => {
+                alert("Gagal: " + error.message);
+                // Reset recaptcha jika gagal agar bisa klik lagi
+                window.recaptchaVerifier.render().then(widgetId => {
+                    grecaptcha.reset(widgetId);
                 });
-        };
-    
-        window.verifikasiOTP = () => {
-            const code = document.getElementById('otp-code').value;
-            window.confirmationResult.confirm(code).then(() => {
-                alert("Login Berhasil!");
-                window.location.href = "forum.html"; 
-            }).catch(() => alert("OTP SALAH!"));
-        };
-    </script>
-    
-    <button 
-        onclick="prosesLogin()"
-        id="sign-in-button"
-        class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 rounded transition-all shadow-lg uppercase">
-        LOGIN TO FORUM
-    </button>
+            });
+    };
 
-            <div id="otp-section" class="mt-8 hidden animate-in fade-in duration-500">
-                <div class="border-t border-gray-800 pt-6">
-                    <input id="otp-code" type="text" placeholder="OTP CODE" 
-                        class="w-full bg-black border border-blue-900 p-4 rounded text-center text-2xl tracking-[0.5em] font-black text-blue-500 mb-4 focus:outline-none">
-                    <button onclick="verifikasiOTP()" class="w-full bg-green-700 hover:bg-green-600 py-3 rounded font-bold uppercase text-xs tracking-widest">
-                        Verify Identity
-                    </button>
-                </div>
-            </div>
-        </div>
+    window.verifikasiOTP = () => {
+        const code = document.getElementById('otp-code').value;
+        window.confirmationResult.confirm(code).then(() => {
+            alert("Login Berhasil!");
+            window.location.href = "forum.html"; 
+        }).catch(() => alert("OTP SALAH!"));
+    };
+</script>
 
-        <div class="mt-8 flex gap-6 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-            <a href="#" class="hover:text-blue-500 transition">UCP System</a>
-            <a href="#" class="hover:text-blue-500 transition">Rules</a>
-            <a href="#" class="hover:text-blue-500 transition">Community</a>
-        </div>
-    </div>
-
-</body>
-</html>
+<button 
+    onclick="prosesLogin()"
+    id="sign-in-button"
+    class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-4 rounded transition-all shadow-lg uppercase">
+    LOGIN TO FORUM
+</button>
