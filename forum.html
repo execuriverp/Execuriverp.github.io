@@ -3,123 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execurive Community - Forum</title>
+    <title>Execurive Community | Forum</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #050a12; color: #d1d5db; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #050a12; color: #d1d5db; font-family: 'Segoe UI', sans-serif; }
+        .header-blue { background: #081225; border-bottom: 3px solid #1e3a8a; }
+        .nav-dark { background: #0c1a33; border-bottom: 1px solid #1e293b; }
+        .forum-card { background: #0f172a; border: 1px solid #1e293b; transition: 0.2s; border-radius: 4px; }
+        .forum-card:hover { border-color: #2563eb; background: #162238; }
         
-        /* IDSosial Blue Header */
-        .header-top { background: #081225; border-bottom: 3px solid #1e3a8a; }
-        .nav-bar { background: #0c1a33; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
-        
-        /* Forum Layout Style */
-        .forum-block { background: #111d33; border: 1px solid #1e293b; border-radius: 4px; overflow: hidden; }
-        .forum-header { background: linear-gradient(to bottom, #1e3a8a, #172554); padding: 10px 15px; font-weight: bold; color: white; border-bottom: 1px solid #1e40af; }
-        .forum-item { background: #0f172a; border-bottom: 1px solid #1e293b; transition: 0.2s; }
-        .forum-item:hover { background: #162238; }
-        
-        /* Sidebar Style */
-        .sidebar-box { background: #111d33; border: 1px solid #1e293b; border-radius: 4px; margin-bottom: 20px; }
-        .sidebar-title { background: #1e3a8a; color: white; padding: 8px 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; }
-        
-        .btn-post { background: #2563eb; color: white; transition: 0.2s; border-radius: 3px; }
-        .btn-post:hover { background: #1d4ed8; transform: translateY(-1px); }
-        
-        input, textarea { background: #0f172a !important; border: 1px solid #1e3a8a !important; color: white !important; }
+        /* Role Colors */
+        .role-owner { color: #ff0000; font-weight: 900; text-shadow: 0 0 5px rgba(255,0,0,0.3); }
+        .role-admin { color: #ff8c00; font-weight: 800; }
+        .role-staff { color: #00ff00; font-weight: 700; }
+        .role-member { color: #3b82f6; }
     </style>
 </head>
 <body>
 
-    <div class="header-top py-6 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-blue-600 rounded flex items-center justify-center text-2xl font-black text-white italic shadow-lg shadow-blue-500/20">E</div>
+    <header class="header-blue py-6 px-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-blue-700 rounded-lg flex items-center justify-center text-3xl font-black text-white italic shadow-lg shadow-blue-500/40 border-b-4 border-blue-900">E</div>
                 <div>
-                    <h1 class="text-2xl font-bold text-white tracking-tight">EXECURIVE COMMUNITY</h1>
-                    <p class="text-xs text-blue-400 font-semibold uppercase tracking-widest">The Blue City Roleplay</p>
+                    <h1 class="text-2xl font-black text-white tracking-tighter uppercase italic">Execurive <span class="text-blue-500">RP</span></h1>
+                    <p class="text-[10px] text-blue-400 font-bold uppercase tracking-[0.2em]">The Blue City Community</p>
                 </div>
             </div>
-            <div id="user-info" class="flex items-center gap-3 bg-black/20 p-2 rounded border border-white/5">
-                <div class="text-right">
-                    <p id="display-name" class="text-sm font-bold text-white">Guest</p>
-                    <p class="text-[10px] text-gray-400">Member ID: <span id="display-uid" class="text-blue-500">...</span></p>
+            <div id="user-profile" class="flex items-center gap-3 bg-black/30 p-2 pr-4 rounded-full border border-white/5">
+                <div id="user-avatar" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-white border-2 border-blue-400">?</div>
+                <div class="flex flex-col">
+                    <span id="user-name" class="text-sm font-bold text-white leading-none">Loading...</span>
+                    <span id="user-role" class="text-[10px] uppercase font-black mt-1">Checking...</span>
                 </div>
-                <div id="user-initial" class="w-10 h-10 bg-blue-700 rounded flex items-center justify-center font-bold">?</div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="nav-bar sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center px-4">
+    <nav class="nav-dark sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between px-4">
             <div class="flex">
-                <a href="#" class="px-4 py-3 text-sm font-bold border-b-2 border-blue-500 text-white bg-white/5">Forums</a>
-                <a href="#" class="px-4 py-3 text-sm font-bold text-gray-400 hover:text-white transition">What's New</a>
-                <a href="#" class="px-4 py-3 text-sm font-bold text-gray-400 hover:text-white transition">Members</a>
+                <a href="#" class="px-6 py-3 text-xs font-bold text-white border-b-2 border-blue-500 bg-blue-500/10">FORUMS</a>
+                <a href="exe-admin.html" id="admin-link" class="hidden px-6 py-3 text-xs font-bold text-red-500 hover:bg-red-500/10 transition">ADMIN PANEL</a>
             </div>
-            <button onclick="logout()" class="text-xs font-bold text-red-400 hover:text-red-300">LOGOUT</button>
+            <button onclick="logout()" class="text-xs font-bold text-gray-500 hover:text-white"><i class="fa fa-sign-out-alt mr-1"></i> LOGOUT</button>
         </div>
-    </div>
+    </nav>
 
-    <div class="max-w-7xl mx-auto px-4 mt-4">
-        <div class="flex items-center gap-2 text-xs text-gray-500">
-            <i class="fa fa-home"></i> <span>Forums</span> <i class="fa fa-chevron-right text-[8px]"></i> <span class="text-gray-300 font-semibold">Home</span>
-        </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto grid grid-cols-12 gap-6 mt-6 px-4 pb-20">
+    <main class="max-w-7xl mx-auto mt-8 px-4 pb-20 grid grid-cols-12 gap-8">
         
         <div class="col-span-12 lg:col-span-9 space-y-6">
-            
-            <div class="flex justify-between items-center bg-[#111d33] p-4 border border-blue-900/30 rounded shadow-inner">
-                <span class="text-sm font-semibold italic text-blue-300">Ada yang ingin kamu bagikan, @<span id="user-tag">user</span>?</span>
-                <button onclick="openModal()" class="btn-post px-6 py-2 text-xs font-bold uppercase tracking-tighter shadow-lg shadow-blue-500/30">Post Thread</button>
+            <div id="post-box" class="hidden bg-[#111d33] p-5 border border-blue-900/30 rounded shadow-lg flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i class="fa fa-pen-nib text-blue-500"></i>
+                    <span class="text-sm font-bold italic">Buat pengumuman atau diskusi baru, <span id="tag-name" class="text-blue-400">Admin</span>?</span>
+                </div>
+                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded text-xs font-bold uppercase shadow-lg shadow-blue-500/20">Create Thread</button>
             </div>
 
-            <div class="forum-block">
-                <div class="forum-header flex justify-between text-xs">
-                    <span>LATEST DISCUSSIONS</span>
-                    <span class="hidden md:block">REPLIES / VIEWS</span>
+            <div class="rounded overflow-hidden border border-gray-800">
+                <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-3 text-xs font-bold text-white uppercase tracking-widest flex justify-between">
+                    <span>Character Story & Applications</span>
+                    <i class="fa fa-folder-open"></i>
                 </div>
-                <div id="thread-list">
-                    <div class="p-10 text-center text-gray-600 italic">Memuat data forum...</div>
+                <div id="thread-list" class="divide-y divide-gray-800 bg-[#0b1221]">
+                    <div class="p-10 text-center text-gray-600 italic">Memproses data dari database...</div>
                 </div>
             </div>
         </div>
 
-        <div class="col-span-12 lg:col-span-3">
-            <div class="sidebar-box">
-                <div class="sidebar-title">Forum Statistics</div>
-                <div class="p-4 space-y-3 text-xs">
-                    <div class="flex justify-between"><span>Total Threads:</span> <span class="font-bold text-blue-400" id="stat-threads">0</span></div>
-                    <div class="flex justify-between"><span>Total Members:</span> <span class="font-bold text-blue-400">124</span></div>
-                    <div class="flex justify-between"><span>Latest Member:</span> <span class="font-bold text-white">ExecurivePlayer</span></div>
+        <aside class="col-span-12 lg:col-span-3 space-y-6">
+            <div class="bg-[#111d33] border border-gray-800 rounded p-4">
+                <h4 class="text-xs font-bold text-blue-500 uppercase mb-4 border-b border-blue-900/50 pb-2">Forum Stats</h4>
+                <div class="space-y-3 text-xs">
+                    <div class="flex justify-between"><span>Threads:</span> <span id="stat-count" class="font-bold">0</span></div>
+                    <div class="flex justify-between"><span>Active Role:</span> <span id="stat-role" class="font-bold">-</span></div>
                 </div>
             </div>
-
-            <div class="sidebar-box">
-                <div class="sidebar-title">Staff Online</div>
-                <div class="p-4 flex items-center gap-3">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-xs font-bold text-red-500">Admin_Execurive</span>
-                </div>
-            </div>
-        </div>
-    </div>
+        </aside>
+    </main>
 
     <div id="postModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
         <div class="bg-[#111d33] w-full max-w-2xl rounded border border-blue-600 shadow-2xl">
             <div class="p-4 bg-blue-900 flex justify-between items-center">
-                <h3 class="font-bold text-white uppercase text-sm italic">Create New Thread</h3>
+                <h3 class="font-bold text-white uppercase text-xs italic">Create New Discussion</h3>
                 <button onclick="closeModal()" class="text-white hover:text-red-400">&times;</button>
             </div>
             <div class="p-6 space-y-4">
-                <input id="post-title" type="text" placeholder="Thread Title..." class="w-full p-3 rounded outline-none text-sm">
-                <textarea id="post-content" rows="8" placeholder="Write your message here..." class="w-full p-3 rounded outline-none text-sm resize-none"></textarea>
-                <div class="flex justify-end gap-2">
-                    <button onclick="closeModal()" class="px-6 py-2 bg-gray-700 text-xs font-bold uppercase">Cancel</button>
-                    <button onclick="submitPost()" class="btn-post px-10 py-2 text-xs font-bold uppercase">Create Thread</button>
+                <input id="post-title" type="text" placeholder="Subject..." class="w-full p-3 rounded bg-[#050a12] border border-blue-900 outline-none text-white text-sm">
+                <textarea id="post-content" rows="8" placeholder="Enter your thread content..." class="w-full p-3 rounded bg-[#050a12] border border-blue-900 outline-none text-white text-sm resize-none"></textarea>
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeModal()" class="text-xs font-bold text-gray-400">CANCEL</button>
+                    <button onclick="submitPost()" class="bg-blue-600 px-8 py-2 rounded text-xs font-bold text-white hover:bg-blue-500">POST THREAD</button>
                 </div>
             </div>
         </div>
@@ -128,7 +104,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, get, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
@@ -143,38 +119,46 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let curUser = null;
+        let myData = null;
 
-        onAuthStateChanged(auth, (user) => {
+        // AUTH & ROLE SYSTEM
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                curUser = user;
-                const name = user.email.split('@')[0];
-                document.getElementById('display-name').innerText = name.toUpperCase();
-                document.getElementById('user-tag').innerText = name;
-                document.getElementById('display-uid').innerText = user.uid.substring(0, 8);
-                document.getElementById('user-initial').innerText = name.charAt(0).toUpperCase();
-                loadThreads();
+                const userRef = ref(db, 'users/' + user.uid);
+                const snap = await get(userRef);
+                
+                if (snap.exists()) {
+                    myData = snap.val();
+                    const role = myData.role || "Member";
+                    
+                    // Update UI
+                    document.getElementById('user-name').innerText = myData.username;
+                    document.getElementById('tag-name').innerText = myData.username;
+                    document.getElementById('user-avatar').innerText = myData.username.charAt(0).toUpperCase();
+                    document.getElementById('stat-role').innerText = role;
+
+                    // Apply Role Styling
+                    const roleEl = document.getElementById('user-role');
+                    roleEl.innerText = role;
+                    if(role === 'Owner') roleEl.className = "text-[10px] font-black mt-1 role-owner";
+                    else if(role === 'Admin') roleEl.className = "text-[10px] font-black mt-1 role-admin";
+                    else if(role === 'Helper') roleEl.className = "text-[10px] font-black mt-1 role-staff";
+                    else roleEl.className = "text-[10px] font-black mt-1 role-member";
+
+                    // Izin Akses Posting & Admin Panel
+                    if(role !== 'Member') {
+                        document.getElementById('post-box').classList.remove('hidden');
+                        document.getElementById('admin-link').classList.remove('hidden');
+                    }
+                    
+                    loadThreads();
+                }
             } else {
                 window.location.href = "execurive.html";
             }
         });
 
-        window.submitPost = async () => {
-            const title = document.getElementById('post-title').value;
-            const content = document.getElementById('post-content').value;
-            if (!title || !content) return alert("Please fill all fields!");
-
-            try {
-                const newThread = push(ref(db, 'threads'));
-                await set(newThread, {
-                    title, content, author: curUser.email.split('@')[0], timestamp: Date.now()
-                });
-                closeModal();
-                document.getElementById('post-title').value = "";
-                document.getElementById('post-content').value = "";
-            } catch (e) { alert(e.message); }
-        };
-
+        // LOAD THREADS FROM DATABASE
         function loadThreads() {
             onValue(ref(db, 'threads'), (snap) => {
                 const list = document.getElementById('thread-list');
@@ -182,38 +166,58 @@
                 if (snap.exists()) {
                     const data = snap.val();
                     const keys = Object.keys(data).reverse();
-                    document.getElementById('stat-threads').innerText = keys.length;
+                    document.getElementById('stat-count').innerText = keys.length;
 
                     keys.forEach(k => {
-                        const p = data[k];
-                        const date = new Date(p.timestamp).toLocaleDateString();
+                        const t = data[k];
+                        const date = new Date(t.timestamp).toLocaleDateString();
                         list.innerHTML += `
-                            <div class="forum-item p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="forum-card p-4 flex items-center justify-between">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-blue-900/50 border border-blue-500/30 rounded flex items-center justify-center text-blue-500">
-                                        <i class="fa fa-comments text-xl"></i>
+                                    <div class="w-10 h-10 bg-blue-900/30 rounded flex items-center justify-center text-blue-500">
+                                        <i class="fa fa-comment-dots text-lg"></i>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-blue-400 text-sm hover:underline cursor-pointer">${p.title}</h4>
-                                        <p class="text-[11px] text-gray-500 mt-1">Started by <span class="text-blue-300 font-semibold">${p.author}</span> • ${date}</p>
+                                        <h4 class="font-bold text-blue-300 text-sm hover:underline cursor-pointer uppercase">${t.title}</h4>
+                                        <p class="text-[10px] text-gray-500 mt-1">Diposting oleh <span class="text-white font-bold">${t.author}</span> • ${date}</p>
                                     </div>
                                 </div>
-                                <div class="hidden md:flex flex-col items-end text-[10px] text-gray-500 uppercase font-bold tracking-widest">
-                                    <span>0 Replies</span>
-                                    <span>24 Views</span>
+                                <div class="hidden md:block text-right">
+                                    <span class="text-[10px] font-black bg-blue-600/10 text-blue-500 px-2 py-1 rounded">PUBLISHED</span>
                                 </div>
                             </div>
                         `;
                     });
                 } else {
-                    list.innerHTML = "<div class='p-10 text-center text-gray-600'>No threads found. Start the first discussion!</div>";
+                    list.innerHTML = "<div class='p-10 text-center text-gray-700'>Database kosong.</div>";
                 }
             });
         }
 
+        // POSTING FUNCTION
+        window.submitPost = async () => {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            if(!title || !content) return alert("Lengkapi judul dan isi!");
+
+            try {
+                const threadRef = push(ref(db, 'threads'));
+                await set(threadRef, {
+                    title: title,
+                    content: content,
+                    author: myData.username,
+                    uid: auth.currentUser.uid,
+                    timestamp: Date.now()
+                });
+                closeModal();
+                document.getElementById('post-title').value = "";
+                document.getElementById('post-content').value = "";
+            } catch (e) { alert(e.message); }
+        };
+
         window.openModal = () => document.getElementById('postModal').classList.remove('hidden');
         window.closeModal = () => document.getElementById('postModal').classList.add('hidden');
-        window.logout = () => signOut(auth);
+        window.logout = () => signOut(auth).then(() => window.location.href="execurive.html");
     </script>
 </body>
 </html>
