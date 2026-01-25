@@ -7,16 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script type="module">
-        // Import Firebase SDK langsung dari CDN
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Firebase Execurive RP
         const firebaseConfig = {
           apiKey: "AIzaSyCtfsTqg3sJuJCq_EGF36c4eg8QUwyhtwE",
           authDomain: "execuriverp.firebaseapp.com",
-          databaseURL: "https://execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
           projectId: "execuriverp",
           storageBucket: "execuriverp.firebasestorage.app",
           messagingSenderId: "672894448184",
@@ -27,115 +24,85 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Inisialisasi Recaptcha saat halaman dimuat
-        window.onload = () => {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
-                'size': 'invisible',
-                'callback': (response) => {
-                    console.log("reCAPTCHA solved");
-                }
-            });
-        };
+        // FUNGSI REGISTER (Untuk User Baru)
+        window.prosesRegister = async () => {
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const phone = document.getElementById('reg-phone').value;
 
-        // Fungsi Utama Login
-        window.prosesLogin = async () => {
-            const phoneNumber = document.getElementById('phone').value;
-            
-            if(!phoneNumber.startsWith('+62')) {
-                alert("Harus pakai +62! Contoh: +628123456789");
-                return;
-            }
+            if(!email || !pass || !phone) return alert("Isi semua data!");
 
-            // 1. Cek Blacklist di Database Firestore
             try {
-                const blacklistRef = doc(db, "blacklist", phoneNumber);
-                const blacklistSnap = await getDoc(blacklistRef);
-                if (blacklistSnap.exists()) {
-                    alert("AKSES DITOLAK: Nomor ini diblokir dari Execurive.");
-                    return; 
-                }
-            } catch (e) {
-                console.error("Cek database gagal:", e);
-            }
+                // 1. Cek Blacklist Nomor HP
+                const blRef = doc(db, "blacklist", phone);
+                const blSnap = await getDoc(blRef);
+                if(blSnap.exists()) return alert("NOMOR HP INI DIBLOKIR!");
 
-            // 2. Jalankan Firebase Phone Auth
-            const appVerifier = window.recaptchaVerifier;
+                // 2. Buat Akun
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
 
-            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-                .then((confirmationResult) => {
-                    window.confirmationResult = confirmationResult;
-                    alert("OTP Berhasil Dikirim ke WhatsApp/SMS!");
-                    document.getElementById('otp-section').classList.remove('hidden');
-                }).catch((error) => {
-                    alert("Error: " + error.message);
-                    // Reset recaptcha jika terjadi kesalahan
-                    if (window.recaptchaVerifier) {
-                        window.recaptchaVerifier.render().then(widgetId => {
-                            grecaptcha.reset(widgetId);
-                        });
-                    }
+                // 3. Simpan data No HP ke Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    phone: phone,
+                    role: "Member"
                 });
+
+                alert("Pendaftaran Berhasil!");
+                window.location.href = "forum.html";
+            } catch (error) {
+                alert("Gagal Daftar: " + error.message);
+            }
         };
 
-        // Fungsi Verifikasi Kode OTP
-        window.verifikasiOTP = () => {
-            const code = document.getElementById('otp-code').value;
-            window.confirmationResult.confirm(code).then((result) => {
-                alert("Login Berhasil! Selamat datang di komunitas.");
-                window.location.href = "forum.html"; 
-            }).catch((error) => {
-                alert("Kode OTP Salah atau Kadaluarsa!");
-            });
+        // FUNGSI LOGIN
+        window.prosesLogin = async () => {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                alert("Login Berhasil!");
+                window.location.href = "forum.html";
+            } catch (error) {
+                alert("Email atau Password Salah!");
+            }
+        };
+
+        // Switch Tampilan
+        window.showRegister = () => {
+            document.getElementById('login-box').classList.add('hidden');
+            document.getElementById('register-box').classList.remove('hidden');
+        };
+        window.showLogin = () => {
+            document.getElementById('register-box').classList.add('hidden');
+            document.getElementById('login-box').classList.remove('hidden');
         };
     </script>
 </head>
 <body class="bg-[#0b0e11] text-gray-200 font-sans min-h-screen flex flex-col items-center justify-center px-4">
 
-    <div class="mb-10 text-center">
-        <h1 class="text-5xl font-black tracking-tighter text-white italic">
-            EXECURIVE <span class="text-blue-600">RP</span>
-        </h1>
-        <div class="h-1 w-20 bg-blue-600 mx-auto mt-2"></div>
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-black tracking-tighter text-white italic">EXECURIVE <span class="text-blue-600">RP</span></h1>
+        <p class="text-[10px] text-gray-500 tracking-[0.3em] uppercase mt-2">Community Forum Access</p>
     </div>
 
-    <div class="bg-[#151921] border border-gray-800 p-8 rounded-2xl w-full max-w-[420px] shadow-2xl">
-        <h2 class="text-xl font-bold mb-6 text-gray-100 flex items-center gap-2">
-            <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
-            MEMBER LOGIN
-        </h2>
-        
-        <div class="mb-6">
-            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2">Nomor WhatsApp</label>
-            <input id="phone" type="text" placeholder="+628123456789" 
-                class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white text-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all font-mono">
-        </div>
-        
-        <button 
-            id="sign-in-button"
-            onclick="prosesLogin()"
-            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-900/20 uppercase tracking-widest text-sm">
-            Kirim Kode OTP
-        </button>
-
-        <div id="otp-section" class="mt-8 pt-8 border-t border-gray-800 hidden">
-            <label class="block text-center text-xs font-bold text-blue-400 uppercase mb-4">Masukkan 6 Digit Kode</label>
-            <input id="otp-code" type="text" placeholder="000000" 
-                class="w-full bg-black border border-blue-900 p-4 rounded-xl text-center text-3xl tracking-[0.4em] font-black text-white focus:outline-none focus:border-blue-400 mb-4">
-            <button onclick="verifikasiOTP()" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all">
-                Konfirmasi Login
-            </button>
-        </div>
+    <div id="login-box" class="bg-[#151921] border border-gray-800 p-8 rounded-2xl w-full max-w-[400px] shadow-2xl">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><span class="w-1 h-5 bg-blue-600"></span> LOGIN</h2>
+        <input id="login-email" type="email" placeholder="Email" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-blue-600">
+        <input id="login-pass" type="password" placeholder="Password" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-6 outline-none focus:border-blue-600">
+        <button onclick="prosesLogin()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all mb-4">Masuk</button>
+        <p class="text-center text-xs text-gray-500">Belum punya akun? <span onclick="showRegister()" class="text-blue-500 cursor-pointer hover:underline">Daftar Sekarang</span></p>
     </div>
 
-    <div class="mt-8 text-center">
-        <p class="text-gray-600 text-[10px] uppercase tracking-widest leading-loose">
-            Belum punya akun? Login otomatis mendaftarkan nomor Anda.<br>
-            Patuhi <span class="text-blue-800">Server Rules</span> & <span class="text-blue-800">Community Guidelines</span>.
-        </p>
-    </div>
-
-    <div class="fixed bottom-4 right-4 text-[9px] text-gray-700 font-mono">
-        EXECURIVE-WEB-V1.0.2
+    <div id="register-box" class="bg-[#151921] border border-gray-800 p-8 rounded-2xl w-full max-w-[400px] shadow-2xl hidden">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><span class="w-1 h-5 bg-green-600"></span> REGISTER</h2>
+        <input id="reg-email" type="email" placeholder="Email" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-blue-600">
+        <input id="reg-phone" type="text" placeholder="Nomor HP (+628...)" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-blue-600">
+        <input id="reg-pass" type="password" placeholder="Buat Password" class="w-full bg-[#0d1117] border border-gray-700 p-4 rounded-xl text-white mb-6 outline-none focus:border-blue-600">
+        <button onclick="prosesRegister()" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all mb-4">Buat Akun</button>
+        <p class="text-center text-xs text-gray-500">Sudah punya akun? <span onclick="showLogin()" class="text-blue-500 cursor-pointer hover:underline">Login</span></p>
     </div>
 
 </body>
