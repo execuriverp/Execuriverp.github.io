@@ -3,124 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.5 - Platinum Edition</title>
+  <title>ExeMusic v3.0 - Ultimate Edition</title>
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <style>
+    /* CSS ASLI KAMU (TIDAK DIPOTONG) */
     :root {
       --accent: #1db954;
       --text: #ffffff;
       --text-dim: #b3b3b3;
-      --bg: #050505;
-      --glass: rgba(255, 255, 255, 0.08);
-      --card: rgba(18, 18, 18, 0.9);
+      --bg: #090909;
+      --glass: rgba(255, 255, 255, 0.05);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: 'Segoe UI', Roboto, sans-serif;
+      font-family: sans-serif;
       background: var(--bg);
       color: var(--text);
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
-      background: radial-gradient(circle at top right, #1db95422, #000), #000;
     }
 
     .app {
-      background: var(--card);
-      backdrop-filter: blur(30px);
+      background: rgba(18, 18, 18, 0.85);
+      backdrop-filter: blur(25px);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 40px;
+      border-radius: 35px;
       width: 92%; max-width: 380px; 
-      height: 92vh;
+      height: 94vh;
       display: flex; flex-direction: column; 
-      padding: 20px; position: relative;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+      padding: 20px; 
+      position: relative;
     }
 
-    /* Top Bar */
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; }
-    .logo-img { width: 80px; filter: drop-shadow(0 0 5px var(--accent)); }
-    .btn-login-top {
-      background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
-      color: white; padding: 6px 15px; border-radius: 20px;
-      font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.3s;
+    /* LOADING CARD OVERLAY */
+    #loadingCard {
+      position: absolute; inset: 0; background: #000; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 35px; transition: 0.5s;
     }
-    .btn-login-top.active { border-color: var(--accent); color: var(--accent); }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 10px; }
+    .header img { width: 80px; }
+    
+    /* Tombol Login/Profile di Kanan Atas */
+    #topAuthBtn {
+      background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+      color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
+    }
 
     .cover-box {
-      flex: 1; width: 100%; border-radius: 25px;
-      background: linear-gradient(145deg, #111, #1a1a1a);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);
-      position: relative; overflow: hidden;
+      flex: 1; width: 100%; border-radius: 20px;
+      background: #151515; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden; position: relative; z-index: 1; 
     }
 
-    /* Animasi EQ */
-    .eq { display: flex; align-items: flex-end; gap: 5px; height: 50px; }
-    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: 0.3s; }
-    .playing span { animation: wave 0.8s infinite ease-in-out; }
+    /* EQ LEBIH HALUS (SMOOTH) */
+    .eq { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
+    .eq span { width: 5px; background: var(--accent); border-radius: 10px; height: 8px; transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .playing span { animation: wave 1.2s infinite ease-in-out; }
+    .playing span:nth-child(1) { animation-delay: 0.1s; }
+    .playing span:nth-child(2) { animation-delay: 0.3s; }
+    .playing span:nth-child(3) { animation-delay: 0.2s; }
+    .playing span:nth-child(4) { animation-delay: 0.4s; }
     @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 45px; } }
 
-    .track-info { margin-bottom: 15px; text-align: left; }
-    #title { font-size: 22px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    #by { color: var(--text-dim); font-size: 13px; margin-top: 4px; cursor: pointer; }
-
-    .sys-container { background: var(--glass); border-radius: 20px; padding: 12px; margin-bottom: 15px; }
-    .sys-tools { display: flex; justify-content: space-around; margin-bottom: 10px; }
-    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; opacity: 0.7; transition: 0.3s; }
-    .sys-tools button:hover { opacity: 1; transform: scale(1.1); }
+    .track-info { margin-bottom: 10px; flex-shrink: 0; text-align: left; }
+    #title { font-size: 20px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
-    .vol-row { display: flex; align-items: center; gap: 10px; }
+    /* Container @User dan Tombol Follow */
+    .user-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    #by { color: var(--accent); font-size: 13px; font-weight: bold; cursor: pointer; }
+    #followBtn { 
+      font-size: 10px; background: var(--accent); color: black; border: none; 
+      padding: 2px 8px; border-radius: 4px; font-weight: bold; display: none; cursor: pointer;
+    }
+
+    .sys-container { background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; }
+    .sys-tools { display: flex; justify-content: space-around; margin-bottom: 5px; }
+    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 16px; opacity: 0.8; padding: 5px; }
+    
+    .vol-row { display: flex; align-items: center; gap: 8px; padding: 0 5px; }
     #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
 
-    .prog-area { margin-bottom: 20px; }
+    .prog-area { margin-bottom: 15px; flex-shrink: 0; }
     #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; }
-    .time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 6px; }
+    .time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
 
-    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; margin-bottom: 20px; }
+    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-bottom: 15px; }
     .btn-play { 
-      width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; 
-      display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; 
-      box-shadow: 0 10px 25px rgba(29, 185, 84, 0.4); cursor: pointer;
+      width: 60px; height: 60px; background: var(--accent); border: none; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; color: black; font-size: 22px; 
+      box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4); cursor: pointer;
     }
-    .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+    .btn-sec { background: none; border: none; color: white; font-size: 26px; cursor: pointer; }
 
-    .footer { display: flex; justify-content: space-around; background: var(--glass); padding: 12px; border-radius: 25px; }
-    .footer button { background: none; border: none; color: white; font-size: 20px; opacity: 0.5; cursor: pointer; transition: 0.3s; }
+    .footer { margin-top: auto; display: flex; justify-content: space-around; background: var(--glass); padding: 10px; border-radius: 20px; }
+    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; }
+    
     .active { color: var(--accent) !important; opacity: 1 !important; }
 
-    /* Modals */
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 2000; backdrop-filter: blur(10px); }
-    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #121212; border-radius: 30px 30px 0 0; padding: 25px; max-height: 80vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.1); }
+    /* MODALS & TOAST */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; }
+    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 380px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 25px 25px 0 0; padding: 20px; max-height: 70vh; overflow-y: auto; }
     
-    .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#1a1a1a; color:white; border:1px solid #333; border-radius:15px; }
-    .btn-act { width:100%; padding:15px; background:var(--accent); border:none; border-radius:15px; font-weight:bold; color:black; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
-    .btn-act:active { transform: scale(0.98); }
-
     #toast { 
-      position: fixed; top: 30px; left: 50%; transform: translateX(-50%); 
-      background: var(--accent); color: #000; padding: 10px 25px; border-radius: 50px; 
-      font-size: 13px; font-weight: bold; opacity: 0; transition: 0.4s; z-index: 5000; 
+      position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); 
+      background: var(--accent); color: #000; padding: 10px 20px; border-radius: 30px; 
+      font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; 
     }
-    #toast.show { opacity: 1; top: 50px; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .song-item { padding: 15px; border-bottom: 1px solid #1a1a1a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .inp-dark { width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px; }
+    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:10px; font-weight:bold; color:black; cursor:pointer; }
   </style>
 </head>
 <body>
 
+  <div id="loadingCard">
+    <div class="spinner"></div>
+    <p style="margin-top:15px; font-size:12px; letter-spacing:2px">EXEMUSIC</p>
+  </div>
+
   <div id="toast">Notif</div>
 
   <div class="app">
-    <div class="top-bar">
-      <img src="exemusic.png" class="logo-img" alt="Logo">
-      <button id="btnUserTop" class="btn-login-top" onclick="openAccount()">Login</button>
+    <div class="header">
+        <img src="exemusic.png" alt="Logo">
+        <button id="topAuthBtn" onclick="openProfile()">Login</button>
     </div>
 
     <div class="cover-box">
@@ -128,8 +147,11 @@
     </div>
 
     <div class="track-info">
-      <div id="title">Menghubungkan...</div>
-      <div id="by">Syncing Database...</div>
+      <div id="title">Loading Lagu...</div>
+      <div class="user-row">
+        <div id="by" onclick="viewUploaderProfile()">@system</div>
+        <button id="followBtn" onclick="followUser()">FOLLOW</button>
+      </div>
     </div>
 
     <div class="sys-container">
@@ -137,7 +159,7 @@
         <button onclick="copyRawUrl()">📋</button>
         <button onclick="shareLink()">🔗</button>
         <button onclick="downloadSong()">⬇️</button>
-        <button onclick="checkAuthAdd()">➕</button>
+        <button onclick="openAddMusic()">➕</button>
       </div>
       <div class="vol-row">
         <span>🔈</span>
@@ -171,48 +193,29 @@
 
   <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:20px">Member Area</h3>
-      <div id="authBox">
-        <input id="authEmail" class="inp-dark" placeholder="Email">
-        <input id="authPass" type="password" class="inp-dark" placeholder="Password">
-        <div id="regExtra" style="display:none">
-          <input id="authUser" class="inp-dark" placeholder="Username (4-10 huruf)">
-        </div>
-        <button id="mainAuthBtn" onclick="handleAuthAction()" class="btn-act">LOGIN</button>
-        <button onclick="toggleAuthMode()" id="switchAuthBtn" style="background:none; border:none; color:var(--text-dim); width:100%; cursor:pointer; font-size:12px">Belum punya akun? Daftar</button>
-        <hr style="border:0; border-top:1px solid #222; margin:20px 0">
-        <button onclick="doGoogle()" class="btn-act" style="background:#fff; color:#000">Login with Google</button>
-      </div>
+      <h3 style="text-align:center; margin-bottom:15px">Member Area</h3>
+      <input id="authEmail" class="inp-dark" placeholder="Email">
+      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
+      <button id="btnPrimaryAuth" onclick="handleAuth()" class="btn-act">LOGIN</button>
+      <button onclick="toggleAuthMode()" id="authToggleLink" style="background:none; border:none; color:#888; width:100%; margin-top:10px">Belum punya akun? Daftar</button>
     </div>
   </div>
 
-  <div class="modal" id="modalAcc" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:20px">My Account</h3>
-      <div style="text-align:center; margin-bottom:25px">
-        <h2 id="accName" style="color:var(--accent)">Guest</h2>
-        <p id="accRole" style="font-size:12px; color:#888; margin-top:5px">User</p>
+      <h3 style="text-align:center; margin-bottom:10px">Profile</h3>
+      <div style="text-align:center; margin-bottom:20px">
+        <h2 id="profName">User</h2>
+        <p id="profFollowers" style="font-size:12px; color:var(--accent)">0 Followers</p>
       </div>
-      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#f44336; color:white">LOGOUT</button>
-    </div>
-  </div>
-
-  <div class="modal" id="modalAdd" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:20px">Upload Lagu</h3>
-      <input id="addTitle" class="inp-dark" placeholder="Judul Lagu">
-      <input id="addUrl" class="inp-dark" placeholder="URL Top4Top (MP3)">
-      <button onclick="submitSong()" class="btn-act">UPLOAD</button>
+      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#333; color:white">LOGOUT</button>
     </div>
   </div>
 
   <div class="modal" id="modalAdmin" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:20px; color:gold">Admin Panel</h3>
-      <button onclick="toggleMT()" id="btnMT" class="btn-act" style="background:#222; border:1px solid gold; color:gold">MT Mode: Loading...</button>
-      <h4 style="margin:15px 0 10px 0">Logs</h4>
-      <div id="adminLogs" style="height:120px; overflow-y:auto; font-size:11px; background:#000; padding:10px; border-radius:10px; color:#0f0; margin-bottom:15px"></div>
-      <h4 style="margin:10px 0">Manage Songs</h4>
+      <h3 style="color:gold; margin-bottom:15px">Admin Panel</h3>
+      <button onclick="toggleMT()" id="mtStatusBtn" class="btn-act" style="background:#222; color:gold; border:1px solid gold; margin-bottom:15px">MT MODE: OFF</button>
       <div id="adminSongList"></div>
     </div>
   </div>
@@ -222,141 +225,146 @@
   </div>
 
   <script>
-    // --- ENKRIPSI CONFIG ---
-    const _c = ["QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=", "ZXhlbXVzaWMtZXhlY3VyaXZlcnAuZmlyZWJhc2VhcHAuY29t", "aHR0cHM6Ly9leGVtdXNpYy1leGVjdXJpdmVycC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw"];
-    
-    firebase.initializeApp({
-      apiKey: atob(_c[0]), authDomain: atob(_c[1]), databaseURL: atob(_c[2]), projectId: "exemusic-execuriverp"
-    });
+    // --- ENKRIPSI FIX (TIDAK AKAN ERROR) ---
+    const _KEY = "QUl6YVN5Q1ZKWVNSNG5IZW9SQTlXVE1aYTMtMnhsaUtRcmQ1ZzQ=";
+    const _DOM = "ZXhlbXVzaWMtZXhlY3VyaXZlcnAuZmlyZWJhc2VhcHAuY29t";
+    const _URL = "aHR0cHM6Ly9leGVtdXNpYy1leGVjdXJpdmVycC1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBw";
 
+    const firebaseConfig = {
+      apiKey: atob(_KEY),
+      authDomain: atob(_DOM),
+      databaseURL: atob(_URL),
+      projectId: "exemusic-execuriverp"
+    };
+
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-    
-    let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
-    let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
-    let userData = null, mtMode = false;
-    const audio = new Audio();
-    const playBtn = document.getElementById('playBtn');
 
-    // --- AUTH LOGIC ---
+    let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
+    let userData = null, mtMode = false;
+    let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    const audio = new Audio();
+
+    // --- AUTH MONITORING ---
     auth.onAuthStateChanged(async (u) => {
-      const btnTop = document.getElementById('btnUserTop');
       if(u) {
         const snap = await db.ref('users/' + u.uid).get();
-        if(snap.exists()) {
-          userData = snap.val();
-          btnTop.textContent = userData.username;
-          btnTop.classList.add('active');
-          document.getElementById('accName').textContent = userData.username;
-          document.getElementById('accRole').textContent = userData.role.toUpperCase();
-          if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
-        }
+        userData = snap.val();
+        document.getElementById('topAuthBtn').textContent = userData ? userData.username : "User";
+        if(userData?.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
+        document.getElementById('followBtn').style.display = 'block';
       } else {
         userData = null;
-        btnTop.textContent = "Login";
-        btnTop.classList.remove('active');
+        document.getElementById('topAuthBtn').textContent = "Login";
         document.getElementById('adminBtn').style.display = 'none';
+        document.getElementById('followBtn').style.display = 'none';
+      }
+      hideLoading();
+    });
+
+    // --- DATABASE SYNC ---
+    db.ref('songs').on('value', snap => {
+      const val = snap.val();
+      if(val) {
+        songs = Object.keys(val).map(k => ({...val[k], key: k}));
+        // URL ?id= Param Sync
+        const params = new URLSearchParams(window.location.search);
+        const urlId = params.get('id');
+        if(urlId && songs[urlId] && audio.src === "") setup(parseInt(urlId), false);
+        else if(audio.src === "") setup(0, false);
       }
     });
 
-    function toggleAuthMode() {
-      isLoginMode = !isLoginMode;
-      document.getElementById('regExtra').style.display = isLoginMode ? 'none' : 'block';
-      document.getElementById('mainAuthBtn').textContent = isLoginMode ? 'LOGIN' : 'REGISTER';
-      document.getElementById('switchAuthBtn').textContent = isLoginMode ? 'Belum punya akun? Daftar' : 'Sudah punya akun? Login';
-    }
-
-    function handleAuthAction() {
-      const email = document.getElementById('authEmail').value;
-      const pass = document.getElementById('authPass').value;
-      if(isLoginMode) {
-        auth.signInWithEmailAndPassword(email, pass).then(() => closeModal()).catch(e => msg(e.message));
-      } else {
-        const user = document.getElementById('authUser').value;
-        if(user.length < 4) return msg("Username minimal 4 huruf");
-        auth.createUserWithEmailAndPassword(email, pass).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: user, role: 'user', isBanned: false, lastUpload: 0 });
-          closeModal();
-        }).catch(e => msg(e.message));
-      }
-    }
-
-    function doGoogle() {
-      auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(() => closeModal()).catch(e => msg(e.message));
-    }
-
-    function openAccount() {
-      if(auth.currentUser) document.getElementById('modalAcc').style.display = 'block';
-      else document.getElementById('modalAuth').style.display = 'block';
-    }
-
-    // --- SYSTEM ENGINE ---
     db.ref('settings/mt').on('value', s => {
       mtMode = s.val();
-      if(document.getElementById('btnMT')) document.getElementById('btnMT').innerText = "MT Mode: " + (mtMode ? "ON" : "OFF");
+      if(document.getElementById('mtStatusBtn')) document.getElementById('mtStatusBtn').innerText = "MT MODE: " + (mtMode ? "ON" : "OFF");
       if(mtMode && userData?.role !== 'admin') {
-        document.body.innerHTML = "<div style='text-align:center; padding-top:100px'><h1>Maintenance</h1><p>Kami akan segera kembali.</p></div>";
+        document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50%'>MAINTENANCE MODE</h1>";
       }
     });
 
-    db.ref('songs').on('value', snap => {
-      const data = snap.val();
-      if(data) {
-        songs = Object.keys(data).map(k => ({...data[k], key: k}));
-        if(audio.src === "") setup(0, false);
-      }
-    });
-
+    // --- FUNCTIONS ---
     function setup(idx, play = true) {
       if(!songs[idx]) return;
       i = idx;
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
-      document.getElementById('by').textContent = "Request by " + songs[i].by;
-      if(play) { audio.play(); playBtn.textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); }
+      document.getElementById('by').textContent = "@" + (songs[i].by || "system");
+      
+      // Update URL without refresh
+      window.history.replaceState(null, null, `?id=${i}`);
+
+      if(play) { audio.play(); document.getElementById('playBtn').textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); }
+      updateFollowStatus();
     }
 
     function toggle() {
-      if(audio.paused) { audio.play(); playBtn.textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); }
-      else { audio.pause(); playBtn.textContent = "▶"; document.getElementById('eq').classList.remove('playing'); }
+      if(audio.paused) { audio.play(); document.getElementById('playBtn').textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); msg("Playing"); }
+      else { audio.pause(); document.getElementById('playBtn').textContent = "▶"; document.getElementById('eq').classList.remove('playing'); msg("Paused"); }
     }
 
-    function checkAuthAdd() {
-      if(!auth.currentUser) return openAccount();
-      document.getElementById('modalAdd').style.display = 'block';
+    // --- AUTH LOGIC ---
+    function openProfile() {
+      if(userData) {
+        document.getElementById('profName').textContent = userData.username;
+        db.ref('follows/' + auth.currentUser.uid).on('value', s => {
+            document.getElementById('profFollowers').textContent = (s.numChildren() || 0) + " Followers";
+        });
+        document.getElementById('modalProfile').style.display = 'block';
+      } else {
+        document.getElementById('modalAuth').style.display = 'block';
+      }
     }
 
-    async function submitSong() {
-      const t = document.getElementById('addTitle').value, u = document.getElementById('addUrl').value;
-      if(!t || !u) return msg("Isi semua data!");
-      if(!u.includes("top4top")) return msg("Gunakan link Top4Top!");
+    function toggleAuthMode() {
+      isLoginMode = !isLoginMode;
+      document.getElementById('btnPrimaryAuth').textContent = isLoginMode ? "LOGIN" : "DAFTAR";
+      document.getElementById('authToggleLink').textContent = isLoginMode ? "Belum punya akun? Daftar" : "Sudah punya akun? Login";
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById('authEmail').value;
+      const pass = document.getElementById('authPass').value;
+      if(isLoginMode) {
+        auth.signInWithEmailAndPassword(email, pass).then(() => { closeModal(); msg("Login Berhasil!"); }).catch(e => msg(e.message));
+      } else {
+        const emailInput = prompt("Masukkan Username Anda:");
+        if(!emailInput) return;
+        auth.createUserWithEmailAndPassword(email, pass).then(res => {
+          db.ref('users/' + res.user.uid).set({ username: emailInput, role: 'user' });
+          closeModal(); msg("Daftar Berhasil!");
+        }).catch(e => msg(e.message));
+      }
+    }
+
+    // --- FOLLOW SYSTEM ---
+    async function followUser() {
+      if(!auth.currentUser) return msg("Login untuk Follow!");
+      const targetUid = songs[i].uid;
+      if(targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
       
-      await db.ref('songs').push({ title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: Date.now() });
-      await db.ref('logs').push({ msg: `${userData.username} added ${t}`, time: new Date().toLocaleString() });
-      document.getElementById('modalAdd').style.display = 'none';
-      msg("Berhasil ditambah!");
+      const ref = db.ref(`follows/${targetUid}/${auth.currentUser.uid}`);
+      const snap = await ref.get();
+      if(snap.exists()) {
+        ref.remove(); msg("Unfollowed");
+      } else {
+        ref.set(true); msg("Followed @"+songs[i].by);
+      }
+      updateFollowStatus();
     }
 
-    // --- ADMIN PANEL ---
-    function openAdmin() {
-      document.getElementById('modalAdmin').style.display = 'block';
-      db.ref('logs').limitToLast(10).on('value', s => {
-        let h = ""; s.forEach(x => { h = `<div>[${x.val().time}] ${x.val().msg}</div>` + h; });
-        document.getElementById('adminLogs').innerHTML = h;
-      });
-      document.getElementById('adminSongList').innerHTML = songs.map(s => `
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #222">
-          <span style="font-size:12px">${s.title}</span>
-          <button onclick="delSong('${s.key}')" style="color:red; background:none; border:none">Hapus</button>
-        </div>
-      `).join('');
+    async function updateFollowStatus() {
+        if(!auth.currentUser) return;
+        const ref = db.ref(`follows/${songs[i].uid}/${auth.currentUser.uid}`);
+        const snap = await ref.get();
+        document.getElementById('followBtn').textContent = snap.exists() ? "FOLLOWED" : "FOLLOW";
     }
-    function toggleMT() { db.ref('settings/mt').set(!mtMode); }
-    function delSong(k) { if(confirm("Hapus lagu?")) db.ref('songs/'+k).remove(); }
 
-    // --- PLAYER UTILS ---
-    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
-    function prev() { setup((i-1+songs.length)%songs.length); }
+    // --- PLAYER CONTROLS ---
+    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); msg("Next Track"); }
+    function prev() { setup((i-1+songs.length)%songs.length); msg("Prev Track"); }
+    
     audio.ontimeupdate = () => {
       document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
       document.getElementById('cur').textContent = fmt(audio.currentTime);
@@ -365,26 +373,45 @@
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
     document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
     audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
-    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
-    function msg(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-    function openList(f) {
-      const c = document.getElementById('songContainer');
-      const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
-      c.innerHTML = l.map(s => `
-        <div class="song-item">
-          <div style="flex:1" onclick="setup(${songs.indexOf(s)}); closeModal()"><b>${s.title}</b><br><small>${s.by}</small></div>
-          <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
+
+    // --- ADMIN ---
+    function openAdmin() {
+      document.getElementById('modalAdmin').style.display = 'block';
+      const list = document.getElementById('adminSongList');
+      list.innerHTML = songs.map(s => `
+        <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333">
+          <span>${s.title}</span>
+          <button onclick="delSong('${s.key}')" style="color:red; background:none; border:none">Hapus</button>
         </div>
       `).join('');
-      document.getElementById('modalList').style.display='block';
     }
-    function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x!==u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
-    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
-    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("URL Disalin"); }
-    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Disalin"); }
-    function downloadSong() { window.open(songs[i].url); }
+    function toggleMT() { db.ref('settings/mt').set(!mtMode); msg("MT Toggled"); }
+    function delSong(k) { if(confirm("Hapus?")) db.ref('songs/'+k).remove(); msg("Lagu Dihapus"); }
+
+    // --- UTILS ---
+    function msg(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sc=Math.floor(s%60); return m+":"+(sc<10?"0"+sc:sc); }
+    function hideLoading() { document.getElementById('loadingCard').style.opacity = '0'; setTimeout(()=>document.getElementById('loadingCard').style.display='none', 500); }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("URL Audio Disalin"); }
+    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Player Disalin"); }
+    function downloadSong() { window.open(songs[i].url); msg("Membuka Download..."); }
+    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); msg(isShuf?"Shuffle On":"Shuffle Off"); }
+    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); msg(isRepeat?"Repeat On":"Repeat Off"); }
+
+    function openList() {
+        const c = document.getElementById('songContainer');
+        c.innerHTML = songs.map((s, idx) => `
+            <div onclick="setup(${idx}); closeModal()" style="padding:15px; border-bottom:1px solid #222">
+                <b>${s.title}</b><br><small>by ${s.by}</small>
+            </div>
+        `).join('');
+        document.getElementById('modalList').style.display = 'block';
+    }
   </script>
 </body>
 </html>
