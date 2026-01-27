@@ -1,321 +1,197 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lamaran Anggota WS | Contrue</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --bg:#020617;
-  --panel:#0f172a;
-  --panel-soft:#020617;
-  --border:#1e293b;
-  --accent:#84cc16;
-  --accent-soft:#bef264;
-  --text:#e5e7eb;
-  --muted:#94a3b8;
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  font-family:'Inter',sans-serif;
-  background:linear-gradient(135deg,#020617,#020617);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:30px;
-}
-
-.container{
-  width:100%;
-  max-width:900px;
-  background:var(--panel);
-  border-radius:18px;
-  padding:40px;
-  border:1px solid var(--border);
-  box-shadow:0 30px 80px rgba(0,0,0,.6);
-  position:relative;
-}
-
-h1{
-  text-align:center;
-  font-size:28px;
-  font-weight:700;
-  color:var(--accent-soft);
-  margin-bottom:35px;
-}
-
-.section{
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:25px;
-  margin-bottom:30px;
-  background:var(--panel-soft);
-}
-
-.section-title{
-  font-size:15px;
-  font-weight:600;
-  margin-bottom:20px;
-  color:var(--accent);
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-label{
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:6px;
-  display:block;
-}
-
-input,select,textarea{
-  width:100%;
-  background:#020617;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:13px 14px;
-  color:var(--text);
-  font-size:14px;
-  margin-bottom:16px;
-}
-
-input:focus,select:focus,textarea:focus{
-  outline:none;
-  border-color:var(--accent);
-}
-
-textarea{min-height:90px;resize:vertical}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:16px;
-}
-
-/* CAPTCHA */
-.captcha{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:14px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#020617;
-}
-
-.captcha-btn{
-  padding:10px 16px;
-  border-radius:8px;
-  border:none;
-  background:var(--accent);
-  font-weight:600;
-  cursor:pointer;
-  color:#020617;
-}
-
-.captcha-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-.captcha-status{
-  font-size:13px;
-  color:var(--muted);
-}
-
-/* SUBMIT */
-button.submit{
-  width:100%;
-  padding:16px;
-  border:none;
-  border-radius:12px;
-  background:linear-gradient(90deg,var(--accent),var(--accent-soft));
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-  color:#020617;
-}
-
-/* LOADING */
-.loading{
-  display:none;
-  position:absolute;
-  inset:0;
-  background:rgba(2,6,23,.95);
-  border-radius:18px;
-  z-index:10;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
-
-.spinner{
-  width:50px;
-  height:50px;
-  border:5px solid #1e293b;
-  border-top:5px solid var(--accent);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.loading span{
-  margin-top:14px;
-  color:var(--accent-soft);
-  font-size:14px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WS CONTRUE GEORGE - EXECURIVE RP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #111827;
+            color: #e5e7eb;
+            font-family: 'Inter', sans-serif;
+        }
+        .container-custom {
+            max-width: 800px;
+            margin: auto;
+        }
+        .form-input {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+        }
+        .section-card {
+            background: #1f2937;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #06b6d4;
+        }
+        .cmd {
+            background: #000;
+            color: #22c55e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
 </head>
+<body class="p-4 md:p-8">
 
-<body>
-<div class="container">
-<h1>Lamaran Anggota Workshop Contrue</h1>
+    <div class="container-custom">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-5xl font-black text-cyan-400">WS Contrue George</h1>
+            <p class="text-gray-400 mt-2 font-bold tracking-widest">EXECURIVE ROLEPLAY</p>
+            <div class="h-1 w-32 bg-cyan-500 mx-auto mt-4"></div>
+        </div>
 
-<form id="form">
+        <div class="section-card">
+            <h2 class="text-xl font-bold mb-4 text-cyan-300"><i class="fas fa-info-circle mr-2"></i> KRITERIA PENDAFTARAN</h2>
+            <ul class="space-y-2 text-sm md:text-base">
+                <li>• Wajib memiliki CS (Character Story) aktif</li>
+                <li>• Minimal Level 7 keatas</li>
+                <li>• Attitude wajib baik di IC maupun OOC</li>
+                <li>• Tidak memiliki Warn dari Staff</li>
+                <li>• Tidak memiliki catatan kriminal (Criminal Record) dari LSPD</li>
+                <li>• Rajin ke kota (Aktif)</li>
+                <li>• Tidak sedang berada di dalam Fraksi (Goodside/Badside)</li>
+            </ul>
+        </div>
 
-<!-- IC -->
-<div class="section">
-  <div class="section-title">Data IC</div>
+        <div class="section-card" style="border-left-color: #eab308;">
+            <h2 class="text-xl font-bold mb-4 text-yellow-400"><i class="fas fa-tools mr-2"></i> PERATURAN & SOP</h2>
+            <ul class="space-y-2 text-sm md:text-base text-gray-300">
+                <li>• Wajib setor kas di <span class="cmd">/wsmenu</span> setiap mendapatkan pelanggan.</li>
+                <li>• Dilarang menjual Repairkit lebih dari 3 buah.</li>
+                <li>• Wajib gunakan <span class="cmd">/me</span> dan <span class="cmd">/do</span> (Contoh: <span class="cmd">/me memperbaiki mesin...</span>).</li>
+                <li>• Gunakan anim pendukung: <span class="cmd">/misc</span>, <span class="cmd">/idles</span>, <span class="cmd">/washhands</span>.</li>
+                <li class="text-red-400 font-bold">• DILARANG MEMBAWA SENJATA ATAU PAKAI VEST DI AREA WS!</li>
+            </ul>
+        </div>
 
-  <label>Nama IC</label>
-  <input id="nama_ic" required>
+        <div class="bg-gray-800 p-6 md:p-10 rounded-2xl shadow-xl border border-gray-700">
+            <h2 class="text-2xl font-bold text-center mb-8 text-white">FORMULIR LAMARAN</h2>
+            
+            <form id="applyForm" class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1">Nama IC:</label>
+                        <input type="text" id="nama_ic" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Usia IC:</label>
+                        <input type="number" id="usia_ic" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Level IC:</label>
+                        <input type="number" id="level_ic" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">HP IC:</label>
+                        <input type="text" id="hp_ic" class="form-input" required>
+                    </div>
+                </div>
 
-  <div class="grid">
-    <div>
-      <label>Usia IC</label>
-      <input type="number" id="usia_ic" required>
+                <hr class="border-gray-700 my-4">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1">Nama OOC:</label>
+                        <input type="text" id="nama_ooc" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Usia OOC:</label>
+                        <input type="number" id="usia_ooc" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Jam Duty:</label>
+                        <input type="text" id="jam_duty" placeholder="Contoh: 19.00 - 22.00" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">CS ON (Aktif):</label>
+                        <select id="cs_on" class="form-input">
+                            <option value="Ya">Ya</option>
+                            <option value="Tidak">Tidak</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Pengalaman Mekanik:</label>
+                    <textarea id="pengalaman" rows="2" class="form-input" required></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Contoh roleplay /me /do:</label>
+                    <textarea id="contoh_rp" rows="3" class="form-input" placeholder="/me membuka kap mobil menggunakan kunci kunci..." required></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Kontak Wa:</label>
+                    <input type="text" id="kontak_wa" class="form-input" value="08" required>
+                </div>
+
+                <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
+                    <p class="text-xs text-red-200 leading-relaxed">
+                        <strong>Note :</strong> saya berjanji dengan ini saya siap menerima sanksi apapun yang diberikan oleh owner ws ataupun staff jika saya menyalahgunakan fitur workshop.
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">
+                    KIRIM LAMARAN
+                </button>
+            </form>
+        </div>
+
+        <footer class="mt-10 text-center text-gray-500 text-sm">
+            <p>Copyright &copy; ExecuriveRP, Contrue George</p>
+        </footer>
     </div>
-    <div>
-      <label>Level IC</label>
-      <input id="level_ic" required>
-    </div>
-  </div>
 
-  <label>Nomor HP IC</label>
-  <input id="hp_ic" required>
-</div>
+    <script>
+        document.getElementById('applyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                namaIc: document.getElementById('nama_ic').value,
+                usiaIc: document.getElementById('usia_ic').value,
+                levelIc: document.getElementById('level_ic').value,
+                hpIc: document.getElementById('hp_ic').value,
+                namaOoc: document.getElementById('nama_ooc').value,
+                usiaOoc: document.getElementById('usia_ooc').value,
+                jamDuty: document.getElementById('jam_duty').value,
+                csOn: document.getElementById('cs_on').value,
+                pengalaman: document.getElementById('pengalaman').value,
+                rp: document.getElementById('contoh_rp').value,
+                wa: document.getElementById('kontak_wa').value
+            };
 
-<!-- OOC -->
-<div class="section">
-  <div class="section-title">Data OOC</div>
+            const phone = "62895329018240";
+            const message = `*LAMARAN WS CONTRUE*\n\n` +
+                            `Nama IC: ${data.namaIc}\n` +
+                            `Usia IC: ${data.usiaIc}\n` +
+                            `Level IC: ${data.levelIc}\n` +
+                            `HP IC: ${data.hpIc}\n\n` +
+                            `Nama OOC: ${data.namaOoc}\n` +
+                            `Usia OOC: ${data.usiaOoc}\n` +
+                            `Jam Duty: ${data.jamDuty}\n` +
+                            `CS ON: ${data.csOn}\n\n` +
+                            `Pengalaman Mekanik:\n${data.pengalaman}\n\n` +
+                            `Contoh roleplay /me /do:\n${data.rp}\n\n` +
+                            `Kontak Wa:\n${data.wa}\n\n` +
+                            `Note : saya berjanji dengan ini saya siap menerima sanksi apapun yang diberikan oleh owner ws ataupun staff jika saya menyalahgunakan fitur workshop.`;
 
-  <label>Nama OOC</label>
-  <input id="nama_ooc" required>
-
-  <label>Usia OOC</label>
-  <input type="number" id="usia_ooc" required>
-
-  <label>Contoh RP (/me /do)</label>
-  <textarea id="contoh_rp" required></textarea>
-
-  <label>Jam Duty</label>
-  <input id="jam_duty" placeholder="Contoh: 18.00 - 23.00 WIB" required>
-</div>
-
-<!-- ADMIN -->
-<div class="section">
-  <div class="section-title">Administrasi WS</div>
-
-  <label>CS Sudah ON?</label>
-  <select id="cs">
-    <option value="">Pilih</option>
-    <option>Ya</option>
-    <option>Belum</option>
-  </select>
-
-  <label>Pengalaman Modifikasi</label>
-  <textarea id="modifikasi" required></textarea>
-
-  <label>Rajin Setor Kas?</label>
-  <select id="kas">
-    <option value="">Pilih</option>
-    <option>Ya</option>
-    <option>Belum</option>
-  </select>
-
-  <label>Kontak WhatsApp</label>
-  <input id="kontak" required>
-
-  <div class="captcha">
-    <button type="button" class="captcha-btn" id="verify">Verifikasi</button>
-    <div class="captcha-status" id="status">Belum diverifikasi</div>
-  </div>
-</div>
-
-<button class="submit">Kirim Lamaran</button>
-</form>
-
-<div class="loading" id="loading">
-  <div class="spinner"></div>
-  <span>Mengirim data...</span>
-</div>
-</div>
-
-<script>
-const wa="62895329018240";
-let verified=false;
-
-verify.onclick=()=>{
-  verify.disabled=true;
-  status.textContent="Memverifikasi...";
-  setTimeout(()=>{
-    verified=true;
-    status.textContent="Terverifikasi";
-    status.style.color="#84cc16";
-  },1500);
-}
-
-form.onsubmit=e=>{
-  e.preventDefault();
-
-  if(!verified) return alert("Silakan verifikasi terlebih dahulu.");
-  if(cs.value!=="Ya") return alert("CS wajib ON.");
-  if(kas.value!=="Ya") return alert("Wajib rajin setor kas.");
-
-  loading.style.display="flex";
-
-  const msg=`*LAMARAN WS CONTRUE*
-
-Nama IC: ${nama_ic.value}
-Usia IC: ${usia_ic.value}
-Level IC: ${level_ic.value}
-HP IC: ${hp_ic.value}
-
-Nama OOC: ${nama_ooc.value}
-Usia OOC: ${usia_ooc.value}
-Jam Duty: ${jam_duty.value}
-
-CS ON: Ya
-Setor Kas: Ya
-
-Pengalaman Modifikasi:
-${modifikasi.value}
-
-Contoh RP:
-${contoh_rp.value}
-
-Kontak:
-${kontak.value}`;
-
-  setTimeout(()=>{
-    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`);
-    loading.style.display="none";
-    alert("Lamaran berhasil dikirim. Sertakan screenshot stats IC.");
-    form.reset();
-    verified=false;
-    verify.disabled=false;
-    status.textContent="Belum diverifikasi";
-    status.style.color="";
-  },1500);
-}
-</script>
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        });
+    </script>
 </body>
 </html>
