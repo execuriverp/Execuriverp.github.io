@@ -20,6 +20,7 @@
       --bg: #090909;
       --glass: rgba(255, 255, 255, 0.05);
       --danger: #ff4d4d;
+      --warning: #f1c40f;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -33,7 +34,7 @@
       overflow: hidden;
     }
 
-    /* FULL SCREEN OVERLAYS (MT & BANNED) */
+    /* FULL SCREEN OVERLAYS */
     .full-overlay {
       position: fixed; inset: 0; background: #000; z-index: 10000;
       display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -44,7 +45,14 @@
     .full-overlay p { color: var(--text-dim); margin-top: 10px; }
     #bannedScreen h1 { color: var(--danger); }
 
-    /* loading card */
+    /* Announcement Banner */
+    #announcement {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 85%; background: var(--accent); color: black; 
+      padding: 8px 15px; border-radius: 10px; font-size: 11px; font-weight: bold;
+      z-index: 100; display: none; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
     #loadingCard {
       position: absolute; inset: 0; background: #090909; z-index: 9999;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -65,7 +73,7 @@
       position: relative;
     }
 
-    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 10px; }
+    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 10px; margin-top: 10px; }
     .header img { width: 100px; max-width: 30%; }
     
     #topLoginBtn { 
@@ -126,14 +134,12 @@
     .inp-dark { width:100%; padding:12px; margin-bottom:10px; background:#222; color:white; border:none; border-radius:10px; font-size: 14px; }
     .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:10px; font-weight:bold; color:black; cursor: pointer; margin-top: 5px; }
     
-    /* Profile Stats */
     .prof-stat { display: flex; justify-content: center; gap: 20px; margin: 15px 0; }
     .prof-stat div { text-align: center; }
     .prof-stat b { display: block; font-size: 18px; }
     .prof-stat span { font-size: 11px; color: var(--text-dim); }
     .section-title { font-size: 14px; font-weight: bold; margin: 15px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
 
-    /* Badge Style */
     .v-badge { color: #1da1f2; font-size: 12px; }
   </style>
 </head>
@@ -150,6 +156,8 @@
     <h1>Access Denied</h1>
     <p>Akun anda telah diblokir secara permanen oleh admin<br>karena melanggar kebijakan ExeMusic.</p>
   </div>
+
+  <div id="announcement">Pemberitahuan Sistem</div>
 
   <div id="loadingCard"><div class="spinner"></div></div>
   <div id="toast">Notif</div>
@@ -257,9 +265,10 @@
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:15px">Upload Lagu</h3>
+      <p id="cooldownHint" style="font-size: 11px; text-align: center; color: var(--warning); margin-bottom: 10px; display: none;">Tunggu cooldown selesai!</p>
       <input id="rLagu" class="inp-dark" placeholder="Judul Lagu">
       <input id="rUrl" class="inp-dark" placeholder="URL MP3 (Top4Top)">
-      <button onclick="saveMusic()" class="btn-act">POST KE DATABASE</button>
+      <button onclick="saveMusic()" id="btnSaveMusic" class="btn-act">POST KE DATABASE</button>
       <div style="margin: 15px 0; color:#555; text-align:center;">--- atau ---</div>
       <input id="rNama" class="inp-dark" placeholder="Nama Anda (Untuk WA)">
       <button onclick="sendReq()" class="btn-act" style="background:#25D366; color:white">REQUEST VIA WA</button>
@@ -289,16 +298,27 @@
     let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
     let userData = null;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    let isFollowingProcess = false; // Mencegah spam klik follow
     const audio = new Audio();
 
-    // --- CHECK MAINTENANCE ---
-    db.ref('settings/mt').on('value', s => {
-        if(s.val() === true) {
+    // --- REALTIME MAINTENANCE & ANNOUNCEMENT ---
+    db.ref('settings').on('value', s => {
+        const set = s.val();
+        // MT Logic
+        if(set?.mt === true) {
             db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
                 if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
             });
         } else {
             document.getElementById('mtScreen').style.display = 'none';
+        }
+        // Announcement Logic
+        const ann = document.getElementById('announcement');
+        if(set?.announcement) {
+            ann.innerText = set.announcement;
+            ann.style.display = 'block';
+        } else {
+            ann.style.display = 'none';
         }
     });
 
@@ -307,19 +327,21 @@
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
-          
+          if(!userData) return;
+
           // BANNED SYSTEM
-          if(userData?.banned === true) {
+          if(userData.banned === true) {
               document.getElementById('bannedScreen').style.display = 'flex';
               auth.signOut();
               return;
           }
 
-          document.getElementById('topLoginBtn').textContent = userData?.username || "Profil";
-          document.getElementById('pUsername').innerText = userData?.username || "User";
-          document.getElementById('pBadge').innerHTML = (userData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          document.getElementById('topLoginBtn').textContent = userData.username || "Profil";
+          document.getElementById('pUsername').innerText = userData.username || "User";
+          // Centang Biru di Profile
+          document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
-          if(userData?.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
+          if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
         });
         document.getElementById('btnFollow').style.display = 'block';
       } else {
@@ -351,7 +373,7 @@
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
       
-      // Get Creator Info for Badge in Main Player
+      // Get Creator Info for Badge (Centang Biru)
       const creatorRef = await db.ref('users/' + songs[i].uid).get();
       const cData = creatorRef.val();
       const badgeHTML = (cData?.followers >= 50) ? ' <i class="fas fa-check-circle v-badge"></i>' : '';
@@ -385,7 +407,7 @@
         const u = document.getElementById('authUser').value;
         if(u.length < 3) return msg("Username minimal 3 karakter");
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', banned: false, followers: 0, following: 0 });
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', banned: false, followers: 0, following: 0, lastUpload: 0 });
           closeModal();
         }).catch(err => msg(err.message));
       }
@@ -408,37 +430,42 @@
         });
     }
 
-    // --- DATABASE SINKRON FOLLOW ---
+    // --- FOLLOW SYSTEM (NO SPAM) ---
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
+      if(isFollowingProcess) return; // Kunci proses
+      
       const targetUid = songs[i].uid;
       if(!targetUid || targetUid === auth.currentUser.uid) return msg("Tidak bisa follow diri sendiri");
       
+      isFollowingProcess = true;
       const followRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
       const followingRef = db.ref('following/' + auth.currentUser.uid + '/' + targetUid);
       
       const s = await followRef.get();
       if(s.exists()) {
-        followRef.remove();
-        followingRef.remove();
+        // Unfollow
+        await Promise.all([followRef.remove(), followingRef.remove()]);
         updateFollowCount(targetUid, -1);
         updateFollowingCount(auth.currentUser.uid, -1);
         msg("Unfollowed");
       } else {
-        followRef.set(true);
-        followingRef.set(true);
+        // Follow
+        await Promise.all([followRef.set(true), followingRef.set(true)]);
         updateFollowCount(targetUid, 1);
         updateFollowingCount(auth.currentUser.uid, 1);
         msg("Following @" + songs[i].by);
       }
+      
       updateFollowUI();
+      isFollowingProcess = false; // Lepas kunci
     }
 
     function updateFollowCount(uid, val) {
-        db.ref('users/' + uid + '/followers').transaction(c => (c || 0) + val);
+        db.ref('users/' + uid + '/followers').transaction(c => Math.max(0, (c || 0) + val));
     }
     function updateFollowingCount(uid, val) {
-        db.ref('users/' + uid + '/following').transaction(c => (c || 0) + val);
+        db.ref('users/' + uid + '/following').transaction(c => Math.max(0, (c || 0) + val));
     }
 
     async function updateFollowUI() {
@@ -452,6 +479,7 @@
       if(!auth.currentUser) return document.getElementById('modalAuth').style.display='block';
       db.ref('users/' + auth.currentUser.uid).on('value', s => {
           const d = s.val();
+          if(!d) return;
           document.getElementById('pFol').innerText = d.followers || 0;
           document.getElementById('pFollowing').innerText = d.following || 0;
       });
@@ -487,15 +515,41 @@
       document.getElementById('modalCreator').style.display='block';
     }
 
+    // --- SAVE MUSIC (WITH 30 MIN COOLDOWN) ---
     async function saveMusic() {
       if(!auth.currentUser) return msg("Login untuk Upload!");
+      
+      const now = Date.now();
+      const lastUp = userData.lastUpload || 0;
+      const cooldownTime = 30 * 60 * 1000; // 30 Menit dalam milidetik
+
+      if (now - lastUp < cooldownTime) {
+          const remain = Math.ceil((cooldownTime - (now - lastUp)) / 60000);
+          msg(`Tunggu ${remain} menit lagi untuk upload!`);
+          document.getElementById('cooldownHint').innerText = `Tunggu ${remain} menit lagi!`;
+          document.getElementById('cooldownHint').style.display = 'block';
+          return;
+      }
+
       const t = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
       if(!t || !u.includes("top4top")) return msg("Link harus dari Top4Top!");
       
-      await db.ref('songs').push({
-        title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: Date.now()
-      });
-      closeModal(); msg("Berhasil diposting!");
+      document.getElementById('btnSaveMusic').disabled = true;
+      document.getElementById('btnSaveMusic').innerText = "PROSES...";
+
+      try {
+          await db.ref('songs').push({
+            title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: now
+          });
+          await db.ref('users/' + auth.currentUser.uid).update({ lastUpload: now });
+          closeModal(); 
+          msg("Lagu Berhasil Diposting!");
+      } catch (e) {
+          msg("Gagal Upload");
+      } finally {
+          document.getElementById('btnSaveMusic').disabled = false;
+          document.getElementById('btnSaveMusic').innerText = "POST KE DATABASE";
+      }
     }
 
     // --- UTILS ---
@@ -518,18 +572,32 @@
     function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("URL Disalin"); }
     function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Disalin"); }
     function downloadSong() { window.open(songs[i].url); }
-    function openReq() { document.getElementById('modalReq').style.display='block'; }
+    function openReq() { 
+        document.getElementById('modalReq').style.display='block'; 
+        document.getElementById('cooldownHint').style.display='none';
+    }
     function sendReq() { window.open("https://wa.me/62895329018240?text=Req:" + document.getElementById('rLagu').value); }
 
-    function openList(f) {
+    // List Lagu dengan Centang Biru Realtime
+    async function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
-      c.innerHTML = l.map((s) => `
-        <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
-          <div style="flex:1"><b>${s.title}</b><br><small>@${s.by}</small></div>
-          <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
-        </div>
-      `).join('');
+      
+      let html = "";
+      for (let s of l) {
+          // Ambil info follower setiap creator untuk centang biru di list
+          const creatorSnap = await db.ref('users/' + s.uid + '/followers').get();
+          const fCount = creatorSnap.val() || 0;
+          const badge = (fCount >= 50) ? ' <i class="fas fa-check-circle v-badge"></i>' : '';
+          
+          html += `
+            <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+              <div style="flex:1"><b>${s.title}</b><br><small>@${s.by}${badge}</small></div>
+              <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
+            </div>
+          `;
+      }
+      c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
     }
 
