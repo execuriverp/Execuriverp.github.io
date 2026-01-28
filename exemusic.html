@@ -34,7 +34,6 @@
       overflow: hidden;
     }
 
-    /* FULL SCREEN OVERLAYS */
     .full-overlay {
       position: fixed; inset: 0; background: #000; z-index: 10000;
       display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -45,12 +44,12 @@
     .full-overlay p { color: var(--text-dim); margin-top: 10px; }
     #bannedScreen h1 { color: var(--danger); }
 
-    /* Announcement Banner */
+    /* Announcement Fixed */
     #announcement {
-      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
       width: 85%; background: var(--accent); color: black; 
-      padding: 8px 15px; border-radius: 10px; font-size: 11px; font-weight: bold;
-      z-index: 100; display: none; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      padding: 10px; border-radius: 12px; font-size: 12px; font-weight: bold;
+      z-index: 1000; display: none; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
     #loadingCard {
@@ -73,7 +72,7 @@
       position: relative;
     }
 
-    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 10px; margin-top: 10px; }
+    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 10px; margin-top: 15px; }
     .header img { width: 100px; max-width: 30%; }
     
     #topLoginBtn { 
@@ -102,7 +101,7 @@
     
     .user-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
     #by { color: var(--accent); font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    #btnFollow { font-size: 10px; background: var(--accent); color: black; border: none; padding: 2px 8px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none; }
+    #btnFollow { font-size: 10px; background: var(--accent); color: black; border: none; padding: 4px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none; }
 
     .sys-container { background: var(--glass); border-radius: 15px; padding: 8px; margin-bottom: 10px; flex-shrink: 0; z-index: 5;}
     .sys-tools { display: flex; justify-content: space-around; margin-bottom: 5px; }
@@ -140,7 +139,7 @@
     .prof-stat span { font-size: 11px; color: var(--text-dim); }
     .section-title { font-size: 14px; font-weight: bold; margin: 15px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
 
-    .v-badge { color: #1da1f2; font-size: 12px; }
+    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 2px; }
   </style>
 </head>
 <body>
@@ -154,10 +153,10 @@
   <div id="bannedScreen" class="full-overlay">
     <i class="fas fa-user-slash" style="color: var(--danger)"></i>
     <h1>Access Denied</h1>
-    <p>Akun anda telah diblokir secara permanen oleh admin<br>karena melanggar kebijakan ExeMusic.</p>
+    <p>Akun anda telah diblokir secara permanen oleh admin.</p>
   </div>
 
-  <div id="announcement">Pemberitahuan Sistem</div>
+  <div id="announcement"></div>
 
   <div id="loadingCard"><div class="spinner"></div></div>
   <div id="toast">Notif</div>
@@ -238,15 +237,12 @@
         </div>
         <button onclick="showChangeName()" style="font-size:10px; background:none; border:none; color:var(--accent); cursor:pointer;">[Ubah Username]</button>
       </div>
-
       <div class="prof-stat">
         <div><b id="pFol">0</b><span>Followers</span></div>
         <div><b id="pFollowing">0</b><span>Following</span></div>
       </div>
-
       <div class="section-title">Postingan Saya</div>
       <div id="myPostList" style="max-height: 200px; overflow-y: auto;"></div>
-
       <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#333; color:white; margin-top:20px">LOGOUT</button>
     </div>
   </div>
@@ -265,7 +261,7 @@
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:15px">Upload Lagu</h3>
-      <p id="cooldownHint" style="font-size: 11px; text-align: center; color: var(--warning); margin-bottom: 10px; display: none;">Tunggu cooldown selesai!</p>
+      <p id="cooldownHint" style="font-size: 11px; text-align: center; color: var(--warning); margin-bottom: 10px; display: none;"></p>
       <input id="rLagu" class="inp-dark" placeholder="Judul Lagu">
       <input id="rUrl" class="inp-dark" placeholder="URL MP3 (Top4Top)">
       <button onclick="saveMusic()" id="btnSaveMusic" class="btn-act">POST KE DATABASE</button>
@@ -298,49 +294,41 @@
     let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
     let userData = null;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
-    let isFollowingProcess = false; // Mencegah spam klik follow
+    let isFollowLoading = false;
     const audio = new Audio();
 
-    // --- REALTIME MAINTENANCE & ANNOUNCEMENT ---
+    // --- REALTIME SETTINGS ---
     db.ref('settings').on('value', s => {
-        const set = s.val();
-        // MT Logic
-        if(set?.mt === true) {
+        const val = s.val();
+        if(!val) return;
+        // MT
+        if(val.mt === true) {
             db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
                 if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
             });
-        } else {
-            document.getElementById('mtScreen').style.display = 'none';
-        }
-        // Announcement Logic
+        } else { document.getElementById('mtScreen').style.display = 'none'; }
+        // Announcement (Fix [object Object])
         const ann = document.getElementById('announcement');
-        if(set?.announcement) {
-            ann.innerText = set.announcement;
+        if(val.announcement && typeof val.announcement === 'string') {
+            ann.innerText = val.announcement;
             ann.style.display = 'block';
-        } else {
-            ann.style.display = 'none';
-        }
+        } else { ann.style.display = 'none'; }
     });
 
-    // --- AUTH & USER DATA ---
+    // --- AUTH ---
     auth.onAuthStateChanged(u => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
           if(!userData) return;
-
-          // BANNED SYSTEM
           if(userData.banned === true) {
               document.getElementById('bannedScreen').style.display = 'flex';
               auth.signOut();
               return;
           }
-
           document.getElementById('topLoginBtn').textContent = userData.username || "Profil";
           document.getElementById('pUsername').innerText = userData.username || "User";
-          // Centang Biru di Profile
           document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-          
           if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
         });
         document.getElementById('btnFollow').style.display = 'block';
@@ -354,7 +342,7 @@
       setTimeout(() => document.getElementById('loadingCard').style.display = 'none', 500);
     });
 
-    // --- FETCH SONGS ---
+    // --- SONGS ---
     db.ref('songs').on('value', snap => {
       const val = snap.val();
       if(val) {
@@ -366,21 +354,18 @@
       }
     });
 
-    // --- PLAYER CORE ---
     async function setup(idx, play = true) {
       if(!songs[idx]) return;
       i = idx;
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
       
-      // Get Creator Info for Badge (Centang Biru)
-      const creatorRef = await db.ref('users/' + songs[i].uid).get();
-      const cData = creatorRef.val();
-      const badgeHTML = (cData?.followers >= 50) ? ' <i class="fas fa-check-circle v-badge"></i>' : '';
+      const creatorSnap = await db.ref('users/' + songs[i].uid).get();
+      const cData = creatorSnap.val();
+      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
       
-      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badgeHTML;
       window.history.replaceState(null, null, "?id=" + i);
-      
       if(play) { audio.play(); document.getElementById('playBtn').textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); }
       updateFollowUI();
     }
@@ -388,15 +373,6 @@
     function toggle() {
       if(audio.paused) { audio.play(); document.getElementById('playBtn').textContent = "❚❚"; document.getElementById('eq').classList.add('playing'); }
       else { audio.pause(); document.getElementById('playBtn').textContent = "▶"; document.getElementById('eq').classList.remove('playing'); }
-    }
-
-    // --- AUTH ACTIONS ---
-    function toggleAuthMode() {
-      isLoginMode = !isLoginMode;
-      document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Register";
-      document.getElementById('authUser').style.display = isLoginMode ? "none" : "block";
-      document.getElementById('authBtn').innerText = isLoginMode ? "MASUK" : "DAFTAR";
-      document.getElementById('authToggle').innerText = isLoginMode ? "Belum punya akun? Daftar" : "Sudah punya akun? Login";
     }
 
     function handleAuth() {
@@ -407,13 +383,23 @@
         const u = document.getElementById('authUser').value;
         if(u.length < 3) return msg("Username minimal 3 karakter");
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', banned: false, followers: 0, following: 0, lastUpload: 0 });
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', banned: false, followers: 0, following: 0, lastUpload: 0, lastNameChange: 0 });
           closeModal();
         }).catch(err => msg(err.message));
       }
     }
 
+    // --- USERNAME COOLDOWN 7 DAYS ---
     function showChangeName() {
+        const lastChange = userData.lastNameChange || 0;
+        const cooldown = 7 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+
+        if(now - lastChange < cooldown) {
+            const daysLeft = Math.ceil((cooldown - (now - lastChange)) / (24 * 60 * 60 * 1000));
+            return Swal.fire({ icon: 'error', title: 'Oops!', text: `Anda baru bisa ganti nama ${daysLeft} hari lagi!`, background: '#181818', color: '#fff' });
+        }
+
         Swal.fire({
             title: 'Ubah Username',
             input: 'text',
@@ -424,48 +410,37 @@
             color: '#fff'
         }).then(res => {
             if(res.value && res.value.length >= 3) {
-                db.ref('users/' + auth.currentUser.uid).update({ username: res.value });
+                db.ref('users/' + auth.currentUser.uid).update({ username: res.value, lastNameChange: Date.now() });
                 msg("Berhasil diubah!");
             }
         });
     }
 
-    // --- FOLLOW SYSTEM (NO SPAM) ---
+    // --- FOLLOW (FIXED & ANTI SPAM) ---
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
-      if(isFollowingProcess) return; // Kunci proses
-      
+      if(isFollowLoading) return;
       const targetUid = songs[i].uid;
       if(!targetUid || targetUid === auth.currentUser.uid) return msg("Tidak bisa follow diri sendiri");
-      
-      isFollowingProcess = true;
+
+      isFollowLoading = true;
       const followRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
       const followingRef = db.ref('following/' + auth.currentUser.uid + '/' + targetUid);
       
       const s = await followRef.get();
       if(s.exists()) {
-        // Unfollow
-        await Promise.all([followRef.remove(), followingRef.remove()]);
-        updateFollowCount(targetUid, -1);
-        updateFollowingCount(auth.currentUser.uid, -1);
+        await followRef.remove(); await followingRef.remove();
+        db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
+        db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
         msg("Unfollowed");
       } else {
-        // Follow
-        await Promise.all([followRef.set(true), followingRef.set(true)]);
-        updateFollowCount(targetUid, 1);
-        updateFollowingCount(auth.currentUser.uid, 1);
-        msg("Following @" + songs[i].by);
+        await followRef.set(true); await followingRef.set(true);
+        db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
+        db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
+        msg("Following!");
       }
-      
       updateFollowUI();
-      isFollowingProcess = false; // Lepas kunci
-    }
-
-    function updateFollowCount(uid, val) {
-        db.ref('users/' + uid + '/followers').transaction(c => Math.max(0, (c || 0) + val));
-    }
-    function updateFollowingCount(uid, val) {
-        db.ref('users/' + uid + '/following').transaction(c => Math.max(0, (c || 0) + val));
+      isFollowLoading = false;
     }
 
     async function updateFollowUI() {
@@ -474,85 +449,24 @@
       document.getElementById('btnFollow').innerText = s.exists() ? "FOLLOWED" : "FOLLOW";
     }
 
-    // --- PROFILE & CREATOR ---
-    function openProfile() {
-      if(!auth.currentUser) return document.getElementById('modalAuth').style.display='block';
-      db.ref('users/' + auth.currentUser.uid).on('value', s => {
-          const d = s.val();
-          if(!d) return;
-          document.getElementById('pFol').innerText = d.followers || 0;
-          document.getElementById('pFollowing').innerText = d.following || 0;
-      });
-      
-      const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
-      document.getElementById('myPostList').innerHTML = myPosts.map(s => `
-        <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
-          <span>${s.title}</span>
-          <small>▶</small>
-        </div>
-      `).join('');
-      document.getElementById('modalProfile').style.display='block';
-    }
-
-    async function viewCreator() {
-      const s = songs[i];
-      if(!s.uid) return;
-      
-      const cRef = await db.ref('users/' + s.uid).get();
-      const cData = cRef.val();
-      const badge = (cData?.followers >= 50) ? ' <i class="fas fa-check-circle v-badge"></i>' : '';
-      
-      document.getElementById('vName').innerHTML = "@" + s.by + badge;
-      document.getElementById('vFol').innerText = cData?.followers || 0;
-      
-      const creatorSongs = songs.filter(x => x.uid === s.uid);
-      document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `
-        <div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
-          <span>${x.title}</span>
-          <small>▶</small>
-        </div>
-      `).join('');
-      document.getElementById('modalCreator').style.display='block';
-    }
-
-    // --- SAVE MUSIC (WITH 30 MIN COOLDOWN) ---
+    // --- UPLOAD COOLDOWN 30 MIN ---
     async function saveMusic() {
-      if(!auth.currentUser) return msg("Login untuk Upload!");
-      
+      if(!auth.currentUser) return msg("Login dulu!");
       const now = Date.now();
-      const lastUp = userData.lastUpload || 0;
-      const cooldownTime = 30 * 60 * 1000; // 30 Menit dalam milidetik
-
-      if (now - lastUp < cooldownTime) {
-          const remain = Math.ceil((cooldownTime - (now - lastUp)) / 60000);
-          msg(`Tunggu ${remain} menit lagi untuk upload!`);
-          document.getElementById('cooldownHint').innerText = `Tunggu ${remain} menit lagi!`;
-          document.getElementById('cooldownHint').style.display = 'block';
-          return;
+      const cooldown = 30 * 60 * 1000;
+      if(now - (userData.lastUpload || 0) < cooldown) {
+          const remain = Math.ceil((cooldown - (now - (userData.lastUpload || 0))) / 60000);
+          return msg(`Tunggu ${remain} menit lagi!`);
       }
-
       const t = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
       if(!t || !u.includes("top4top")) return msg("Link harus dari Top4Top!");
       
-      document.getElementById('btnSaveMusic').disabled = true;
-      document.getElementById('btnSaveMusic').innerText = "PROSES...";
-
-      try {
-          await db.ref('songs').push({
-            title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: now
-          });
-          await db.ref('users/' + auth.currentUser.uid).update({ lastUpload: now });
-          closeModal(); 
-          msg("Lagu Berhasil Diposting!");
-      } catch (e) {
-          msg("Gagal Upload");
-      } finally {
-          document.getElementById('btnSaveMusic').disabled = false;
-          document.getElementById('btnSaveMusic').innerText = "POST KE DATABASE";
-      }
+      await db.ref('songs').push({ title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: now });
+      await db.ref('users/' + auth.currentUser.uid).update({ lastUpload: now });
+      closeModal(); msg("Berhasil posting!");
     }
 
-    // --- UTILS ---
+    // --- CORE UTILS ---
     function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
     function prev() { setup((i-1+songs.length)%songs.length); }
     audio.ontimeupdate = () => {
@@ -572,30 +486,47 @@
     function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("URL Disalin"); }
     function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Disalin"); }
     function downloadSong() { window.open(songs[i].url); }
-    function openReq() { 
-        document.getElementById('modalReq').style.display='block'; 
-        document.getElementById('cooldownHint').style.display='none';
-    }
+    function openReq() { document.getElementById('modalReq').style.display='block'; }
     function sendReq() { window.open("https://wa.me/62895329018240?text=Req:" + document.getElementById('rLagu').value); }
+    function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Register"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
 
-    // List Lagu dengan Centang Biru Realtime
+    function openProfile() {
+      if(!auth.currentUser) return document.getElementById('modalAuth').style.display='block';
+      const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
+      document.getElementById('myPostList').innerHTML = myPosts.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><span>${s.title}</span><small>▶</small></div>`).join('');
+      document.getElementById('modalProfile').style.display='block';
+      db.ref('users/' + auth.currentUser.uid).once('value', s => {
+          document.getElementById('pFol').innerText = s.val().followers || 0;
+          document.getElementById('pFollowing').innerText = s.val().following || 0;
+      });
+    }
+
+    async function viewCreator() {
+      const s = songs[i]; if(!s.uid) return;
+      const cRef = await db.ref('users/' + s.uid).get();
+      const cData = cRef.val();
+      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      document.getElementById('vName').innerHTML = "@" + s.by + badge;
+      document.getElementById('vFol').innerText = cData?.followers || 0;
+      const creatorSongs = songs.filter(x => x.uid === s.uid);
+      document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small>▶</small></div>`).join('');
+      document.getElementById('modalCreator').style.display='block';
+    }
+
     async function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
+      c.innerHTML = '<p style="text-align:center; padding:20px;">Memuat list...</p>';
       
       let html = "";
-      for (let s of l) {
-          // Ambil info follower setiap creator untuk centang biru di list
-          const creatorSnap = await db.ref('users/' + s.uid + '/followers').get();
-          const fCount = creatorSnap.val() || 0;
-          const badge = (fCount >= 50) ? ' <i class="fas fa-check-circle v-badge"></i>' : '';
-          
+      for(let s of l) {
+          const snap = await db.ref('users/' + s.uid + '/followers').get();
+          const badge = (snap.val() >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           html += `
             <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
               <div style="flex:1"><b>${s.title}</b><br><small>@${s.by}${badge}</small></div>
               <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'#1db954':'#444'}">⭐</span>
-            </div>
-          `;
+            </div>`;
       }
       c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
@@ -608,9 +539,7 @@
       openList(false);
     }
 
-    function openAdmin() {
-        if(userData?.role === 'admin') window.location.href = 'admmenu.html';
-    }
+    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
   </script>
 </body>
 </html>
