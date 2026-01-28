@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExeMusic - Admin Terminal</title>
+    <title>ExeMusic - Elite Admin Terminal</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -11,128 +11,166 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { 
-            --accent: #00ff41; /* Matrix Green */
-            --bg: #050505; 
-            --card: #0f0f0f;
-            --danger: #ff0000;
+            --accent: #00ff41; 
+            --bg: #020202; 
+            --card: #0a0a0a;
+            --danger: #ff3131;
+            --warn: #f5f500;
         }
         
+        * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+
         body { 
-            font-family: 'Consolas', monospace; 
+            font-family: 'JetBrains Mono', 'Consolas', monospace; 
             background: var(--bg); 
-            color: white; 
+            color: #e0e0e0; 
             margin: 0; 
             overflow: hidden;
+            background-image: radial-gradient(circle, #111 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        /* CAPTCHA OVERLAY */
+        /* CAPTCHA ANIMATION */
         #captchaOverlay {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
         }
 
-        /* MAIN DASHBOARD (HIDDEN BY DEFAULT) */
-        #adminDashboard { display: none; padding: 20px; height: 100vh; overflow-y: auto; }
+        #adminDashboard { display: none; padding: 20px; height: 100vh; overflow-y: auto; opacity: 0; transform: translateY(20px); }
+        #adminDashboard.show { display: block; opacity: 1; transform: translateY(0); }
 
-        .container { max-width: 1100px; margin: auto; }
+        .container { max-width: 1200px; margin: auto; animation: fadeIn 0.8s ease; }
+
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;
-            text-shadow: 0 0 10px var(--accent);
+            border-bottom: 2px solid var(--accent); padding-bottom: 15px; margin-bottom: 25px;
+            box-shadow: 0 4px 15px -10px var(--accent);
         }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .header h2 { margin: 0; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        
         .card { 
-            background: var(--card); border: 1px solid #222; 
-            padding: 15px; border-radius: 5px; position: relative;
+            background: var(--card); border: 1px solid #1a1a1a; 
+            padding: 20px; border-radius: 12px; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .card h3 { border-left: 4px solid var(--accent); padding-left: 10px; margin-top: 0; font-size: 16px; }
+        
+        .card:hover { border-color: var(--accent); transform: scale(1.01); box-shadow: 0 0 20px rgba(0,255,65,0.1); }
+        .card h3 { color: var(--accent); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
         .btn { 
-            padding: 10px 15px; border: 1px solid var(--accent); background: transparent; 
-            color: var(--accent); cursor: pointer; font-weight: bold; text-transform: uppercase;
+            padding: 10px 20px; border: 1px solid var(--accent); background: transparent; 
+            color: var(--accent); cursor: pointer; font-weight: bold; border-radius: 4px;
+            text-transform: uppercase; font-size: 11px;
         }
-        .btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
+        
+        .btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); transform: translateY(-2px); }
+        .btn:active { transform: scale(0.9); }
+        
         .btn-danger { border-color: var(--danger); color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
 
         .log-box { 
-            font-size: 12px; height: 250px; overflow-y: auto; 
-            background: #000; padding: 10px; border: 1px solid #333; color: #00ff41;
+            font-size: 11px; height: 300px; overflow-y: auto; 
+            background: #000; padding: 15px; border: 1px solid #111; color: var(--accent);
+            border-radius: 8px; line-height: 1.6;
         }
+
         .item { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 8px; border-bottom: 1px solid #222; 
+            padding: 12px; border-bottom: 1px solid #111; border-radius: 4px;
         }
+        .item:hover { background: rgba(255,255,255,0.02); }
 
         input, textarea { 
-            background: #111; border: 1px solid #333; color: white; 
-            padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 10px;
+            background: #080808; border: 1px solid #222; color: white; 
+            padding: 12px; width: 100%; border-radius: 6px; margin-bottom: 15px;
+            font-family: inherit;
+        }
+        input:focus { border-color: var(--accent); outline: none; }
+
+        .ann-box { 
+            background: linear-gradient(145deg, #0a0000, #1a0000); 
+            border: 1px solid var(--danger); padding: 20px; border-radius: 12px; margin-bottom: 25px; 
         }
 
-        .ann-box { background: rgba(255, 0, 0, 0.1); border: 1px solid var(--danger); padding: 10px; margin-bottom: 20px; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .badge-admin { background: var(--accent); color: black; }
+        .badge-user { background: #333; color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div id="captchaOverlay">
-    <h1 style="color: var(--accent); margin-bottom: 5px;">VERIFIKASI ADMIN</h1>
-    <p style="color: #666; margin-bottom: 20px;">Selesaikan captcha untuk mengakses terminal.</p>
-    <div style="background: #111; padding: 20px; border-radius: 10px; text-align: center;">
-        <h2 id="captchaCode" style="letter-spacing: 10px; background: #222; padding: 10px; margin-bottom: 15px; color: var(--accent)">----</h2>
-        <input type="text" id="captchaInput" placeholder="Masukkan Kode" style="text-align: center; font-size: 20px; width: 200px;">
+    <div style="text-align: center; background: #080808; padding: 40px; border-radius: 20px; border: 1px solid #1a1a1a;">
+        <h1 style="color: var(--accent); margin-bottom: 10px; font-size: 1.5rem;">ACCESS PROTOCOL</h1>
+        <p style="color: #555; margin-bottom: 30px; font-size: 0.8rem;">Identify yourself to unlock the terminal.</p>
+        
+        <div id="captchaCode" style="font-size: 2.5rem; letter-spacing: 12px; background: #000; padding: 20px; margin-bottom: 20px; color: var(--accent); border: 1px dashed var(--accent); text-shadow: 0 0 10px var(--accent);">----</div>
+        
+        <input type="text" id="captchaInput" placeholder="ENTER CODE" style="text-align: center; font-size: 1.2rem; letter-spacing: 4px;">
         <br>
-        <button class="btn" onclick="verifyCaptcha()">UNLOCK TERMINAL</button>
+        <button class="btn" style="width: 100%; padding: 15px;" onclick="verifyCaptcha()">INITIALIZE LOGIN</button>
     </div>
 </div>
 
 <div id="adminDashboard">
     <div class="container">
         <div class="header">
-            <h2><i class="fas fa-terminal"></i> EXEMUSIC_SYSTEM_v4.0</h2>
+            <h2><i class="fas fa-microchip"></i> SYSTEM_CORE_V5.0</h2>
             <div>
-                <span id="adminName">Loading...</span>
-                <button class="btn" style="margin-left: 15px;" onclick="window.location.href='exemusic.html'">LOGOUT</button>
+                <span id="adminName" style="color: #888; font-size: 0.8rem;">IDENTIFYING...</span>
+                <button class="btn btn-danger" style="margin-left: 20px;" onclick="logout()">SHUTDOWN</button>
             </div>
         </div>
 
         <div class="ann-box">
-            <h3 style="color: var(--danger);"><i class="fas fa-bullhorn"></i> GLOBAL ANNOUNCEMENT</h3>
-            <textarea id="annText" placeholder="Ketik pengumuman di sini... (Otomatis hilang 15 detik)"></textarea>
-            <button class="btn btn-danger" onclick="sendAnnouncement()">KIRIM PENGUMUMAN SEKARANG</button>
+            <h3><i class="fas fa-broadcast-tower"></i> GLOBAL BROADCAST SYSTEM</h3>
+            <textarea id="annText" rows="2" placeholder="Enter broadcast message... (Player will see this for 15s)"></textarea>
+            <button class="btn btn-danger" style="width: 100%;" onclick="sendAnnouncement()">DEPLOY ANNOUNCEMENT</button>
         </div>
 
         <div class="grid">
             <div class="card">
-                <h3>SYSTEM SETTINGS</h3>
+                <h3><i class="fas fa-sliders-h"></i> CORE CONFIG</h3>
                 <div class="item">
-                    <span>Maintenance Mode (Lock System)</span>
-                    <button id="mtBtn" class="btn" onclick="toggleMT()">LOADING</button>
+                    <span>Maintenance Protocol</span>
+                    <button id="mtBtn" class="btn" onclick="toggleMT()">---</button>
                 </div>
-                <div class="item" style="margin-top: 10px;">
-                    <span>Server Status</span>
-                    <span style="color: var(--accent)">ONLINE (STABLE)</span>
+                <div class="item">
+                    <span>Database Engine</span>
+                    <span style="color: var(--accent)">FIREBASE_RTDB_V1</span>
+                </div>
+                <div class="item">
+                    <span>System Integrity</span>
+                    <span style="color: var(--accent)">EXCELLENT</span>
                 </div>
             </div>
 
             <div class="card">
-                <h3>REALTIME LOGS (ADD MUSIC/SYSTEM)</h3>
+                <h3><i class="fas fa-list-ul"></i> OPERATIONAL LOGS</h3>
                 <div id="logContainer" class="log-box"></div>
+                <button class="btn" style="margin-top:10px; width:100%; font-size:9px;" onclick="clearLogs()">WIPE LOGS</button>
             </div>
         </div>
 
-        <div class="grid" style="margin-top: 20px;">
+        <div class="grid" style="margin-top: 25px;">
             <div class="card">
-                <h3>DATABASE USERS</h3>
+                <h3><i class="fas fa-users"></i> USER REGISTRY</h3>
                 <div id="userList" style="max-height: 400px; overflow-y: auto;"></div>
             </div>
 
             <div class="card">
-                <h3>DATABASE SONGS</h3>
+                <h3><i class="fas fa-music"></i> CONTENT REPOSITORY</h3>
                 <div id="songList" style="max-height: 400px; overflow-y: auto;"></div>
             </div>
         </div>
@@ -156,10 +194,9 @@
     const auth = firebase.auth();
 
     let currentCaptcha = "";
-    let isVerified = false;
     let mtStatus = false;
 
-    // --- SECURITY LAYER ---
+    // --- CAPTCHA SYSTEM ---
     function generateCaptcha() {
         currentCaptcha = Math.random().toString(36).substring(2, 8).toUpperCase();
         document.getElementById('captchaCode').innerText = currentCaptcha;
@@ -168,138 +205,171 @@
     function verifyCaptcha() {
         const input = document.getElementById('captchaInput').value.toUpperCase();
         if(input === currentCaptcha) {
-            isVerified = true;
-            document.getElementById('captchaOverlay').style.display = 'none';
-            document.getElementById('adminDashboard').style.display = 'block';
-            msg("Terminal Unlocked", "success");
+            document.getElementById('captchaOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('captchaOverlay').style.display = 'none';
+                const dash = document.getElementById('adminDashboard');
+                dash.style.display = 'block';
+                setTimeout(() => dash.classList.add('show'), 50);
+            }, 500);
+            toast("Terminal Unlocked", "success");
         } else {
-            Swal.fire("Gagal", "Captcha salah!", "error");
+            Swal.fire({ icon: 'error', title: 'ACCESS DENIED', text: 'Invalid Captcha Code!', background: '#0a0a0a', color: '#fff' });
             generateCaptcha();
         }
     }
 
-    // --- AUTH & AUTO BAN PROTECTION ---
+    // --- SECURITY & AUTH ---
     auth.onAuthStateChanged(user => {
         if (user) {
             db.ref('users/' + user.uid).once('value', snap => {
                 const data = snap.val();
                 if (data?.role !== 'admin') {
-                    // KICK & BAN OTOMATIS JIKA BUKAN ADMIN
                     db.ref('users/' + user.uid).update({ banned: true });
-                    Swal.fire({
-                        title: "YOU ARE NOT ADMIN",
-                        text: "System detect illegal access. Your account has been BANNED.",
-                        icon: "error",
-                        timer: 3000
-                    }).then(() => {
-                        window.location.href = 'exemusic.html';
+                    Swal.fire("UNAUTHORIZED", "Your access attempt has been logged. Account BANNED.", "error").then(() => {
+                        window.location.href = 'index.html';
                     });
                 } else {
-                    document.getElementById('adminName').innerText = "Logged as: " + data.username;
+                    document.getElementById('adminName').innerText = `ACCESS_GRANTED: ${data.username.toUpperCase()}`;
                     loadAdminData();
                 }
             });
         } else {
-            // TENDANG JIKA BELUM LOGIN
-            window.location.href = 'exemusic.html';
+            window.location.href = 'index.html';
         }
     });
 
+    // --- DATA LOADERS ---
     function loadAdminData() {
-        // MT
+        // Maintenance Status
         db.ref('settings/mt').on('value', s => {
             mtStatus = s.val();
             const btn = document.getElementById('mtBtn');
-            btn.innerText = mtStatus ? "MT: ACTIVE" : "MT: INACTIVE";
-            btn.style.color = mtStatus ? "#ff0000" : "#00ff41";
+            btn.innerText = mtStatus ? "LOCKDOWN ACTIVE" : "SYSTEM OPEN";
+            btn.className = mtStatus ? "btn btn-danger" : "btn";
         });
 
-        // Detailed Logs (Jam:Menit:Detik)
-        db.ref('logs').limitToLast(30).on('value', s => {
+        // System Logs
+        db.ref('logs').limitToLast(50).on('value', s => {
+            const container = document.getElementById('logContainer');
             let h = '';
             s.forEach(child => {
                 const l = child.val();
-                h = `<div>[${l.time}] > ${l.msg}</div>` + h;
+                h += `<div style="margin-bottom:5px"><span style="color:#444">[${l.time}]</span> > ${l.msg}</div>`;
             });
-            document.getElementById('logContainer').innerHTML = h;
+            container.innerHTML = h;
+            container.scrollTop = container.scrollHeight;
         });
 
-        // Song List
-        db.ref('songs').on('value', s => {
-            let h = '';
-            s.forEach(child => {
-                const song = child.val();
-                h += `<div class="item">
-                    <span><b>${song.title}</b><br><small>by @${song.by}</small></span>
-                    <button class="btn btn-danger" onclick="delSong('${child.key}', '${song.title}')">REMOVE</button>
-                </div>`;
-            });
-            document.getElementById('songList').innerHTML = h;
-        });
-
-        // User List
+        // User Registry
         db.ref('users').on('value', s => {
             let h = '';
             s.forEach(child => {
                 const u = child.val();
                 const isBanned = u.banned === true;
                 h += `<div class="item">
-                    <span style="color: ${isBanned ? 'red' : 'white'}">${u.username} (${u.role})</span>
+                    <div>
+                        <span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">${u.role.toUpperCase()}</span>
+                        <span style="margin-left:10px; color:${isBanned ? 'var(--danger)' : 'white'}">${u.username}</span>
+                    </div>
                     <button class="btn ${isBanned ? '' : 'btn-danger'}" onclick="toggleBan('${child.key}', ${isBanned})">
-                        ${isBanned ? 'UNBAN' : 'BAN'}
+                        ${isBanned ? 'REVOKE BAN' : 'BAN'}
                     </button>
                 </div>`;
             });
             document.getElementById('userList').innerHTML = h;
         });
+
+        // Song Registry
+        db.ref('songs').on('value', s => {
+            let h = '';
+            s.forEach(child => {
+                const song = child.val();
+                h += `<div class="item">
+                    <span><b>${song.title}</b><br><small style="color:#555">UID: ${child.key}</small></span>
+                    <button class="btn btn-danger" onclick="delSong('${child.key}', '${song.title}')">PURGE</button>
+                </div>`;
+            });
+            document.getElementById('songList').innerHTML = h;
+        });
     }
 
-    // --- ADMIN ACTIONS ---
+    // --- ACTIONS ---
     function sendAnnouncement() {
-        const text = document.getElementById('annText').value;
-        if(!text) return;
+        const text = document.getElementById('annText').value.trim();
+        if(!text) return toast("Message cannot be empty", "error");
 
         db.ref('settings/announcement').set({
-            msg: "ADMIN ANNOUNCEMENT: " + text,
+            msg: "⚠️ SYSTEM NOTICE: " + text.toUpperCase(),
             timestamp: Date.now()
+        }).then(() => {
+            addLog(`Global broadcast deployed: ${text.substring(0, 20)}...`);
+            document.getElementById('annText').value = "";
+            Swal.fire({ icon: 'success', title: 'BROADCAST LIVE', text: 'Message synced to all players.', timer: 2000, background: '#0a0a0a', color: '#fff' });
         });
-
-        addLog(`Sent global announcement: ${text}`);
-        document.getElementById('annText').value = "";
-        Swal.fire("Terkirim", "Pesan akan muncul di player selama 15 detik", "success");
     }
 
     function toggleMT() {
         db.ref('settings/mt').set(!mtStatus);
-        addLog(`Changed Maintenance Mode to: ${!mtStatus}`);
+        addLog(`Maintenance Protocol updated to: ${!mtStatus}`);
     }
 
     function delSong(key, title) {
-        if(confirm(`Hapus permanen lagu ${title}?`)) {
-            db.ref('songs/' + key).remove();
-            addLog(`Deleted song: ${title}`);
-        }
-    }
-
-    function toggleBan(uid, currentStatus) {
-        db.ref('users/' + uid).update({ banned: !currentStatus });
-        addLog(`Updated ban status for ${uid} to ${!currentStatus}`);
-    }
-
-    function addLog(message) {
-        const now = new Date();
-        const timeStr = now.getHours().toString().padStart(2,'0') + ":" + 
-                        now.getMinutes().toString().padStart(2,'0') + ":" + 
-                        now.getSeconds().toString().padStart(2,'0');
-        
-        db.ref('logs').push({
-            msg: message,
-            time: timeStr
+        Swal.fire({
+            title: 'PURGE CONTENT?',
+            text: `Permanently delete ${title}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff3131',
+            confirmButtonText: 'DELETE',
+            background: '#0a0a0a',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                db.ref('songs/' + key).remove();
+                addLog(`Purged song: ${title}`);
+                toast("Content Purged", "success");
+            }
         });
     }
 
-    function msg(t, i) {
-        Swal.fire({ title: t, icon: i, toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+    function toggleBan(uid, status) {
+        const action = status ? "UNBAN" : "BAN";
+        Swal.fire({
+            title: `${action} USER?`,
+            text: `Confirm ${action} action for UID: ${uid}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'CONFIRM',
+            background: '#0a0a0a',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                db.ref('users/' + uid).update({ banned: !status });
+                addLog(`${action} user account: ${uid}`);
+                toast(`User ${action}ED`, "success");
+            }
+        });
+    }
+
+    function clearLogs() {
+        if(confirm("Wipe all system logs?")) {
+            db.ref('logs').remove();
+            toast("Logs wiped", "info");
+        }
+    }
+
+    function addLog(message) {
+        const timeStr = new Date().toLocaleTimeString('id-ID');
+        db.ref('logs').push({ msg: message, time: timeStr });
+    }
+
+    function logout() {
+        auth.signOut().then(() => window.location.href = 'index.html');
+    }
+
+    function toast(t, i) {
+        Swal.fire({ title: t, icon: i, toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#111', color: '#fff' });
     }
 
     generateCaptcha();
