@@ -3,184 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExeMusic - Elite Admin Panel</title>
+    <title>ExeMusic // OVERLORD PANEL</title>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
         :root { 
-            --accent: #00ffcc; 
-            --bg: #050505; 
-            --card: #0d0d0d;
-            --danger: #ff0055;
+            --bg-color: #0b0b0f;
+            --sidebar-bg: #111116;
+            --card-bg: rgba(30, 30, 35, 0.6);
+            --accent: #00f3ff; /* Cyan Cyberpunk */
+            --danger: #ff2a6d; /* Red Glitch */
             --warning: #ffcc00;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(0, 255, 204, 0.2);
+            --text-main: #e0e6ed;
+            --text-muted: #676e79;
+            --border: rgba(255, 255, 255, 0.08);
+            --glow: 0 0 10px rgba(0, 243, 255, 0.3);
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-
+        * { box-sizing: border-box; outline: none; }
+        
         body { 
-            background: var(--bg); 
-            color: #fff; 
+            background: var(--bg-color); 
+            color: var(--text-main); 
             margin: 0; 
+            font-family: 'Rajdhani', sans-serif; 
             display: flex; 
-            height: 100vh;
+            height: 100vh; 
             overflow: hidden;
         }
 
-        /* --- CUSTOM NOTIFICATION --- */
-        #notify-container {
-            position: fixed; top: 20px; right: 20px; z-index: 11000;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .notify-card {
-            background: rgba(10, 10, 10, 0.9); border-left: 4px solid var(--accent);
-            padding: 15px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            color: white; font-size: 13px; font-weight: bold; backdrop-filter: blur(10px);
-            animation: slideIn 0.3s forwards, fadeOut 0.5s 2.5s forwards; min-width: 250px;
-        }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateX(20px); } }
-
-        /* --- CAPTCHA OVERLAY --- */
-        #captchaOverlay {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .captcha-box {
-            background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border);
-            text-align: center; box-shadow: 0 0 50px rgba(0, 255, 204, 0.1);
-        }
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
         /* --- SIDEBAR --- */
         .sidebar {
-            width: 260px; background: #080808; border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 20px; gap: 10px;
+            width: 250px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 10;
         }
-        .sidebar h2 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; letter-spacing: 2px; }
+
+        .brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            color: var(--accent);
+            text-shadow: var(--glow);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .nav-btn {
-            padding: 12px 15px; border-radius: 8px; background: transparent; border: none;
-            color: #888; text-align: left; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 5px;
         }
-        .nav-btn:hover, .nav-btn.active { background: var(--glass); color: var(--accent); }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+        }
 
         /* --- MAIN CONTENT --- */
-        .main { flex: 1; overflow-y: auto; padding: 30px; position: relative; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-
-        .card { 
-            background: var(--card); border: 1px solid rgba(255,255,255,0.05); 
-            border-radius: 16px; padding: 25px; position: relative;
+        .main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.02) 0%, transparent 50%);
         }
-        .card h3 { margin-top: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; opacity: 0.8; }
 
-        /* --- INPUTS & BUTTONS --- */
-        textarea, input {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; color: #fff; padding: 12px; width: 100%; margin-bottom: 10px;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
         }
-        textarea:focus { border-color: var(--accent); outline: none; }
 
+        .status-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        /* --- STATS GRID --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 50px; height: 50px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: var(--accent);
+        }
+
+        /* --- CONTENT GRID --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Kiri lebih lebar */
+            gap: 20px;
+        }
+        
+        @media (max-width: 1000px) { .grid-container { grid-template-columns: 1fr; } }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* --- LIST ITEMS --- */
+        .list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+            transition: 0.2s;
+        }
+
+        .list-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-left-color: var(--accent);
+        }
+
+        .item-info b { color: var(--text-main); font-size: 14px; }
+        .item-info small { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+        /* --- BUTTONS --- */
         .btn {
-            padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer;
-            font-weight: bold; font-size: 12px; transition: 0.3s; text-transform: uppercase;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: 0.2s;
         }
-        .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
-        .btn-danger { background: var(--danger); color: #fff; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--accent); }
-        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-        /* --- LOGS --- */
+        .btn-primary { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+        .btn-danger { background: rgba(255, 42, 109, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #fff; box-shadow: 0 0 10px rgba(255,42,109,0.4); }
+        
+        .search-bar {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 6px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* --- TERMINAL --- */
         .terminal {
-            background: #000; border-radius: 10px; padding: 15px; font-family: 'Consolas', monospace;
-            font-size: 11px; height: 180px; overflow-y: auto; color: #00ff41; border: 1px solid #111;
+            background: #000;
+            color: #33ff00;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            border-radius: 6px;
+            border: 1px solid #222;
+        }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+        .log-time { color: #666; margin-right: 10px; }
+
+        /* --- SECURITY OVERLAY --- */
+        #securityOverlay {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .sec-box { text-align: center; width: 300px; }
+        .sec-input { 
+            width: 100%; padding: 15px; background: #111; 
+            border: 1px solid var(--accent); color: var(--accent); 
+            text-align: center; font-size: 20px; letter-spacing: 5px; margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        /* --- USER & SONG LIST --- */
-        .item-list { display: flex; flex-direction: column; gap: 10px; max-height: 350px; overflow-y: auto; }
-        .item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: var(--glass); padding: 12px; border-radius: 10px;
-        }
-        .badge { font-size: 9px; padding: 3px 8px; border-radius: 4px; background: #333; }
-
-        /* --- BANNER --- */
-        .banner {
-            background: linear-gradient(90deg, #1a0000, #330000);
-            border: 1px solid var(--danger); padding: 20px; border-radius: 15px; margin-bottom: 30px;
-            display: flex; gap: 20px; align-items: center;
-        }
     </style>
 </head>
 <body>
 
-<div id="notify-container"></div>
-
-<div id="captchaOverlay">
-    <div class="captcha-box">
-        <h1 style="margin-top:0">SECURITY_KEY</h1>
-        <div id="captchaCode" style="font-size: 2.5rem; color: var(--accent); letter-spacing: 10px; margin: 20px 0;">----</div>
-        <input type="text" id="captchaInput" placeholder="ENTER TERMINAL CODE" style="text-align: center; background: #000;">
-        <button class="btn btn-primary" style="width:100%" onclick="verifyCaptcha()">UNLOCK PANEL</button>
+<div id="securityOverlay">
+    <i class="fas fa-shield-halved" style="font-size: 50px; color: var(--accent); margin-bottom: 20px;"></i>
+    <div class="sec-box">
+        <h2 style="color: #fff; font-weight: normal; margin:0">SYSTEM LOCKED</h2>
+        <p style="color: #666; font-size: 12px; margin-bottom: 20px;">AUTHENTICATION REQUIRED</p>
+        <div style="background: #111; color: #fff; padding: 10px; margin-bottom: 10px; font-family: monospace;">CODE: <span id="captchaDisplay" style="color: var(--warning); font-weight: bold;"></span></div>
+        <input type="text" id="secInput" class="sec-input" maxlength="4" placeholder="XXXX">
+        <button class="btn btn-primary" style="width: 100%; padding: 15px;" onclick="unlockSystem()">ACCESS PANEL</button>
     </div>
 </div>
 
 <div class="sidebar">
-    <h2>EXEMUSIC</h2>
-    <button class="nav-btn active"><i class="fas fa-home"></i> Dashboard</button>
-    <button class="nav-btn"><i class="fas fa-users"></i> Users</button>
-    <button class="nav-btn"><i class="fas fa-music"></i> Library</button>
-    <button class="nav-btn"><i class="fas fa-cog"></i> Settings</button>
+    <div class="brand">
+        <i class="fas fa-biohazard"></i> EXE.ADMIN
+    </div>
+    <button class="nav-btn active"><i class="fas fa-chart-line"></i> Dashboard</button>
+    <button class="nav-btn"><i class="fas fa-users"></i> User Manager</button>
+    <button class="nav-btn"><i class="fas fa-database"></i> Song Database</button>
     <div style="margin-top: auto;">
-        <button class="btn btn-danger" style="width:100%" onclick="logout()"><i class="fas fa-power-off"></i> Logout</button>
+        <div style="font-size: 10px; color: #444; margin-bottom: 10px;">SESSION ID: <span id="sessId">...</span></div>
+        <button class="btn btn-danger" style="width: 100%;" onclick="logout()">DISCONNECT</button>
     </div>
 </div>
 
 <div class="main">
+    
     <div class="header">
         <div>
-            <h1 style="margin:0; font-size: 20px;">SYSTEM OPERATOR</h1>
-            <span id="adminName" style="color: #555; font-size: 12px;">LOADING_IDENT...</span>
+            <h2 style="margin: 0; font-size: 18px;">COMMAND CENTER</h2>
+            <small style="color: var(--text-muted)">Welcome back, Operator.</small>
         </div>
-        <div style="display:flex; gap:10px;">
-            <button class="btn btn-outline" onclick="resetAllCooldowns()"><i class="fas fa-bolt"></i> NUKE ALL COOLDOWNS</button>
-            <button id="mtBtn" class="btn btn-primary" onclick="toggleMT()">LOADING...</button>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <div id="serverStatus" class="status-badge">CONN: ONLINE</div>
+            <button id="mtBtn" class="btn" style="background: #333; color: #fff;" onclick="toggleMT()">LOADING...</button>
         </div>
     </div>
 
-    <div class="banner">
-        <i class="fas fa-radiation" style="font-size: 40px; color: var(--danger)"></i>
-        <div style="flex:1">
-            <h4 style="margin:0; color: var(--danger)">GLOBAL SERVER ANNOUNCEMENT</h4>
-            <input type="text" id="annText" placeholder="Ketik pesan pengumuman di sini..." style="margin-top:10px; border: 1px solid var(--danger)">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div>
+                <div style="font-size: 24px; font-weight: bold;" id="countUsers">0</div>
+                <small style="color: var(--text-muted)">Total Users</small>
+            </div>
         </div>
-        <button class="btn btn-danger" onclick="sendAnnouncement()">DEPLOY MSG</button>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-music"></i></div>
+            <div>
+                <div style="font-size: 24px; font-weight: bold;" id="countSongs">0</div>
+                <small style="color: var(--text-muted)">Total Songs</small>
+            </div>
+        </div>
+        <div class="stat-card" style="border-color: var(--danger);">
+            <div class="stat-icon" style="color: var(--danger)"><i class="fas fa-radiation"></i></div>
+            <button class="btn btn-danger" style="width: 100%;" onclick="nukeCooldowns()">NUKE COOLDOWNS</button>
+        </div>
     </div>
 
-    <div class="grid">
-        <div class="card">
-            <h3><i class="fas fa-terminal"></i> Operational Logs</h3>
-            <div id="logContainer" class="terminal"></div>
-            <button class="btn btn-outline" style="width:100%; margin-top:10px; font-size:10px" onclick="clearLogs()">CLEAR HISTORY</button>
+    <div class="panel" style="height: auto; margin-bottom: 20px; border-color: var(--warning);">
+        <div class="panel-header" style="border:none; padding-bottom:0; margin-bottom: 10px;">
+            <span class="panel-title" style="color: var(--warning); font-size: 14px;"><i class="fas fa-bullhorn"></i> GLOBAL BROADCAST</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="annInput" class="search-bar" placeholder="Ketik pesan peringatan ke semua user..." style="margin:0;">
+            <button class="btn btn-primary" style="background: var(--warning); color: #000;" onclick="sendBroadcast()">SEND</button>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title"><i class="fas fa-compact-disc"></i> Content Registry</span>
+                <span class="status-badge" style="background: #111; color: #fff;">LIVE</span>
+            </div>
+            <input type="text" id="searchSong" class="search-bar" placeholder="Search song title..." onkeyup="filterSongs()">
+            <div id="songList" class="list-container">
+                </div>
         </div>
 
-        <div class="card">
-            <h3><i class="fas fa-users"></i> User Database</h3>
-            <div id="userList" class="item-list"></div>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="panel" style="height: 250px;">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fas fa-user-shield"></i> Users</span>
+                </div>
+                <div id="userList" class="list-container">
+                    </div>
+            </div>
+
+            <div class="panel" style="height: 230px; background: #000; border: 1px solid #333; padding: 0;">
+                <div style="padding: 10px; border-bottom: 1px solid #222; font-size: 10px; color: #666; display: flex; justify-content: space-between;">
+                    <span>SYSTEM_LOGS.TXT</span>
+                    <span style="cursor: pointer; color: var(--danger)" onclick="clearLogs()">[CLEAR]</span>
+                </div>
+                <div id="terminalLog" class="terminal" style="height: 100%; border:none; border-radius: 0;"></div>
+            </div>
         </div>
 
-        <div class="card">
-            <h3><i class="fas fa-compact-disc"></i> Content Registry</h3>
-            <div id="songList" class="item-list"></div>
-        </div>
     </div>
 </div>
 
 <script>
+    // --- FIREBASE CONFIG (Sama seperti sebelumnya) ---
     const firebaseConfig = {
         apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
         authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -196,158 +390,287 @@
     const db = firebase.database();
     const auth = firebase.auth();
 
-    let currentCaptcha = "";
+    // --- VARIABLES ---
+    let songsData = []; // Untuk fitur search
+    let generatedCaptcha = "";
     let mtStatus = false;
 
-    // --- SYSTEM UI ---
-    function notify(msg, type = 'accent') {
-        const container = document.getElementById('notify-container');
-        const card = document.createElement('div');
-        card.className = 'notify-card';
-        card.style.borderLeftColor = `var(--${type})`;
-        card.innerText = msg;
-        container.appendChild(card);
-        setTimeout(() => card.remove(), 3000);
+    // --- SECURITY SYSTEM ---
+    function initSecurity() {
+        generatedCaptcha = Math.floor(1000 + Math.random() * 9000).toString();
+        document.getElementById('captchaDisplay').innerText = generatedCaptcha;
+        document.getElementById('sessId').innerText = Math.random().toString(36).substr(2, 9).toUpperCase();
     }
 
-    function generateCaptcha() {
-        currentCaptcha = Math.random().toString(36).substring(2, 6).toUpperCase();
-        document.getElementById('captchaCode').innerText = currentCaptcha;
-    }
-
-    function verifyCaptcha() {
-        const input = document.getElementById('captchaInput').value.toUpperCase();
-        if(input === currentCaptcha) {
-            document.getElementById('captchaOverlay').style.display = 'none';
-            notify("Panel Unlocked. Welcome back, Admin.", "accent");
+    function unlockSystem() {
+        const input = document.getElementById('secInput').value;
+        if(input === generatedCaptcha) {
+            document.getElementById('securityOverlay').style.display = 'none';
+            Swal.fire({
+                icon: 'success',
+                title: 'ACCESS GRANTED',
+                text: 'Welcome to the mainframe, Admin.',
+                background: '#111', color: '#fff',
+                timer: 1500, showConfirmButton: false
+            });
         } else {
-            notify("Invalid Key!", "danger");
-            generateCaptcha();
+            Swal.fire({
+                icon: 'error', title: 'ACCESS DENIED', background: '#111', color: '#fff',
+                timer: 1000, showConfirmButton: false
+            });
+            initSecurity(); // Reset captcha
+            document.getElementById('secInput').value = '';
         }
     }
 
-    // --- CORE LOGIC ---
+    // --- AUTH CHECK ---
     auth.onAuthStateChanged(user => {
         if (user) {
             db.ref('users/' + user.uid).once('value', snap => {
-                const d = snap.val();
-                if (d?.role !== 'admin') {
-                    db.ref('users/' + user.uid).update({ banned: true });
-                    window.location.href = 'index.html';
-                } else {
-                    document.getElementById('adminName').innerText = `SESSION: ${d.username.toUpperCase()}`;
+                const data = snap.val();
+                if (data && data.role === 'admin') {
                     initListeners();
+                } else {
+                    window.location.href = 'exemusic.html'; // Kick non-admin
                 }
             });
-        } else { window.location.href = 'exemusic.html'; }
+        } else {
+            window.location.href = 'exemusic.html'; // Kick jika tidak login
+        }
     });
 
+    // --- REALTIME LISTENERS ---
     function initListeners() {
-        // MT
-        db.ref('settings/mt').on('value', s => {
-            mtStatus = s.val();
-            const btn = document.getElementById('mtBtn');
-            btn.innerText = mtStatus ? "MAINTENANCE: ON" : "SERVER: ONLINE";
-            btn.className = mtStatus ? "btn btn-danger" : "btn btn-primary";
-        });
-
-        // Logs
-        db.ref('logs').limitToLast(30).on('value', s => {
-            let h = '';
-            s.forEach(c => {
-                const l = c.val();
-                h += `<div>[${l.time}] ${l.msg}</div>`;
+        // 1. Logs
+        db.ref('logs').limitToLast(50).on('value', snap => {
+            const container = document.getElementById('terminalLog');
+            let html = '';
+            snap.forEach(child => {
+                const log = child.val();
+                html += `<div class="log-entry"><span class="log-time">[${log.time}]</span> ${log.msg}</div>`;
             });
-            const cont = document.getElementById('logContainer');
-            cont.innerHTML = h;
-            cont.scrollTop = cont.scrollHeight;
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
         });
 
-        // Users
-        db.ref('users').on('value', s => {
-            let h = '';
-            s.forEach(c => {
-                const u = c.val();
-                h += `
-                <div class="item">
-                    <div>
-                        <span class="badge">${u.role}</span><br>
-                        <span style="font-size:13px; color:${u.banned?'#ff0055':'#fff'}">${u.username}</span>
+        // 2. MT Status
+        db.ref('settings/mt').on('value', snap => {
+            mtStatus = snap.val();
+            const btn = document.getElementById('mtBtn');
+            if(mtStatus) {
+                btn.innerText = "MAINTENANCE: ON";
+                btn.style.background = "var(--danger)";
+                btn.style.boxShadow = "0 0 10px var(--danger)";
+            } else {
+                btn.innerText = "SERVER: NORMAL";
+                btn.style.background = "#222";
+                btn.style.boxShadow = "none";
+            }
+        });
+
+        // 3. Songs Data
+        db.ref('songs').on('value', snap => {
+            songsData = [];
+            let count = 0;
+            snap.forEach(child => {
+                songsData.push({ key: child.key, ...child.val() });
+                count++;
+            });
+            document.getElementById('countSongs').innerText = count;
+            renderSongs(songsData);
+        });
+
+        // 4. Users Data
+        db.ref('users').on('value', snap => {
+            const list = document.getElementById('userList');
+            let html = '';
+            let count = 0;
+            snap.forEach(child => {
+                count++;
+                const u = child.val();
+                const isBanned = u.banned ? true : false;
+                const roleColor = u.role === 'admin' ? 'var(--accent)' : '#666';
+                
+                html += `
+                <div class="list-item" style="border-left-color: ${isBanned ? 'var(--danger)' : roleColor}">
+                    <div class="item-info">
+                        <b style="color:${isBanned ? 'var(--danger)' : '#fff'}">${u.username}</b>
+                        <br><small>${u.role.toUpperCase()}</small>
                     </div>
-                    <button class="btn btn-outline" style="padding:5px 10px" onclick="toggleBan('${c.key}', ${u.banned})">
-                        ${u.banned ? 'UNBAN' : 'BAN'}
+                    <button class="btn btn-outline" style="font-size:9px; border:1px solid #444; color:#ccc" 
+                        onclick="confirmBan('${child.key}', '${u.username}', ${isBanned})">
+                        ${isBanned ? 'UNBAN' : 'BAN'}
                     </button>
                 </div>`;
             });
-            document.getElementById('userList').innerHTML = h;
-        });
-
-        // Songs
-        db.ref('songs').on('value', s => {
-            let h = '';
-            s.forEach(c => {
-                const m = c.val();
-                h += `
-                <div class="item">
-                    <span style="font-size:12px"><b>${m.title}</b><br><small>@${m.by}</small></span>
-                    <button class="btn btn-danger" style="padding:5px 10px" onclick="delSong('${c.key}')">DEL</button>
-                </div>`;
-            });
-            document.getElementById('songList').innerHTML = h;
+            document.getElementById('countUsers').innerText = count;
+            list.innerHTML = html;
         });
     }
 
-    // --- ACTIONS ---
-    function sendAnnouncement() {
-        const msg = document.getElementById('annText').value.trim();
-        if(!msg) return notify("Input message!", "warning");
-        db.ref('settings/announcement').set(msg).then(() => {
-            addLog("Global Announcement Sent: " + msg);
-            document.getElementById('annText').value = "";
-            notify("Announcement Broadcasted!", "accent");
+    // --- RENDER HELPERS ---
+    function renderSongs(data) {
+        const container = document.getElementById('songList');
+        let html = '';
+        // Reverse array agar lagu baru di atas
+        const reversed = [...data].reverse();
+        
+        reversed.forEach(song => {
+            html += `
+            <div class="list-item">
+                <div class="item-info" style="flex:1">
+                    <b>${song.title}</b>
+                    <br><small>Artist: ${song.by || 'Unknown'} | Uploader: ${song.uploadedBy || 'System'}</small>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <a href="${song.url}" target="_blank" class="btn" style="background:#222; color:#fff; text-decoration:none;"><i class="fas fa-play"></i></a>
+                    <button class="btn btn-danger" onclick="confirmDelete('${song.key}', '${song.title}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function filterSongs() {
+        const query = document.getElementById('searchSong').value.toLowerCase();
+        const filtered = songsData.filter(s => s.title.toLowerCase().includes(query) || (s.by && s.by.toLowerCase().includes(query)));
+        renderSongs(filtered);
+    }
+
+    // --- ACTIONS WITH SWEETALERT (SAFE GUARDS) ---
+
+    // 1. DELETE SONG
+    function confirmDelete(key, title) {
+        Swal.fire({
+            title: 'DELETE CONFIRMATION',
+            text: `Are you sure you want to delete "${title}"? This cannot be undone!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff2a6d',
+            cancelButtonColor: '#333',
+            confirmButtonText: 'YES, DELETE IT!',
+            background: '#111', color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                db.ref('songs/' + key).remove()
+                    .then(() => {
+                        logAction(`Deleted song: ${title}`);
+                        Swal.fire({
+                            title: 'DELETED!',
+                            text: 'The song has been purged from the database.',
+                            icon: 'success', background: '#111', color: '#fff', timer: 1500, showConfirmButton: false
+                        });
+                    });
+            }
         });
     }
 
+    // 2. BAN USER
+    function confirmBan(uid, name, isBanned) {
+        const action = isBanned ? "UNBAN" : "BAN";
+        const color = isBanned ? "#00f3ff" : "#ff2a6d";
+        
+        Swal.fire({
+            title: `${action} USER?`,
+            text: `You are about to ${action} user "${name}".`,
+            icon: isBanned ? 'question' : 'warning',
+            showCancelButton: true,
+            confirmButtonColor: color,
+            cancelButtonColor: '#333',
+            confirmButtonText: `YES, ${action}`,
+            background: '#111', color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                db.ref('users/' + uid).update({ banned: !isBanned })
+                    .then(() => {
+                        logAction(`${action} user: ${name}`);
+                        Swal.fire({
+                            title: 'SUCCESS', icon: 'success', background: '#111', color: '#fff', timer: 1000, showConfirmButton: false
+                        });
+                    });
+            }
+        });
+    }
+
+    // 3. NUKE COOLDOWNS
+    function nukeCooldowns() {
+        Swal.fire({
+            title: 'NUCLEAR OPTION',
+            text: "Reset ALL upload cooldowns for EVERY user? This allows spam uploading.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff2a6d',
+            cancelButtonColor: '#333',
+            confirmButtonText: 'NUKE IT ALL',
+            background: '#111', color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                db.ref('users').once('value', s => {
+                    let updates = {};
+                    s.forEach(c => { updates[`users/${c.key}/lastUpload`] = 0; });
+                    db.ref().update(updates);
+                    logAction("ADMIN NUKED ALL COOLDOWNS");
+                    Swal.fire('NUKED!', 'Cooldowns have been reset.', 'success');
+                });
+            }
+        });
+    }
+
+    // 4. MAINTENANCE
     function toggleMT() {
-        db.ref('settings/mt').set(!mtStatus);
-        addLog(`MT Status toggled to ${!mtStatus}`);
-        notify("Server status changed", "warning");
+        // No confirmation needed for MT, but sound/visual feedback is nice
+        const newStatus = !mtStatus;
+        db.ref('settings/mt').set(newStatus);
+        logAction(`MT Status changed to ${newStatus}`);
     }
 
-    function resetAllCooldowns() {
-        db.ref('users').once('value', s => {
-            let updates = {};
-            s.forEach(c => {
-                updates[`users/${c.key}/lastUpload`] = 0;
-            });
-            db.ref().update(updates).then(() => {
-                addLog("NUKE: All upload cooldowns reset to 0");
-                notify("All cooldowns have been cleared!", "accent");
-            });
+    // 5. ANNOUNCEMENT
+    function sendBroadcast() {
+        const msg = document.getElementById('annInput').value;
+        if(!msg) return;
+        
+        Swal.fire({
+            title: 'Send Broadcast?',
+            text: `Message: "${msg}"`,
+            showCancelButton: true,
+            confirmButtonText: 'SEND',
+            background: '#111', color: '#fff'
+        }).then((res) => {
+            if(res.isConfirmed) {
+                db.ref('settings/announcement').set(msg);
+                logAction(`Broadcast sent: ${msg}`);
+                document.getElementById('annInput').value = '';
+                Swal.fire('Sent!', '', 'success');
+            }
         });
     }
 
-    function toggleBan(uid, currentStatus) {
-        db.ref('users/' + uid).update({ banned: !currentStatus });
-        addLog(`Ban status changed for UID: ${uid}`);
-        notify("User updated", "accent");
-    }
-
-    function delSong(key) {
-        db.ref('songs/' + key).remove();
-        addLog(`Deleted song: ${key}`);
-        notify("Content Purged", "danger");
-    }
-
-    function addLog(m) {
+    // 6. LOGS
+    function logAction(msg) {
         const time = new Date().toLocaleTimeString();
-        db.ref('logs').push({ msg: m, time: time });
+        db.ref('logs').push({ msg: msg, time: time });
+    }
+    
+    function clearLogs() {
+        Swal.fire({
+             title: 'Clear Logs?', icon: 'warning', showCancelButton: true, background: '#111', color: '#fff', confirmButtonColor: '#d33'
+        }).then(r => {
+            if(r.isConfirmed) db.ref('logs').remove();
+        });
     }
 
-    function clearLogs() { db.ref('logs').remove(); notify("Logs Wiped", "danger"); }
-    function logout() { auth.signOut(); }
+    function logout() {
+        Swal.fire({
+            title: 'Disconnecting...', timer: 1000, showConfirmButton: false, background: '#111', color: '#fff'
+        }).then(() => {
+            auth.signOut();
+            window.location.href = 'exemusic.html';
+        });
+    }
 
-    generateCaptcha();
+    // Start Security
+    initSecurity();
+
 </script>
 
 </body>
