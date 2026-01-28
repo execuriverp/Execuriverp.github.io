@@ -9,6 +9,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     :root {
@@ -118,6 +119,9 @@
     .prof-stat b { display: block; font-size: 18px; }
     .prof-stat span { font-size: 11px; color: var(--text-dim); }
     .section-title { font-size: 14px; font-weight: bold; margin: 15px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+
+    /* Verified Badge Style */
+    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
   </style>
 </head>
 <body>
@@ -194,20 +198,19 @@
   <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center;">Profile Saya</h3>
-      
       <div style="text-align:center; margin: 15px 0;">
-        <input id="editUser" class="inp-dark" style="text-align:center; font-weight:bold; font-size:20px; background:none;" placeholder="Username">
-        <button onclick="changeUsername()" style="font-size:10px; background:none; border:none; color:var(--accent); cursor:pointer;">[Ubah Username]</button>
+        <div id="pNameContainer" style="font-weight:bold; font-size:20px; display:flex; align-items:center; justify-content:center; gap:5px;">
+           <span id="pNameDisplay">User</span><span id="pBadge"></span>
+        </div>
+        <input id="editUser" class="inp-dark" style="text-align:center; font-weight:bold; font-size:18px; background:none; display:none;" placeholder="Username">
+        <button onclick="showEditUser()" id="btnEditUser" style="font-size:10px; background:none; border:none; color:var(--accent); cursor:pointer;">[Ubah Username]</button>
       </div>
-
       <div class="prof-stat">
         <div><b id="pFol">0</b><span>Followers</span></div>
         <div><b id="pFollowing">0</b><span>Following</span></div>
       </div>
-
       <div class="section-title">Postingan Saya</div>
       <div id="myPostList" style="max-height: 200px; overflow-y: auto;"></div>
-
       <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#333; color:white; margin-top:20px">LOGOUT</button>
     </div>
   </div>
@@ -235,14 +238,6 @@
     </div>
   </div>
 
-  <div class="modal" id="modalAdmin" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="color:gold; margin-bottom:15px">Admin Panel</h3>
-      <button onclick="toggleMT()" id="mtBtn" class="btn-act" style="background:#222; border:1px solid gold; color:gold; margin-bottom:15px">MT MODE: OFF</button>
-      <div id="adminSongList"></div>
-    </div>
-  </div>
-
   <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet"><div id="songContainer"></div></div>
   </div>
@@ -264,16 +259,31 @@
     const db = firebase.database();
 
     let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
-    let userData = null, mtMode = false;
+    let userData = null, isMT = false;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
+
+    // --- TRACK MAINTENANCE MODE ---
+    db.ref('settings/mt').on('value', s => { isMT = s.val(); });
 
     // --- AUTH & DATA SYNC ---
     auth.onAuthStateChanged(async (u) => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
+          
+          // PROTEKSI BANNED
+          if(userData?.role === 'banned') {
+              Swal.fire('BANNED', 'Akun kamu telah diblokir!', 'error').then(() => {
+                  auth.signOut();
+                  location.reload();
+              });
+              return;
+          }
+
           document.getElementById('topLoginBtn').textContent = userData?.username || "Profil";
+          document.getElementById('pNameDisplay').innerText = userData?.username || "User";
+          document.getElementById('pBadge').innerHTML = userData?.original ? ' <i class="fas fa-check-circle v-badge"></i>' : '';
           document.getElementById('editUser').value = userData?.username || "";
           if(userData?.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
         });
@@ -299,7 +309,7 @@
       }
     });
 
-    // --- PLAYER ---
+    // --- PLAYER FUNCTIONS ---
     function setup(idx, play = true) {
       if(!songs[idx]) return;
       i = idx;
@@ -316,7 +326,7 @@
       else { audio.pause(); document.getElementById('playBtn').textContent = "▶"; document.getElementById('eq').classList.remove('playing'); }
     }
 
-    // --- USER ACTIONS ---
+    // --- AUTH ACTIONS ---
     function toggleAuthMode() {
       isLoginMode = !isLoginMode;
       document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Register";
@@ -333,10 +343,20 @@
         const u = document.getElementById('authUser').value;
         if(u.length < 3) return msg("Username minimal 3 karakter");
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', created: Date.now() });
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', created: Date.now(), followers: 0, original: false });
           closeModal();
         }).catch(err => msg(err.message));
       }
+    }
+
+    function showEditUser() {
+        document.getElementById('pNameContainer').style.display = 'none';
+        document.getElementById('editUser').style.display = 'block';
+        document.getElementById('btnEditUser').innerText = "[Klik Enter Untuk Simpan]";
+        document.getElementById('editUser').focus();
+        document.getElementById('editUser').onkeydown = (e) => {
+            if(e.key === 'Enter') changeUsername();
+        }
     }
 
     function changeUsername() {
@@ -344,9 +364,12 @@
       if(newU.length < 3) return msg("Terlalu pendek!");
       db.ref('users/' + auth.currentUser.uid).update({ username: newU });
       msg("Username diperbarui!");
+      document.getElementById('pNameContainer').style.display = 'flex';
+      document.getElementById('editUser').style.display = 'none';
+      document.getElementById('btnEditUser').innerText = "[Ubah Username]";
     }
 
-    // --- FOLLOW SYSTEM (DB DRIVEN) ---
+    // --- FOLLOW SYSTEM ---
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
       const targetUid = songs[i].uid;
@@ -357,11 +380,19 @@
       
       const s = await ref.get();
       if(s.exists()) {
-        ref.remove(); followingRef.remove(); msg("Unfollowed");
+        ref.remove(); followingRef.remove(); 
+        updateFollowCount(targetUid, -1);
+        msg("Unfollowed");
       } else {
-        ref.set(true); followingRef.set(true); msg("Following @" + songs[i].by);
+        ref.set(true); followingRef.set(true); 
+        updateFollowCount(targetUid, 1);
+        msg("Following @" + songs[i].by);
       }
       updateFollowUI();
+    }
+
+    function updateFollowCount(uid, val) {
+        db.ref('users/' + uid + '/followers').transaction(curr => (curr || 0) + val);
     }
 
     async function updateFollowUI() {
@@ -370,15 +401,12 @@
       document.getElementById('btnFollow').innerText = s.exists() ? "FOLLOWED" : "FOLLOW";
     }
 
-    // --- PROFILE & POSTS ---
+    // --- PROFILE & CREATOR ---
     function openProfile() {
       if(!auth.currentUser) return document.getElementById('modalAuth').style.display='block';
-      
-      // Load Stats
       db.ref('follows/' + auth.currentUser.uid).on('value', s => document.getElementById('pFol').innerText = s.numChildren());
       db.ref('following/' + auth.currentUser.uid).on('value', s => document.getElementById('pFollowing').innerText = s.numChildren());
       
-      // Load My Posts
       const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
       document.getElementById('myPostList').innerHTML = myPosts.map(s => `
         <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
@@ -386,7 +414,6 @@
           <small>▶</small>
         </div>
       `).join('');
-      
       document.getElementById('modalProfile').style.display='block';
     }
 
@@ -408,6 +435,8 @@
 
     async function saveMusic() {
       if(!auth.currentUser) return msg("Login untuk Upload!");
+      if(isMT && userData.role !== 'admin') return Swal.fire('MT', 'Sistem sedang Maintenance!', 'warning');
+      
       const t = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
       if(!t || !u.includes("top4top")) return msg("Link harus dari Top4Top!");
       
@@ -417,7 +446,7 @@
       closeModal(); msg("Berhasil diposting!");
     }
 
-    // --- UTILS ---
+    // --- SYSTEM UTILS ---
     function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
     function prev() { setup((i-1+songs.length)%songs.length); }
     audio.ontimeupdate = () => {
@@ -460,13 +489,14 @@
     }
 
     function openAdmin() {
-    // Pastikan hanya admin yang bisa pindah halaman
-    if(userData?.role === 'admin') {
-        window.location.href = 'admineln-pa.html'; // Mengarah ke file admin
-    } else {
-        Swal.fire('Error', 'Kamu bukan admin!', 'error');
+        if(userData?.role === 'admin') {
+            // Menggunakan path relatif agar aman di GitHub
+            window.location.href = 'admineln-pa.html'; 
+        } else {
+            Swal.fire('Error', 'Kamu bukan admin!', 'error');
+        }
     }
-}
   </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </body>
 </html>
