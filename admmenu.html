@@ -3,61 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExeMusic - Admin Dashboard</title>
+    <title>ExeMusic - Admin Terminal</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #1db954; --bg: #090909; --card: #181818; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        .card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid #222; }
-        .btn { padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-danger { background: #ff4d4d; color: white; }
-        .btn-accent { background: var(--accent); color: black; }
+        :root { 
+            --accent: #00ff41; /* Matrix Green */
+            --bg: #050505; 
+            --card: #0f0f0f;
+            --danger: #ff0000;
+        }
+        
+        body { 
+            font-family: 'Consolas', monospace; 
+            background: var(--bg); 
+            color: white; 
+            margin: 0; 
+            overflow: hidden;
+        }
+
+        /* CAPTCHA OVERLAY */
+        #captchaOverlay {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* MAIN DASHBOARD (HIDDEN BY DEFAULT) */
+        #adminDashboard { display: none; padding: 20px; height: 100vh; overflow-y: auto; }
+
+        .container { max-width: 1100px; margin: auto; }
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--accent);
+        }
+
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; font-size: 14px; }
-        .log-box { font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; background: #000; padding: 10px; border-radius: 10px; }
-        .verified-badge { color: #1da1f2; margin-left: 5px; }
-        input { background: #222; border: 1px solid #444; color: white; padding: 5px; border-radius: 5px; width: 60px; }
+        .card { 
+            background: var(--card); border: 1px solid #222; 
+            padding: 15px; border-radius: 5px; position: relative;
+        }
+        .card h3 { border-left: 4px solid var(--accent); padding-left: 10px; margin-top: 0; font-size: 16px; }
+
+        .btn { 
+            padding: 10px 15px; border: 1px solid var(--accent); background: transparent; 
+            color: var(--accent); cursor: pointer; font-weight: bold; text-transform: uppercase;
+        }
+        .btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
+
+        .log-box { 
+            font-size: 12px; height: 250px; overflow-y: auto; 
+            background: #000; padding: 10px; border: 1px solid #333; color: #00ff41;
+        }
+        .item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 8px; border-bottom: 1px solid #222; 
+        }
+
+        input, textarea { 
+            background: #111; border: 1px solid #333; color: white; 
+            padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 10px;
+        }
+
+        .ann-box { background: rgba(255, 0, 0, 0.1); border: 1px solid var(--danger); padding: 10px; margin-bottom: 20px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h2>🛡️ ExeMusic Admin</h2>
-        <button class="btn btn-accent" onclick="window.location.href='execurive.html'">Kembali ke Player</button>
+<div id="captchaOverlay">
+    <h1 style="color: var(--accent); margin-bottom: 5px;">VERIFIKASI ADMIN</h1>
+    <p style="color: #666; margin-bottom: 20px;">Selesaikan captcha untuk mengakses terminal.</p>
+    <div style="background: #111; padding: 20px; border-radius: 10px; text-align: center;">
+        <h2 id="captchaCode" style="letter-spacing: 10px; background: #222; padding: 10px; margin-bottom: 15px; color: var(--accent)">----</h2>
+        <input type="text" id="captchaInput" placeholder="Masukkan Kode" style="text-align: center; font-size: 20px; width: 200px;">
+        <br>
+        <button class="btn" onclick="verifyCaptcha()">UNLOCK TERMINAL</button>
     </div>
+</div>
 
-    <div class="grid">
-        <div class="card">
-            <h3>Settings</h3>
-            <div style="display:flex; justify-content: space-between; align-items: center;">
-                <span>Maintenance Mode (MT)</span>
-                <button id="mtBtn" class="btn" onclick="toggleMT()">Loading...</button>
+<div id="adminDashboard">
+    <div class="container">
+        <div class="header">
+            <h2><i class="fas fa-terminal"></i> EXEMUSIC_SYSTEM_v4.0</h2>
+            <div>
+                <span id="adminName">Loading...</span>
+                <button class="btn" style="margin-left: 15px;" onclick="window.location.href='exemusic.html'">LOGOUT</button>
             </div>
-            <p style="font-size: 11px; color: #888; margin-top: 10px;">*User biasa tidak bisa add lagu jika MT ON.</p>
         </div>
 
-        <div class="card">
-            <h3>Recent Activity Logs</h3>
-            <div id="logContainer" class="log-box">Memuat logs...</div>
+        <div class="ann-box">
+            <h3 style="color: var(--danger);"><i class="fas fa-bullhorn"></i> GLOBAL ANNOUNCEMENT</h3>
+            <textarea id="annText" placeholder="Ketik pengumuman di sini... (Otomatis hilang 15 detik)"></textarea>
+            <button class="btn btn-danger" onclick="sendAnnouncement()">KIRIM PENGUMUMAN SEKARANG</button>
         </div>
-    </div>
 
-    <div class="card">
-        <h3>Manage Songs (Total: <span id="songCount">0</span>)</h3>
-        <div id="songList" style="max-height: 300px; overflow-y: auto;"></div>
-    </div>
+        <div class="grid">
+            <div class="card">
+                <h3>SYSTEM SETTINGS</h3>
+                <div class="item">
+                    <span>Maintenance Mode (Lock System)</span>
+                    <button id="mtBtn" class="btn" onclick="toggleMT()">LOADING</button>
+                </div>
+                <div class="item" style="margin-top: 10px;">
+                    <span>Server Status</span>
+                    <span style="color: var(--accent)">ONLINE (STABLE)</span>
+                </div>
+            </div>
 
-    <div class="card">
-        <h3>Manage Users</h3>
-        <div id="userList" style="max-height: 300px; overflow-y: auto;"></div>
+            <div class="card">
+                <h3>REALTIME LOGS (ADD MUSIC/SYSTEM)</h3>
+                <div id="logContainer" class="log-box"></div>
+            </div>
+        </div>
+
+        <div class="grid" style="margin-top: 20px;">
+            <div class="card">
+                <h3>DATABASE USERS</h3>
+                <div id="userList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+
+            <div class="card">
+                <h3>DATABASE SONGS</h3>
+                <div id="songList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -77,128 +155,154 @@
     const db = firebase.database();
     const auth = firebase.auth();
 
-    let adminData = null;
+    let currentCaptcha = "";
+    let isVerified = false;
     let mtStatus = false;
 
-    // Proteksi Halaman Admin
+    // --- SECURITY LAYER ---
+    function generateCaptcha() {
+        currentCaptcha = Math.random().toString(36).substring(2, 8).toUpperCase();
+        document.getElementById('captchaCode').innerText = currentCaptcha;
+    }
+
+    function verifyCaptcha() {
+        const input = document.getElementById('captchaInput').value.toUpperCase();
+        if(input === currentCaptcha) {
+            isVerified = true;
+            document.getElementById('captchaOverlay').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            msg("Terminal Unlocked", "success");
+        } else {
+            Swal.fire("Gagal", "Captcha salah!", "error");
+            generateCaptcha();
+        }
+    }
+
+    // --- AUTH & AUTO BAN PROTECTION ---
     auth.onAuthStateChanged(user => {
         if (user) {
             db.ref('users/' + user.uid).once('value', snap => {
                 const data = snap.val();
                 if (data?.role !== 'admin') {
-                    window.location.href = 'execurive.html'; // Tendang jika bukan admin
+                    // KICK & BAN OTOMATIS JIKA BUKAN ADMIN
+                    db.ref('users/' + user.uid).update({ banned: true });
+                    Swal.fire({
+                        title: "YOU ARE NOT ADMIN",
+                        text: "System detect illegal access. Your account has been BANNED.",
+                        icon: "error",
+                        timer: 3000
+                    }).then(() => {
+                        window.location.href = 'exemusic.html';
+                    });
                 } else {
-                    adminData = data;
-                    adminData.uid = user.uid;
-                    loadAllData();
+                    document.getElementById('adminName').innerText = "Logged as: " + data.username;
+                    loadAdminData();
                 }
             });
         } else {
+            // TENDANG JIKA BELUM LOGIN
             window.location.href = 'exemusic.html';
         }
     });
 
-    function loadAllData() {
-        // MT Status
+    function loadAdminData() {
+        // MT
         db.ref('settings/mt').on('value', s => {
             mtStatus = s.val();
             const btn = document.getElementById('mtBtn');
-            btn.innerText = mtStatus ? "MT: ON" : "MT: OFF";
-            btn.style.background = mtStatus ? "#ff4d4d" : "#1db954";
+            btn.innerText = mtStatus ? "MT: ACTIVE" : "MT: INACTIVE";
+            btn.style.color = mtStatus ? "#ff0000" : "#00ff41";
         });
 
-        // Logs
-        db.ref('logs').limitToLast(20).on('value', s => {
+        // Detailed Logs (Jam:Menit:Detik)
+        db.ref('logs').limitToLast(30).on('value', s => {
             let h = '';
             s.forEach(child => {
                 const l = child.val();
-                h = `<div>[${l.time}] ${l.msg}</div>` + h;
+                h = `<div>[${l.time}] > ${l.msg}</div>` + h;
             });
             document.getElementById('logContainer').innerHTML = h;
         });
 
-        // Songs
+        // Song List
         db.ref('songs').on('value', s => {
             let h = '';
-            let count = 0;
             s.forEach(child => {
                 const song = child.val();
-                h += `
-                <div class="item">
-                    <span><b>${song.title}</b> by ${song.by}</span>
-                    <button class="btn-danger" onclick="delSong('${child.key}', '${song.title}')">Hapus</button>
+                h += `<div class="item">
+                    <span><b>${song.title}</b><br><small>by @${song.by}</small></span>
+                    <button class="btn btn-danger" onclick="delSong('${child.key}', '${song.title}')">REMOVE</button>
                 </div>`;
-                count++;
             });
             document.getElementById('songList').innerHTML = h;
-            document.getElementById('songCount').innerText = count;
         });
 
-        // Users
+        // User List
         db.ref('users').on('value', s => {
             let h = '';
             s.forEach(child => {
                 const u = child.val();
-                const verif = u.original ? '<i class="fas fa-check-circle verified-badge"></i>' : '';
-                h += `
-                <div class="item">
-                    <span>${u.username} ${verif} (${u.followers || 0} fol)</span>
-                    <div>
-                        <input type="number" id="fol-${child.key}" value="${u.followers || 0}">
-                        <button class="btn-accent" style="padding:5px" onclick="setFol('${child.key}')">Set</button>
-                        <button class="btn-danger" style="padding:5px" onclick="bannedUser('${child.key}', '${u.username}')">Ban</button>
-                    </div>
+                const isBanned = u.banned === true;
+                h += `<div class="item">
+                    <span style="color: ${isBanned ? 'red' : 'white'}">${u.username} (${u.role})</span>
+                    <button class="btn ${isBanned ? '' : 'btn-danger'}" onclick="toggleBan('${child.key}', ${isBanned})">
+                        ${isBanned ? 'UNBAN' : 'BAN'}
+                    </button>
                 </div>`;
             });
             document.getElementById('userList').innerHTML = h;
         });
     }
 
-    // ACTIONS
-    window.toggleMT = () => {
+    // --- ADMIN ACTIONS ---
+    function sendAnnouncement() {
+        const text = document.getElementById('annText').value;
+        if(!text) return;
+
+        db.ref('settings/announcement').set({
+            msg: "ADMIN ANNOUNCEMENT: " + text,
+            timestamp: Date.now()
+        });
+
+        addLog(`Sent global announcement: ${text}`);
+        document.getElementById('annText').value = "";
+        Swal.fire("Terkirim", "Pesan akan muncul di player selama 15 detik", "success");
+    }
+
+    function toggleMT() {
         db.ref('settings/mt').set(!mtStatus);
-        addLog(`${adminData.username} changed MT to ${!mtStatus}`);
-    };
+        addLog(`Changed Maintenance Mode to: ${!mtStatus}`);
+    }
 
-    window.delSong = (key, title) => {
-        if(confirm(`Hapus lagu ${title}?`)) {
+    function delSong(key, title) {
+        if(confirm(`Hapus permanen lagu ${title}?`)) {
             db.ref('songs/' + key).remove();
-            addLog(`${adminData.username} deleted song: ${title}`);
+            addLog(`Deleted song: ${title}`);
         }
-    };
+    }
 
-    window.setFol = (uid) => {
-        const val = parseInt(document.getElementById('fol-'+uid).value);
-        const isOriginal = val >= 50;
-        db.ref('users/' + uid).update({
-            followers: val,
-            original: isOriginal
-        });
-        addLog(`${adminData.username} set followers for ${uid} to ${val}`);
-        Swal.fire('Updated', 'Followers & Status berhasil diupdate', 'success');
-    };
-
-    window.bannedUser = (uid, name) => {
-        Swal.fire({
-            title: `Banned ${name}?`,
-            text: "User ini tidak akan bisa akses lagi!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ff4d4d'
-        }).then(r => {
-            if(r.isConfirmed) {
-                db.ref('users/' + uid + '/role').set('banned');
-                addLog(`${adminData.username} banned user: ${name}`);
-            }
-        });
-    };
+    function toggleBan(uid, currentStatus) {
+        db.ref('users/' + uid).update({ banned: !currentStatus });
+        addLog(`Updated ban status for ${uid} to ${!currentStatus}`);
+    }
 
     function addLog(message) {
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2,'0') + ":" + 
+                        now.getMinutes().toString().padStart(2,'0') + ":" + 
+                        now.getSeconds().toString().padStart(2,'0');
+        
         db.ref('logs').push({
             msg: message,
-            time: new Date().toLocaleString("en-GB")
+            time: timeStr
         });
     }
+
+    function msg(t, i) {
+        Swal.fire({ title: t, icon: i, toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+    }
+
+    generateCaptcha();
 </script>
 
 </body>
