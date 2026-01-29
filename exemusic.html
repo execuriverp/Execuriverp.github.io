@@ -14,7 +14,7 @@
 
   <style>
     :root {
-      --accent: #00ff88; /* Sedikit lebih neon dari versi sebelumnya */
+      --accent: #00ff88; 
       --text: #ffffff;
       --text-dim: #b3b3b3;
       --bg: #050505;
@@ -34,12 +34,24 @@
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
+      transition: background 0.3s ease; /* Untuk fitur Disco Admin */
     }
+
+    /* --- ADMIN DISCO MODE --- */
+    @keyframes discoLights {
+        0% { background: #050505; }
+        20% { background: #ff0050; }
+        40% { background: #00ff88; }
+        60% { background: #aa00ff; }
+        80% { background: #0088ff; }
+        100% { background: #050505; }
+    }
+    .disco-active { animation: discoLights 1.5s infinite alternate; }
 
     /* --- ROBLOX STYLE BROADCAST SYSTEM --- */
     .sys-broadcast {
         position: fixed;
-        top: -150px; /* Hidden default */
+        top: -150px; 
         left: 50%;
         transform: translateX(-50%);
         width: 90%;
@@ -146,7 +158,6 @@
     .user-row { display: flex; align-items: center; gap: 10px; }
     #by { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     
-    /* Tombol Follow TikTok Style */
     #btnFollow { 
       font-size: 12px; 
       background: var(--tiktok-red); 
@@ -210,7 +221,7 @@
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
 
-    /* Spotify Style Profile Banner */
+    /* PROFILE UI UPGRADE */
     .spotify-banner {
       width: 100%; height: 120px;
       background: linear-gradient(to bottom, var(--accent), #181818);
@@ -223,25 +234,32 @@
       border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
       display: flex; align-items: center; justify-content: center; font-size: 30px;
       border: 3px solid #181818;
+      overflow: hidden; /* Fix for profile photo */
     }
+    .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .spotify-info { margin-left: 15px; }
     .spotify-info h2 { font-size: 24px; margin: 0; }
     
-    /* Tag Styles */
+    /* Tag Styles UPGRADED */
     .user-tag {
-      font-size: 9px;
-      padding: 2px 6px;
-      border-radius: 4px;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
       font-weight: 800;
       text-transform: uppercase;
-      margin-left: 5px;
+      margin-right: 5px;
       vertical-align: middle;
       letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .tag-admin { background: #ff3333; color: #fff; }
-    .tag-owner { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-admin { background: #ff3333; color: #fff; box-shadow: 0 0 10px #ff3333; }
+    .tag-owner { background: linear-gradient(45deg, gold, #fff); color: #000; animation: pulse 2s infinite; }
     .tag-staff { background: #0088ff; color: #fff; }
-    .tag-executive { background: #aa00ff; color: #fff; }
+    .tag-executive { background: #aa00ff; color: #fff; border: 1px solid #fff; }
+    .tag-pro { background: #00ff88; color: #000; font-style: italic; }
+    .tag-muscikers { background: #ff0050; color: #fff; }
     .tag-user { background: #444; color: #eee; }
     
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
@@ -345,7 +363,7 @@
   <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="spotify-banner">
-          <div class="spotify-avatar"><i class="fas fa-user"></i></div>
+          <div class="spotify-avatar" id="pAvatar" onclick="changePfp()"><i class="fas fa-user"></i></div>
           <div class="spotify-info">
               <div style="display:flex; align-items:center; gap:5px">
                   <h2 id="pUsername">User</h2>
@@ -371,7 +389,7 @@
   <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
-          <div class="spotify-avatar"><i class="fas fa-microphone"></i></div>
+          <div class="spotify-avatar" id="vAvatar"><i class="fas fa-microphone"></i></div>
           <div class="spotify-info">
               <div style="display:flex; align-items:center; gap:5px">
                   <h2 id="vName">@creator</h2>
@@ -426,28 +444,42 @@
     let isFollowLoading = false;
     const audio = new Audio();
     
-    // --- BROADCAST SYSTEM VARS ---
     let broadcastTimeout;
 
-    // --- UTILS FOR TAGS ---
+    // --- UTILS FOR TAGS UPGRADED ---
     function getTagHTML(tag) {
       if(!tag || tag === "none") return '';
-      return `<span class="user-tag tag-${tag.toLowerCase()}">${tag}</span>`;
+      let icon = '<i class="fas fa-user"></i>';
+      if(tag === 'admin') icon = '<i class="fas fa-shield-alt"></i>';
+      if(tag === 'owner') icon = '<i class="fas fa-crown"></i>';
+      if(tag === 'pro') icon = '<i class="fas fa-star"></i>';
+      if(tag === 'muscikers') icon = '<i class="fas fa-music"></i>';
+      if(tag === 'executive') icon = '<i class="fas fa-gem"></i>';
+      return `<span class="user-tag tag-${tag.toLowerCase()}">${icon} ${tag}</span>`;
     }
 
-    // --- REALTIME SETTINGS ---
+    // --- REALTIME SETTINGS & ANNOUNCEMENT ---
     db.ref('settings').on('value', s => {
         const val = s.val();
         if(!val) return;
         
+        // Maintenance System
         if(val.mt === true) {
             db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
                 if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
             });
         } else { document.getElementById('mtScreen').style.display = 'none'; }
         
-        if(val.announcement && typeof val.announcement === 'string' && val.announcement.trim() !== "") {
+        // Realtime Announcement Update
+        if(val.announcement) {
             triggerBroadcast(val.announcement);
+        }
+
+        // Admin Disco Effect
+        if(val.discoMode === true) {
+            document.body.classList.add('disco-active');
+        } else {
+            document.body.classList.remove('disco-active');
         }
     });
 
@@ -484,7 +516,11 @@
           document.getElementById('topLoginBtn').textContent = userData.username || "Profil";
           document.getElementById('pUsername').innerText = userData.username || "User";
           
-          // Centang biru & Tag di Profil
+          // Profile Pic
+          if(userData.pfp) {
+              document.getElementById('pAvatar').innerHTML = `<img src="${userData.pfp}">`;
+          }
+
           document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           
@@ -500,6 +536,26 @@
       document.getElementById('loadingCard').style.opacity = '0';
       setTimeout(() => document.getElementById('loadingCard').style.display = 'none', 500);
     });
+
+    // --- CHANGE PFP SYSTEM ---
+    function changePfp() {
+        Swal.fire({
+            title: 'Change Profile Picture',
+            input: 'text',
+            inputPlaceholder: 'Imgur Image URL (ex: https://imgur.com/...)',
+            showCancelButton: true,
+            confirmButtonColor: '#00ff88',
+            background: '#181818',
+            color: '#fff'
+        }).then(res => {
+            if(res.value && res.value.includes('imgur.com')) {
+                let finalUrl = res.value;
+                if(!finalUrl.match(/\.(jpeg|jpg|gif|png)$/)) finalUrl += '.png';
+                db.ref('users/' + auth.currentUser.uid).update({ pfp: finalUrl });
+                msg("Photo Updated!");
+            }
+        });
+    }
 
     // --- SONGS ---
     db.ref('songs').on('value', snap => {
@@ -521,7 +577,6 @@
       
       const creatorSnap = await db.ref('users/' + songs[i].uid).get();
       const cData = creatorSnap.val();
-      // Baca followers dari database untuk centang biru
       const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
       
@@ -554,13 +609,25 @@
         const u = document.getElementById('authUser').value;
         if(u.length < 3) return msg("Username minimal 3 karakter");
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', tag: 'user', banned: false, followers: 0, following: 0, lastUpload: 0, lastNameChange: 0 });
+          // PRO CHANCE SYSTEM: 10% chance to get 'pro' tag on register
+          let initialTag = (Math.random() < 0.1) ? 'pro' : 'user';
+          db.ref('users/' + res.user.uid).set({ 
+              username: u, 
+              role: 'user', 
+              tag: initialTag, 
+              banned: false, 
+              followers: 0, 
+              following: 0, 
+              lastUpload: 0, 
+              lastNameChange: 0,
+              pfp: ''
+          });
           closeModal();
+          if(initialTag === 'pro') Swal.fire('Lucky!', 'Kamu mendapatkan Tag PRO secara gratis!', 'success');
         }).catch(err => msg(err.message));
       }
     }
 
-    // --- UTILS & FEATURES ---
     function showChangeName() {
         const lastChange = userData.lastNameChange || 0;
         const cooldown = 7 * 24 * 60 * 60 * 1000;
@@ -579,6 +646,7 @@
         });
     }
 
+    // --- SYSTEM FOLLOWERS UPGRADED ---
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
       if(isFollowLoading) return;
@@ -591,12 +659,16 @@
       
       const s = await followRef.get();
       if(s.exists()) {
-        await followRef.remove(); await followingRef.remove();
+        // UNFOLLOW
+        await followRef.remove(); 
+        await followingRef.remove();
         db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
         db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
         msg("Unfollowed");
       } else {
-        await followRef.set(true); await followingRef.set(true);
+        // FOLLOW
+        await followRef.set({ timestamp: Date.now(), followerId: auth.currentUser.uid }); 
+        await followingRef.set({ timestamp: Date.now(), followedId: targetUid });
         db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
         db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
         msg("Following!");
@@ -629,6 +701,13 @@
       const t = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
       if(!t || !u.includes("top4top")) return msg("Link harus dari Top4Top!");
       
+      // Give 'muscikers' tag if they upload 5 songs (example chance)
+      db.ref('songs').orderByChild('uid').equalTo(auth.currentUser.uid).once('value', s => {
+         if(s.numChildren() >= 5 && userData.tag === 'user') {
+             db.ref('users/' + auth.currentUser.uid).update({ tag: 'muscikers' });
+         }
+      });
+
       await db.ref('songs').push({ title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: now });
       await db.ref('users/' + auth.currentUser.uid).update({ lastUpload: now });
       closeModal(); msg("Berhasil upload!");
@@ -679,6 +758,12 @@
       document.getElementById('vName').innerHTML = "@" + s.by + badge;
       document.getElementById('vFol').innerText = cData?.followers || 0;
       document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+      
+      if(cData?.pfp) {
+          document.getElementById('vAvatar').innerHTML = `<img src="${cData.pfp}">`;
+      } else {
+          document.getElementById('vAvatar').innerHTML = `<i class="fas fa-microphone"></i>`;
+      }
       
       const creatorSongs = songs.filter(x => x.uid === s.uid);
       document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
