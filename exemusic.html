@@ -23,6 +23,24 @@
       --danger: #ff3333;
       --warning: #ffcc00;
       --tiktok-red: #ff0050;
+      --disco-color: #00ff88;
+    }
+
+    /* Disco Mode Theme Changes */
+    body.disco-active {
+        animation: discoBg 2s infinite alternate;
+    }
+    @keyframes discoBg {
+        from { background: #050505; }
+        to { background: #1a0033; }
+    }
+    .disco-active .app {
+        border-color: var(--disco-color);
+        box-shadow: 0 0 30px var(--disco-color);
+    }
+    .disco-active .eq span {
+        background: var(--disco-color) !important;
+        box-shadow: 0 0 20px var(--disco-color);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -34,6 +52,7 @@
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
+      transition: background 0.5s ease;
     }
 
     /* --- ROBLOX STYLE BROADCAST SYSTEM --- */
@@ -56,45 +75,22 @@
         backdrop-filter: blur(10px);
     }
     .sys-broadcast.active { top: 20px; }
-    
     .sb-content { display: flex; align-items: flex-start; gap: 12px; }
     .sb-icon { font-size: 20px; color: var(--accent); margin-top: 2px; }
     .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
     .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
-    
-    .sb-close {
-        position: absolute; top: 10px; right: 10px;
-        background: transparent; border: none; color: #666;
-        cursor: pointer; font-size: 16px; padding: 5px;
-    }
-    .sb-close:hover { color: white; }
-
-    .sb-progress {
-        width: 100%; height: 3px; background: #333;
-        margin-top: 12px; border-radius: 2px; overflow: hidden;
-    }
-    .sb-bar {
-        width: 100%; height: 100%; background: var(--accent);
-        transform-origin: left;
-    }
+    .sb-close { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; font-size: 16px; padding: 5px; }
+    .sb-progress { width: 100%; height: 3px; background: #333; margin-top: 12px; border-radius: 2px; overflow: hidden; }
+    .sb-bar { width: 100%; height: 100%; background: var(--accent); transform-origin: left; }
     @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
     /* --- OVERLAYS --- */
-    .full-overlay {
-      position: fixed; inset: 0; background: #000; z-index: 10000;
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 30px;
-    }
+    .full-overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
     .full-overlay i { font-size: 60px; margin-bottom: 20px; }
     .full-overlay h1 { font-size: 24px; color: var(--accent); }
     .full-overlay p { color: var(--text-dim); margin-top: 10px; }
-    #bannedScreen h1 { color: var(--danger); }
 
-    #loadingCard {
-      position: absolute; inset: 0; background: var(--bg); z-index: 9999;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: 0.5s;
-    }
+    #loadingCard { position: absolute; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
     .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -111,18 +107,12 @@
       padding: 25px; 
       position: relative;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transition: all 0.5s ease;
     }
 
     .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 15px; }
     .header img { width: 110px; cursor: pointer; transition: 0.3s; }
-    .header img:active { transform: scale(0.9); }
-    
-    #topLoginBtn { 
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); 
-      color: white; padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer;
-      font-weight: 600; transition: 0.2s;
-    }
-    #topLoginBtn:hover { background: var(--accent); color: black; border-color: var(--accent); }
+    #topLoginBtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer; font-weight: 600; }
 
     .cover-box {
       flex: 1; width: 100%; border-radius: 25px;
@@ -133,127 +123,71 @@
     }
 
     .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; }
-    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease; box-shadow: 0 0 15px var(--accent); }
+    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease, background 0.5s ease; }
     .playing span { animation: wave 0.8s infinite ease-in-out; }
-    .playing span:nth-child(1) { animation-delay: 0.1s; }
-    .playing span:nth-child(2) { animation-delay: 0.3s; }
-    .playing span:nth-child(3) { animation-delay: 0.2s; }
-    .playing span:nth-child(4) { animation-delay: 0.4s; }
+    .playing.disco-eq span { animation: discoWave 0.4s infinite ease-in-out; } /* Lebih cepat saat disco */
+    
     @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 50px; } }
+    @keyframes discoWave { 0%, 100% { height: 5px; } 50% { height: 75px; } }
 
     .track-info { margin-bottom: 20px; flex-shrink: 0; text-align: left; }
-    #title { font-size: 22px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-    
+    #title { font-size: 22px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; }
     .user-row { display: flex; align-items: center; gap: 10px; }
     #by { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    
-    #btnFollow { 
-      font-size: 12px; 
-      background: var(--tiktok-red); 
-      color: white; 
-      border: none; 
-      width: 22px; height: 22px; 
-      border-radius: 50%; 
-      font-weight: bold; 
-      cursor: pointer; 
-      display: none; 
-      transition: 0.2s; 
-      align-items: center; 
-      justify-content: center;
-    }
-    #btnFollow:active { transform: scale(0.9); }
+    #btnFollow { font-size: 12px; background: var(--tiktok-red); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; }
 
-    .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; flex-shrink: 0; z-index: 5;}
+    .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; }
     .sys-tools { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 0 10px; }
-    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; opacity: 0.7; transition: 0.2s; }
-    .sys-tools button:hover { opacity: 1; transform: translateY(-2px); color: var(--accent); }
-    
+    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; opacity: 0.7; }
     .vol-row { display: flex; align-items: center; gap: 10px; padding: 0 5px; }
-    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; border-radius: 2px; }
+    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
 
-    .prog-area { margin-bottom: 20px; flex-shrink: 0; z-index: 5; }
-    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; border-radius: 2px; }
-    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; }
+    .prog-area { margin-bottom: 20px; }
+    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; }
+    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; }
 
-    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 100; }
-    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); transition: 0.2s; }
-    .btn-play:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
-    .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; opacity: 0.9; }
-    .btn-sec:active { transform: scale(0.9); }
+    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; }
+    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); }
+    .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; }
 
-    .footer { margin-top: auto; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 15px 30px; border-radius: 25px; flex-shrink: 0; z-index: 10; }
-    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; transition: 0.2s; }
-    .footer button:hover { opacity: 1; }
-    
-    .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
+    .footer { margin-top: auto; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 15px 30px; border-radius: 25px; }
+    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; }
+    .active { color: var(--accent) !important; opacity: 1 !important; }
 
     /* MODALS */
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; backdrop-filter: blur(5px); }
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); border-top: 1px solid #333; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
 
-    .song-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; transition: 0.2s; }
-    .song-item:hover { background: rgba(255,255,255,0.05); }
-    
-    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+    .song-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; font-size: 14px; }
-    .inp-dark:focus { border-color: var(--accent); }
-    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; color:black; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; }
+    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; color:black; cursor: pointer; }
     
     .prof-stat { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
     .prof-stat div { text-align: center; }
     .prof-stat b { display: block; font-size: 20px; color: white; }
     .prof-stat span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
-    .section-title { font-size: 12px; font-weight: bold; margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    .section-title { font-size: 12px; font-weight: bold; margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #888; text-transform: uppercase; }
 
-    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
-
-    .spotify-banner {
-      width: 100%; height: 120px;
-      background: linear-gradient(to bottom, var(--accent), #181818);
-      margin: -25px -25px 20px -25px;
-      border-radius: 30px 30px 0 0;
-      display: flex; align-items: flex-end; padding: 20px;
-      position: relative;
-    }
-    .spotify-avatar {
-      width: 80px; height: 80px; background: #222; 
-      border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center; font-size: 30px;
-      border: 3px solid #181818;
-      overflow: hidden;
-      position: relative;
-    }
+    .spotify-banner { width: 100%; height: 120px; background: linear-gradient(to bottom, var(--accent), #181818); margin: -25px -25px 20px -25px; border-radius: 30px 30px 0 0; display: flex; align-items: flex-end; padding: 20px; position: relative; transition: background 0.5s ease; }
+    .spotify-avatar { width: 80px; height: 80px; background: #222; border-radius: 50%; border: 3px solid #181818; overflow: hidden; position: relative; }
     .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar-edit {
-        position: absolute; inset: 0; background: rgba(0,0,0,0.5);
-        display: none; align-items: center; justify-content: center;
-        font-size: 14px; cursor: pointer; color: white;
-    }
+    .avatar-edit { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
     .spotify-avatar:hover .avatar-edit { display: flex; }
-
     .spotify-info { margin-left: 15px; }
-    .spotify-info h2 { font-size: 24px; margin: 0; }
-    
-    /* Tag Styles */
-    .user-tag {
-      font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
-      text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
-    }
+    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
+    .user-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 5px; vertical-align: middle; }
     .tag-admin { background: #ff3333; color: #fff; }
-    .tag-owner { background: gold; color: #000; animation: pulse 2s infinite; }
-    .tag-staff { background: #0088ff; color: #fff; }
-    .tag-executive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
-    
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
-    /* About Modal Styling */
+    /* About UI Enhancement */
     .about-box { font-size: 13px; line-height: 1.6; color: #ccc; }
-    .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-    .about-box p { margin-bottom: 10px; }
+    .about-box h3 { color: var(--accent); margin-bottom: 12px; border-left: 3px solid var(--accent); padding-left: 10px; }
+    .about-box ul { padding-left: 18px; margin-bottom: 15px; }
+    .about-box li { margin-bottom: 5px; }
     .about-box b { color: #fff; }
   </style>
 </head>
@@ -264,8 +198,8 @@
       <div class="sb-content">
           <i class="fas fa-bullhorn sb-icon"></i>
           <div class="sb-text">
-              <h4>Announcement</h4>
-              <p id="sbMessage">Loading message...</p>
+              <h4>System Announcement</h4>
+              <p id="sbMessage">Menghubungkan ke server...</p>
           </div>
       </div>
       <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
@@ -279,8 +213,8 @@
 
   <div id="bannedScreen" class="full-overlay">
     <i class="fas fa-user-slash" style="color: var(--danger)"></i>
-    <h1>Access Denied</h1>
-    <p>Akun anda telah diblokir secara permanen oleh admin.</p>
+    <h1>Akses Diblokir</h1>
+    <p>Akun anda telah diblokir secara permanen dari layanan ExeMusic.</p>
   </div>
 
   <div id="loadingCard"><div class="spinner"></div></div>
@@ -297,7 +231,7 @@
     </div>
 
     <div class="track-info">
-      <div id="title">Loading Lagu...</div>
+      <div id="title">Memuat Lagu...</div>
       <div class="user-row">
         <div id="by" onclick="viewCreator()">@system</div>
         <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
@@ -320,10 +254,7 @@
 
     <div class="prog-area">
       <input type="range" id="seek" value="0">
-      <div class="time">
-        <span id="cur">0:00</span>
-        <span id="dur">0:00</span>
-      </div>
+      <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
     </div>
 
     <div class="main-ctrl">
@@ -338,6 +269,40 @@
       <button onclick="openList(true)"><i class="fas fa-heart"></i></button>
       <button id="adminBtn" style="display:none; color:gold" onclick="openAdmin()"><i class="fas fa-shield-alt"></i></button>
       <button id="rep" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="about-box">
+        <h3>Tentang ExeMusic v3.1</h3>
+        <p>Selamat datang di platform streaming musik independen. Berikut adalah detail fungsionalitas sistem kami:</p>
+        
+        <b>1. Sistem Monetisasi & Reward</b>
+        <ul>
+            <li><b>Penghasilan:</b> Dapatkan 17.000 IDR ($1) untuk setiap pencapaian followers/favorit tertentu (S&K berlaku).</li>
+            <li><b>Penarikan:</b> Hubungi Hexky untuk klaim reward melalui sistem WhatsApp.</li>
+        </ul>
+
+        <b>2. Verifikasi & Badge</b>
+        <ul>
+            <li><b>Verified (Centang Biru):</b> Diberikan otomatis saat akun mencapai minimal <b>50 Followers</b> asli.</li>
+            <li><b>Original User:</b> Badge khusus untuk kontributor awal ExeMusic.</li>
+        </ul>
+
+        <b>3. Aturan Unggah (Upload)</b>
+        <ul>
+            <li>Hanya menerima link direct dari <b>Top4Top</b>.</li>
+            <li><b>Cooldown:</b> Pengguna terdaftar memiliki jeda 30 menit antar upload untuk mencegah spam.</li>
+            <li>Konten dilarang: Musik mengandung unsur SARA, kebencian, atau audio rusak. Pelanggaran berakibat <b>Permanen Ban</b>.</li>
+        </ul>
+
+        <b>4. Fitur Disco Mode</b>
+        <p>Fitur eksklusif yang diaktifkan oleh Admin pada event tertentu. Saat aktif, tema aplikasi akan berubah menjadi dinamis dan kecepatan visualisasi EQ meningkat drastis.</p>
+        
+        <p style="font-size: 11px; margin-top: 15px; color: #666; text-align: center;">Build 2024.1.29 - Developed by Hexky & System</p>
+        <button onclick="closeModal()" class="btn-act" style="margin-top:10px">MENGERTI</button>
+      </div>
     </div>
   </div>
 
@@ -377,23 +342,8 @@
     </div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
-          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
-          <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:5px">
-                  <h2 id="vName">@creator</h2>
-                  <span id="vBadge"></span>
-              </div>
-              <div id="vTagDisplay"></div> </div>
-      </div>
-      <div class="prof-stat">
-        <div><b id="vFol">0</b><span>Followers</span></div>
-      </div>
-      <div class="section-title">Lagu Terupload</div>
-      <div id="creatorPostList"></div>
-    </div>
+  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet"><div id="songContainer"></div></div>
   </div>
 
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
@@ -409,21 +359,6 @@
           <input id="guestLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
           <input id="guestUrl" class="inp-dark" placeholder="Link MP3 Top4Top">
           <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white">WHATSAPP REQUEST</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet"><div id="songContainer"></div></div>
-  </div>
-
-  <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="about-box">
-        <h3>Informasi ExeMusic</h3>
-        <p><b>Penghasilan & Reward:</b> Dapatkan penghasilan saat followers atau favorit nembus angka tertentu. Anda bisa mendapatkan <b>17ribu/1dolar</b> dari Hexky.</p>
-        <p><b>Original User Badge:</b> Dapatkan badge original user / centang biru di profil anda dengan mengumpulkan minimal <b>50 followers</b> dari user lainnya.</p>
-        <button onclick="closeModal()" class="btn-act">TUTUP</button>
       </div>
     </div>
   </div>
@@ -446,7 +381,9 @@
 
     let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
     let userData = null;
+    let discoMode = false;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    let isFollowLoading = false;
     const audio = new Audio();
     let broadcastTimeout;
 
@@ -455,16 +392,34 @@
       return `<span class="user-tag tag-${tag.toLowerCase()}">${tag}</span>`;
     }
 
-    // REALTIME MONITORING
+    // --- REALTIME SETTINGS MONITOR (DISCO, MAINTENANCE, ANNOUNCEMENT) ---
     db.ref('settings').on('value', s => {
         const val = s.val();
         if(!val) return;
+        
+        // Maintenance
         if(val.mt === true) {
             db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
                 if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
             });
         } else { document.getElementById('mtScreen').style.display = 'none'; }
+
+        // Announcement
         if(val.announcement) triggerBroadcast(val.announcement);
+
+        // Disco Mode Instant Change
+        if(val.discoMode !== discoMode) {
+            discoMode = val.discoMode;
+            if(discoMode) {
+                document.body.classList.add('disco-active');
+                document.getElementById('eq').classList.add('disco-eq');
+                triggerBroadcast("✨ Disco Mode telah dimulai! Nikmati visualnya!");
+                document.documentElement.style.setProperty('--disco-color', val.discoColor || '#ff00ff');
+            } else {
+                document.body.classList.remove('disco-active');
+                document.getElementById('eq').classList.remove('disco-eq');
+            }
+        }
     });
 
     function triggerBroadcast(msg) {
@@ -484,7 +439,7 @@
 
     function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
 
-    // AUTH & USER DATA (REALTIME FOLLOWERS)
+    // --- AUTH & REALTIME USER DATA ---
     auth.onAuthStateChanged(u => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
@@ -512,11 +467,13 @@
         document.getElementById('topLoginBtn').textContent = "Login";
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('adminBtn').style.display = 'none';
+        document.getElementById('uploadFormUser').style.display = 'none';
+        document.getElementById('uploadFormGuest').style.display = 'block';
       }
       document.getElementById('loadingCard').style.display = 'none';
     });
 
-    // SONGS DATA
+    // --- SONGS DATA ---
     db.ref('songs').on('value', snap => {
       const val = snap.val();
       if(val) {
@@ -538,12 +495,14 @@
       updateFollowUI();
     }
 
-    // LOGIC FOLLOWERS (REALTIME SINKRON)
+    // --- REALTIME FOLLOW SYSTEM ---
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
+      if(isFollowLoading) return;
       const targetUid = songs[i].uid;
       if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
 
+      isFollowLoading = true;
       const fRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
       const snap = await fRef.get();
       
@@ -556,6 +515,8 @@
           db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
           db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
       }
+      isFollowLoading = false;
+      updateFollowUI();
     }
 
     async function updateFollowUI() {
@@ -566,7 +527,7 @@
       btn.style.background = s.exists() ? "#444" : "var(--tiktok-red)";
     }
 
-    // CORE AUDIO CONTROLS
+    // --- CORE AUDIO CONTROLS ---
     function toggle() {
       if(audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
       else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
@@ -583,10 +544,11 @@
     document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
     audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
 
-    // UI & UTILS
+    // --- UTILS & MODALS ---
     function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
     function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+    
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
         else {
@@ -595,18 +557,7 @@
             document.getElementById('modalProfile').style.display = 'block';
         }
     }
-    async function viewCreator() {
-        const s = songs[i]; if(!s.uid) return;
-        const cRef = await db.ref('users/' + s.uid).get();
-        const cData = cRef.val();
-        document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
-        document.getElementById('vName').innerHTML = "@" + s.by + ((cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
-        document.getElementById('vFol').innerText = cData?.followers || 0;
-        document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
-        const creatorSongs = songs.filter(x => x.uid === s.uid);
-        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
-        document.getElementById('modalCreator').style.display = 'block';
-    }
+
     async function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
@@ -621,16 +572,16 @@
       c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
     }
+
     function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
     function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
     function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link audio disalin"); }
-    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link player disalin"); }
+    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link disalin"); }
+    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Player disalin"); }
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
-    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
 
     function handleAuth() {
@@ -639,11 +590,21 @@
       else {
         const u = document.getElementById('authUser').value;
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', followers: 0, following: 0, tag: 'user' });
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', followers: 0, following: 0, tag: 'user', banned: false });
           closeModal();
         }).catch(err => msg(err.message));
       }
     }
+
+    async function saveMusic() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      const t = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
+      if(!t || !u.includes("top4top")) return msg("Link harus Top4Top!");
+      await db.ref('songs').push({ title: t, url: u, by: userData.username, uid: auth.currentUser.uid, timestamp: Date.now() });
+      closeModal(); msg("Berhasil upload!");
+    }
+
+    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ingin upload: ${document.getElementById('guestLagu').value}`); }
 
     function uploadAvatar(input) {
         const file = input.files[0];
