@@ -34,19 +34,18 @@
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
-      transition: background 0.1s;
+      transition: background 1.5s ease; /* Transisi disco lebih smooth */
     }
 
-    /* Disco Mode Animation */
-    @keyframes discoBG {
-      0% { background: #ff0000; }
-      20% { background: #00ff00; }
-      40% { background: #0000ff; }
-      60% { background: #ffff00; }
-      80% { background: #ff00ff; }
-      100% { background: #00ffff; }
+    /* Disco Mode Smooth */
+    @keyframes discoFlow {
+      0% { background: #ff0050; }
+      25% { background: #00ff88; }
+      50% { background: #1da1f2; }
+      75% { background: #aa00ff; }
+      100% { background: #ff0050; }
     }
-    .disco-active { animation: discoBG 0.2s infinite !important; }
+    .disco-active { animation: discoFlow 4s linear infinite !important; }
 
     /* --- HEXKY ANNOUNCEMENT SYSTEM --- */
     .sys-broadcast {
@@ -58,30 +57,28 @@
         max-width: 400px;
         background: rgba(15, 15, 15, 0.95);
         border-left: 4px solid var(--accent);
-        border-radius: 6px;
+        border-radius: 12px;
         padding: 15px;
-        z-index: 12000;
+        z-index: 30000;
         box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        display: flex;
-        flex-direction: column;
         transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         backdrop-filter: blur(10px);
     }
     .sys-broadcast.active { top: 20px; }
-    .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-    .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; font-weight: bold; }
+    .sb-text p { margin: 0; font-size: 14px; color: #fff; line-height: 1.4; font-weight: bold; }
 
     /* --- OVERLAYS --- */
     .full-overlay {
-      position: fixed; inset: 0; background: #000; z-index: 20000;
+      position: fixed; inset: 0; background: #000; z-index: 40000;
       display: none; flex-direction: column; align-items: center; justify-content: center;
       text-align: center; padding: 30px;
     }
     .full-overlay i { font-size: 60px; margin-bottom: 20px; }
-    #bannedScreen { background: #000; }
+    .full-overlay h1 { font-size: 24px; color: var(--accent); }
+    #bannedScreen h1 { color: var(--danger); }
 
     #loadingCard {
-      position: absolute; inset: 0; background: var(--bg); z-index: 15000;
+      position: absolute; inset: 0; background: var(--bg); z-index: 35000;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: 0.5s;
     }
@@ -124,8 +121,15 @@
 
     .track-info { margin-bottom: 20px; text-align: left; }
     #title { font-size: 22px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-row { display: flex; align-items: center; gap: 10px; }
     #by { color: var(--accent); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     
+    #btnFollow { 
+      background: var(--tiktok-red); border: none; color: white; 
+      width: 22px; height: 22px; border-radius: 50%; 
+      display: none; align-items: center; justify-content: center; cursor: pointer;
+    }
+
     .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; }
     .sys-tools { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 0 10px; }
     .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; }
@@ -135,7 +139,7 @@
     .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; }
 
     .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; }
-    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; }
+    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; color: black; }
     .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
 
     .footer { margin-top: auto; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 15px 30px; border-radius: 25px; }
@@ -147,7 +151,7 @@
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; }
 
     .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; }
-    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; cursor: pointer; }
+    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; cursor: pointer; color: black; }
     
     .prof-stat { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
     .prof-stat div { text-align: center; }
@@ -158,8 +162,13 @@
     .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
     
-    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 20000; pointer-events: none; }
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 50000; pointer-events: none; }
     #toast.show { opacity: 1; }
+
+    /* Tag Styles */
+    .user-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 5px; }
+    .tag-admin { background: #ff3333; color: #fff; }
+    .tag-user { background: #444; color: #eee; }
   </style>
 </head>
 <body>
@@ -181,7 +190,6 @@
 
   <div id="sysBroadcast" class="sys-broadcast">
       <div class="sb-text">
-          <h4 id="sbHeader">HEXKY</h4>
           <p id="sbMessage"></p>
       </div>
   </div>
@@ -198,9 +206,9 @@
 
     <div class="track-info">
       <div id="title">Loading...</div>
-      <div class="user-row" style="display:flex; align-items:center; gap:10px;">
+      <div class="user-row">
         <div id="by" onclick="viewCreator()">@system</div>
-        <button id="btnFollow" onclick="followUser()" style="background:var(--tiktok-red); border:none; color:white; width:22px; height:22px; border-radius:50%; display:none; align-items:center; justify-content:center; cursor:pointer;"><i class="fas fa-plus"></i></button>
+        <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
       </div>
     </div>
 
@@ -210,7 +218,7 @@
         <button onclick="shareLink()"><i class="fas fa-share-alt"></i></button>
         <button onclick="downloadSong()"><i class="fas fa-download"></i></button>
         <button onclick="openReq()"><i class="fas fa-plus-circle"></i></button>
-        <button id="discoBtn" onclick="toggleDisco()"><i class="fas fa-compact-disc"></i></button>
+        <button id="discoBtn" style="display:none" onclick="toggleDisco()"><i class="fas fa-compact-disc"></i></button>
       </div>
       <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" style="width:100%; accent-color:var(--accent)">
     </div>
@@ -241,9 +249,8 @@
       <div style="font-size:12px; color:#ccc; line-height:1.6; margin-top:15px;">
         <p><b>Penghasilan:</b> 17ribu/$1 dari Hexky jika followers/favorit tinggi.</p>
         <p><b>Badge:</b> 50 Followers = Centang Biru Original User.</p>
-        <p><b>Upload:</b> Gunakan URL Top4Top. Jika belum login, kirim data ke WhatsApp admin melalui tombol [+]. Jika sudah login, upload realtime dengan delay 30 menit.</p>
-        <p><b>Peringatan:</b> Konten asal-asalan = Banned Email.</p>
-        <p><b>Status:</b> v3.1 sedang tidak stabil, fitur follow delay karena database padat.</p>
+        <p><b>Upload:</b> Link Top4Top. Delay 30 menit per upload.</p>
+        <p><b>Status:</b> v3.1 sedang tahap stabilisasi database.</p>
       </div>
       <button onclick="closeModal()" class="btn-act" style="margin-top:20px;">TUTUP</button>
     </div>
@@ -259,14 +266,14 @@
           <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
           <div style="margin-left:15px;">
               <h2 id="pUsername">User</h2>
-              <span id="pBadge"></span>
+              <div id="pTagDisplay"></div>
           </div>
       </div>
       <div class="prof-stat">
         <div><b id="pFol">0</b><span>Followers</span></div>
         <div><b id="pFollowing">0</b><span>Following</span></div>
       </div>
-      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#333; color:red;">LOGOUT</button>
+      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#222; color:red;">LOGOUT</button>
     </div>
   </div>
 
@@ -293,13 +300,24 @@
         <input id="gName" class="inp-dark" placeholder="Nama">
         <input id="gLagu" class="inp-dark" placeholder="Judul">
         <input id="gUrl" class="inp-dark" placeholder="Link">
-        <button onclick="sendWA()" class="btn-act" style="background:#25D366;">WA ADMIN</button>
+        <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white;">WA ADMIN</button>
       </div>
     </div>
   </div>
 
   <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet"><div id="songContainer"></div></div>
+  </div>
+
+  <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="spotify-banner" style="background:#333">
+          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
+          <div style="margin-left:15px;"><h2 id="vName">@creator</h2></div>
+      </div>
+      <div class="prof-stat"><div><b id="vFol">0</b><span>Followers</span></div></div>
+      <div id="creatorPostList"></div>
+    </div>
   </div>
 
   <script>
@@ -323,22 +341,24 @@
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
 
-    // REALTIME MONITORING (Banned, Maintenance, Hexky Announcement)
+    // MONITORING SETTINGS (Realtime MT & Hexky Announcement)
     db.ref('settings').on('value', s => {
         const val = s.val();
         if(!val) return;
         
-        // 1. Maintenance
+        // 1. Realtime Maintenance Check
         if(val.mt === true) {
-            db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
-                if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
-            });
+            if(userData && userData.role !== 'admin') {
+                document.getElementById('mtScreen').style.display = 'flex';
+            } else if(!auth.currentUser) {
+                document.getElementById('mtScreen').style.display = 'flex';
+            }
         } else { document.getElementById('mtScreen').style.display = 'none'; }
 
-        // 2. Hexky Announcement (Auto Hapus 1 Menit)
+        // 2. Hexky Announcement (Auto Delete 1 Minute)
         if(val.hexkyann) {
             const el = document.getElementById('sysBroadcast');
-            document.getElementById('sbMessage').innerText = val.hexkyann;
+            document.getElementById('sbMessage').innerText = "Hexky : " + val.hexkyann;
             el.classList.add('active');
             setTimeout(() => { 
                 db.ref('settings/hexkyann').remove(); 
@@ -353,25 +373,33 @@
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
           if(!userData) return;
+          
+          // Realtime Banned Check
           if(userData.banned === true) {
               document.getElementById('bannedScreen').style.display = 'flex';
               auth.signOut(); return;
           }
+
           document.getElementById('topLoginBtn').textContent = userData.username;
           document.getElementById('pUsername').innerText = userData.username;
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
           document.getElementById('pFol').innerText = userData.followers || 0;
           document.getElementById('pFollowing').innerText = userData.following || 0;
-          document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          document.getElementById('pTagDisplay').innerHTML = userData.role === 'admin' ? '<span class="user-tag tag-admin">ADMIN</span>' : '<span class="user-tag tag-user">USER</span>';
+          
+          if(userData.role === 'admin') {
+              document.getElementById('adminBtn').style.display = 'block';
+              document.getElementById('discoBtn').style.display = 'block';
+          }
           
           document.getElementById('upFormUser').style.display = 'block';
           document.getElementById('upFormGuest').style.display = 'none';
           document.getElementById('btnFollow').style.display = 'flex';
-          if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
         });
       } else {
         document.getElementById('topLoginBtn').textContent = "Login";
         document.getElementById('btnFollow').style.display = 'none';
+        document.getElementById('discoBtn').style.display = 'none';
       }
       document.getElementById('loadingCard').style.display = 'none';
     });
@@ -389,31 +417,24 @@
       i = idx;
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
-      document.getElementById('by').innerText = "@" + (songs[i].by || "system");
-      if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
+      const cRef = await db.ref('users/' + songs[i].uid).get();
+      const cData = cRef.val();
+      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
+      if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
       updateFollowUI();
     }
 
     function toggle() {
-      if(audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
-      else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
+      if(audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
     }
 
     function toggleDisco() {
+        if(userData?.role !== 'admin') return msg("Hanya Admin!");
         disco = !disco;
         document.body.classList.toggle('disco-active', disco);
         document.getElementById('discoBtn').classList.toggle('active', disco);
-    }
-
-    function uploadAvatar(input) {
-        const file = input.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result })
-            .then(() => msg("Foto Profil Diperbarui!"));
-        };
-        reader.readAsDataURL(file);
     }
 
     async function followUser() {
@@ -442,6 +463,18 @@
       document.getElementById('btnFollow').innerHTML = s.exists() ? '<i class="fas fa-check"></i>' : '<i class="fas fa-plus"></i>';
     }
 
+    function handleAuth() {
+      const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
+      if(isLoginMode) auth.signInWithEmailAndPassword(e, p).then(closeModal).catch(err => msg(err.message));
+      else {
+        const u = document.getElementById('authUser').value;
+        auth.createUserWithEmailAndPassword(e, p).then(res => {
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', followers: 0, following: 0, banned: false, lastUpload: 0 });
+          closeModal();
+        }).catch(err => msg(err.message));
+      }
+    }
+
     async function saveMusic() {
       const now = Date.now();
       if(now - (userData.lastUpload || 0) < 1800000) return msg("Delay 30 Menit!");
@@ -452,30 +485,55 @@
       closeModal(); msg("Berhasil!");
     }
 
-    function handleAuth() {
-      const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
-      if(isLoginMode) auth.signInWithEmailAndPassword(e, p).then(closeModal).catch(err => msg(err.message));
-      else {
-        const u = document.getElementById('authUser').value;
-        auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', followers: 0, following: 0, banned: false });
-          closeModal();
-        }).catch(err => msg(err.message));
-      }
+    function uploadAvatar(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("Profil Update!"));
+        };
+        reader.readAsDataURL(file);
     }
 
-    function sendWA() { window.open(`https://wa.me/62895329018240?text=Upload:%20${document.getElementById('gLagu').value}%20Link:%20${document.getElementById('gUrl').value}`); }
+    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
+    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
+    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
+    function prev() { setup((i-1+songs.length)%songs.length); }
+    
+    audio.ontimeupdate = () => {
+      document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
+      document.getElementById('cur').textContent = fmt(audio.currentTime);
+      document.getElementById('dur').textContent = fmt(audio.duration);
+    };
+    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
+    
+    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function openProfile() { if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; else document.getElementById('modalProfile').style.display='block'; }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-    function next() { setup((i+1)%songs.length); }
-    function prev() { setup((i-1+songs.length)%songs.length); }
-    audio.ontimeupdate = () => document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
     function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link Audio Disalin"); }
     function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link Player Disalin"); }
+    function downloadSong() { window.open(songs[i].url); }
+    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
+    function sendWA() { window.open(`https://wa.me/62895329018240?text=Upload:%20${document.getElementById('gLagu').value}%20Link:%20${document.getElementById('gUrl').value}`); }
+
+    async function openList(f) {
+      const c = document.getElementById('songContainer');
+      const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
+      c.innerHTML = '<p style="text-align:center; padding:20px; color:#555">Memuat...</p>';
+      let html = "";
+      for(let s of l) {
+          const uRef = await db.ref('users/' + s.uid).get();
+          const uData = uRef.val();
+          const badge = (uData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          html += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`;
+      }
+      c.innerHTML = html;
+      document.getElementById('modalList').style.display='block';
+    }
+    function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
   </script>
 </body>
 </html>
