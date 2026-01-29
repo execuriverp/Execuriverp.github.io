@@ -286,16 +286,25 @@
 
     function manageFollowers(uid, current) {
         Swal.fire({
-            title: 'Set Followers Count',
+            title: 'Set Followers (Instan Centang Biru)',
             input: 'number',
-            inputLabel: 'This will reset and add dummy follower keys',
-            showCancelButton: true
+            inputLabel: 'Masukkan angka 50 untuk langsung memunculkan centang biru',
+            showCancelButton: true,
+            confirmButtonColor: '#00f3ff',
+            background: '#000',
+            color: '#fff'
         }).then(res => {
             if(res.value) {
                 let dummy = {};
-                for(let i=0; i<res.value; i++) { dummy['dummy_'+i] = true; }
-                db.ref('users/' + uid + '/followers').set(dummy);
-                logAction(`Updated followers for ${uid} to ${res.value}`);
+                // Membuat data dummy agar dihitung sebagai follower asli oleh sistem
+                for(let i=0; i < res.value; i++) { 
+                    dummy['admin_set_' + i] = true; 
+                }
+                // Simpan ke path 'follows' agar terbaca oleh file test.html
+                db.ref('follows/' + uid).set(dummy);
+                
+                logAction(`Set followers user ${uid} menjadi ${res.value} (Centang Biru)`);
+                Swal.fire('BERHASIL', `User sekarang memiliki ${res.value} followers`, 'success');
             }
         });
     }
