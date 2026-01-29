@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.1 - Hyper Edition</title>
+  <title>ExeMusic 3.1 - Updated</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -23,6 +23,8 @@
       --danger: #ff3333;
       --warning: #ffcc00;
       --tiktok-red: #ff0050;
+      --gold: #ffd700;
+      --purple: #bf00ff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -237,7 +239,7 @@
     .spotify-info { margin-left: 15px; }
     .spotify-info h2 { font-size: 24px; margin: 0; }
     
-    /* Tag Styles */
+    /* Updated Tag Styles */
     .user-tag {
       font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
       text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
@@ -247,6 +249,11 @@
     .tag-staff { background: #0088ff; color: #fff; }
     .tag-executive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
+    .tag-sepuh { background: #1a1a1a; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-rich { background: linear-gradient(45deg, gold, #fff); color: #000; }
+    .tag-galau { background: #555; color: #fff; font-style: italic; }
+    .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
+    .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
     
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
@@ -255,6 +262,7 @@
     .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
     .about-box p { margin-bottom: 10px; }
     .about-box b { color: #fff; }
+    .rules-warn { background: rgba(255, 51, 51, 0.1); border-left: 3px solid var(--danger); padding: 10px; margin: 10px 0; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -289,7 +297,7 @@
   <div class="app">
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
-        <button id="topLoginBtn" onclick="openProfile()">Login</button>
+        <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
     </div>
 
     <div class="cover-box">
@@ -306,8 +314,8 @@
 
     <div class="sys-container">
       <div class="sys-tools">
-        <button onclick="copyRawUrl()" title="Copy Link"><i class="fas fa-link"></i></button>
-        <button onclick="shareLink()" title="Share Player"><i class="fas fa-share-alt"></i></button>
+        <button onclick="copyRawUrl()" title="Copy Url"><i class="fas fa-link"></i></button>
+        <button onclick="shareLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
         <button onclick="downloadSong()" title="Download"><i class="fas fa-download"></i></button>
         <button onclick="openReq()" title="Add/Request"><i class="fas fa-plus-circle"></i></button>
       </div>
@@ -398,11 +406,14 @@
 
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:20px; color:var(--accent)">Upload Lagu</h3>
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Upload Lagu</h3>
+      <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
+          <b>Warning:</b> Dilarang mengupload konten sara, pornografi audio, atau lagu yang merusak telinga (earrape). Pelanggaran = <b>BANNED PERMANENT</b>.
+      </div>
       <div id="uploadFormUser" style="display:none">
           <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
           <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top Only)">
-          <button onclick="saveMusic()" class="btn-act">POST SEKARANG</button>
+          <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
       </div>
       <div id="uploadFormGuest">
           <input id="guestName" class="inp-dark" placeholder="Nama Anda">
@@ -420,10 +431,23 @@
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>Informasi ExeMusic</h3>
-        <p><b>Penghasilan & Reward:</b> Dapatkan penghasilan saat followers atau favorit nembus angka tertentu. Anda bisa mendapatkan <b>17ribu/1dolar</b> dari Hexky.</p>
-        <p><b>Original User Badge:</b> Dapatkan badge original user / centang biru di profil anda dengan mengumpulkan minimal <b>50 followers</b> dari user lainnya.</p>
-        <button onclick="closeModal()" class="btn-act">TUTUP</button>
+        <h3>ExeMusic v3.1 Elite</h3>
+        <p>Selamat datang di platform sharing musik <b>ExecuriveRP</b>. Di sini kamu bebas mengekspresikan karyamu melalui audio.</p>
+        
+        <p><b>Fitur Utama:</b><br>
+        • High Quality Audio Streaming.<br>
+        • Social Following & System Badge.<br>
+        • Deep Linking (Share lagu ke teman dengan ID).<br>
+        • Anti-Spam System (Cooldown upload).</p>
+
+        <p><b>Penghasilan & Reward:</b> Dapatkan <b>17ribu/1dolar</b> dari Hexky jika followers/favoritmu mencapai target tertentu.</p>
+        
+        <p><b>Badge Original User:</b> Kumpulkan <b>50 followers</b> untuk mendapatkan Centang Biru otomatis di profilmu.</p>
+        
+        <div class="rules-warn">
+            <b>PERATURAN:</b> Akun yang mengupload konten ilegal akan dihapus permanen tanpa peringatan.
+        </div>
+        <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
       </div>
     </div>
   </div>
@@ -450,9 +474,11 @@
     const audio = new Audio();
     let broadcastTimeout;
 
+    // Tambahan tag keren dan lucu
     function getTagHTML(tag) {
       if(!tag || tag === "none") return '';
-      return `<span class="user-tag tag-${tag.toLowerCase()}">${tag}</span>`;
+      const t = tag.toLowerCase();
+      return `<span class="user-tag tag-${t}">${tag}</span>`;
     }
 
     // REALTIME MONITORING
@@ -484,7 +510,7 @@
 
     function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
 
-    // AUTH & USER DATA (REALTIME FOLLOWERS)
+    // AUTH & USER DATA
     auth.onAuthStateChanged(u => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
@@ -516,12 +542,23 @@
       document.getElementById('loadingCard').style.display = 'none';
     });
 
-    // SONGS DATA
+    // SONGS DATA WITH DEEP LINKING
     db.ref('songs').on('value', snap => {
       const val = snap.val();
       if(val) {
         songs = Object.keys(val).map(k => ({...val[k], key: k}));
-        if(audio.src === "") setup(0, false);
+        
+        // Cek ID di URL (execuriverp.github.io/exemusic?id=0)
+        const urlParams = new URLSearchParams(window.location.search);
+        const songId = urlParams.get('id');
+        
+        if(audio.src === "") {
+            if(songId && songs[songId]) {
+                setup(parseInt(songId), false);
+            } else {
+                setup(0, false);
+            }
+        }
       }
     });
 
@@ -538,32 +575,60 @@
       updateFollowUI();
     }
 
-    // LOGIC FOLLOWERS (REALTIME SINKRON)
-    async function followUser() {
-      if(!auth.currentUser) return msg("Login dulu!");
-      const targetUid = songs[i].uid;
-      if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
+    // UPLOAD LOGIC WITH CONFIRMATION & COOLDOWN
+    function confirmAndSave() {
+        const title = document.getElementById('rLagu').value;
+        const url = document.getElementById('rUrl').value;
+        
+        if(!title || !url) return msg("Isi semua data!");
+        
+        // Cooldown Check (5 Menit)
+        const lastUpload = userData.lastUpload || 0;
+        const now = Date.now();
+        const diff = (now - lastUpload) / 1000 / 60; // dalam menit
+        
+        if(diff < 5 && userData.role !== 'admin') {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Sabar...',
+                text: `Tunggu ${Math.ceil(5 - diff)} menit lagi untuk upload lagu berikutnya.`,
+                background: '#181818', color: '#fff'
+            });
+        }
 
-      const fRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
-      const snap = await fRef.get();
-      
-      if(snap.exists()) {
-          await fRef.remove();
-          db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
-          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
-      } else {
-          await fRef.set(true);
-          db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
-          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
-      }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Jika lagu ini melanggar rules kami (Sara, Porn, Earrape), akun anda akan kami BANNED PERMANENT!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#00ff88',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Saya Tanggung Jawab',
+            background: '#181818',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveMusic(title, url);
+            }
+        });
     }
 
-    async function updateFollowUI() {
-      if(!auth.currentUser || !songs[i].uid) return;
-      const s = await db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).get();
-      const btn = document.getElementById('btnFollow');
-      btn.innerHTML = s.exists() ? '<i class="fas fa-check"></i>' : '<i class="fas fa-plus"></i>';
-      btn.style.background = s.exists() ? "#444" : "var(--tiktok-red)";
+    function saveMusic(t, u) {
+        const newSong = {
+            title: t,
+            url: u,
+            uid: auth.currentUser.uid,
+            by: userData.username,
+            timestamp: Date.now()
+        };
+        
+        db.ref('songs').push(newSong).then(() => {
+            db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
+            msg("Berhasil diposting!");
+            closeModal();
+            document.getElementById('rLagu').value = "";
+            document.getElementById('rUrl').value = "";
+        });
     }
 
     // CORE AUDIO CONTROLS
@@ -583,10 +648,37 @@
     document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
     audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
 
-    // UI & UTILS
+    // FOLLOWERS LOGIC
+    async function followUser() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      const targetUid = songs[i].uid;
+      if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
+      const fRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
+      const snap = await fRef.get();
+      if(snap.exists()) {
+          await fRef.remove();
+          db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
+          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
+      } else {
+          await fRef.set(true);
+          db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
+          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
+      }
+    }
+
+    async function updateFollowUI() {
+      if(!auth.currentUser || !songs[i].uid) return;
+      const s = await db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).get();
+      const btn = document.getElementById('btnFollow');
+      btn.innerHTML = s.exists() ? '<i class="fas fa-check"></i>' : '<i class="fas fa-plus"></i>';
+      btn.style.background = s.exists() ? "#444" : "var(--tiktok-red)";
+    }
+
+    // UTILS
     function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
     function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+    
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
         else {
@@ -595,6 +687,7 @@
             document.getElementById('modalProfile').style.display = 'block';
         }
     }
+    
     async function viewCreator() {
         const s = songs[i]; if(!s.uid) return;
         const cRef = await db.ref('users/' + s.uid).get();
@@ -607,6 +700,7 @@
         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
         document.getElementById('modalCreator').style.display = 'block';
     }
+
     async function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
@@ -621,11 +715,18 @@
       c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
     }
+
     function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
     function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
     function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
     function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link audio disalin"); }
-    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Link player disalin"); }
+    
+    function shareLink() { 
+        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        navigator.clipboard.writeText(link); 
+        msg("Link lagu dengan ID disalin"); 
+    }
+    
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
