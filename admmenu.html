@@ -248,9 +248,9 @@
         if(user) {
             db.ref('users/' + user.uid).once('value', snap => {
                 if(snap.val()?.role === 'admin') initApp();
-                else location.href = 'test.html';
+                else location.href = 'exemusic.html';
             });
-        } else location.href = 'test.html';
+        } else location.href = 'exemusic.html';
     });
 
     function initApp() {
