@@ -22,6 +22,7 @@
       --glass: rgba(255, 255, 255, 0.05);
       --danger: #ff3333;
       --warning: #ffcc00;
+      --tiktok-red: #ff0050;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -144,8 +145,23 @@
     
     .user-row { display: flex; align-items: center; gap: 10px; }
     #by { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    #btnFollow { font-size: 10px; background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none; transition: 0.2s; }
-    #btnFollow:active { transform: scale(0.95); }
+    
+    /* Tombol Follow TikTok Style */
+    #btnFollow { 
+      font-size: 12px; 
+      background: var(--tiktok-red); 
+      color: white; 
+      border: none; 
+      width: 22px; height: 22px; 
+      border-radius: 50%; 
+      font-weight: bold; 
+      cursor: pointer; 
+      display: none; 
+      transition: 0.2s; 
+      align-items: center; 
+      justify-content: center;
+    }
+    #btnFollow:active { transform: scale(0.9); }
 
     .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; flex-shrink: 0; z-index: 5;}
     .sys-tools { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 0 10px; }
@@ -194,25 +210,7 @@
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
 
-    /* --- ADDED CSS FOR TAGS & SPOTIFY PROFILE --- */
-    .user-tag {
-      font-size: 9px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-left: 5px;
-      vertical-align: middle;
-      letter-spacing: 0.5px;
-    }
-    .tag-admin { background: #ff3333; color: #fff; }
-    .tag-owner { background: #gold; color: #000; animation: pulse 2s infinite; }
-    .tag-staff { background: #0088ff; color: #fff; }
-    .tag-executive { background: #aa00ff; color: #fff; }
-    .tag-user { background: #444; color: #eee; }
-    
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
-
+    /* Spotify Style Profile Banner */
     .spotify-banner {
       width: 100%; height: 120px;
       background: linear-gradient(to bottom, var(--accent), #181818);
@@ -228,6 +226,25 @@
     }
     .spotify-info { margin-left: 15px; }
     .spotify-info h2 { font-size: 24px; margin: 0; }
+    
+    /* Tag Styles */
+    .user-tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-left: 5px;
+      vertical-align: middle;
+      letter-spacing: 0.5px;
+    }
+    .tag-admin { background: #ff3333; color: #fff; }
+    .tag-owner { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-staff { background: #0088ff; color: #fff; }
+    .tag-executive { background: #aa00ff; color: #fff; }
+    .tag-user { background: #444; color: #eee; }
+    
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
   </style>
 </head>
 <body>
@@ -273,7 +290,7 @@
       <div id="title">Loading Lagu...</div>
       <div class="user-row">
         <div id="by" onclick="viewCreator()">@system</div>
-        <button id="btnFollow" onclick="followUser()">+</button>
+        <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
       </div>
     </div>
 
@@ -327,19 +344,20 @@
 
   <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <div class="spotify-banner" id="pBanner">
+      <div class="spotify-banner">
           <div class="spotify-avatar"><i class="fas fa-user"></i></div>
           <div class="spotify-info">
               <div style="display:flex; align-items:center; gap:5px">
                   <h2 id="pUsername">User</h2>
                   <span id="pBadge"></span>
               </div>
-              <div id="pTagDisplay"></div>
-          </div>
+              <div id="pTagDisplay"></div> </div>
       </div>
+      
       <div style="text-align:center; margin-top:-10px">
         <button onclick="showChangeName()" style="font-size:11px; background:none; border:none; color:var(--accent); cursor:pointer;">[ Ubah Username ]</button>
       </div>
+
       <div class="prof-stat">
         <div><b id="pFol">0</b><span>Followers</span></div>
         <div><b id="pFollowing">0</b><span>Following</span></div>
@@ -352,16 +370,16 @@
 
   <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <div class="spotify-banner" id="vBanner">
+      <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
           <div class="spotify-avatar"><i class="fas fa-microphone"></i></div>
           <div class="spotify-info">
               <div style="display:flex; align-items:center; gap:5px">
                   <h2 id="vName">@creator</h2>
                   <span id="vBadge"></span>
               </div>
-              <div id="vTagDisplay"></div>
-          </div>
+              <div id="vTagDisplay"></div> </div>
       </div>
+      
       <div class="prof-stat">
         <div><b id="vFol">0</b><span>Followers</span></div>
       </div>
@@ -411,19 +429,23 @@
     // --- BROADCAST SYSTEM VARS ---
     let broadcastTimeout;
 
+    // --- UTILS FOR TAGS ---
+    function getTagHTML(tag) {
+      if(!tag || tag === "none") return '';
+      return `<span class="user-tag tag-${tag.toLowerCase()}">${tag}</span>`;
+    }
+
     // --- REALTIME SETTINGS ---
     db.ref('settings').on('value', s => {
         const val = s.val();
         if(!val) return;
         
-        // Maintenance Mode
         if(val.mt === true) {
             db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
                 if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
             });
         } else { document.getElementById('mtScreen').style.display = 'none'; }
         
-        // Broadcast System (Logic Baru)
         if(val.announcement && typeof val.announcement === 'string' && val.announcement.trim() !== "") {
             triggerBroadcast(val.announcement);
         }
@@ -432,33 +454,20 @@
     function triggerBroadcast(msg) {
         const el = document.getElementById('sysBroadcast');
         const bar = document.getElementById('sbBar');
-        
-        // Reset animasi
         el.classList.remove('active');
         bar.style.animation = 'none';
-        void bar.offsetWidth; // Trigger reflow
-        
+        void bar.offsetWidth; 
         document.getElementById('sbMessage').innerText = msg;
-        
-        // Tampilkan
         setTimeout(() => {
             el.classList.add('active');
             bar.style.animation = 'countDown 15s linear forwards';
         }, 100);
-
-        // Auto hide 15s
         clearTimeout(broadcastTimeout);
         broadcastTimeout = setTimeout(closeBroadcast, 15000);
     }
 
     function closeBroadcast() {
         document.getElementById('sysBroadcast').classList.remove('active');
-    }
-
-    // --- UTILS FOR TAGS ---
-    function getTagHTML(tag) {
-      if(!tag || tag === "none") return '';
-      return `<span class="user-tag tag-${tag.toLowerCase()}">${tag}</span>`;
     }
 
     // --- AUTH ---
@@ -475,21 +484,13 @@
           document.getElementById('topLoginBtn').textContent = userData.username || "Profil";
           document.getElementById('pUsername').innerText = userData.username || "User";
           
-          // Get dynamic follower count
-          db.ref('follows/' + u.uid).on('value', fSnap => {
-            const count = fSnap.numChildren();
-            document.getElementById('pFol').innerText = count;
-            document.getElementById('pBadge').innerHTML = (count >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-          });
-          
-          db.ref('following/' + u.uid).on('value', fgSnap => {
-            document.getElementById('pFollowing').innerText = fgSnap.numChildren();
-          });
-
+          // Centang biru & Tag di Profil
+          document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
+          
           if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
         });
-        document.getElementById('btnFollow').style.display = 'block';
+        document.getElementById('btnFollow').style.display = 'flex';
       } else {
         userData = null;
         document.getElementById('topLoginBtn').textContent = "Login";
@@ -520,14 +521,9 @@
       
       const creatorSnap = await db.ref('users/' + songs[i].uid).get();
       const cData = creatorSnap.val();
-      
-      // Get Realtime Follower Count for badge
-      const fRef = await db.ref('follows/' + songs[i].uid).get();
-      const fCount = fRef.numChildren();
-      
-      const badge = (fCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-      const tag = getTagHTML(cData?.tag);
-      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + tag;
+      // Baca followers dari database untuk centang biru
+      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
       
       window.history.replaceState(null, null, "?id=" + i);
       if(play) { 
@@ -558,14 +554,7 @@
         const u = document.getElementById('authUser').value;
         if(u.length < 3) return msg("Username minimal 3 karakter");
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ 
-              username: u, 
-              role: 'user', 
-              tag: 'user',
-              banned: false, 
-              lastUpload: 0, 
-              lastNameChange: 0 
-          });
+          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', tag: 'user', banned: false, followers: 0, following: 0, lastUpload: 0, lastNameChange: 0 });
           closeModal();
         }).catch(err => msg(err.message));
       }
@@ -602,12 +591,14 @@
       
       const s = await followRef.get();
       if(s.exists()) {
-        await followRef.remove(); 
-        await followingRef.remove();
+        await followRef.remove(); await followingRef.remove();
+        db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
+        db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
         msg("Unfollowed");
       } else {
-        await followRef.set(true); 
-        await followingRef.set(true);
+        await followRef.set(true); await followingRef.set(true);
+        db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
+        db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
         msg("Following!");
       }
       updateFollowUI();
@@ -619,13 +610,11 @@
       const s = await db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).get();
       const btn = document.getElementById('btnFollow');
       if (s.exists()) {
-          btn.innerText = "FOLLOWED";
-          btn.style.background = "var(--accent)";
-          btn.style.color = "black";
+          btn.innerHTML = '<i class="fas fa-check"></i>';
+          btn.style.background = "#444";
       } else {
-          btn.innerText = "FOLLOW";
-          btn.style.background = "transparent";
-          btn.style.color = "var(--accent)";
+          btn.innerHTML = '<i class="fas fa-plus"></i>';
+          btn.style.background = "var(--tiktok-red)";
       }
     }
 
@@ -675,6 +664,10 @@
       const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
       document.getElementById('myPostList').innerHTML = myPosts.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><span>${s.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
       document.getElementById('modalProfile').style.display='block';
+      db.ref('users/' + auth.currentUser.uid).once('value', s => {
+          document.getElementById('pFol').innerText = s.val().followers || 0;
+          document.getElementById('pFollowing').innerText = s.val().following || 0;
+      });
     }
 
     async function viewCreator() {
@@ -682,13 +675,10 @@
       const cRef = await db.ref('users/' + s.uid).get();
       const cData = cRef.val();
       
-      const fRef = await db.ref('follows/' + s.uid).get();
-      const fCount = fRef.numChildren();
-      
-      const badge = (fCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
       document.getElementById('vName').innerHTML = "@" + s.by + badge;
+      document.getElementById('vFol').innerText = cData?.followers || 0;
       document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
-      document.getElementById('vFol').innerText = fCount;
       
       const creatorSongs = songs.filter(x => x.uid === s.uid);
       document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
@@ -702,16 +692,12 @@
       
       let html = "";
       for(let s of l) {
-          const fRef = await db.ref('follows/' + s.uid).get();
-          const fCount = fRef.numChildren();
-          const badge = (fCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-          
           const uRef = await db.ref('users/' + s.uid).get();
-          const tag = getTagHTML(uRef.val()?.tag);
-
+          const uData = uRef.val();
+          const badge = (uData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           html += `
             <div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
-              <div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}${tag}</small></div>
+              <div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div>
               <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span>
             </div>`;
       }
