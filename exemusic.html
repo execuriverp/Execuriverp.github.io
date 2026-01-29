@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.1 - Hyper Edition</title>
+  <title>ExeMusic v3.1 - Hyper Realtime</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -16,20 +16,14 @@
     :root {
       --accent: #00ff88; 
       --text: #ffffff;
-      --text-dim: #b3b3b3;
       --bg: #050505;
-      --card-bg: #121212;
-      --glass: rgba(255, 255, 255, 0.05);
-      --danger: #ff3333;
-      --warning: #ffcc00;
-      --tiktok-red: #ff0050;
       --disco-color: #ff00ff;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
       height: 100vh;
@@ -38,263 +32,137 @@
       transition: background 0.5s ease;
     }
 
-    /* DISCO MODE STYLES */
-    body.disco-active {
-        animation: discoBg 1.5s infinite alternate;
-    }
-    @keyframes discoBg {
-        from { background: #050505; }
-        to { background: #1a0033; }
-    }
-    .disco-active .app {
-        border: 2px solid var(--disco-color);
-        box-shadow: 0 0 40px var(--disco-color);
-    }
-    .disco-active .eq span {
-        background: var(--disco-color) !important;
-        box-shadow: 0 0 15px var(--disco-color);
+    /* --- REALISTIC EQ ANIMATION --- */
+    .eq { display: flex; align-items: flex-end; gap: 5px; height: 70px; }
+    .eq span { 
+        width: 7px; 
+        background: var(--accent); 
+        border-radius: 10px; 
+        height: 10px; 
+        transition: background 0.5s ease;
     }
 
-    /* --- ROBLOX STYLE BROADCAST --- */
+    /* Gerakan EQ Berbeda-beda (Realistik) */
+    .playing span { animation: wave var(--d) infinite ease-in-out; }
+    .eq span:nth-child(1) { --d: 0.8s; animation-delay: 0.1s; }
+    .eq span:nth-child(2) { --d: 1.1s; animation-delay: 0.3s; }
+    .eq span:nth-child(3) { --d: 0.9s; animation-delay: 0.0s; }
+    .eq span:nth-child(4) { --d: 1.2s; animation-delay: 0.5s; }
+    .eq span:nth-child(5) { --d: 1.0s; animation-delay: 0.2s; }
+
+    /* EQ Saat Disco Mode (Lebih Cepat & Agresif) */
+    .disco-active .playing span { 
+        animation: discoWave var(--d) infinite ease-in-out; 
+        background: var(--disco-color) !important;
+    }
+    .disco-active .eq span:nth-child(1) { --d: 0.3s; }
+    .disco-active .eq span:nth-child(2) { --d: 0.4s; }
+    .disco-active .eq span:nth-child(3) { --d: 0.35s; }
+    .disco-active .eq span:nth-child(4) { --d: 0.45s; }
+    .disco-active .eq span:nth-child(5) { --d: 0.32s; }
+
+    @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 50px; } }
+    @keyframes discoWave { 0%, 100% { height: 10px; } 50% { height: 80px; } }
+
+    /* --- ROBLOX BROADCAST UI --- */
     .sys-broadcast {
-        position: fixed;
-        top: -150px; left: 50%;
-        transform: translateX(-50%);
-        width: 90%; max-width: 400px;
-        background: rgba(15, 15, 15, 0.95);
-        border-left: 4px solid var(--accent);
-        border-radius: 6px; padding: 15px;
-        z-index: 12000;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        display: flex; flex-direction: column;
-        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        backdrop-filter: blur(10px);
+        position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+        width: 90%; max-width: 400px; background: rgba(15, 15, 15, 0.95);
+        border-left: 4px solid var(--accent); border-radius: 8px; padding: 15px;
+        z-index: 10000; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(15px); box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
     .sys-broadcast.active { top: 20px; }
-    .sb-content { display: flex; align-items: flex-start; gap: 12px; }
-    .sb-icon { font-size: 20px; color: var(--accent); }
-    .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-    .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
-    .sb-close { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; }
-    .sb-progress { width: 100%; height: 3px; background: #333; margin-top: 12px; border-radius: 2px; overflow: hidden; }
-    .sb-bar { width: 100%; height: 100%; background: var(--accent); transform-origin: left; }
-    @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    .sb-bar { width: 100%; height: 3px; background: var(--accent); margin-top: 10px; transform-origin: left; }
 
-    /* --- OVERLAYS --- */
-    .full-overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
-    .full-overlay i { font-size: 60px; margin-bottom: 20px; }
-    #loadingCard { position: absolute; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* --- MAIN APP --- */
+    /* --- APP LAYOUT --- */
     .app {
-      background: rgba(18, 18, 18, 0.6);
-      backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 35px;
-      width: 95%; max-width: 400px; height: 95vh;
-      display: flex; flex-direction: column; padding: 25px; 
-      position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      transition: all 0.5s ease;
+      background: rgba(20, 20, 20, 0.7);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 40px; width: 95%; max-width: 400px; height: 90vh;
+      display: flex; flex-direction: column; padding: 30px; position: relative;
     }
 
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .header img { width: 110px; cursor: pointer; }
-    #topLoginBtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer; font-weight: 600; }
+    body.disco-active { animation: bgDisco 2s infinite alternate; }
+    @keyframes bgDisco { from { background: #050505; } to { background: #1a002b; } }
 
-    .cover-box {
-      flex: 1; width: 100%; border-radius: 25px;
-      background: #000; display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);
-      overflow: hidden; position: relative;
-    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header img { width: 100px; }
+    #loginBtn { background: var(--accent); color: black; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; }
 
-    /* EQ SYSTEM */
-    .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; }
-    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease, background 0.5s ease; }
-    .playing span { animation: wave 0.8s infinite ease-in-out; }
-    .playing.disco-eq span { animation: discoWave 0.4s infinite ease-in-out; }
-    @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 50px; } }
-    @keyframes discoWave { 0%, 100% { height: 5px; } 50% { height: 80px; } }
+    .cover { flex: 1; background: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid #222; }
 
-    .track-info { margin-bottom: 20px; text-align: left; }
-    #title { font-size: 22px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; }
-    .user-row { display: flex; align-items: center; gap: 10px; }
-    #by { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    #btnFollow { font-size: 12px; background: var(--tiktok-red); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; }
+    .track-info h2 { font-size: 22px; margin-bottom: 5px; }
+    .track-info p { color: var(--accent); font-weight: bold; cursor: pointer; }
 
-    .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; }
-    .sys-tools { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 0 10px; }
-    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; opacity: 0.7; }
-    .vol-row { display: flex; align-items: center; gap: 10px; padding: 0 5px; }
-    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; }
+    .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+    .play-btn { width: 70px; height: 70px; background: var(--accent); border-radius: 50%; border: none; font-size: 24px; cursor: pointer; }
 
-    .prog-area { margin-bottom: 20px; }
-    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; }
-    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; }
-
-    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; }
-    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); }
-    .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
-
-    .footer { margin-top: auto; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 15px 30px; border-radius: 25px; }
-    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; }
-    .active { color: var(--accent) !important; opacity: 1 !important; }
-
-    /* MODALS */
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; backdrop-filter: blur(5px); }
-    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; border-top: 1px solid #333; animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
-
-    .song-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; }
-    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; color:black; cursor: pointer; }
+    /* MODAL STYLE */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 9999; align-items: center; justify-content: center; }
+    .modal-content { background: #111; width: 90%; max-width: 350px; padding: 30px; border-radius: 20px; border: 1px solid #333; }
     
-    .prof-stat { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
-    .prof-stat b { display: block; font-size: 20px; color: white; text-align: center; }
-    .prof-stat span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
-
-    .spotify-banner { width: 100%; height: 120px; background: linear-gradient(to bottom, var(--accent), #181818); margin: -25px -25px 20px -25px; border-radius: 30px 30px 0 0; display: flex; align-items: flex-end; padding: 20px; position: relative; }
-    .spotify-avatar { width: 80px; height: 80px; background: #222; border-radius: 50%; border: 3px solid #181818; overflow: hidden; position: relative; }
-    .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
-    .user-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 5px; vertical-align: middle; }
-    .tag-admin { background: #ff3333; color: #fff; }
-
-    .about-box { font-size: 13px; line-height: 1.6; color: #ccc; }
-    .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    #toast { position: fixed; bottom: 50px; background: var(--accent); color: black; padding: 10px 20px; border-radius: 30px; font-weight: bold; display: none; z-index: 10001; }
   </style>
 </head>
-<body>
+<body id="mainBody">
 
   <div id="sysBroadcast" class="sys-broadcast">
-      <button class="sb-close" onclick="closeBroadcast()"><i class="fas fa-times"></i></button>
-      <div class="sb-content">
-          <i class="fas fa-bullhorn sb-icon"></i>
-          <div class="sb-text">
-              <h4 id="sbTitle">System Announcement</h4>
-              <p id="sbMessage">Menghubungkan ke server...</p>
-          </div>
+    <div style="display:flex; gap:15px; align-items:center">
+      <i class="fas fa-bullhorn" style="color:var(--accent)"></i>
+      <div>
+        <h4 style="font-size:12px; color:var(--accent)">SISTEM BROADCAST</h4>
+        <p id="sbMsg" style="font-size:13px">Memuat pesan...</p>
       </div>
-      <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
+    </div>
+    <div id="sbBar" class="sb-bar"></div>
   </div>
 
-  <div id="mtScreen" class="full-overlay">
-    <i class="fas fa-tools" style="color: var(--accent)"></i>
-    <h1>Maintenance</h1>
-    <p>Server sedang diperbarui. Mohon tunggu.</p>
-  </div>
-  <div id="bannedScreen" class="full-overlay">
-    <i class="fas fa-user-slash" style="color: var(--danger)"></i>
-    <h1>Banned</h1>
-    <p>Akun anda telah diblokir secara permanen.</p>
-  </div>
-  <div id="loadingCard"><div class="spinner"></div></div>
-  <div id="toast">Notif</div>
+  <div id="toast"></div>
 
   <div class="app">
     <div class="header">
-        <img src="exemusic.png" alt="Logo" onclick="openAbout()">
-        <button id="topLoginBtn" onclick="openProfile()">Login</button>
+      <img src="exemusic.png" alt="Logo">
+      <button id="loginBtn" onclick="openProfile()">LOGIN</button>
     </div>
 
-    <div class="cover-box">
-      <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cover">
+      <div class="eq" id="eq">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
     </div>
 
     <div class="track-info">
-      <div id="title">Memuat...</div>
-      <div class="user-row">
-        <div id="by" onclick="viewCreator()">@system</div>
-        <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
+      <h2 id="title">Memuat Musik...</h2>
+      <p id="artist" onclick="openAbout()">@system</p>
+    </div>
+
+    <div style="margin-top:20px">
+      <input type="range" id="seek" style="width:100%; accent-color:var(--accent)" value="0">
+      <div style="display:flex; justify-content:space-between; font-size:10px; margin-top:5px">
+        <span id="cur">0:00</span>
+        <span id="dur">0:00</span>
       </div>
     </div>
 
-    <div class="sys-container">
-      <div class="sys-tools">
-        <button onclick="copyRawUrl()"><i class="fas fa-link"></i></button>
-        <button onclick="shareLink()"><i class="fas fa-share-alt"></i></button>
-        <button onclick="downloadSong()"><i class="fas fa-download"></i></button>
-        <button onclick="openReq()"><i class="fas fa-plus-circle"></i></button>
-      </div>
-      <div class="vol-row">
-        <i class="fas fa-volume-down" style="font-size:10px"></i>
-        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8">
-        <i class="fas fa-volume-up" style="font-size:10px"></i>
-      </div>
-    </div>
-
-    <div class="prog-area">
-      <input type="range" id="seek" value="0">
-      <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
-    </div>
-
-    <div class="main-ctrl">
-      <button class="btn-sec" onclick="prev()"><i class="fas fa-step-backward"></i></button>
-      <button class="btn-play" onclick="toggle()" id="playBtn"><i class="fas fa-play"></i></button>
-      <button class="btn-sec" onclick="next()"><i class="fas fa-step-forward"></i></button>
-    </div>
-
-    <div class="footer">
-      <button id="shuf" onclick="toggleShuffle()"><i class="fas fa-random"></i></button>
-      <button onclick="openList(false)"><i class="fas fa-list-ul"></i></button>
-      <button onclick="openList(true)"><i class="fas fa-heart"></i></button>
-      <button id="adminBtn" style="display:none; color:gold" onclick="openAdmin()"><i class="fas fa-shield-alt"></i></button>
-      <button id="rep" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+    <div class="controls">
+      <button style="background:none; border:none; color:white; font-size:25px" onclick="prev()"><i class="fas fa-backward"></i></button>
+      <button class="play-btn" id="playBtn" onclick="toggle()"><i class="fas fa-play"></i></button>
+      <button style="background:none; border:none; color:white; font-size:25px" onclick="next()"><i class="fas fa-forward"></i></button>
     </div>
   </div>
 
-  <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="about-box">
-        <h3>ExeMusic v3.1 Hyper</h3>
-        <p><b>Fitur Unggulan:</b></p>
-        <ul>
-            <li><b>Disco Mode:</b> Event khusus dengan visual dinamis.</li>
-            <li><b>Realtime Follow:</b> Sistem pengikut instan dari database.</li>
-            <li><b>Verified Badge:</b> Capai 50 followers untuk centang biru.</li>
-            <li><b>Monetisasi:</b> Reward 17rb/1$ untuk milestone tertentu (hubungi Hexky).</li>
-        </ul>
-        <p style="margin-top:10px; font-size:11px; color:#666">Developed by Hexky & Google Gemini.</p>
-        <button onclick="closeModal()" class="btn-act" style="margin-top:15px">TUTUP</button>
+  <div class="modal" id="modalAbout" onclick="this.style.display='none'">
+    <div class="modal-content">
+      <h3 style="color:var(--accent); margin-bottom:15px">Tentang ExeMusic</h3>
+      <div style="font-size:13px; line-height:1.6; color:#ccc">
+        <p><b>Realtime Tech:</b> Menggunakan Firebase RTDB untuk sinkronisasi tanpa delay.</p>
+        <p><b>Disco Mode:</b> Fitur visual party yang dikontrol admin.</p>
+        <p><b>Reward:</b> Dapatkan $1 (17rb) setiap pencapaian tertentu. Hubungi admin untuk klaim.</p>
+        <p><b>Verified:</b> Otomatis centang biru pada 50 followers.</p>
       </div>
     </div>
-  </div>
-
-  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 id="authTitle" style="text-align:center; margin-bottom:20px; color:var(--accent)">Login</h3>
-      <input id="authUser" class="inp-dark" placeholder="Username (Untuk Daftar)" style="display:none">
-      <input id="authEmail" class="inp-dark" placeholder="Email">
-      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
-      <button onclick="handleAuth()" id="authBtn" class="btn-act">MASUK</button>
-      <button onclick="toggleAuthMode()" style="background:none; border:none; color:#888; width:100%; margin-top:15px">Belum punya akun? Daftar</button>
-    </div>
-  </div>
-
-  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner" id="pBanner">
-          <div class="spotify-avatar"><img id="pAvatarImg" src="https://via.placeholder.com/150"></div>
-          <div class="spotify-info">
-              <h2 id="pUsername">User</h2>
-              <div id="pTagDisplay"></div>
-          </div>
-      </div>
-      <div class="prof-stat">
-        <div><b id="pFol">0</b><span>Followers</span></div>
-        <div><b id="pFollowing">0</b><span>Following</span></div>
-      </div>
-      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#222; color:red; margin-top:20px">LOGOUT</button>
-    </div>
-  </div>
-
-  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet"><div id="songContainer"></div></div>
   </div>
 
   <script>
@@ -305,187 +173,95 @@
       projectId: "exemusic-execuriverp",
       storageBucket: "exemusic-execuriverp.firebasestorage.app",
       messagingSenderId: "722057744401",
-      appId: "1:722057744401:web:cd6a6a103692059bda61b0",
-      measurementId: "G-2P56Y7QQ18"
+      appId: "1:722057744401:web:cd6a6a103692059bda61b0"
     };
 
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.database();
-
-    let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
-    let userData = null, discoMode = false;
-    let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
-    let broadcastTimeout;
+    let songs = [], i = 0, isDisco = false;
 
-    // --- REALTIME SETTINGS (INSTANT) ---
-    db.ref('settings').on('value', snap => {
-        const val = snap.val();
-        if(!val) return;
+    // --- INSTANT REALTIME SETTINGS ---
+    db.ref('settings').on('value', (s) => {
+      const data = s.val();
+      if(!data) return;
 
-        // Maintenance
-        if(val.mt) document.getElementById('mtScreen').style.display = 'flex';
-        else document.getElementById('mtScreen').style.display = 'none';
+      // Realtime Announcement
+      if(data.announcement) {
+        showBroadcast(data.announcement);
+      }
 
-        // Disco Mode Logic
-        if(val.discoMode !== discoMode) {
-            discoMode = val.discoMode;
-            if(discoMode) {
-                document.body.classList.add('disco-active');
-                document.getElementById('eq').classList.add('disco-eq');
-                triggerBroadcast("Disco Mode Telah Dimulai!", "✨ Let's Party!");
-            } else {
-                document.body.classList.remove('disco-active');
-                document.getElementById('eq').classList.remove('disco-eq');
-            }
+      // Realtime Disco Mode
+      if(data.discoMode !== isDisco) {
+        isDisco = data.discoMode;
+        if(isDisco) {
+          document.getElementById('mainBody').classList.add('disco-active');
+          showBroadcast("DISCO MODE TELAH DIMULAI! ✨");
+        } else {
+          document.getElementById('mainBody').classList.remove('disco-active');
         }
-
-        // Announcement
-        if(val.announcement) triggerBroadcast(val.announcement);
+      }
     });
 
-    function triggerBroadcast(msg, title = "System Announcement") {
-        const el = document.getElementById('sysBroadcast');
-        const bar = document.getElementById('sbBar');
-        document.getElementById('sbMessage').innerText = msg;
-        document.getElementById('sbTitle').innerText = title;
-        el.classList.remove('active');
-        bar.style.animation = 'none';
-        void bar.offsetWidth;
-        setTimeout(() => {
-            el.classList.add('active');
-            bar.style.animation = 'countDown 10s linear forwards';
-        }, 100);
-        clearTimeout(broadcastTimeout);
-        broadcastTimeout = setTimeout(() => el.classList.remove('active'), 10000);
+    function showBroadcast(msg) {
+      const b = document.getElementById('sysBroadcast');
+      document.getElementById('sbMsg').innerText = msg;
+      b.classList.add('active');
+      document.getElementById('sbBar').style.transition = 'none';
+      document.getElementById('sbBar').style.transform = 'scaleX(1)';
+      setTimeout(() => {
+        document.getElementById('sbBar').style.transition = 'transform 8s linear';
+        document.getElementById('sbBar').style.transform = 'scaleX(0)';
+      }, 100);
+      setTimeout(() => b.classList.remove('active'), 8000);
     }
 
-    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
-
-    // --- USER & FOLLOW SYSTEM (INSTANT) ---
-    auth.onAuthStateChanged(u => {
-      if(u) {
-        db.ref('users/' + u.uid).on('value', snap => {
-          userData = snap.val();
-          if(!userData) return;
-          if(userData.banned) { document.getElementById('bannedScreen').style.display = 'flex'; auth.signOut(); return; }
-          
-          document.getElementById('topLoginBtn').textContent = userData.username;
-          document.getElementById('pUsername').innerText = userData.username;
-          document.getElementById('pFol').innerText = userData.followers || 0;
-          document.getElementById('pFollowing').innerText = userData.following || 0;
-          document.getElementById('btnFollow').style.display = 'flex';
-          if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
-          updateFollowUI();
-        });
-      } else {
-        document.getElementById('topLoginBtn').textContent = "Login";
-        document.getElementById('btnFollow').style.display = 'none';
-      }
-      document.getElementById('loadingCard').style.display = 'none';
-    });
-
-    db.ref('songs').on('value', snap => {
-      const val = snap.val();
+    // --- LOAD SONGS ---
+    db.ref('songs').on('value', (s) => {
+      const val = s.val();
       if(val) {
-        songs = Object.keys(val).map(k => ({...val[k], key: k}));
-        if(!audio.src) setup(0, false);
+        songs = Object.keys(val).map(k => val[k]);
+        if(!audio.src) loadTrack(0);
       }
     });
 
-    async function setup(idx, play = true) {
-      if(!songs[idx]) return;
+    function loadTrack(idx) {
       i = idx;
       audio.src = songs[i].url;
-      document.getElementById('title').textContent = songs[i].title;
-      const cRef = await db.ref('users/' + songs[i].uid).get();
-      const cData = cRef.val();
-      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + (cData?.followers >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '');
-      if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
-      updateFollowUI();
+      document.getElementById('title').innerText = songs[i].title;
+      document.getElementById('artist').innerText = "@" + songs[i].by;
     }
 
-    async function followUser() {
-      if(!auth.currentUser) return msg("Login dulu!");
-      const target = songs[i].uid;
-      if(!target || target === auth.currentUser.uid) return msg("Tidak bisa follow diri sendiri");
-
-      const fRef = db.ref('follows/' + target + '/' + auth.currentUser.uid);
-      const snap = await fRef.get();
-      if(snap.exists()) {
-          await fRef.remove();
-          db.ref('users/' + target + '/followers').transaction(c => (c || 0) - 1);
-          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
-      } else {
-          await fRef.set(true);
-          db.ref('users/' + target + '/followers').transaction(c => (c || 0) + 1);
-          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
-      }
-    }
-
-    async function updateFollowUI() {
-      if(!auth.currentUser || !songs[i].uid) return;
-      db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).on('value', s => {
-          const btn = document.getElementById('btnFollow');
-          btn.innerHTML = s.exists() ? '<i class="fas fa-check"></i>' : '<i class="fas fa-plus"></i>';
-          btn.style.background = s.exists() ? "#444" : "var(--tiktok-red)";
-      });
-    }
-
-    // --- CORE AUDIO ---
     function toggle() {
-      if(audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
-      else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
+      if(audio.paused) {
+        audio.play();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+        document.getElementById('eq').classList.add('playing');
+      } else {
+        audio.pause();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        document.getElementById('eq').classList.remove('playing');
+      }
     }
-    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
-    function prev() { setup((i-1+songs.length)%songs.length); }
+
+    function next() { i = (i + 1) % songs.length; loadTrack(i); audio.play(); }
+    function prev() { i = (i - 1 + songs.length) % songs.length; loadTrack(i); audio.play(); }
+
     audio.ontimeupdate = () => {
-      document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
-      document.getElementById('cur').textContent = fmt(audio.currentTime);
-      document.getElementById('dur').textContent = fmt(audio.duration);
+      const p = (audio.currentTime / audio.duration) * 100;
+      document.getElementById('seek').value = p || 0;
+      document.getElementById('cur').innerText = formatTime(audio.currentTime);
+      document.getElementById('dur').innerText = formatTime(audio.duration);
     };
-    document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
-    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
-    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
 
-    // --- UI HELPERS ---
-    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
-    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-    function openProfile() { if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; else document.getElementById('modalProfile').style.display='block'; }
-    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
-    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
-    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link disalin"); }
-    function shareLink() { navigator.clipboard.writeText(window.location.href); msg("Player disalin"); }
-    function downloadSong() { window.open(songs[i].url); }
-    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
-    function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
-
-    function handleAuth() {
-      const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
-      if(isLoginMode) auth.signInWithEmailAndPassword(e, p).then(closeModal).catch(err => msg(err.message));
-      else {
-        const u = document.getElementById('authUser').value;
-        auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', followers: 0, following: 0, banned: false });
-          closeModal();
-        }).catch(err => msg(err.message));
-      }
+    function formatTime(sec) {
+      if(isNaN(sec)) return "0:00";
+      let m = Math.floor(sec/60), s = Math.floor(sec%60);
+      return m + ":" + (s < 10 ? "0"+s : s);
     }
 
-    async function openList(f) {
-      const c = document.getElementById('songContainer');
-      const list = f ? songs.filter(s => fav.includes(s.url)) : songs;
-      c.innerHTML = '<p style="text-align:center; padding:20px">Memuat...</p>';
-      let h = "";
-      for(let s of list) {
-          h += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div><b>${s.title}</b><br><small>@${s.by}</small></div><i class="fas fa-play"></i></div>`;
-      }
-      c.innerHTML = h;
-      document.getElementById('modalList').style.display='block';
-    }
+    function openAbout() { document.getElementById('modalAbout').style.display = 'flex'; }
+
   </script>
 </body>
 </html>
