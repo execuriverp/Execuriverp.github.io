@@ -3,395 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADMIN EXEMUSIC</title>
+    <title>EXE.ADMIN // OVERLORD V3</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { 
-            --bg-deep: #050505;
-            --bg-panel: #0a0a0f;
-            --bg-card: rgba(20, 20, 25, 0.7);
+        :root {
+            --bg: #050507;
+            --panel: #0d0d12;
             --accent: #00f3ff;
-            --accent-dim: rgba(0, 243, 255, 0.1);
             --danger: #ff0055;
             --warning: #ffcc00;
             --success: #00ff99;
-            --text-main: #e0e6ed;
-            --text-muted: #5c6370;
-            --border: rgba(255, 255, 255, 0.05);
-            --font-ui: 'Rajdhani', sans-serif;
-            --font-code: 'JetBrains Mono', monospace;
+            --border: rgba(0, 243, 255, 0.1);
         }
 
-        * { box-sizing: border-box; outline: none; user-select: none; }
-        
-        body { 
-            background: var(--bg-deep); 
-            color: var(--text-main); 
-            margin: 0; 
-            font-family: var(--font-ui); 
-            height: 100vh; 
-            overflow: hidden; 
+        body {
+            background: var(--bg);
+            color: #e0e6ed;
+            margin: 0;
+            font-family: 'Rajdhani', sans-serif;
             display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* --- CRT EFFECT OVERLAY --- */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
+        /* --- UI GLITCH & CRT --- */
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            pointer-events: none; z-index: 999;
         }
-
-        /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); }
 
         /* --- SIDEBAR --- */
         .sidebar {
-            width: 260px;
-            background: var(--bg-panel);
+            width: 260px; background: var(--panel);
             border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            padding: 25px;
-            z-index: 10;
-            position: relative;
+            display: flex; flex-direction: column; padding: 25px;
         }
 
         .brand {
-            font-family: var(--font-code);
-            font-size: 24px;
-            color: var(--accent);
-            text-shadow: 0 0 15px var(--accent);
-            margin-bottom: 50px;
-            letter-spacing: -1px;
-            display: flex; align-items: center; gap: 10px;
+            font-family: 'JetBrains Mono', monospace; font-size: 20px;
+            color: var(--accent); margin-bottom: 40px; text-shadow: 0 0 10px var(--accent);
         }
 
         .nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 16px;
-            text-align: left;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            border-radius: 4px;
-            display: flex; align-items: center; gap: 15px;
-            margin-bottom: 8px;
-            font-family: var(--font-ui);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
+            background: none; border: none; color: #676e79;
+            padding: 15px; text-align: left; font-size: 15px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px;
+            border-radius: 4px; margin-bottom: 5px; font-weight: bold;
         }
 
-        .nav-btn::before {
-            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 0;
-            background: var(--accent); opacity: 0.1; transition: 0.3s;
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--accent); background: rgba(0, 243, 255, 0.05);
+            box-shadow: inset 3px 0 0 var(--accent);
         }
 
-        .nav-btn:hover { color: #fff; }
-        .nav-btn:hover::before { width: 100%; }
-
-        .nav-btn.active {
-            color: var(--accent);
-            background: linear-gradient(90deg, var(--accent-dim), transparent);
-            border-left: 2px solid var(--accent);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.05);
+        /* --- CONTENT AREA --- */
+        .main-view {
+            flex: 1; padding: 40px; overflow-y: auto; position: relative;
         }
 
-        /* --- MAIN CONTENT --- */
-        .main {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            position: relative;
-            background: radial-gradient(circle at top right, #11111a, #000);
+        .view-section { display: none; animation: slideUp 0.4s ease; }
+        .view-section.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-title {
-            font-size: 28px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 2px; color: #fff;
-            display: flex; align-items: center; gap: 15px;
-        }
-
-        /* --- TABS SYSTEM --- */
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- CARDS & PANELS --- */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px; margin-bottom: 30px;
-        }
-
+        /* --- CARDS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 25px;
-            border-radius: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0.5;
+            background: rgba(20, 20, 25, 0.8); border: 1px solid var(--border);
+            padding: 25px; border-radius: 8px; position: relative;
         }
 
-        .stat-val { font-size: 36px; font-family: var(--font-code); font-weight: 800; color: #fff; margin: 10px 0; }
-        .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- INPUTS & BUTTONS --- */
-        .input-group { display: flex; gap: 10px; }
+        .stat-num { font-family: 'JetBrains Mono'; font-size: 35px; color: #fff; }
         
+        /* --- TABLE / LIST --- */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .data-table th { text-align: left; padding: 12px; color: var(--accent); border-bottom: 2px solid var(--border); }
+        .data-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- INPUTS --- */
         .cyber-input {
-            width: 100%;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-            padding: 12px 20px;
-            color: var(--accent);
-            font-family: var(--font-code);
-            font-size: 14px;
-            transition: 0.3s;
+            background: #000; border: 1px solid var(--border); padding: 12px;
+            color: var(--accent); font-family: 'JetBrains Mono'; width: 100%; border-radius: 4px;
         }
-        .cyber-input:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-dim); }
 
         .btn {
-            background: var(--bg-panel);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: var(--font-code);
-            font-size: 12px;
-            text-transform: uppercase;
-            font-weight: bold;
-            transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;
+            font-weight: bold; font-family: 'JetBrains Mono'; transition: 0.2s;
         }
+        .btn-neon { background: var(--accent); color: #000; }
+        .btn-danger { background: var(--danger); color: #fff; }
 
-        .btn-neon { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
-        .btn-neon:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent); }
-        
-        .btn-danger { color: var(--danger); border-color: rgba(255, 0, 85, 0.3); }
-        .btn-danger:hover { background: var(--danger); color: #fff; box-shadow: 0 0 20px var(--danger); }
-
-        .btn-warn { color: var(--warning); border-color: rgba(255, 204, 0, 0.3); }
-        .btn-warn:hover { background: var(--warning); color: #000; }
-
-        /* --- LISTS --- */
-        .data-list { max-height: 60vh; overflow-y: auto; padding-right: 10px; }
-        
-        .list-row {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.02);
-            padding: 15px; margin-bottom: 5px;
-            border-left: 2px solid transparent;
-            transition: 0.2s;
+        /* --- CAPTCHA OVERLAY --- */
+        #lockScreen {
+            position: fixed; inset: 0; background: #050507; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .list-row:hover { background: rgba(255,255,255,0.05); border-left-color: var(--accent); }
-        
-        /* --- SECURITY OVERLAY --- */
-        #securityOverlay {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
-        }
-        
-        canvas#captchaCanvas {
-            border: 1px solid var(--border);
-            margin: 20px 0;
-            background: #080808;
-            cursor: not-allowed;
-        }
-
-        /* --- TERMINAL --- */
-        .terminal-window {
-            background: #000;
-            border: 1px solid #333;
-            height: 300px;
-            font-family: var(--font-code);
-            font-size: 12px;
-            padding: 15px;
-            overflow-y: auto;
-            color: var(--success);
-        }
-        .log-line { margin-bottom: 5px; opacity: 0.8; }
-        .log-ts { color: #666; margin-right: 10px; }
-
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-<div id="securityOverlay">
-    <div style="text-align: center; width: 350px;">
-        <i class="fas fa-fingerprint" style="font-size: 60px; color: var(--danger); margin-bottom: 20px; animation: pulse 2s infinite"></i>
-        <h2 style="font-family: var(--font-code); color: #fff; margin:0; letter-spacing: 3px;">SYSTEM LOCKED</h2>
-        <p style="color: #666; font-size: 12px; margin-bottom: 20px; font-family: var(--font-code);">IDENTITY VERIFICATION REQUIRED</p>
-        
-        <canvas id="captchaCanvas" width="300" height="80"></canvas>
-        <div style="font-size: 10px; color: #444; margin-bottom: 10px;">HUMAN VERIFICATION</div>
-        
-        <input type="text" id="secInput" class="cyber-input" style="text-align: center; font-size: 20px; letter-spacing: 5px; color: #fff;" maxlength="5" placeholder="ENTER CODE" onpaste="return false" autocomplete="off">
-        
-        <button class="btn btn-neon" style="width: 100%; margin-top: 20px; padding: 15px;" onclick="unlockSystem()">
-            <i class="fas fa-unlock"></i> AUTHENTICATE
-        </button>
+<div id="lockScreen">
+    <div style="text-align: center;">
+        <i class="fas fa-shield-virus" style="font-size: 50px; color: var(--danger); margin-bottom: 15px;"></i>
+        <h2 style="letter-spacing: 5px;">SYSTEM ENCRYPTED</h2>
+        <canvas id="capCanvas" width="250" height="80" style="background: #111; margin: 20px 0; border: 1px dashed var(--accent);"></canvas>
+        <input type="text" id="capInput" class="cyber-input" placeholder="VERIFY PROTOCOL" style="text-align: center; width: 250px;" maxlength="5">
+        <button class="btn btn-neon" style="width: 250px; margin-top: 15px;" onclick="verifyCaptcha()">INITIALIZE</button>
     </div>
 </div>
 
 <div class="sidebar">
-    <div class="brand">
-        <i class="fas fa-network-wired"></i> OVERLORD
-    </div>
+    <div class="brand"><i class="fas fa-biohazard"></i> EXE.OVERLORD</div>
+    <button class="nav-btn active" onclick="showView('dash')"><i class="fas fa-th-large"></i> DASHBOARD</button>
+    <button class="nav-btn" onclick="showView('users')"><i class="fas fa-user-shield"></i> USER MANAGER</button>
+    <button class="nav-btn" onclick="showView('songs')"><i class="fas fa-music"></i> SONG DATABASE</button>
     
-    <nav>
-        <button class="nav-btn active" onclick="switchTab('dashboard')">
-            <i class="fas fa-chart-pie"></i> Dashboard
-        </button>
-        <button class="nav-btn" onclick="switchTab('users')">
-            <i class="fas fa-users-cog"></i> User Manager
-        </button>
-        <button class="nav-btn" onclick="switchTab('songs')">
-            <i class="fas fa-database"></i> Song Database
-        </button>
-    </nav>
-
     <div style="margin-top: auto;">
-        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; border: 1px solid #222; margin-bottom: 10px;">
-            <div style="font-size: 10px; color: #666;">SERVER NODE</div>
-            <div style="font-family: var(--font-code); color: var(--success); font-size: 11px;">ASIA-SE1 [ONLINE]</div>
-        </div>
-        <button class="btn btn-danger" style="width: 100%;" onclick="logout()">
-            <i class="fas fa-power-off"></i> TERMINATE
-        </button>
+        <button class="btn btn-danger" style="width: 100%;" onclick="logout()">LOGOUT</button>
     </div>
 </div>
 
-<div class="main">
-    
-    <div class="top-bar">
-        <div class="section-title">
-            <i class="fas fa-terminal"></i> <span id="pageTitle">COMMAND CENTER</span>
-        </div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div style="text-align: right;">
-                <div style="font-size: 10px; color: var(--text-muted);">ADMINISTRATOR</div>
-                <div style="font-family: var(--font-code); font-weight: bold;">ROOT_ACCESS</div>
-            </div>
-            <div style="width: 40px; height: 40px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent);">
-                <i class="fas fa-user-astronaut" style="color: var(--accent);"></i>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-dashboard" class="tab-content active">
-        <div class="stats-grid">
+<div class="main-view">
+    <div id="view-dash" class="view-section active">
+        <h1 style="margin-top:0">DASHBOARD_SUMMARY</h1>
+        <div class="grid">
             <div class="card">
-                <div class="stat-label">Total Users</div>
-                <div class="stat-val" id="countUsers">0</div>
-                <i class="fas fa-users" style="position: absolute; right: 20px; bottom: 20px; font-size: 40px; color: #fff; opacity: 0.05;"></i>
+                <div style="color: var(--accent)">TOTAL_USERS</div>
+                <div class="stat-num" id="stat-u">0</div>
             </div>
             <div class="card">
-                <div class="stat-label">Library Size</div>
-                <div class="stat-val" id="countSongs">0</div>
-                <i class="fas fa-music" style="position: absolute; right: 20px; bottom: 20px; font-size: 40px; color: #fff; opacity: 0.05;"></i>
+                <div style="color: var(--accent)">TOTAL_SONGS</div>
+                <div class="stat-num" id="stat-s">0</div>
             </div>
-            <div class="card" style="border-color: var(--warning);">
-                <div class="stat-label">System Mode</div>
-                <div class="stat-val" id="mtDisplay" style="font-size: 20px; color: var(--warning);">NORMAL</div>
-                <button id="mtBtn" class="btn btn-warn" style="margin-top: 10px; width: 100%; font-size: 10px;" onclick="toggleMT()">TOGGLE MAINTENANCE</button>
-            </div>
-        </div>
-
-        <div class="card" style="margin-bottom: 20px; border-color: var(--accent);">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span class="stat-label" style="color: var(--accent);"><i class="fas fa-bullhorn"></i> GLOBAL BROADCAST</span>
-                <span id="currentAnnStatus" style="font-size: 10px; font-family: var(--font-code); color: #666;">IDLE</span>
-            </div>
-            <div class="input-group">
-                <input type="text" id="annInput" class="cyber-input" placeholder="Type system alert message...">
-                <button class="btn btn-neon" onclick="sendBroadcast()">TRANSMIT</button>
-                <button class="btn btn-danger" onclick="clearBroadcast()" title="Hapus Pengumuman"><i class="fas fa-trash"></i></button>
+            <div class="card" id="mt-card">
+                <div style="color: var(--warning)">MAINTENANCE_STATUS</div>
+                <div class="stat-num" id="stat-mt" style="font-size: 18px;">FETCHING...</div>
+                <button class="btn btn-neon" style="font-size: 10px; width: 100%; margin-top: 10px;" onclick="toggleMT()">TOGGLE MT</button>
             </div>
         </div>
 
-        <div class="card" style="padding: 0; background: #000;">
-            <div style="padding: 10px 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
-                <span class="stat-label">KERNEL_LOGS.TXT</span>
-                <button class="btn" style="padding: 2px 8px; font-size: 10px;" onclick="clearLogs()">CLEAR</button>
+        <div class="card" style="margin-top: 20px;">
+            <div style="color: var(--success); margin-bottom: 15px;">GLOBAL_ANNOUNCEMENT</div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="annInput" class="cyber-input" placeholder="Broadcast message...">
+                <button class="btn btn-neon" onclick="saveAnn()">SEND</button>
+                <button class="btn btn-danger" onclick="clearAnn()">CLEAR</button>
             </div>
-            <div id="terminalLog" class="terminal-window">
-                </div>
         </div>
-        
-        <div style="margin-top: 20px;">
-             <button class="btn btn-danger" style="width: 100%; border-style: dashed;" onclick="nukeCooldowns()">
-                <i class="fas fa-radiation"></i> EMERGENCY: RESET ALL UPLOAD COOLDOWNS
-            </button>
+
+        <div class="card" style="margin-top: 20px; background: #000;">
+            <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #555; margin-bottom: 10px;">SYSTEM_LOGS</div>
+            <div id="logBox" style="height: 150px; overflow-y: auto; font-family: 'JetBrains Mono'; font-size: 11px; color: var(--success);"></div>
         </div>
     </div>
 
-    <div id="tab-users" class="tab-content">
-        <div class="input-group" style="margin-bottom: 20px;">
-            <i class="fas fa-search" style="padding: 12px; background: #111; border: 1px solid var(--border); color: #666;"></i>
-            <input type="text" id="searchUser" class="cyber-input" placeholder="Search username..." onkeyup="filterUsers()">
-        </div>
-        <div class="card" style="padding: 0;">
-            <div class="list-row" style="background: #111; font-weight: bold; font-family: var(--font-code); font-size: 12px; color: #888;">
-                <div style="flex: 1;">IDENTITY</div>
-                <div style="width: 100px;">ROLE</div>
-                <div style="width: 100px; text-align: right;">ACTION</div>
-            </div>
-            <div id="userList" class="data-list">
-                </div>
-        </div>
+    <div id="view-users" class="view-section">
+        <h1>USER_MANAGEMENT</h1>
+        <input type="text" class="cyber-input" placeholder="Search user..." onkeyup="filterTabel('userTable', this.value)">
+        <table class="data-table" id="userTable">
+            <thead>
+                <tr><th>USERNAME</th><th>ROLE</th><th>STATUS</th><th>ACTION</th></tr>
+            </thead>
+            <tbody id="userList"></tbody>
+        </table>
     </div>
 
-    <div id="tab-songs" class="tab-content">
-        <div class="input-group" style="margin-bottom: 20px;">
-            <i class="fas fa-search" style="padding: 12px; background: #111; border: 1px solid var(--border); color: #666;"></i>
-            <input type="text" id="searchSong" class="cyber-input" placeholder="Search song title or artist..." onkeyup="filterSongs()">
-        </div>
-        <div class="card" style="padding: 0;">
-            <div class="list-row" style="background: #111; font-weight: bold; font-family: var(--font-code); font-size: 12px; color: #888;">
-                <div style="flex: 2;">METADATA</div>
-                <div style="flex: 1;">UPLOADER</div>
-                <div style="width: 120px; text-align: right;">CONTROLS</div>
-            </div>
-            <div id="songList" class="data-list">
-                </div>
-        </div>
+    <div id="view-songs" class="view-section">
+        <h1>SONG_REPOSITORY</h1>
+        <input type="text" class="cyber-input" placeholder="Search title/artist..." onkeyup="filterTabel('songTable', this.value)">
+        <table class="data-table" id="songTable">
+            <thead>
+                <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTION</th></tr>
+            </thead>
+            <tbody id="songList"></tbody>
+        </table>
     </div>
-
 </div>
 
 <script>
-// --- FIREBASE CONFIG ---
+    // --- CONFIG --- (Sesuaikan dengan data kamu)
     const firebaseConfig = {
         apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
         authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -399,335 +201,160 @@
         projectId: "exemusic-execuriverp",
         storageBucket: "exemusic-execuriverp.firebasestorage.app",
         messagingSenderId: "722057744401",
-        appId: "1:722057744401:web:cd6a6a103692059bda61b0",
-        measurementId: "G-2P56Y7QQ18"
+        appId: "1:722057744401:web:cd6a6a103692059bda61b0"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
 
-    let songsData = [];
-    let usersData = [];
-    let generatedCaptchaCode = "";
-    let mtStatus = false;
+    let capCode = "";
+    let isMT = false;
 
-    // --- SECURITY & CAPTCHA ---
-    function initSecurity() {
-        const canvas = document.getElementById('captchaCanvas');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#080808';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        let code = "";
-        for(let i=0; i<5; i++) { code += chars.charAt(Math.floor(Math.random() * chars.length)); }
-        generatedCaptchaCode = code;
-
-        ctx.font = "bold 42px 'JetBrains Mono'";
-        for(let i=0; i<code.length; i++) {
-            ctx.save();
-            ctx.translate(40 + i * 50, 45);
-            ctx.rotate((Math.random() - 0.5) * 0.3);
-            ctx.fillStyle = i % 2 === 0 ? "#00f3ff" : "#ff0055";
-            ctx.fillText(code[i], 0, 0);
-            ctx.restore();
+    // --- CAPTCHA ---
+    function genCap() {
+        const c = document.getElementById('capCanvas');
+        const ctx = c.getContext('2d');
+        capCode = Math.random().toString(36).substring(2, 7).toUpperCase();
+        ctx.fillStyle = "#111"; ctx.fillRect(0,0,250,80);
+        ctx.font = "bold 35px 'JetBrains Mono'";
+        ctx.fillStyle = "#00f3ff"; ctx.textAlign = "center";
+        ctx.fillText(capCode, 125, 50);
+        for(let i=0; i<5; i++) {
+            ctx.strokeStyle = "rgba(255,0,85,0.5)"; ctx.beginPath();
+            ctx.moveTo(Math.random()*250, Math.random()*80); ctx.lineTo(Math.random()*250, Math.random()*80);
+            ctx.stroke();
         }
     }
 
-    function unlockSystem() {
-        if(document.getElementById('secInput').value.toUpperCase() === generatedCaptchaCode) {
-            document.getElementById('securityOverlay').style.opacity = '0';
-            setTimeout(() => document.getElementById('securityOverlay').style.display = 'none', 500);
+    function verifyCaptcha() {
+        if(document.getElementById('capInput').value.toUpperCase() === capCode) {
+            document.getElementById('lockScreen').style.display = 'none';
         } else {
-            Swal.fire({ icon: 'error', title: 'INVALID CODE', background: '#000', color: '#fff' });
-            initSecurity();
-            document.getElementById('secInput').value = '';
+            Swal.fire('ERROR', 'Invalid Protocol Code', 'error'); genCap();
         }
     }
 
-    // --- TAB SYSTEM ---
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(`tab-${tabId}`).classList.add('active');
+    // --- NAVIGATION ---
+    function showView(id) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('view-'+id).classList.add('active');
         event.currentTarget.classList.add('active');
-        document.getElementById('pageTitle').innerText = tabId.toUpperCase().replace('-', ' ');
     }
 
-    // --- CORE DATA ENGINE ---
-    function initListeners() {
-        console.log("System: Connecting to Database...");
-
-        // Listen Songs
-        db.ref('songs').on('value', snap => {
-            songsData = [];
-            if (snap.exists()) {
-                snap.forEach(c => {
-                    let s = c.val();
-                    s.key = c.key;
-                    songsData.push(s);
-                });
-            }
-            document.getElementById('countSongs').innerText = songsData.length;
-            renderSongs(songsData);
-        }, err => console.error("Songs Load Error:", err));
-
-        // Listen Users
-        db.ref('users').on('value', snap => {
-            usersData = [];
-            if (snap.exists()) {
-                snap.forEach(c => {
-                    let u = c.val();
-                    u.key = c.key;
-                    usersData.push(u);
-                });
-            }
-            document.getElementById('countUsers').innerText = usersData.length;
-            renderUsers(usersData);
-        }, err => console.error("Users Load Error:", err));
-
-        // Maintenance Toggle (Realtime)
-        db.ref('settings/mt').on('value', snap => {
-            mtStatus = snap.val() === true;
-            const disp = document.getElementById('mtDisplay');
-            const btn = document.getElementById('mtBtn');
-            disp.innerText = mtStatus ? "MAINTENANCE ACTIVE" : "SYSTEM NORMAL";
-            disp.style.color = mtStatus ? "var(--danger)" : "var(--success)";
-            btn.className = mtStatus ? "btn btn-danger" : "btn btn-warn";
-        });
-
-        // Broadcast/Announcement
-        db.ref('settings/announcement').on('value', snap => {
-            const val = snap.val();
-            document.getElementById('currentAnnStatus').innerText = val ? "BROADCAST ACTIVE" : "NO BROADCAST";
-            if(!document.getElementById('annInput').matches(':focus')) {
-                document.getElementById('annInput').value = val || "";
-            }
-        });
-
-        // Logs
-        db.ref('logs').limitToLast(30).on('value', snap => {
-            const logBox = document.getElementById('terminalLog');
-            let html = '';
-            snap.forEach(c => {
-                const l = c.val();
-                html += `<div class="log-line"><span class="log-ts">[${l.time || '00:00'}]</span> ${l.msg}</div>`;
-            });
-            logBox.innerHTML = html;
-            logBox.scrollTop = logBox.scrollHeight;
-        });
-    }
-
-    // --- UI RENDERING ---
-    function renderUsers(data) {
-        const list = document.getElementById('userList');
-        list.innerHTML = data.map(u => `
-            <div class="list-row">
-                <div style="flex:1">
-                    <div style="color:${u.banned ? 'var(--danger)' : '#fff'}; font-weight:bold">${u.username || 'Unknown'}</div>
-                    <small style="color:#555">${u.key}</small>
-                </div>
-                <div style="width:100px; color:var(--accent)">${(u.role || 'user').toUpperCase()}</div>
-                <div style="width:100px; text-align:right">
-                    <button class="btn ${u.banned ? 'btn-neon' : 'btn-danger'}" onclick="toggleBan('${u.key}', '${u.username}', ${u.banned})">
-                        ${u.banned ? 'UNBAN' : 'BAN'}
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function renderSongs(data) {
-        const list = document.getElementById('songList');
-        list.innerHTML = data.slice().reverse().map(s => `
-            <div class="list-row">
-                <div style="flex:2">
-                    <div style="color:#fff; font-weight:bold">${s.title || 'Untitled'}</div>
-                    <small style="color:#666">${s.by || 'Unknown Artist'}</small>
-                </div>
-                <div style="flex:1; font-size:12px; color:var(--accent)">${s.uploadedBy || 'System'}</div>
-                <div style="width:120px; text-align:right; display:flex; gap:5px; justify-content:flex-end">
-                    <a href="${s.url}" target="_blank" class="btn"><i class="fas fa-play"></i></a>
-                    <button class="btn btn-danger" onclick="deleteSong('${s.key}', '${s.title}')"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // --- ACTIONS ---
-    function toggleMT() {
-        const next = !mtStatus;
-        db.ref('settings').update({ mt: next });
-        logAction(`MT Mode changed to ${next}`);
-    }
-
-    function sendBroadcast() {
-        const val = document.getElementById('annInput').value;
-        if(val) {
-            db.ref('settings').update({ announcement: val });
-            logAction(`Sent Broadcast: ${val}`);
-            Swal.fire({ icon: 'success', title: 'TRANSMITTED', background: '#000', color: '#fff' });
-        }
-    }
-
-    function clearBroadcast() {
-        db.ref('settings/announcement').remove();
-        logAction(`Cleared Broadcast Message`);
-    }
-
-    function deleteSong(id, title) {
-        if(confirm(`Purge ${title} from database?`)) {
-            db.ref(`songs/${id}`).remove();
-            logAction(`DELETED SONG: ${title}`);
-        }
-    }
-
-    function toggleBan(id, name, status) {
-        db.ref(`users/${id}`).update({ banned: !status });
-        logAction(`${!status ? 'BANNED' : 'UNBANNED'} USER: ${name}`);
-    }
-
-    function logAction(msg) {
-        const t = new Date().toLocaleTimeString();
-        db.ref('logs').push({ msg, time: t });
-    }
-
-    function logout() {
-        auth.signOut().then(() => window.location.href = 'exemusic.html');
-    }
-
-    // --- AUTH CHECK ---
+    // --- CORE LOGIC ---
     auth.onAuthStateChanged(user => {
-        if (user) {
+        if(user) {
             db.ref('users/' + user.uid).once('value', snap => {
-                if (snap.val()?.role === 'admin') {
-                    initListeners();
-                    initSecurity();
+                if(snap.val()?.role === 'admin') {
+                    loadData();
+                    genCap();
                 } else { window.location.href = 'exemusic.html'; }
             });
         } else { window.location.href = 'exemusic.html'; }
     });
 
-    function filterUsers() {
-        const q = document.getElementById('searchUser').value.toLowerCase();
-        renderUsers(usersData.filter(u => u.username?.toLowerCase().includes(q)));
-    }
-    function filterSongs() {
-        const q = document.getElementById('searchSong').value.toLowerCase();
-        renderSongs(songsData.filter(s => s.title?.toLowerCase().includes(q) || s.by?.toLowerCase().includes(q)));
+    function loadData() {
+        // Users
+        db.ref('users').on('value', snap => {
+            const list = document.getElementById('userList');
+            let html = ''; let count = 0;
+            snap.forEach(c => {
+                const u = c.val(); count++;
+                html += `<tr>
+                    <td>${u.username}</td>
+                    <td>${u.role || 'user'}</td>
+                    <td style="color:${u.banned ? 'red' : 'green'}">${u.banned ? 'BANNED' : 'ACTIVE'}</td>
+                    <td><button onclick="toggleBan('${c.key}', ${u.banned})" class="btn" style="background:#222; color:#fff">${u.banned ? 'UNBAN' : 'BAN'}</button></td>
+                </tr>`;
+            });
+            list.innerHTML = html;
+            document.getElementById('stat-u').innerText = count;
+        });
+
+        // Songs
+        db.ref('songs').on('value', snap => {
+            const list = document.getElementById('songList');
+            let html = ''; let count = 0;
+            snap.forEach(c => {
+                const s = c.val(); count++;
+                html += `<tr>
+                    <td>${s.title}</td>
+                    <td>${s.by || '-'}</td>
+                    <td>${s.uploadedBy || 'System'}</td>
+                    <td><button onclick="delSong('${c.key}')" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+            });
+            list.innerHTML = html;
+            document.getElementById('stat-s').innerText = count;
+        });
+
+        // MT Status
+        db.ref('settings/mt').on('value', snap => {
+            isMT = snap.val();
+            const el = document.getElementById('stat-mt');
+            el.innerText = isMT ? "ACTIVE" : "OFFLINE";
+            el.style.color = isMT ? "var(--danger)" : "var(--success)";
+        });
+
+        // Ann
+        db.ref('settings/announcement').on('value', snap => {
+            document.getElementById('annInput').value = snap.val() || "";
+        });
+
+        // Logs
+        db.ref('logs').limitToLast(20).on('value', snap => {
+            const box = document.getElementById('logBox');
+            let h = '';
+            snap.forEach(c => { h += `<div>> ${c.val().time}: ${c.val().msg}</div>`; });
+            box.innerHTML = h; box.scrollTop = box.scrollHeight;
+        });
     }
 
     // --- ACTIONS ---
-
     function toggleMT() {
-        // Toggle boolean status
-        const newState = !mtStatus;
-        db.ref('settings/mt').set(newState)
-            .then(() => {
-                logAction(`MAINTENANCE MODE SET TO: ${newState.toString().toUpperCase()}`);
-                Swal.fire({
-                    icon: newState ? 'warning' : 'success',
-                    title: 'SYSTEM UPDATED',
-                    text: `Maintenance Mode is now ${newState ? 'ON' : 'OFF'}`,
-                    background: '#111', color: '#fff', timer: 1500, showConfirmButton: false
-                });
-            });
+        db.ref('settings').update({ mt: !isMT });
+        logIt(`Maintenance toggled to ${!isMT}`);
     }
 
-    function sendBroadcast() {
-        const msg = document.getElementById('annInput').value;
-        if(!msg) return;
-        db.ref('settings/announcement').set(msg);
-        logAction(`Broadcast sent: "${msg}"`);
-        Swal.fire({ icon: 'success', title: 'SENT', background: '#111', color: '#fff', timer: 1000, showConfirmButton: false });
+    function saveAnn() {
+        const val = document.getElementById('annInput').value;
+        db.ref('settings').update({ announcement: val });
+        logIt(`Ann updated: ${val}`);
+        Swal.fire('SUCCESS', 'Broadcast sent', 'success');
     }
 
-    function clearBroadcast() {
-        Swal.fire({
-            title: 'REMOVE ANNOUNCEMENT?',
-            text: "This will clear the alert from all users.",
-            icon: 'question', showCancelButton: true,
-            confirmButtonColor: '#ff0055', cancelButtonColor: '#333',
-            background: '#111', color: '#fff'
-        }).then((res) => {
-            if(res.isConfirmed) {
-                db.ref('settings/announcement').remove(); // Menghapus field
-                logAction('Broadcast message cleared');
-                Swal.fire({ icon: 'success', title: 'CLEARED', background: '#111', color: '#fff', timer: 1000, showConfirmButton: false });
-            }
+    function clearAnn() {
+        db.ref('settings/announcement').remove();
+        logIt(`Ann cleared`);
+    }
+
+    function toggleBan(uid, current) {
+        db.ref('users/' + uid).update({ banned: !current });
+        logIt(`User ${uid} status changed`);
+    }
+
+    function delSong(id) {
+        if(confirm('Purge this song?')) {
+            db.ref('songs/' + id).remove();
+            logIt(`Song ${id} removed`);
+        }
+    }
+
+    function logIt(msg) {
+        db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() });
+    }
+
+    function filterTabel(tableId, query) {
+        const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+        rows.forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
         });
     }
 
-    function toggleBan(uid, name, currentStatus) {
-        const action = currentStatus ? "UNBAN" : "BAN";
-        Swal.fire({
-            title: `CONFIRM ${action}?`,
-            text: `User: ${name}`,
-            icon: 'warning', showCancelButton: true,
-            confirmButtonColor: currentStatus ? '#00f3ff' : '#ff0055',
-            cancelButtonColor: '#333',
-            background: '#111', color: '#fff'
-        }).then((res) => {
-            if(res.isConfirmed) {
-                db.ref(`users/${uid}/banned`).set(!currentStatus);
-                logAction(`User ${name} was ${action}NED`);
-            }
-        });
-    }
-
-    function deleteSong(key, title) {
-        Swal.fire({
-            title: 'DELETE DATA?',
-            text: `Removing: ${title}`,
-            icon: 'warning', showCancelButton: true,
-            confirmButtonColor: '#ff0055', cancelButtonColor: '#333',
-            background: '#111', color: '#fff'
-        }).then((res) => {
-            if(res.isConfirmed) {
-                db.ref(`songs/${key}`).remove();
-                logAction(`Deleted song: ${title}`);
-            }
-        });
-    }
-
-    function nukeCooldowns() {
-        Swal.fire({
-            title: 'NUCLEAR OPTION',
-            text: "RESET ALL UPLOAD TIMERS?",
-            icon: 'warning', showCancelButton: true,
-            confirmButtonColor: '#ff0055', cancelButtonColor: '#333',
-            background: '#111', color: '#fff', confirmButtonText: 'EXECUTE'
-        }).then((res) => {
-            if(res.isConfirmed) {
-                db.ref('users').once('value', s => {
-                    let updates = {};
-                    s.forEach(c => { updates[`users/${c.key}/lastUpload`] = 0; });
-                    db.ref().update(updates);
-                    logAction("GLOBAL COOLDOWN RESET EXECUTED");
-                    Swal.fire({ icon: 'success', title: 'DONE', background: '#111', color: '#fff', timer: 1000, showConfirmButton: false });
-                });
-            }
-        });
-    }
-
-    function logAction(msg) {
-        const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-        db.ref('logs').push({ msg: msg, time: time });
-    }
-
-    function clearLogs() {
-        db.ref('logs').remove();
-    }
-
-    function logout() {
-        auth.signOut().then(() => window.location.href = 'exemusic.html');
-    }
-
-    // Init
-    initSecurity();
-
+    function logout() { auth.signOut(); }
 </script>
+
 </body>
 </html>
