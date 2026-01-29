@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXE.ADMIN // OVERLORD V3</title>
+    <title>EXE.ADMIN // OVERLORD V4</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -14,186 +14,121 @@
 
     <style>
         :root {
-            --bg: #050507;
-            --panel: #0d0d12;
-            --accent: #00f3ff;
-            --danger: #ff0055;
-            --warning: #ffcc00;
-            --success: #00ff99;
+            --bg: #050507; --panel: #0d0d12; --accent: #00f3ff;
+            --danger: #ff0055; --warning: #ffcc00; --success: #00ff99;
             --border: rgba(0, 243, 255, 0.1);
         }
-
-        body {
-            background: var(--bg);
-            color: #e0e6ed;
-            margin: 0;
-            font-family: 'Rajdhani', sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- UI GLITCH & CRT --- */
-        body::after {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-            pointer-events: none; z-index: 999;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 260px; background: var(--panel);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 25px;
-        }
-
-        .brand {
-            font-family: 'JetBrains Mono', monospace; font-size: 20px;
-            color: var(--accent); margin-bottom: 40px; text-shadow: 0 0 10px var(--accent);
-        }
-
-        .nav-btn {
-            background: none; border: none; color: #676e79;
-            padding: 15px; text-align: left; font-size: 15px;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px;
-            border-radius: 4px; margin-bottom: 5px; font-weight: bold;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            color: var(--accent); background: rgba(0, 243, 255, 0.05);
-            box-shadow: inset 3px 0 0 var(--accent);
-        }
-
-        /* --- CONTENT AREA --- */
-        .main-view {
-            flex: 1; padding: 40px; overflow-y: auto; position: relative;
-        }
-
-        .view-section { display: none; animation: slideUp 0.4s ease; }
-        .view-section.active { display: block; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- CARDS --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card {
-            background: rgba(20, 20, 25, 0.8); border: 1px solid var(--border);
-            padding: 25px; border-radius: 8px; position: relative;
-        }
-
-        .stat-num { font-family: 'JetBrains Mono'; font-size: 35px; color: #fff; }
+        body { background: var(--bg); color: #e0e6ed; margin: 0; font-family: 'Rajdhani', sans-serif; display: flex; height: 100vh; overflow: hidden; }
         
-        /* --- TABLE / LIST --- */
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .data-table th { text-align: left; padding: 12px; color: var(--accent); border-bottom: 2px solid var(--border); }
-        .data-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* SIDEBAR */
+        .sidebar { width: 280px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
+        .nav-btn { background: none; border: none; color: #676e79; padding: 15px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; border-radius: 4px; font-weight: bold; margin-bottom: 5px; transition: 0.3s; }
+        .nav-btn:hover, .nav-btn.active { color: var(--accent); background: rgba(0, 243, 255, 0.05); box-shadow: inset 4px 0 0 var(--accent); }
 
-        /* --- INPUTS --- */
-        .cyber-input {
-            background: #000; border: 1px solid var(--border); padding: 12px;
-            color: var(--accent); font-family: 'JetBrains Mono'; width: 100%; border-radius: 4px;
-        }
+        /* MAIN CONTENT */
+        .main-view { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .btn {
-            padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;
-            font-weight: bold; font-family: 'JetBrains Mono'; transition: 0.2s;
-        }
+        /* UI ELEMENTS */
+        .card { background: rgba(20, 20, 25, 0.8); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .stat-val { font-family: 'JetBrains Mono'; font-size: 28px; color: #fff; }
+        
+        .cyber-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .cyber-table th { text-align: left; padding: 12px; color: var(--accent); border-bottom: 2px solid var(--border); font-size: 14px; }
+        .cyber-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; }
+
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-family: 'JetBrains Mono'; font-weight: bold; transition: 0.2s; font-size: 12px; }
         .btn-neon { background: var(--accent); color: #000; }
         .btn-danger { background: var(--danger); color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: #fff; }
 
-        /* --- CAPTCHA OVERLAY --- */
-        #lockScreen {
-            position: fixed; inset: 0; background: #050507; z-index: 10000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        .cyber-input { background: #000; border: 1px solid var(--border); padding: 10px; color: var(--accent); font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
+
+        /* LOCK SCREEN */
+        #lockScreen { position: fixed; inset: 0; background: #050507; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
 <div id="lockScreen">
-    <div style="text-align: center;">
-        <i class="fas fa-shield-virus" style="font-size: 50px; color: var(--danger); margin-bottom: 15px;"></i>
-        <h2 style="letter-spacing: 5px;">SYSTEM ENCRYPTED</h2>
-        <canvas id="capCanvas" width="250" height="80" style="background: #111; margin: 20px 0; border: 1px dashed var(--accent);"></canvas>
-        <input type="text" id="capInput" class="cyber-input" placeholder="VERIFY PROTOCOL" style="text-align: center; width: 250px;" maxlength="5">
-        <button class="btn btn-neon" style="width: 250px; margin-top: 15px;" onclick="verifyCaptcha()">INITIALIZE</button>
+    <div style="width: 300px; text-align: center;">
+        <h2 style="color: var(--accent); letter-spacing: 3px;">ADMIN_AUTH</h2>
+        <canvas id="capCanvas" width="200" height="60" style="background: #111; margin: 15px 0; border: 1px solid var(--border);"></canvas>
+        <input type="text" id="capInput" class="cyber-input" placeholder="ENTER CODE" style="text-align: center; margin-bottom: 10px;">
+        <button class="btn btn-neon" style="width: 100%;" onclick="verifyAccess()">ACCESS SYSTEM</button>
     </div>
 </div>
 
 <div class="sidebar">
-    <div class="brand"><i class="fas fa-biohazard"></i> EXE.OVERLORD</div>
-    <button class="nav-btn active" onclick="showView('dash')"><i class="fas fa-th-large"></i> DASHBOARD</button>
-    <button class="nav-btn" onclick="showView('users')"><i class="fas fa-user-shield"></i> USER MANAGER</button>
-    <button class="nav-btn" onclick="showView('songs')"><i class="fas fa-music"></i> SONG DATABASE</button>
+    <div style="font-size: 22px; font-weight: bold; color: var(--accent); margin-bottom: 30px;"><i class="fas fa-microchip"></i> OVERLORD_V4</div>
+    <button class="nav-btn active" onclick="switchView('dash')"><i class="fas fa-terminal"></i> DASHBOARD</button>
+    <button class="nav-btn" onclick="switchView('users')"><i class="fas fa-users-cog"></i> USER CONTROL</button>
+    <button class="nav-btn" onclick="switchView('songs')"><i class="fas fa-compact-disc"></i> MUSIC DATABASE</button>
+    <button class="nav-btn" onclick="switchView('logs')"><i class="fas fa-history"></i> SYSTEM LOGS</button>
     
-    <div style="margin-top: auto;">
-        <button class="btn btn-danger" style="width: 100%;" onclick="logout()">LOGOUT</button>
+    <div style="margin-top: auto; padding-top: 20px;">
+        <button class="btn btn-danger" style="width: 100%;" onclick="auth.signOut()">SHUTDOWN</button>
     </div>
 </div>
 
 <div class="main-view">
     <div id="view-dash" class="view-section active">
-        <h1 style="margin-top:0">DASHBOARD_SUMMARY</h1>
+        <h1>DASHBOARD_V4</h1>
         <div class="grid">
+            <div class="card"><div>USERS</div><div class="stat-val" id="count-u">0</div></div>
+            <div class="card"><div>SONGS</div><div class="stat-val" id="count-s">0</div></div>
             <div class="card">
-                <div style="color: var(--accent)">TOTAL_USERS</div>
-                <div class="stat-num" id="stat-u">0</div>
-            </div>
-            <div class="card">
-                <div style="color: var(--accent)">TOTAL_SONGS</div>
-                <div class="stat-num" id="stat-s">0</div>
-            </div>
-            <div class="card" id="mt-card">
-                <div style="color: var(--warning)">MAINTENANCE_STATUS</div>
-                <div class="stat-num" id="stat-mt" style="font-size: 18px;">FETCHING...</div>
-                <button class="btn btn-neon" style="font-size: 10px; width: 100%; margin-top: 10px;" onclick="toggleMT()">TOGGLE MT</button>
+                <div>SYSTEM_MODE</div>
+                <div id="mt-text" style="font-weight: bold; margin: 5px 0;">ONLINE</div>
+                <button class="btn btn-outline" style="width:100%" onclick="toggleMT()">TOGGLE MT</button>
             </div>
         </div>
-
-        <div class="card" style="margin-top: 20px;">
-            <div style="color: var(--success); margin-bottom: 15px;">GLOBAL_ANNOUNCEMENT</div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="annInput" class="cyber-input" placeholder="Broadcast message...">
-                <button class="btn btn-neon" onclick="saveAnn()">SEND</button>
-                <button class="btn btn-danger" onclick="clearAnn()">CLEAR</button>
+        
+        <div class="card">
+            <div style="color: var(--accent); margin-bottom: 10px;">GLOBAL_BROADCAST</div>
+            <textarea id="bcInput" class="cyber-input" style="height: 60px; margin-bottom: 10px;" placeholder="Type announcement..."></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-neon" onclick="sendBC()">TRANSMIT</button>
+                <button class="btn btn-danger" onclick="clearBC()">TERMINATE</button>
             </div>
-        </div>
-
-        <div class="card" style="margin-top: 20px; background: #000;">
-            <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #555; margin-bottom: 10px;">SYSTEM_LOGS</div>
-            <div id="logBox" style="height: 150px; overflow-y: auto; font-family: 'JetBrains Mono'; font-size: 11px; color: var(--success);"></div>
         </div>
     </div>
 
     <div id="view-users" class="view-section">
         <h1>USER_MANAGEMENT</h1>
-        <input type="text" class="cyber-input" placeholder="Search user..." onkeyup="filterTabel('userTable', this.value)">
-        <table class="data-table" id="userTable">
+        <input type="text" class="cyber-input" placeholder="Search by UID or Name..." onkeyup="searchTable('userTable', this.value)">
+        <table class="cyber-table" id="userTable">
             <thead>
-                <tr><th>USERNAME</th><th>ROLE</th><th>STATUS</th><th>ACTION</th></tr>
+                <tr><th>USER_INFO</th><th>ROLE</th><th>FOLLOWERS</th><th>CD_STATUS</th><th>ACTIONS</th></tr>
             </thead>
             <tbody id="userList"></tbody>
         </table>
     </div>
 
     <div id="view-songs" class="view-section">
-        <h1>SONG_REPOSITORY</h1>
-        <input type="text" class="cyber-input" placeholder="Search title/artist..." onkeyup="filterTabel('songTable', this.value)">
-        <table class="data-table" id="songTable">
+        <h1>SONG_DATABASE</h1>
+        <input type="text" class="cyber-input" placeholder="Search by Title/Artist..." onkeyup="searchTable('songTable', this.value)">
+        <table class="cyber-table" id="songTable">
             <thead>
-                <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTION</th></tr>
+                <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTIONS</th></tr>
             </thead>
             <tbody id="songList"></tbody>
         </table>
     </div>
+
+    <div id="view-logs" class="view-section">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <h1>SYSTEM_LOGS</h1>
+            <button class="btn btn-danger" onclick="clearAllLogs()">WIPE LOGS</button>
+        </div>
+        <div id="logTerminal" style="background:#000; border:1px solid var(--border); height: 500px; overflow-y:auto; padding:15px; font-family:'JetBrains Mono'; font-size:12px; color:var(--success); line-height:1.6;"></div>
+    </div>
 </div>
 
 <script>
-    // --- CONFIG --- (Sesuaikan dengan data kamu)
     const firebaseConfig = {
         apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
         authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -208,152 +143,204 @@
     const db = firebase.database();
     const auth = firebase.auth();
 
-    let capCode = "";
-    let isMT = false;
+    let secretCode = "";
+    let mtState = false;
 
-    // --- CAPTCHA ---
-    function genCap() {
+    // --- SECURITY ---
+    function generateCaptcha() {
         const c = document.getElementById('capCanvas');
         const ctx = c.getContext('2d');
-        capCode = Math.random().toString(36).substring(2, 7).toUpperCase();
-        ctx.fillStyle = "#111"; ctx.fillRect(0,0,250,80);
-        ctx.font = "bold 35px 'JetBrains Mono'";
-        ctx.fillStyle = "#00f3ff"; ctx.textAlign = "center";
-        ctx.fillText(capCode, 125, 50);
-        for(let i=0; i<5; i++) {
-            ctx.strokeStyle = "rgba(255,0,85,0.5)"; ctx.beginPath();
-            ctx.moveTo(Math.random()*250, Math.random()*80); ctx.lineTo(Math.random()*250, Math.random()*80);
-            ctx.stroke();
+        secretCode = Math.random().toString(36).substring(2, 7).toUpperCase();
+        
+        ctx.fillStyle = "#111"; ctx.fillRect(0,0,200,60);
+        ctx.font = "bold 28px 'JetBrains Mono'";
+        ctx.fillStyle = "#00f3ff";
+        ctx.textAlign = "center";
+        ctx.fillText(secretCode, 100, 40);
+        // Noise lines
+        for(let i=0; i<3; i++) {
+            ctx.strokeStyle = "rgba(255,0,85,0.4)";
+            ctx.beginPath(); ctx.moveTo(0, Math.random()*60); ctx.lineTo(200, Math.random()*60); ctx.stroke();
         }
     }
 
-    function verifyCaptcha() {
-        if(document.getElementById('capInput').value.toUpperCase() === capCode) {
-            document.getElementById('lockScreen').style.display = 'none';
+    function verifyAccess() {
+        const input = document.getElementById('capInput').value.trim().toUpperCase();
+        if(input === secretCode) {
+            document.getElementById('lockScreen').style.opacity = '0';
+            setTimeout(() => document.getElementById('lockScreen').style.display = 'none', 500);
         } else {
-            Swal.fire('ERROR', 'Invalid Protocol Code', 'error'); genCap();
+            Swal.fire('ACCESS DENIED', 'Incorrect Protocol Code', 'error');
+            generateCaptcha();
+            document.getElementById('capInput').value = '';
         }
     }
 
     // --- NAVIGATION ---
-    function showView(id) {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    function switchView(id) {
+        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('view-'+id).classList.add('active');
         event.currentTarget.classList.add('active');
     }
 
-    // --- CORE LOGIC ---
+    // --- DATA FETCHING ---
     auth.onAuthStateChanged(user => {
         if(user) {
             db.ref('users/' + user.uid).once('value', snap => {
                 if(snap.val()?.role === 'admin') {
-                    loadData();
-                    genCap();
+                    initApp();
                 } else { window.location.href = 'exemusic.html'; }
             });
         } else { window.location.href = 'exemusic.html'; }
     });
 
-    function loadData() {
-        // Users
+    function initApp() {
+        generateCaptcha();
+        
+        // Listen Users
         db.ref('users').on('value', snap => {
             const list = document.getElementById('userList');
             let html = ''; let count = 0;
-            snap.forEach(c => {
-                const u = c.val(); count++;
+            snap.forEach(child => {
+                const u = child.val(); count++;
+                const followers = u.followers ? Object.keys(u.followers).length : 0;
                 html += `<tr>
-                    <td>${u.username}</td>
+                    <td><b>${u.username || 'NoName'}</b><br><small style="color:#555">${child.key}</small></td>
                     <td>${u.role || 'user'}</td>
-                    <td style="color:${u.banned ? 'red' : 'green'}">${u.banned ? 'BANNED' : 'ACTIVE'}</td>
-                    <td><button onclick="toggleBan('${c.key}', ${u.banned})" class="btn" style="background:#222; color:#fff">${u.banned ? 'UNBAN' : 'BAN'}</button></td>
+                    <td>
+                        <button class="btn btn-outline" onclick="manageFollowers('${child.key}', ${followers})">${followers} FOLLOWERS</button>
+                    </td>
+                    <td>
+                        <button class="btn ${u.lastUpload ? 'btn-danger' : 'btn-outline'}" onclick="resetCD('${child.key}')">
+                            ${u.lastUpload ? 'RESET CD' : 'NO CD'}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn ${u.banned ? 'btn-neon' : 'btn-danger'}" onclick="toggleBan('${child.key}', ${u.banned})">
+                            ${u.banned ? 'UNBAN' : 'BAN'}
+                        </button>
+                    </td>
                 </tr>`;
             });
             list.innerHTML = html;
-            document.getElementById('stat-u').innerText = count;
+            document.getElementById('count-u').innerText = count;
         });
 
-        // Songs
+        // Listen Songs
         db.ref('songs').on('value', snap => {
             const list = document.getElementById('songList');
             let html = ''; let count = 0;
-            snap.forEach(c => {
-                const s = c.val(); count++;
+            snap.forEach(child => {
+                const s = child.val(); count++;
                 html += `<tr>
                     <td>${s.title}</td>
                     <td>${s.by || '-'}</td>
                     <td>${s.uploadedBy || 'System'}</td>
-                    <td><button onclick="delSong('${c.key}')" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="delSong('${child.key}', '${s.title}')"><i class="fas fa-trash"></i></button>
+                    </td>
                 </tr>`;
             });
             list.innerHTML = html;
-            document.getElementById('stat-s').innerText = count;
+            document.getElementById('count-s').innerText = count;
         });
 
-        // MT Status
+        // Listen Settings
         db.ref('settings/mt').on('value', snap => {
-            isMT = snap.val();
-            const el = document.getElementById('stat-mt');
-            el.innerText = isMT ? "ACTIVE" : "OFFLINE";
-            el.style.color = isMT ? "var(--danger)" : "var(--success)";
+            mtState = snap.val();
+            const txt = document.getElementById('mt-text');
+            txt.innerText = mtState ? "MAINTENANCE ACTIVE" : "SYSTEM ONLINE";
+            txt.style.color = mtState ? "var(--danger)" : "var(--success)";
         });
 
-        // Ann
         db.ref('settings/announcement').on('value', snap => {
-            document.getElementById('annInput').value = snap.val() || "";
+            document.getElementById('bcInput').value = snap.val() || "";
         });
 
-        // Logs
-        db.ref('logs').limitToLast(20).on('value', snap => {
-            const box = document.getElementById('logBox');
+        // Listen Logs
+        db.ref('logs').limitToLast(50).on('value', snap => {
+            const box = document.getElementById('logTerminal');
             let h = '';
-            snap.forEach(c => { h += `<div>> ${c.val().time}: ${c.val().msg}</div>`; });
-            box.innerHTML = h; box.scrollTop = box.scrollHeight;
+            snap.forEach(c => {
+                const l = c.val();
+                h += `<div><span style="color:#555">[${l.time}]</span> ${l.msg}</div>`;
+            });
+            box.innerHTML = h;
+            box.scrollTop = box.scrollHeight;
         });
     }
 
-    // --- ACTIONS ---
-    function toggleMT() {
-        db.ref('settings').update({ mt: !isMT });
-        logIt(`Maintenance toggled to ${!isMT}`);
+    // --- FUNCTIONS ---
+
+    function toggleBan(uid, status) {
+        db.ref('users/' + uid).update({ banned: !status });
+        logAction(`User ${uid} status: ${!status ? 'BANNED' : 'ACTIVE'}`);
     }
 
-    function saveAnn() {
-        const val = document.getElementById('annInput').value;
-        db.ref('settings').update({ announcement: val });
-        logIt(`Ann updated: ${val}`);
-        Swal.fire('SUCCESS', 'Broadcast sent', 'success');
+    function resetCD(uid) {
+        db.ref('users/' + uid + '/lastUpload').remove();
+        Swal.fire('COOLDOWN RESET', 'User can upload again immediately', 'success');
+        logAction(`Reset Cooldown for user ${uid}`);
     }
 
-    function clearAnn() {
-        db.ref('settings/announcement').remove();
-        logIt(`Ann cleared`);
+    function manageFollowers(uid, current) {
+        Swal.fire({
+            title: 'Set Followers Count',
+            input: 'number',
+            inputLabel: 'This will reset and add dummy follower keys',
+            showCancelButton: true
+        }).then(res => {
+            if(res.value) {
+                let dummy = {};
+                for(let i=0; i<res.value; i++) { dummy['dummy_'+i] = true; }
+                db.ref('users/' + uid + '/followers').set(dummy);
+                logAction(`Updated followers for ${uid} to ${res.value}`);
+            }
+        });
     }
 
-    function toggleBan(uid, current) {
-        db.ref('users/' + uid).update({ banned: !current });
-        logIt(`User ${uid} status changed`);
-    }
-
-    function delSong(id) {
-        if(confirm('Purge this song?')) {
+    function delSong(id, title) {
+        if(confirm(`Delete ${title}?`)) {
             db.ref('songs/' + id).remove();
-            logIt(`Song ${id} removed`);
+            logAction(`Deleted song: ${title}`);
         }
     }
 
-    function logIt(msg) {
-        db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() });
+    function toggleMT() {
+        db.ref('settings').update({ mt: !mtState });
+        logAction(`Maintenance toggled to ${!mtState}`);
     }
 
-    function filterTabel(tableId, query) {
+    function sendBC() {
+        const val = document.getElementById('bcInput').value;
+        db.ref('settings').update({ announcement: val });
+        logAction(`Broadcast sent: ${val}`);
+        Swal.fire('SENT', 'Broadcast live', 'success');
+    }
+
+    function clearBC() {
+        db.ref('settings/announcement').remove();
+        logAction('Broadcast terminated');
+    }
+
+    function clearAllLogs() {
+        if(confirm('Wipe all system logs?')) {
+            db.ref('logs').remove();
+        }
+    }
+
+    function logAction(msg) {
+        const t = new Date().toLocaleTimeString();
+        db.ref('logs').push({ msg, time: t });
+    }
+
+    function searchTable(tableId, query) {
         const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-        rows.forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+        rows.forEach(r => {
+            r.style.display = r.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
         });
     }
-
-    function logout() { auth.signOut(); }
 </script>
 
 </body>
