@@ -34,10 +34,10 @@
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
-      transition: background 1.5s ease; /* Transisi disco lebih smooth */
+      transition: background 1.5s ease; /* Smooth Disco Transition */
     }
 
-    /* Disco Mode Smooth */
+    /* Disco Mode Animation */
     @keyframes discoFlow {
       0% { background: #ff0050; }
       25% { background: #00ff88; }
@@ -57,9 +57,9 @@
         max-width: 400px;
         background: rgba(15, 15, 15, 0.95);
         border-left: 4px solid var(--accent);
-        border-radius: 12px;
+        border-radius: 6px;
         padding: 15px;
-        z-index: 30000;
+        z-index: 12000;
         box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         backdrop-filter: blur(10px);
@@ -69,7 +69,7 @@
 
     /* --- OVERLAYS --- */
     .full-overlay {
-      position: fixed; inset: 0; background: #000; z-index: 40000;
+      position: fixed; inset: 0; background: #000; z-index: 10000;
       display: none; flex-direction: column; align-items: center; justify-content: center;
       text-align: center; padding: 30px;
     }
@@ -78,7 +78,7 @@
     #bannedScreen h1 { color: var(--danger); }
 
     #loadingCard {
-      position: absolute; inset: 0; background: var(--bg); z-index: 35000;
+      position: absolute; inset: 0; background: var(--bg); z-index: 9999;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: 0.5s;
     }
@@ -89,6 +89,7 @@
     .app {
       background: rgba(18, 18, 18, 0.6);
       backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 35px;
       width: 95%; max-width: 400px; 
@@ -99,7 +100,7 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 15px; }
     .header img { width: 110px; cursor: pointer; }
     
     #topLoginBtn { 
@@ -147,7 +148,7 @@
     .active { color: var(--accent) !important; opacity: 1 !important; }
 
     /* MODALS */
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 10000; backdrop-filter: blur(5px); }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; backdrop-filter: blur(5px); }
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; }
 
     .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; }
@@ -162,13 +163,8 @@
     .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
     
-    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 50000; pointer-events: none; }
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; }
     #toast.show { opacity: 1; }
-
-    /* Tag Styles */
-    .user-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 5px; }
-    .tag-admin { background: #ff3333; color: #fff; }
-    .tag-user { background: #444; color: #eee; }
   </style>
 </head>
 <body>
@@ -182,7 +178,7 @@
   <div id="bannedScreen" class="full-overlay">
     <i class="fas fa-user-slash" style="color: var(--danger)"></i>
     <h1>Account Banned</h1>
-    <p>Akses Anda telah dicabut secara permanen.</p>
+    <p>Akses anda telah dicabut oleh Admin.</p>
   </div>
 
   <div id="loadingCard"><div class="spinner"></div></div>
@@ -243,16 +239,14 @@
     </div>
   </div>
 
-  <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3>Informasi ExeMusic</h3>
-      <div style="font-size:12px; color:#ccc; line-height:1.6; margin-top:15px;">
-        <p><b>Penghasilan:</b> 17ribu/$1 dari Hexky jika followers/favorit tinggi.</p>
-        <p><b>Badge:</b> 50 Followers = Centang Biru Original User.</p>
-        <p><b>Upload:</b> Link Top4Top. Delay 30 menit per upload.</p>
-        <p><b>Status:</b> v3.1 sedang tahap stabilisasi database.</p>
-      </div>
-      <button onclick="closeModal()" class="btn-act" style="margin-top:20px;">TUTUP</button>
+      <h3 id="authTitle" style="text-align:center;">Login</h3>
+      <input id="authUser" class="inp-dark" placeholder="Username" style="display:none">
+      <input id="authEmail" class="inp-dark" placeholder="Email">
+      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
+      <button onclick="handleAuth()" class="btn-act">SUBMIT</button>
+      <p onclick="toggleAuthMode()" style="text-align:center; font-size:12px; margin-top:15px; cursor:pointer;">Belum punya akun? Daftar</p>
     </div>
   </div>
 
@@ -264,27 +258,13 @@
               <div onclick="document.getElementById('avatarInp').click()" style="position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; cursor:pointer;"><i class="fas fa-camera"></i></div>
           </div>
           <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
-          <div style="margin-left:15px;">
-              <h2 id="pUsername">User</h2>
-              <div id="pTagDisplay"></div>
-          </div>
+          <div style="margin-left:15px;"><h2 id="pUsername">User</h2></div>
       </div>
       <div class="prof-stat">
         <div><b id="pFol">0</b><span>Followers</span></div>
         <div><b id="pFollowing">0</b><span>Following</span></div>
       </div>
       <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#222; color:red;">LOGOUT</button>
-    </div>
-  </div>
-
-  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 id="authTitle" style="text-align:center;">Login</h3>
-      <input id="authUser" class="inp-dark" placeholder="Username" style="display:none">
-      <input id="authEmail" class="inp-dark" placeholder="Email">
-      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
-      <button onclick="handleAuth()" class="btn-act">SUBMIT</button>
-      <p onclick="toggleAuthMode()" style="text-align:center; font-size:12px; margin-top:15px; cursor:pointer;">Belum punya akun? Daftar</p>
     </div>
   </div>
 
@@ -309,17 +289,6 @@
     <div class="sheet"><div id="songContainer"></div></div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner" style="background:#333">
-          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
-          <div style="margin-left:15px;"><h2 id="vName">@creator</h2></div>
-      </div>
-      <div class="prof-stat"><div><b id="vFol">0</b><span>Followers</span></div></div>
-      <div id="creatorPostList"></div>
-    </div>
-  </div>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
@@ -341,21 +310,19 @@
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
 
-    // MONITORING SETTINGS (Realtime MT & Hexky Announcement)
+    // REALTIME MONITORING (MT & ANNOUNCEMENT)
     db.ref('settings').on('value', s => {
         const val = s.val();
         if(!val) return;
         
-        // 1. Realtime Maintenance Check
+        // MT Check Realtime
         if(val.mt === true) {
-            if(userData && userData.role !== 'admin') {
-                document.getElementById('mtScreen').style.display = 'flex';
-            } else if(!auth.currentUser) {
-                document.getElementById('mtScreen').style.display = 'flex';
-            }
+            db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
+                if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
+            });
         } else { document.getElementById('mtScreen').style.display = 'none'; }
 
-        // 2. Hexky Announcement (Auto Delete 1 Minute)
+        // Hexky Announcement (Auto Delete 1 Minute)
         if(val.hexkyann) {
             const el = document.getElementById('sysBroadcast');
             document.getElementById('sbMessage').innerText = "Hexky : " + val.hexkyann;
@@ -367,14 +334,13 @@
         }
     });
 
-    // REALTIME USER DATA & FOLLOWERS
+    // REALTIME USER DATA (FOLLOWERS/FOLLOWED)
     auth.onAuthStateChanged(u => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
           if(!userData) return;
           
-          // Realtime Banned Check
           if(userData.banned === true) {
               document.getElementById('bannedScreen').style.display = 'flex';
               auth.signOut(); return;
@@ -383,18 +349,19 @@
           document.getElementById('topLoginBtn').textContent = userData.username;
           document.getElementById('pUsername').innerText = userData.username;
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
+          
+          // Sinkronisasi Realtime Followers
           document.getElementById('pFol').innerText = userData.followers || 0;
           document.getElementById('pFollowing').innerText = userData.following || 0;
-          document.getElementById('pTagDisplay').innerHTML = userData.role === 'admin' ? '<span class="user-tag tag-admin">ADMIN</span>' : '<span class="user-tag tag-user">USER</span>';
           
           if(userData.role === 'admin') {
               document.getElementById('adminBtn').style.display = 'block';
               document.getElementById('discoBtn').style.display = 'block';
           }
-          
           document.getElementById('upFormUser').style.display = 'block';
           document.getElementById('upFormGuest').style.display = 'none';
           document.getElementById('btnFollow').style.display = 'flex';
+          updateFollowUI();
         });
       } else {
         document.getElementById('topLoginBtn').textContent = "Login";
@@ -431,7 +398,7 @@
     }
 
     function toggleDisco() {
-        if(userData?.role !== 'admin') return msg("Hanya Admin!");
+        if(userData?.role !== 'admin') return;
         disco = !disco;
         document.body.classList.toggle('disco-active', disco);
         document.getElementById('discoBtn').classList.toggle('active', disco);
@@ -454,7 +421,6 @@
           db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
           db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
       }
-      updateFollowUI();
     }
 
     async function updateFollowUI() {
@@ -473,16 +439,6 @@
           closeModal();
         }).catch(err => msg(err.message));
       }
-    }
-
-    async function saveMusic() {
-      const now = Date.now();
-      if(now - (userData.lastUpload || 0) < 1800000) return msg("Delay 30 Menit!");
-      const t = document.getElementById('rLagu').value, u = document.getElementById('rUrl').value;
-      if(!u.includes("top4top")) return msg("Gunakan Top4Top!");
-      await db.ref('songs').push({ title: t, url: u, by: userData.username, uid: auth.currentUser.uid });
-      await db.ref('users/' + auth.currentUser.uid).update({ lastUpload: now });
-      closeModal(); msg("Berhasil!");
     }
 
     function uploadAvatar(input) {
@@ -509,7 +465,6 @@
     
     function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function openProfile() { if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; else document.getElementById('modalProfile').style.display='block'; }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
