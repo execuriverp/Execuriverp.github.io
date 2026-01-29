@@ -3,117 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic v3.1 - Hyper Realtime</title>
-  <link rel="icon" type="image/png" href="exemusicicon.png">
+  <title>ExeMusic v3.1 - Final Realtime</title>
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
-      --accent: #00ff88; 
-      --text: #ffffff;
+      --accent: #00ff88;
       --bg: #050505;
+      --card: rgba(255,255,255,0.05);
       --disco-color: #ff00ff;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    body { background: var(--bg); color: white; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: 0.5s; }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
-      display: flex; justify-content: center; align-items: center;
-      overflow: hidden;
-      transition: background 0.5s ease;
-    }
-
-    /* --- REALISTIC EQ ANIMATION --- */
-    .eq { display: flex; align-items: flex-end; gap: 5px; height: 70px; }
-    .eq span { 
-        width: 7px; 
-        background: var(--accent); 
-        border-radius: 10px; 
-        height: 10px; 
-        transition: background 0.5s ease;
-    }
-
-    /* Gerakan EQ Berbeda-beda (Realistik) */
-    .playing span { animation: wave var(--d) infinite ease-in-out; }
-    .eq span:nth-child(1) { --d: 0.8s; animation-delay: 0.1s; }
-    .eq span:nth-child(2) { --d: 1.1s; animation-delay: 0.3s; }
-    .eq span:nth-child(3) { --d: 0.9s; animation-delay: 0.0s; }
-    .eq span:nth-child(4) { --d: 1.2s; animation-delay: 0.5s; }
-    .eq span:nth-child(5) { --d: 1.0s; animation-delay: 0.2s; }
-
-    /* EQ Saat Disco Mode (Lebih Cepat & Agresif) */
-    .disco-active .playing span { 
-        animation: discoWave var(--d) infinite ease-in-out; 
-        background: var(--disco-color) !important;
-    }
-    .disco-active .eq span:nth-child(1) { --d: 0.3s; }
-    .disco-active .eq span:nth-child(2) { --d: 0.4s; }
-    .disco-active .eq span:nth-child(3) { --d: 0.35s; }
-    .disco-active .eq span:nth-child(4) { --d: 0.45s; }
-    .disco-active .eq span:nth-child(5) { --d: 0.32s; }
-
-    @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 50px; } }
-    @keyframes discoWave { 0%, 100% { height: 10px; } 50% { height: 80px; } }
-
-    /* --- ROBLOX BROADCAST UI --- */
-    .sys-broadcast {
-        position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
-        width: 90%; max-width: 400px; background: rgba(15, 15, 15, 0.95);
-        border-left: 4px solid var(--accent); border-radius: 8px; padding: 15px;
-        z-index: 10000; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        backdrop-filter: blur(15px); box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    }
-    .sys-broadcast.active { top: 20px; }
-    .sb-bar { width: 100%; height: 3px; background: var(--accent); margin-top: 10px; transform-origin: left; }
-
-    /* --- APP LAYOUT --- */
-    .app {
-      background: rgba(20, 20, 20, 0.7);
-      backdrop-filter: blur(30px);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 40px; width: 95%; max-width: 400px; height: 90vh;
-      display: flex; flex-direction: column; padding: 30px; position: relative;
-    }
-
-    body.disco-active { animation: bgDisco 2s infinite alternate; }
-    @keyframes bgDisco { from { background: #050505; } to { background: #1a002b; } }
-
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .header img { width: 100px; }
-    #loginBtn { background: var(--accent); color: black; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; }
-
-    .cover { flex: 1; background: #000; border-radius: 25px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid #222; }
-
-    .track-info h2 { font-size: 22px; margin-bottom: 5px; }
-    .track-info p { color: var(--accent); font-weight: bold; cursor: pointer; }
-
-    .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-    .play-btn { width: 70px; height: 70px; background: var(--accent); border-radius: 50%; border: none; font-size: 24px; cursor: pointer; }
-
-    /* MODAL STYLE */
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 9999; align-items: center; justify-content: center; }
-    .modal-content { background: #111; width: 90%; max-width: 350px; padding: 30px; border-radius: 20px; border: 1px solid #333; }
+    /* --- REALISTIC EQ (Tiap Bar Beda Gerakan) --- */
+    .eq { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 8px; }
     
-    #toast { position: fixed; bottom: 50px; background: var(--accent); color: black; padding: 10px 20px; border-radius: 30px; font-weight: bold; display: none; z-index: 10001; }
+    .playing span { animation: wave var(--t) infinite ease-in-out; }
+    .eq span:nth-child(1) { --t: 0.7s; animation-delay: 0.1s; }
+    .eq span:nth-child(2) { --t: 1.0s; animation-delay: 0.3s; }
+    .eq span:nth-child(3) { --t: 0.8s; animation-delay: 0.0s; }
+    .eq span:nth-child(4) { --t: 1.2s; animation-delay: 0.5s; }
+    .eq span:nth-child(5) { --t: 0.9s; animation-delay: 0.2s; }
+
+    /* Disco Mode: Kecepatan gila & warna beda */
+    .disco-active .playing span { animation: discoWave var(--t) infinite ease-in-out; background: var(--disco-color); }
+    .disco-active .eq span:nth-child(1) { --t: 0.3s; }
+    .disco-active .eq span:nth-child(2) { --t: 0.4s; }
+    .disco-active .eq span:nth-child(3) { --t: 0.25s; }
+    .disco-active .eq span:nth-child(4) { --t: 0.45s; }
+    .disco-active .eq span:nth-child(5) { --t: 0.35s; }
+
+    @keyframes wave { 0%, 100% { height: 8px; } 50% { height: 45px; } }
+    @keyframes discoWave { 0%, 100% { height: 5px; } 50% { height: 65px; } }
+
+    /* --- ROBLOX BROADCAST --- */
+    .sb {
+      position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+      width: 90%; max-width: 400px; background: #111; border-left: 4px solid var(--accent);
+      padding: 15px; border-radius: 8px; z-index: 9999; transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .sb.active { top: 20px; }
+    .sb-bar { height: 3px; background: var(--accent); width: 100%; margin-top: 10px; transform-origin: left; }
+
+    /* --- APP INTERFACE --- */
+    .app { 
+      width: 95%; max-width: 380px; height: 90vh; background: rgba(20,20,20,0.8);
+      backdrop-filter: blur(20px); border-radius: 35px; border: 1px solid rgba(255,255,255,0.1);
+      display: flex; flex-direction: column; padding: 25px; position: relative;
+    }
+    .disco-active .app { border-color: var(--disco-color); box-shadow: 0 0 30px var(--disco-color); }
+
+    .cover { flex: 1; background: #000; border-radius: 20px; margin: 20px 0; display: flex; align-items: center; justify-content: center; border: 1px solid #222; }
+    .info h2 { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .info p { color: var(--accent); font-size: 14px; margin-top: 5px; cursor: pointer; }
+
+    .sys-tools { display: flex; justify-content: space-between; margin-top: 15px; background: var(--card); padding: 10px; border-radius: 15px; }
+    .sys-tools button { background: none; border: none; color: white; font-size: 16px; cursor: pointer; opacity: 0.7; }
+
+    .seekbar { margin-top: 20px; }
+    input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+    .ctrls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+    .play-btn { width: 65px; height: 65px; background: var(--accent); border-radius: 50%; border: none; font-size: 24px; cursor: pointer; }
+
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 10000; align-items: center; justify-content: center; }
+    .modal-box { background: #151515; width: 85%; padding: 25px; border-radius: 20px; border: 1px solid #333; }
+    
+    #toast { position: fixed; bottom: 30px; background: white; color: black; padding: 8px 20px; border-radius: 20px; font-weight: bold; display: none; z-index: 10001; }
   </style>
 </head>
-<body id="mainBody">
+<body id="bdy">
 
-  <div id="sysBroadcast" class="sys-broadcast">
-    <div style="display:flex; gap:15px; align-items:center">
+  <div id="sysB" class="sb">
+    <div style="display:flex; align-items:center; gap:12px">
       <i class="fas fa-bullhorn" style="color:var(--accent)"></i>
       <div>
-        <h4 style="font-size:12px; color:var(--accent)">SISTEM BROADCAST</h4>
-        <p id="sbMsg" style="font-size:13px">Memuat pesan...</p>
+        <b style="font-size:11px; color:var(--accent)">SYSTEM NOTIFICATION</b>
+        <p id="sbTxt" style="font-size:13px; margin-top:2px"></p>
       </div>
     </div>
     <div id="sbBar" class="sb-bar"></div>
@@ -122,51 +95,59 @@
   <div id="toast"></div>
 
   <div class="app">
-    <div class="header">
-      <img src="exemusic.png" alt="Logo">
-      <button id="loginBtn" onclick="openProfile()">LOGIN</button>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <img src="exemusic.png" width="90" alt="Logo">
+      <button onclick="openProfile()" style="background:var(--accent); border:none; padding:6px 15px; border-radius:20px; font-weight:bold; font-size:11px">LOGIN</button>
     </div>
 
     <div class="cover">
-      <div class="eq" id="eq">
-        <span></span><span></span><span></span><span></span><span></span>
+      <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="info">
+      <h2 id="ttl">Memuat...</h2>
+      <p id="usr" onclick="openAbout()">@system</p>
+    </div>
+
+    <div class="sys-tools">
+      <button onclick="copyLink()"><i class="fas fa-link"></i></button>
+      <button onclick="share()"><i class="fas fa-share-alt"></i></button>
+      <button onclick="download()"><i class="fas fa-download"></i></button>
+      <div style="display:flex; align-items:center; gap:8px; flex:1; margin-left:15px">
+        <i class="fas fa-volume-down" style="font-size:10px"></i>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8">
       </div>
     </div>
 
-    <div class="track-info">
-      <h2 id="title">Memuat Musik...</h2>
-      <p id="artist" onclick="openAbout()">@system</p>
-    </div>
-
-    <div style="margin-top:20px">
-      <input type="range" id="seek" style="width:100%; accent-color:var(--accent)" value="0">
-      <div style="display:flex; justify-content:space-between; font-size:10px; margin-top:5px">
-        <span id="cur">0:00</span>
-        <span id="dur">0:00</span>
+    <div class="seekbar">
+      <input type="range" id="sk" value="0">
+      <div style="display:flex; justify-content:space-between; font-size:10px; margin-top:5px; color:#888">
+        <span id="cT">0:00</span><span id="dT">0:00</span>
       </div>
     </div>
 
-    <div class="controls">
-      <button style="background:none; border:none; color:white; font-size:25px" onclick="prev()"><i class="fas fa-backward"></i></button>
-      <button class="play-btn" id="playBtn" onclick="toggle()"><i class="fas fa-play"></i></button>
-      <button style="background:none; border:none; color:white; font-size:25px" onclick="next()"><i class="fas fa-forward"></i></button>
+    <div class="ctrls">
+      <button style="background:none; border:none; color:white; font-size:22px" onclick="prev()"><i class="fas fa-step-backward"></i></button>
+      <button class="play-btn" id="pB" onclick="toggle()"><i class="fas fa-play"></i></button>
+      <button style="background:none; border:none; color:white; font-size:22px" onclick="next()"><i class="fas fa-step-forward"></i></button>
     </div>
   </div>
 
-  <div class="modal" id="modalAbout" onclick="this.style.display='none'">
-    <div class="modal-content">
-      <h3 style="color:var(--accent); margin-bottom:15px">Tentang ExeMusic</h3>
-      <div style="font-size:13px; line-height:1.6; color:#ccc">
-        <p><b>Realtime Tech:</b> Menggunakan Firebase RTDB untuk sinkronisasi tanpa delay.</p>
-        <p><b>Disco Mode:</b> Fitur visual party yang dikontrol admin.</p>
-        <p><b>Reward:</b> Dapatkan $1 (17rb) setiap pencapaian tertentu. Hubungi admin untuk klaim.</p>
-        <p><b>Verified:</b> Otomatis centang biru pada 50 followers.</p>
+  <div class="modal" id="mAbut" onclick="this.style.display='none'">
+    <div class="modal-box">
+      <h3 style="color:var(--accent); margin-bottom:12px">Detail ExeMusic v3.1</h3>
+      <div style="font-size:13px; line-height:1.6; color:#bbb">
+        <p><b>• Realtime Core:</b> Menggunakan Firebase untuk sinkronisasi instan tanpa delay jeda.</p>
+        <p><b>• Disco Mode:</b> Visual khusus party yang diaktifkan oleh admin. EQ akan bergerak 3x lebih cepat.</p>
+        <p><b>• Monetisasi:</b> Reward 17.000 IDR / $1 untuk user kreatif (Syarat & Ketentuan berlaku).</p>
+        <p><b>• Blue Badge:</b> Otomatis diberikan jika menyentuh 50 followers asli.</p>
+        <p><b>• Keamanan:</b> Sistem banned otomatis untuk pelanggar hak cipta atau konten SARA.</p>
       </div>
     </div>
   </div>
 
   <script>
-    const firebaseConfig = {
+    const fbC = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
       authDomain: "exemusic-execuriverp.firebaseapp.com",
       databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -176,92 +157,93 @@
       appId: "1:722057744401:web:cd6a6a103692059bda61b0"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(fbC);
     const db = firebase.database();
-    const audio = new Audio();
-    let songs = [], i = 0, isDisco = false;
+    const aud = new Audio();
+    let sngs = [], cur = 0, disco = false;
 
-    // --- INSTANT REALTIME SETTINGS ---
-    db.ref('settings').on('value', (s) => {
-      const data = s.val();
-      if(!data) return;
+    // --- ULTRA REALTIME LISTENER ---
+    db.ref('settings').on('value', snap => {
+      const v = snap.val();
+      if(!v) return;
 
-      // Realtime Announcement
-      if(data.announcement) {
-        showBroadcast(data.announcement);
-      }
+      // Announcement Instant
+      if(v.announcement) showSB(v.announcement);
 
-      // Realtime Disco Mode
-      if(data.discoMode !== isDisco) {
-        isDisco = data.discoMode;
-        if(isDisco) {
-          document.getElementById('mainBody').classList.add('disco-active');
-          showBroadcast("DISCO MODE TELAH DIMULAI! ✨");
+      // Disco Mode Instant
+      if(v.discoMode !== disco) {
+        disco = v.discoMode;
+        if(disco) {
+          document.getElementById('bdy').classList.add('disco-active');
+          showSB("DISCO MODE TELAH DIMULAI! ✨");
         } else {
-          document.getElementById('mainBody').classList.remove('disco-active');
+          document.getElementById('bdy').classList.remove('disco-active');
         }
       }
     });
 
-    function showBroadcast(msg) {
-      const b = document.getElementById('sysBroadcast');
-      document.getElementById('sbMsg').innerText = msg;
-      b.classList.add('active');
+    function showSB(m) {
+      const el = document.getElementById('sysB');
+      document.getElementById('sbTxt').innerText = m;
+      el.classList.add('active');
       document.getElementById('sbBar').style.transition = 'none';
       document.getElementById('sbBar').style.transform = 'scaleX(1)';
       setTimeout(() => {
-        document.getElementById('sbBar').style.transition = 'transform 8s linear';
+        document.getElementById('sbBar').style.transition = 'transform 7s linear';
         document.getElementById('sbBar').style.transform = 'scaleX(0)';
       }, 100);
-      setTimeout(() => b.classList.remove('active'), 8000);
+      setTimeout(() => el.classList.remove('active'), 7000);
     }
 
-    // --- LOAD SONGS ---
-    db.ref('songs').on('value', (s) => {
-      const val = s.val();
+    // --- MUSIC CORE ---
+    db.ref('songs').on('value', snap => {
+      const val = snap.val();
       if(val) {
-        songs = Object.keys(val).map(k => val[k]);
-        if(!audio.src) loadTrack(0);
+        sngs = Object.keys(val).map(k => val[k]);
+        if(!aud.src) load(0, false);
       }
     });
 
-    function loadTrack(idx) {
-      i = idx;
-      audio.src = songs[i].url;
-      document.getElementById('title').innerText = songs[i].title;
-      document.getElementById('artist').innerText = "@" + songs[i].by;
+    function load(idx, p = true) {
+      cur = idx;
+      aud.src = sngs[cur].url;
+      document.getElementById('ttl').innerText = sngs[cur].title;
+      document.getElementById('usr').innerText = "@" + sngs[cur].by;
+      if(p) { aud.play(); document.getElementById('pB').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
     }
 
     function toggle() {
-      if(audio.paused) {
-        audio.play();
-        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
-        document.getElementById('eq').classList.add('playing');
-      } else {
-        audio.pause();
-        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById('eq').classList.remove('playing');
-      }
+      if(aud.paused) { aud.play(); document.getElementById('pB').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      else { aud.pause(); document.getElementById('pB').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
     }
 
-    function next() { i = (i + 1) % songs.length; loadTrack(i); audio.play(); }
-    function prev() { i = (i - 1 + songs.length) % songs.length; loadTrack(i); audio.play(); }
+    function next() { cur = (cur+1)%sngs.length; load(cur); }
+    function prev() { cur = (cur-1+sngs.length)%sngs.length; load(cur); }
 
-    audio.ontimeupdate = () => {
-      const p = (audio.currentTime / audio.duration) * 100;
-      document.getElementById('seek').value = p || 0;
-      document.getElementById('cur').innerText = formatTime(audio.currentTime);
-      document.getElementById('dur').innerText = formatTime(audio.duration);
+    aud.ontimeupdate = () => {
+      document.getElementById('sk').value = (aud.currentTime/aud.duration)*100 || 0;
+      document.getElementById('cT').innerText = fmt(aud.currentTime);
+      document.getElementById('dT').innerText = fmt(aud.duration);
     };
 
-    function formatTime(sec) {
-      if(isNaN(sec)) return "0:00";
-      let m = Math.floor(sec/60), s = Math.floor(sec%60);
-      return m + ":" + (s < 10 ? "0"+s : s);
+    document.getElementById('sk').oninput = (e) => aud.currentTime = (e.target.value/100)*aud.duration;
+    document.getElementById('vol').oninput = (e) => aud.volume = e.target.value;
+
+    function fmt(s) {
+      if(isNaN(s)) return "0:00";
+      let m=Math.floor(s/60), sec=Math.floor(s%60);
+      return m + ":" + (sec<10?"0"+sec:sec);
     }
 
-    function openAbout() { document.getElementById('modalAbout').style.display = 'flex'; }
-
+    // --- UTILS ---
+    function copyLink() { navigator.clipboard.writeText(aud.src); toast("Link MP3 Disalin"); }
+    function share() { navigator.clipboard.writeText(window.location.href); toast("Link Player Disalin"); }
+    function download() { window.open(aud.src); }
+    function toast(m) {
+      const t = document.getElementById('toast'); t.innerText = m; t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 2000);
+    }
+    function openAbout() { document.getElementById('mAbut').style.display='flex'; }
   </script>
 </body>
 </html>
