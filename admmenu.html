@@ -391,7 +391,7 @@
 </div>
 
 <script>
-    // --- FIREBASE CONFIG ---
+// --- FIREBASE CONFIG ---
     const firebaseConfig = {
         apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
         authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -407,243 +407,216 @@
     const db = firebase.database();
     const auth = firebase.auth();
 
-    // --- GLOBAL STATE ---
     let songsData = [];
     let usersData = [];
     let generatedCaptchaCode = "";
     let mtStatus = false;
 
-    // --- SECURITY & CAPTCHA (CANVAS BASED) ---
+    // --- SECURITY & CAPTCHA ---
     function initSecurity() {
         const canvas = document.getElementById('captchaCanvas');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Background Noise
-        ctx.fillStyle = '#111';
+        ctx.fillStyle = '#080808';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Random Code Generation
         const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         let code = "";
-        for(let i=0; i<5; i++) {
-            code += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
+        for(let i=0; i<5; i++) { code += chars.charAt(Math.floor(Math.random() * chars.length)); }
         generatedCaptchaCode = code;
 
-        // Draw Text with Distortion
-        ctx.font = "bold 40px 'JetBrains Mono'";
-        ctx.textBaseline = "middle";
+        ctx.font = "bold 42px 'JetBrains Mono'";
         for(let i=0; i<code.length; i++) {
             ctx.save();
-            ctx.translate(30 + i * 50, 40);
-            ctx.rotate((Math.random() - 0.5) * 0.4); // Random rotation
-            ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 70%)`; // Random Neon Color
+            ctx.translate(40 + i * 50, 45);
+            ctx.rotate((Math.random() - 0.5) * 0.3);
+            ctx.fillStyle = i % 2 === 0 ? "#00f3ff" : "#ff0055";
             ctx.fillText(code[i], 0, 0);
             ctx.restore();
-        }
-
-        // Draw Interference Lines
-        for(let i=0; i<10; i++) {
-            ctx.strokeStyle = `rgba(255,255,255,0.1)`;
-            ctx.beginPath();
-            ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
-            ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
-            ctx.stroke();
         }
     }
 
     function unlockSystem() {
-        const input = document.getElementById('secInput').value.toUpperCase();
-        if(input === generatedCaptchaCode) {
-            document.getElementById('securityOverlay').style.display = 'none';
-            // Play Welcome Sound (Optional)
-            const audio = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Example sound
-            audio.volume = 0.2;
-            audio.play().catch(e=>{});
+        if(document.getElementById('secInput').value.toUpperCase() === generatedCaptchaCode) {
+            document.getElementById('securityOverlay').style.opacity = '0';
+            setTimeout(() => document.getElementById('securityOverlay').style.display = 'none', 500);
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'ACCESS DENIED',
-                text: 'Security Protocol Failed.',
-                background: '#000', color: '#fff',
-                timer: 1000, showConfirmButton: false,
-                backdrop: `rgba(255,0,0,0.2)`
-            });
+            Swal.fire({ icon: 'error', title: 'INVALID CODE', background: '#000', color: '#fff' });
             initSecurity();
             document.getElementById('secInput').value = '';
         }
     }
 
-    // --- TAB SWITCHING LOGIC (SPA) ---
+    // --- TAB SYSTEM ---
     function switchTab(tabId) {
-        // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-        // Show target tab
         document.getElementById(`tab-${tabId}`).classList.add('active');
-        
-        // Highlight Sidebar
-        // Note: Simple way to find the button index matches logic
-        const buttons = document.querySelectorAll('.nav-btn');
-        if(tabId === 'dashboard') buttons[0].classList.add('active');
-        if(tabId === 'users') buttons[1].classList.add('active');
-        if(tabId === 'songs') buttons[2].classList.add('active');
-
-        // Update Title
-        const titles = {
-            'dashboard': 'COMMAND CENTER',
-            'users': 'USER DIRECTORY',
-            'songs': 'AUDIO REPOSITORY'
-        };
-        document.getElementById('pageTitle').innerText = titles[tabId];
+        event.currentTarget.classList.add('active');
+        document.getElementById('pageTitle').innerText = tabId.toUpperCase().replace('-', ' ');
     }
 
-    // --- AUTHENTICATION CHECK ---
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            db.ref('users/' + user.uid).once('value', snap => {
-                const data = snap.val();
-                if (data && data.role === 'admin') {
-                    initListeners();
-                    console.log("ADMIN AUTHENTICATED: " + user.uid);
-                } else {
-                    window.location.href = 'exemusic.html';
-                }
-            });
-        } else {
-            window.location.href = 'exemusic.html';
-        }
-    });
-
-    // --- DATA LISTENERS ---
+    // --- CORE DATA ENGINE ---
     function initListeners() {
-        
-        // 1. Songs Data
+        console.log("System: Connecting to Database...");
+
+        // Listen Songs
         db.ref('songs').on('value', snap => {
             songsData = [];
-            snap.forEach(c => songsData.push({ key: c.key, ...c.val() }));
+            if (snap.exists()) {
+                snap.forEach(c => {
+                    let s = c.val();
+                    s.key = c.key;
+                    songsData.push(s);
+                });
+            }
             document.getElementById('countSongs').innerText = songsData.length;
-            renderSongs(songsData); // Initial Render
-        });
+            renderSongs(songsData);
+        }, err => console.error("Songs Load Error:", err));
 
-        // 2. Users Data
+        // Listen Users
         db.ref('users').on('value', snap => {
             usersData = [];
-            snap.forEach(c => usersData.push({ key: c.key, ...c.val() }));
+            if (snap.exists()) {
+                snap.forEach(c => {
+                    let u = c.val();
+                    u.key = c.key;
+                    usersData.push(u);
+                });
+            }
             document.getElementById('countUsers').innerText = usersData.length;
-            renderUsers(usersData); // Initial Render
-        });
+            renderUsers(usersData);
+        }, err => console.error("Users Load Error:", err));
 
-        // 3. Maintenance Status
+        // Maintenance Toggle (Realtime)
         db.ref('settings/mt').on('value', snap => {
-            mtStatus = snap.val() || false;
+            mtStatus = snap.val() === true;
             const disp = document.getElementById('mtDisplay');
             const btn = document.getElementById('mtBtn');
-            
-            if(mtStatus) {
-                disp.innerText = "MAINTENANCE ACTIVE";
-                disp.style.color = "var(--danger)";
-                btn.innerText = "DISABLE MAINTENANCE";
-                btn.className = "btn btn-danger";
-            } else {
-                disp.innerText = "SYSTEM NORMAL";
-                disp.style.color = "var(--success)";
-                btn.innerText = "ENABLE MAINTENANCE";
-                btn.className = "btn btn-warn";
-            }
+            disp.innerText = mtStatus ? "MAINTENANCE ACTIVE" : "SYSTEM NORMAL";
+            disp.style.color = mtStatus ? "var(--danger)" : "var(--success)";
+            btn.className = mtStatus ? "btn btn-danger" : "btn btn-warn";
         });
 
-        // 4. Announcement Check
+        // Broadcast/Announcement
         db.ref('settings/announcement').on('value', snap => {
             const val = snap.val();
-            const statusEl = document.getElementById('currentAnnStatus');
-            if(val) {
-                statusEl.innerText = "ACTIVE: " + (val.length > 20 ? val.substring(0,20)+'...' : val);
-                statusEl.style.color = "var(--success)";
-                document.getElementById('annInput').value = val;
-            } else {
-                statusEl.innerText = "NO ACTIVE BROADCAST";
-                statusEl.style.color = "#666";
-                document.getElementById('annInput').value = "";
+            document.getElementById('currentAnnStatus').innerText = val ? "BROADCAST ACTIVE" : "NO BROADCAST";
+            if(!document.getElementById('annInput').matches(':focus')) {
+                document.getElementById('annInput').value = val || "";
             }
         });
 
-        // 5. System Logs
-        db.ref('logs').limitToLast(50).on('value', snap => {
-            const container = document.getElementById('terminalLog');
+        // Logs
+        db.ref('logs').limitToLast(30).on('value', snap => {
+            const logBox = document.getElementById('terminalLog');
             let html = '';
-            snap.forEach(child => {
-                const log = child.val();
-                html += `<div class="log-line"><span class="log-ts">[${log.time}]</span> ${log.msg}</div>`;
+            snap.forEach(c => {
+                const l = c.val();
+                html += `<div class="log-line"><span class="log-ts">[${l.time || '00:00'}]</span> ${l.msg}</div>`;
             });
-            container.innerHTML = html;
-            container.scrollTop = container.scrollHeight;
+            logBox.innerHTML = html;
+            logBox.scrollTop = logBox.scrollHeight;
         });
     }
 
-    // --- RENDER & FILTER FUNCTIONS ---
-
+    // --- UI RENDERING ---
     function renderUsers(data) {
         const list = document.getElementById('userList');
-        // Sort admins first, then by name
-        const sorted = data.sort((a,b) => (b.role === 'admin') - (a.role === 'admin'));
-        
-        let html = '';
-        sorted.forEach(u => {
-            const isBanned = u.banned;
-            const isAdmin = u.role === 'admin';
-            html += `
-            <div class="list-row" style="border-left-color: ${isBanned ? 'var(--danger)' : (isAdmin ? 'var(--accent)' : 'transparent')}">
-                <div style="flex:1;">
-                    <div style="color: ${isBanned ? 'var(--danger)' : '#fff'}; font-weight:bold;">${u.username}</div>
-                    <small style="color:#666; font-family: var(--font-code)">UID: ${u.key.substring(0,8)}...</small>
+        list.innerHTML = data.map(u => `
+            <div class="list-row">
+                <div style="flex:1">
+                    <div style="color:${u.banned ? 'var(--danger)' : '#fff'}; font-weight:bold">${u.username || 'Unknown'}</div>
+                    <small style="color:#555">${u.key}</small>
                 </div>
-                <div style="width:100px; color:${isAdmin ? 'var(--accent)' : '#888'}; font-family:var(--font-code)">${u.role.toUpperCase()}</div>
-                <div style="width:100px; text-align:right;">
-                    <button class="btn ${isBanned ? 'btn-neon' : 'btn-danger'}" style="padding: 5px 10px; font-size: 10px;" 
-                        onclick="toggleBan('${u.key}', '${u.username}', ${isBanned})">
-                        ${isBanned ? 'UNBAN' : 'BAN'}
+                <div style="width:100px; color:var(--accent)">${(u.role || 'user').toUpperCase()}</div>
+                <div style="width:100px; text-align:right">
+                    <button class="btn ${u.banned ? 'btn-neon' : 'btn-danger'}" onclick="toggleBan('${u.key}', '${u.username}', ${u.banned})">
+                        ${u.banned ? 'UNBAN' : 'BAN'}
                     </button>
                 </div>
-            </div>`;
-        });
-        list.innerHTML = html;
+            </div>
+        `).join('');
     }
 
     function renderSongs(data) {
         const list = document.getElementById('songList');
-        const reversed = [...data].reverse();
-        
-        let html = '';
-        reversed.forEach(s => {
-            html += `
+        list.innerHTML = data.slice().reverse().map(s => `
             <div class="list-row">
-                <div style="flex:2;">
-                    <div style="color: #fff; font-weight:bold;">${s.title}</div>
-                    <small style="color:#888;">${s.by || 'Unknown Artist'}</small>
+                <div style="flex:2">
+                    <div style="color:#fff; font-weight:bold">${s.title || 'Untitled'}</div>
+                    <small style="color:#666">${s.by || 'Unknown Artist'}</small>
                 </div>
-                <div style="flex:1; color:#666; font-size:12px;">${s.uploadedBy || 'System'}</div>
-                <div style="width:120px; text-align:right; display:flex; gap:5px; justify-content: flex-end;">
-                    <a href="${s.url}" target="_blank" class="btn" style="padding:5px 8px;"><i class="fas fa-play"></i></a>
-                    <button class="btn btn-danger" style="padding:5px 8px;" onclick="deleteSong('${s.key}', '${s.title}')"><i class="fas fa-trash"></i></button>
+                <div style="flex:1; font-size:12px; color:var(--accent)">${s.uploadedBy || 'System'}</div>
+                <div style="width:120px; text-align:right; display:flex; gap:5px; justify-content:flex-end">
+                    <a href="${s.url}" target="_blank" class="btn"><i class="fas fa-play"></i></a>
+                    <button class="btn btn-danger" onclick="deleteSong('${s.key}', '${s.title}')"><i class="fas fa-trash"></i></button>
                 </div>
-            </div>`;
-        });
-        list.innerHTML = html;
+            </div>
+        `).join('');
     }
+
+    // --- ACTIONS ---
+    function toggleMT() {
+        const next = !mtStatus;
+        db.ref('settings').update({ mt: next });
+        logAction(`MT Mode changed to ${next}`);
+    }
+
+    function sendBroadcast() {
+        const val = document.getElementById('annInput').value;
+        if(val) {
+            db.ref('settings').update({ announcement: val });
+            logAction(`Sent Broadcast: ${val}`);
+            Swal.fire({ icon: 'success', title: 'TRANSMITTED', background: '#000', color: '#fff' });
+        }
+    }
+
+    function clearBroadcast() {
+        db.ref('settings/announcement').remove();
+        logAction(`Cleared Broadcast Message`);
+    }
+
+    function deleteSong(id, title) {
+        if(confirm(`Purge ${title} from database?`)) {
+            db.ref(`songs/${id}`).remove();
+            logAction(`DELETED SONG: ${title}`);
+        }
+    }
+
+    function toggleBan(id, name, status) {
+        db.ref(`users/${id}`).update({ banned: !status });
+        logAction(`${!status ? 'BANNED' : 'UNBANNED'} USER: ${name}`);
+    }
+
+    function logAction(msg) {
+        const t = new Date().toLocaleTimeString();
+        db.ref('logs').push({ msg, time: t });
+    }
+
+    function logout() {
+        auth.signOut().then(() => window.location.href = 'exemusic.html');
+    }
+
+    // --- AUTH CHECK ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            db.ref('users/' + user.uid).once('value', snap => {
+                if (snap.val()?.role === 'admin') {
+                    initListeners();
+                    initSecurity();
+                } else { window.location.href = 'exemusic.html'; }
+            });
+        } else { window.location.href = 'exemusic.html'; }
+    });
 
     function filterUsers() {
         const q = document.getElementById('searchUser').value.toLowerCase();
-        const f = usersData.filter(u => u.username.toLowerCase().includes(q));
-        renderUsers(f);
+        renderUsers(usersData.filter(u => u.username?.toLowerCase().includes(q)));
     }
-
     function filterSongs() {
         const q = document.getElementById('searchSong').value.toLowerCase();
-        const f = songsData.filter(s => s.title.toLowerCase().includes(q) || (s.by && s.by.toLowerCase().includes(q)));
-        renderSongs(f);
+        renderSongs(songsData.filter(s => s.title?.toLowerCase().includes(q) || s.by?.toLowerCase().includes(q)));
     }
 
     // --- ACTIONS ---
