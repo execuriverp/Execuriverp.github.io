@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXE.ADMIN // OVERLORD V4</title>
+    <title>EXE.ADMIN // OVERLORD V5 PRO</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -14,117 +14,141 @@
 
     <style>
         :root {
-            --bg: #050507; --panel: #0d0d12; --accent: #00f3ff;
+            --bg: #030305; --panel: #0a0a0f; --accent: #00f3ff;
             --danger: #ff0055; --warning: #ffcc00; --success: #00ff99;
-            --border: rgba(0, 243, 255, 0.1);
+            --border: rgba(0, 243, 255, 0.15);
+            --glass: rgba(255, 255, 255, 0.03);
         }
         body { background: var(--bg); color: #e0e6ed; margin: 0; font-family: 'Rajdhani', sans-serif; display: flex; height: 100vh; overflow: hidden; }
         
-        /* SIDEBAR */
-        .sidebar { width: 280px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
-        .nav-btn { background: none; border: none; color: #676e79; padding: 15px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; border-radius: 4px; font-weight: bold; margin-bottom: 5px; transition: 0.3s; }
-        .nav-btn:hover, .nav-btn.active { color: var(--accent); background: rgba(0, 243, 255, 0.05); box-shadow: inset 4px 0 0 var(--accent); }
+        /* SIDEBAR PRO */
+        .sidebar { width: 260px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 25px 15px; position: relative; }
+        .sidebar::after { content: ''; position: absolute; top: 0; right: 0; height: 100%; width: 2px; background: linear-gradient(to bottom, transparent, var(--accent), transparent); }
+        
+        .nav-btn { background: none; border: none; color: #5a616b; padding: 14px 18px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; border-radius: 8px; font-weight: bold; margin-bottom: 8px; transition: 0.3s; font-size: 15px; }
+        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-btn.active { color: var(--accent); background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); }
 
         /* MAIN CONTENT */
-        .main-view { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+        .main-view { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(0, 243, 255, 0.03), transparent); }
         .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .view-section.active { display: block; animation: slideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* UI ELEMENTS */
-        .card { background: rgba(20, 20, 25, 0.8); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .stat-val { font-family: 'JetBrains Mono'; font-size: 28px; color: #fff; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 25px; position: relative; overflow: hidden; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .stat-label { font-size: 12px; color: #5a616b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-val { font-family: 'JetBrains Mono'; font-size: 32px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
         
-        .cyber-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .cyber-table th { text-align: left; padding: 12px; color: var(--accent); border-bottom: 2px solid var(--border); font-size: 14px; }
-        .cyber-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; }
+        .cyber-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 20px; }
+        .cyber-table th { text-align: left; padding: 15px; color: var(--accent); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .cyber-table td { padding: 15px; background: var(--glass); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .cyber-table td:first-child { border-left: 1px solid var(--border); border-radius: 10px 0 0 10px; }
+        .cyber-table td:last-child { border-right: 1px solid var(--border); border-radius: 0 10px 10px 0; }
 
-        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-family: 'JetBrains Mono'; font-weight: bold; transition: 0.2s; font-size: 12px; }
-        .btn-neon { background: var(--accent); color: #000; }
+        /* TAGS UI */
+        .badge-tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-family: 'JetBrains Mono'; display: inline-block; margin-top: 5px; }
+        .tag-owner { background: gold; color: #000; }
+        .tag-admin { background: var(--danger); color: #fff; }
+        .tag-staff { background: var(--accent); color: #000; }
+        .tag-user { background: #333; color: #eee; }
+
+        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-family: 'JetBrains Mono'; font-weight: bold; transition: 0.2s; font-size: 11px; text-transform: uppercase; }
+        .btn-neon { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+        .btn-neon:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 243, 255, 0.5); }
         .btn-danger { background: var(--danger); color: #fff; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: #fff; }
+        .btn-outline:hover { background: var(--border); }
 
-        .cyber-input { background: #000; border: 1px solid var(--border); padding: 10px; color: var(--accent); font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
+        .cyber-input { background: #000; border: 1px solid var(--border); padding: 12px; color: var(--accent); font-family: 'JetBrains Mono'; width: 100%; border-radius: 6px; }
 
-        /* LOCK SCREEN */
-        #lockScreen { position: fixed; inset: 0; background: #050507; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        #lockScreen { position: fixed; inset: 0; background: #030305; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
 
 <div id="lockScreen">
-    <div style="width: 300px; text-align: center;">
-        <h2 style="color: var(--accent); letter-spacing: 3px;">ADMIN_AUTH</h2>
-        <canvas id="capCanvas" width="200" height="60" style="background: #111; margin: 15px 0; border: 1px solid var(--border);"></canvas>
-        <input type="text" id="capInput" class="cyber-input" placeholder="ENTER CODE" style="text-align: center; margin-bottom: 10px;">
-        <button class="btn btn-neon" style="width: 100%;" onclick="verifyAccess()">ACCESS SYSTEM</button>
+    <div style="width: 320px; text-align: center; background: var(--panel); padding: 40px; border-radius: 20px; border: 1px solid var(--border);">
+        <i class="fas fa-user-shield" style="font-size: 40px; color: var(--accent); margin-bottom: 20px;"></i>
+        <h2 style="color: var(--accent); letter-spacing: 5px; margin-bottom: 20px;">CORE_AUTH</h2>
+        <canvas id="capCanvas" width="220" height="70" style="background: #000; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border);"></canvas>
+        <input type="text" id="capInput" class="cyber-input" placeholder="ACCESS_CODE" style="text-align: center; margin-bottom: 15px; font-size: 18px;">
+        <button class="btn btn-neon" style="width: 100%;" onclick="verifyAccess()">INITIALIZE SESSION</button>
     </div>
 </div>
 
 <div class="sidebar">
-    <div style="font-size: 22px; font-weight: bold; color: var(--accent); margin-bottom: 30px;"><i class="fas fa-microchip"></i> OVERLORD_V4</div>
-    <button class="nav-btn active" onclick="switchView('dash')"><i class="fas fa-terminal"></i> DASHBOARD</button>
-    <button class="nav-btn" onclick="switchView('users')"><i class="fas fa-users-cog"></i> USER CONTROL</button>
-    <button class="nav-btn" onclick="switchView('songs')"><i class="fas fa-compact-disc"></i> MUSIC DATABASE</button>
-    <button class="nav-btn" onclick="switchView('logs')"><i class="fas fa-history"></i> SYSTEM LOGS</button>
+    <div style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 40px; padding: 0 10px;">
+        <span style="color: var(--accent);">EXE</span>.OVERLORD <small style="font-size: 10px; color: var(--danger);">V5</small>
+    </div>
     
-    <div style="margin-top: auto; padding-top: 20px;">
-        <button class="btn btn-danger" style="width: 100%;" onclick="auth.signOut()">SHUTDOWN</button>
+    <button class="nav-btn active" onclick="switchView('dash')"><i class="fas fa-project-diagram"></i> DASHBOARD</button>
+    <button class="nav-btn" onclick="switchView('users')"><i class="fas fa-user-cog"></i> USER CONTROL</button>
+    <button class="nav-btn" onclick="switchView('songs')"><i class="fas fa-database"></i> MUSIC DATA</button>
+    <button class="nav-btn" onclick="switchView('logs')"><i class="fas fa-code"></i> SYSTEM LOGS</button>
+    
+    <div style="margin-top: auto; padding: 0 10px;">
+        <div style="font-size: 10px; color: #444; margin-bottom: 10px; font-family: 'JetBrains Mono';">SECURE_CONNECTION: ESTABLISHED</div>
+        <button class="btn btn-danger" style="width: 100%;" onclick="auth.signOut()">TERMINATE</button>
     </div>
 </div>
 
 <div class="main-view">
     <div id="view-dash" class="view-section active">
-        <h1>DASHBOARD_V4</h1>
+        <h1 style="letter-spacing: -1px;">SYSTEM_OVERVIEW</h1>
         <div class="grid">
-            <div class="card"><div>USERS</div><div class="stat-val" id="count-u">0</div></div>
-            <div class="card"><div>SONGS</div><div class="stat-val" id="count-s">0</div></div>
+            <div class="card"><div class="stat-label">Total Entities</div><div class="stat-val" id="count-u">0</div></div>
+            <div class="card"><div class="stat-label">Audio Packets</div><div class="stat-val" id="count-s">0</div></div>
             <div class="card">
-                <div>SYSTEM_MODE</div>
-                <div id="mt-text" style="font-weight: bold; margin: 5px 0;">ONLINE</div>
-                <button class="btn btn-outline" style="width:100%" onclick="toggleMT()">TOGGLE MT</button>
+                <div class="stat-label">Operational Mode</div>
+                <div id="mt-text" style="font-weight: bold; margin: 10px 0; font-size: 18px;">ONLINE</div>
+                <button class="btn btn-outline" style="width:100%" onclick="toggleMT()">TOGGLE MAINTENANCE</button>
             </div>
         </div>
         
         <div class="card">
-            <div style="color: var(--accent); margin-bottom: 10px;">GLOBAL_BROADCAST</div>
-            <textarea id="bcInput" class="cyber-input" style="height: 60px; margin-bottom: 10px;" placeholder="Type announcement..."></textarea>
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-neon" onclick="sendBC()">TRANSMIT</button>
-                <button class="btn btn-danger" onclick="clearBC()">TERMINATE</button>
+            <div style="color: var(--accent); margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;"><i class="fas fa-broadcast-tower"></i> GLOBAL_TRANSMISSION</div>
+            <textarea id="bcInput" class="cyber-input" style="height: 80px; margin-bottom: 15px; resize: none;" placeholder="Enter system announcement..."></textarea>
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-neon" onclick="sendBC()">BROADCAST</button>
+                <button class="btn btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="clearBC()">STOP ALL</button>
             </div>
         </div>
     </div>
 
     <div id="view-users" class="view-section">
-        <h1>USER_MANAGEMENT</h1>
-        <input type="text" class="cyber-input" placeholder="Search by UID or Name..." onkeyup="searchTable('userTable', this.value)">
+        <h1>USER_OPERATIONS</h1>
+        <div class="card" style="padding: 10px;">
+            <input type="text" class="cyber-input" placeholder="SEARCH_BY_ALIAS_OR_UID..." onkeyup="searchTable('userTable', this.value)" style="border:none;">
+        </div>
         <table class="cyber-table" id="userTable">
             <thead>
-                <tr><th>USER_INFO</th><th>ROLE</th><th>FOLLOWERS</th><th>CD_STATUS</th><th>ACTIONS</th></tr>
+                <tr><th>IDENTIFIER</th><th>PRIVILEGE</th><th>SOCIAL_DATA</th><th>COOLDOWN</th><th>ACTIONS</th></tr>
             </thead>
             <tbody id="userList"></tbody>
         </table>
     </div>
 
     <div id="view-songs" class="view-section">
-        <h1>SONG_DATABASE</h1>
-        <input type="text" class="cyber-input" placeholder="Search by Title/Artist..." onkeyup="searchTable('songTable', this.value)">
+        <h1>DATABASE_INDEX</h1>
+        <div class="card" style="padding: 10px;">
+            <input type="text" class="cyber-input" placeholder="SEARCH_BY_AUDIO_TITLE..." onkeyup="searchTable('songTable', this.value)" style="border:none;">
+        </div>
         <table class="cyber-table" id="songTable">
             <thead>
-                <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTIONS</th></tr>
+                <tr><th>SONG_TITLE</th><th>ARTIST_TAG</th><th>SOURCE_UID</th><th>CONTROL</th></tr>
             </thead>
             <tbody id="songList"></tbody>
         </table>
     </div>
 
     <div id="view-logs" class="view-section">
-        <div style="display:flex; justify-content: space-between; align-items: center;">
-            <h1>SYSTEM_LOGS</h1>
-            <button class="btn btn-danger" onclick="clearAllLogs()">WIPE LOGS</button>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>SECURITY_LOGS</h1>
+            <button class="btn btn-danger" onclick="clearAllLogs()">WIPE_HISTORY</button>
         </div>
-        <div id="logTerminal" style="background:#000; border:1px solid var(--border); height: 500px; overflow-y:auto; padding:15px; font-family:'JetBrains Mono'; font-size:12px; color:var(--success); line-height:1.6;"></div>
+        <div id="logTerminal" style="background:#000; border:1px solid var(--border); height: 550px; overflow-y:auto; padding:20px; font-family:'JetBrains Mono'; font-size:12px; color:var(--success); line-height:1.8; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,255,153,0.05);"></div>
     </div>
 </div>
 
@@ -146,21 +170,20 @@
     let secretCode = "";
     let mtState = false;
 
-    // --- SECURITY ---
+    // --- SECURITY CAPTCHA ---
     function generateCaptcha() {
         const c = document.getElementById('capCanvas');
         const ctx = c.getContext('2d');
         secretCode = Math.random().toString(36).substring(2, 7).toUpperCase();
         
-        ctx.fillStyle = "#111"; ctx.fillRect(0,0,200,60);
-        ctx.font = "bold 28px 'JetBrains Mono'";
-        ctx.fillStyle = "#00f3ff";
-        ctx.textAlign = "center";
-        ctx.fillText(secretCode, 100, 40);
-        // Noise lines
-        for(let i=0; i<3; i++) {
-            ctx.strokeStyle = "rgba(255,0,85,0.4)";
-            ctx.beginPath(); ctx.moveTo(0, Math.random()*60); ctx.lineTo(200, Math.random()*60); ctx.stroke();
+        ctx.fillStyle = "#000"; ctx.fillRect(0,0,220,70);
+        ctx.font = "bold 32px 'JetBrains Mono'";
+        ctx.fillStyle = "#00f3ff"; ctx.textAlign = "center";
+        ctx.fillText(secretCode, 110, 45);
+        
+        for(let i=0; i<15; i++) {
+            ctx.strokeStyle = i % 2 === 0 ? "rgba(0, 243, 255, 0.2)" : "rgba(255, 0, 85, 0.2)";
+            ctx.beginPath(); ctx.moveTo(Math.random()*220, Math.random()*70); ctx.lineTo(Math.random()*220, Math.random()*70); ctx.stroke();
         }
     }
 
@@ -170,27 +193,18 @@
             document.getElementById('lockScreen').style.opacity = '0';
             setTimeout(() => document.getElementById('lockScreen').style.display = 'none', 500);
         } else {
-            Swal.fire('ACCESS DENIED', 'Incorrect Protocol Code', 'error');
+            Swal.fire({ icon: 'error', title: 'INVALID_CODE', background: '#0a0a0f', color: '#fff' });
             generateCaptcha();
             document.getElementById('capInput').value = '';
         }
     }
 
-    // --- NAVIGATION ---
-    function switchView(id) {
-        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('view-'+id).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    // --- DATA FETCHING ---
+    // --- APP LOGIC ---
     auth.onAuthStateChanged(user => {
         if(user) {
             db.ref('users/' + user.uid).once('value', snap => {
-                if(snap.val()?.role === 'admin') {
-                    initApp();
-                } else { window.location.href = 'exemusic.html'; }
+                if(snap.val()?.role === 'admin') initApp();
+                else window.location.href = 'exemusic.html';
             });
         } else { window.location.href = 'exemusic.html'; }
     });
@@ -204,22 +218,27 @@
             let html = ''; let count = 0;
             snap.forEach(child => {
                 const u = child.val(); count++;
-                const followers = u.followers ? Object.keys(u.followers).length : 0;
-                html += `<tr>
-                    <td><b>${u.username || 'NoName'}</b><br><small style="color:#555">${child.key}</small></td>
-                    <td>${u.role || 'user'}</td>
+                const uid = child.key;
+                const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
+                
+                // Realtime check followers count from 'follows' path
+                db.ref('follows/' + uid).once('value', fSnap => {
+                    const fCount = fSnap.numChildren();
+                    const row = document.getElementById('row-' + uid);
+                    if(row) row.querySelector('.fol-btn').innerText = fCount + ' FOLLOWERS';
+                });
+
+                html += `<tr id="row-${uid}">
+                    <td><b>${u.username || 'NoName'}</b><br><small style="color:#555">${uid}</small></td>
                     <td>
-                        <button class="btn btn-outline" onclick="manageFollowers('${child.key}', ${followers})">${followers} FOLLOWERS</button>
-                    </td>
-                    <td>
-                        <button class="btn ${u.lastUpload ? 'btn-danger' : 'btn-outline'}" onclick="resetCD('${child.key}')">
-                            ${u.lastUpload ? 'RESET CD' : 'NO CD'}
+                        <button class="btn btn-outline" onclick="manageTag('${uid}', '${u.tag || 'user'}')">
+                            <span class="badge-tag ${tagClass}">${u.tag || 'USER'}</span>
                         </button>
                     </td>
+                    <td><button class="btn btn-outline fol-btn" onclick="manageFollowers('${uid}')">0 FOLLOWERS</button></td>
+                    <td><button class="btn ${u.lastUpload ? 'btn-danger' : 'btn-outline'}" onclick="resetCD('${uid}')">${u.lastUpload ? 'RESET CD' : 'NO_LIMIT'}</button></td>
                     <td>
-                        <button class="btn ${u.banned ? 'btn-neon' : 'btn-danger'}" onclick="toggleBan('${child.key}', ${u.banned})">
-                            ${u.banned ? 'UNBAN' : 'BAN'}
-                        </button>
+                        <button class="btn ${u.banned ? 'btn-neon' : 'btn-danger'}" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button>
                     </td>
                 </tr>`;
             });
@@ -236,112 +255,133 @@
                 html += `<tr>
                     <td>${s.title}</td>
                     <td>${s.by || '-'}</td>
-                    <td>${s.uploadedBy || 'System'}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="delSong('${child.key}', '${s.title}')"><i class="fas fa-trash"></i></button>
-                    </td>
+                    <td><small>${s.uid || 'System'}</small></td>
+                    <td><button class="btn btn-danger" onclick="delSong('${child.key}', '${s.title}')"><i class="fas fa-trash"></i></button></td>
                 </tr>`;
             });
             list.innerHTML = html;
             document.getElementById('count-s').innerText = count;
         });
 
-        // Listen Settings
-        db.ref('settings/mt').on('value', snap => {
-            mtState = snap.val();
+        // Listen System Settings
+        db.ref('settings/mt').on('value', s => {
+            mtState = s.val();
             const txt = document.getElementById('mt-text');
-            txt.innerText = mtState ? "MAINTENANCE ACTIVE" : "SYSTEM ONLINE";
+            txt.innerText = mtState ? "MAINTENANCE_ACTIVE" : "CORE_ONLINE";
             txt.style.color = mtState ? "var(--danger)" : "var(--success)";
         });
 
-        db.ref('settings/announcement').on('value', snap => {
-            document.getElementById('bcInput').value = snap.val() || "";
-        });
+        db.ref('settings/announcement').on('value', s => document.getElementById('bcInput').value = s.val() || "");
 
-        // Listen Logs
+        // Logs Terminal
         db.ref('logs').limitToLast(50).on('value', snap => {
             const box = document.getElementById('logTerminal');
             let h = '';
             snap.forEach(c => {
                 const l = c.val();
-                h += `<div><span style="color:#555">[${l.time}]</span> ${l.msg}</div>`;
+                h += `<div><span style="color:#444">[${l.time}]</span> <span style="color:var(--accent)">SYS_MSG:</span> ${l.msg}</div>`;
             });
             box.innerHTML = h;
             box.scrollTop = box.scrollHeight;
         });
     }
 
-    // --- FUNCTIONS ---
+    // --- CORE FUNCTIONS ---
 
-    function toggleBan(uid, status) {
-        db.ref('users/' + uid).update({ banned: !status });
-        logAction(`User ${uid} status: ${!status ? 'BANNED' : 'ACTIVE'}`);
-    }
-
-    function resetCD(uid) {
-        db.ref('users/' + uid + '/lastUpload').remove();
-        Swal.fire('COOLDOWN RESET', 'User can upload again immediately', 'success');
-        logAction(`Reset Cooldown for user ${uid}`);
-    }
-
-    function manageFollowers(uid, current) {
+    function manageTag(uid, current) {
         Swal.fire({
-            title: 'Set Followers (Instan Centang Biru)',
-            input: 'number',
-            inputLabel: 'Masukkan angka 50 untuk langsung memunculkan centang biru',
+            title: 'MANAGE_USER_TAG',
+            input: 'select',
+            inputOptions: {
+                'USER': 'USER',
+                'STAFF': 'STAFF',
+                'EXECUTIVE': 'EXECUTIVE',
+                'ADMIN': 'ADMIN',
+                'OWNER': 'OWNER'
+            },
+            inputValue: current.toUpperCase(),
             showCancelButton: true,
-            confirmButtonColor: '#00f3ff',
-            background: '#000',
-            color: '#fff'
+            background: '#0a0a0f', color: '#fff', confirmButtonColor: '#00f3ff'
         }).then(res => {
             if(res.value) {
-                let dummy = {};
-                // Membuat data dummy agar dihitung sebagai follower asli oleh sistem
-                for(let i=0; i < res.value; i++) { 
-                    dummy['admin_set_' + i] = true; 
-                }
-                // Simpan ke path 'follows' agar terbaca oleh file test.html
-                db.ref('follows/' + uid).set(dummy);
-                
-                logAction(`Set followers user ${uid} menjadi ${res.value} (Centang Biru)`);
-                Swal.fire('BERHASIL', `User sekarang memiliki ${res.value} followers`, 'success');
+                db.ref('users/' + uid).update({ tag: res.value });
+                logAction(`Changed Tag for ${uid} to ${res.value}`);
+                msg('Tag Updated');
             }
         });
     }
 
+    function manageFollowers(uid) {
+        Swal.fire({
+            title: 'INJECT_FOLLOWERS',
+            text: 'Masukkan jumlah followers (Ketik 50 untuk centang biru)',
+            input: 'number',
+            showCancelButton: true,
+            background: '#0a0a0f', color: '#fff', confirmButtonColor: '#00f3ff'
+        }).then(res => {
+            if(res.value !== undefined) {
+                const amount = parseInt(res.value);
+                let dummy = {};
+                for(let i=0; i<amount; i++) { dummy['auto_gen_'+i] = true; }
+                
+                db.ref('follows/' + uid).set(dummy).then(() => {
+                    logAction(`Injected ${amount} followers to ${uid}`);
+                    msg(`Injected ${amount} followers`);
+                });
+            }
+        });
+    }
+
+    function toggleBan(uid, status) {
+        db.ref('users/' + uid).update({ banned: !status });
+        logAction(`User ${uid} security status: ${!status ? 'LOCKED' : 'OPEN'}`);
+    }
+
+    function resetCD(uid) {
+        db.ref('users/' + uid + '/lastUpload').remove();
+        logAction(`Cooldown Override for ${uid}`);
+        msg('Cooldown Reset');
+    }
+
     function delSong(id, title) {
-        if(confirm(`Delete ${title}?`)) {
-            db.ref('songs/' + id).remove();
-            logAction(`Deleted song: ${title}`);
-        }
+        Swal.fire({
+            title: 'WIPE_DATA?', text: `Delete ${title}?`, icon: 'warning',
+            showCancelButton: true, background: '#0a0a0f', color: '#fff', confirmButtonColor: '#ff0055'
+        }).then(res => {
+            if(res.isConfirmed) {
+                db.ref('songs/' + id).remove();
+                logAction(`Deleted song: ${title}`);
+            }
+        });
     }
 
     function toggleMT() {
         db.ref('settings').update({ mt: !mtState });
-        logAction(`Maintenance toggled to ${!mtState}`);
+        logAction(`Maintenance set to ${!mtState}`);
     }
 
     function sendBC() {
         const val = document.getElementById('bcInput').value;
         db.ref('settings').update({ announcement: val });
-        logAction(`Broadcast sent: ${val}`);
-        Swal.fire('SENT', 'Broadcast live', 'success');
+        logAction(`Transmission: ${val}`);
+        msg('Broadcast Active');
     }
 
     function clearBC() {
         db.ref('settings/announcement').remove();
-        logAction('Broadcast terminated');
-    }
-
-    function clearAllLogs() {
-        if(confirm('Wipe all system logs?')) {
-            db.ref('logs').remove();
-        }
+        logAction('Transmission Terminated');
     }
 
     function logAction(msg) {
-        const t = new Date().toLocaleTimeString();
-        db.ref('logs').push({ msg, time: t });
+        const time = new Date().toLocaleTimeString();
+        db.ref('logs').push({ msg, time });
+    }
+
+    function switchView(id) {
+        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('view-'+id).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
     function searchTable(tableId, query) {
@@ -350,6 +390,8 @@
             r.style.display = r.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
         });
     }
+
+    function msg(t) { Swal.fire({ toast: true, position: 'top-end', title: t, showConfirmButton: false, timer: 2000, background: '#00f3ff', color: '#000' }); }
 </script>
 
 </body>
