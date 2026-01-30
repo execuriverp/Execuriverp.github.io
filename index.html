@@ -15,6 +15,7 @@
   --purple:#6366f1;
   --green:#22c55e;
   --gold:#facc15;
+  --red:#ef4444;
   --text:#e5e7eb;
   --muted:#94a3b8;
 }
@@ -232,7 +233,7 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== EID COUNTDOWN MODAL STYLES ===== */
+/* ===== EVENT POPUP MODAL STYLES ===== */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(2,6,23,0.9); z-index: 2000;
@@ -252,8 +253,10 @@ body{
   transition: .2s;
 }
 .modal-close:hover { color: var(--text); }
+
+/* Bagian Timer */
 .eid-title {
-  font-size: 20px; font-weight: 900; color: var(--green);
+  font-size: 18px; font-weight: 900; color: var(--green);
   letter-spacing: 1px; margin-bottom: 20px;
 }
 .timer-grid {
@@ -261,10 +264,70 @@ body{
 }
 .timer-item {
   background: rgba(255,255,255,0.03); padding: 10px;
-  border-radius: 12px; min-width: 65px; border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px; min-width: 60px; border: 1px solid rgba(255,255,255,0.05);
 }
-.t-num { font-size: 22px; font-weight: 900; color: var(--text); display: block; }
+.t-num { font-size: 20px; font-weight: 900; color: var(--text); display: block; }
 .t-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Bagian Special Offer Box (Style Diperbaiki) */
+.special-offer-box {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.05), rgba(15, 23, 42, 0.8));
+  border: 1px solid rgba(250, 204, 21, 0.4); /* Gold Border */
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.offer-header {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge-now {
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  animation: blink 1.2s infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+.offer-list {
+  list-style: none;
+  margin-bottom: 12px;
+}
+.offer-list li {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+.offer-list li::before {
+  content: "🎁";
+  margin-right: 10px;
+  font-size: 12px;
+}
+
+.offer-note {
+  font-size: 10px;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.4;
+  border-top: 1px dashed rgba(255,255,255,0.1);
+  padding-top: 10px;
+}
+.offer-note strong { color: var(--red); font-weight: 800; }
+
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
 /* ===== MOBILE OPTIMIZATION ===== */
@@ -327,10 +390,10 @@ body{
     <div class="label">Access System</div>
     <div class="value">WHITELIST</div>
   </div>
-  
+   
   <div class="card" onclick="openEidModal()" style="cursor: pointer;">
-    <div class="label">Special Event</div>
-    <div class="value" style="font-size:16px;">Idul Fitri Count Down</div>
+    <div class="label">ExeEvent</div>
+    <div class="value">2026 EVENT</div>
     <div class="status" style="margin-top:5px; font-size:11px; color:var(--muted);">
        <span style="color:var(--green)">●</span> Click to Open
     </div>
@@ -386,8 +449,8 @@ body{
 <div class="modal-overlay" id="eidModal">
   <div class="modal-content">
     <span class="modal-close" onclick="closeEidModal()">&times;</span>
-    <div class="eid-title">MENUJU IDUL FITRI 1447 H</div>
     
+    <div class="eid-title">MENUJU IDUL FITRI 1447 H</div>
     <div class="timer-grid">
       <div class="timer-item">
         <span class="t-num" id="d-val">00</span>
@@ -407,12 +470,26 @@ body{
       </div>
     </div>
     
-    <div style="font-size:12px; color:var(--muted); line-height:1.6;">
-      Semoga kita dipertemukan kembali dengan hari kemenangan.<br>
+    <div style="font-size:11px; color:var(--muted); margin-bottom:20px;">
       <span style="color:var(--green); font-weight:bold;">Mohon Maaf Lahir dan Batin</span>
     </div>
+
+    <div class="special-offer-box">
+      <div class="offer-header">
+        EVENT STARTERPACK <span class="badge-now">NOW!</span>
+      </div>
+      <ul class="offer-list">
+        <li>Rumah Gratis (1x Claim)</li>
+        <li>Mobil Import Turismo</li>
+      </ul>
+      <div class="offer-note">
+        <strong>NOTE :</strong> Khusus warga baru. Tidak berlaku bagi yang sudah ambil starterpack biasa.
+      </div>
+    </div>
+
   </div>
 </div>
+
 <script>
 function copyIP(btn){
   document.getElementById("loading").style.display="flex";
