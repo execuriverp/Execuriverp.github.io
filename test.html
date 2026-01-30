@@ -1,48 +1,373 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Secure Form</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    form {
-      background: #020617;
-      padding: 25px;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 0 20px rgba(0,0,0,.6);
-    }
-    input, textarea, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background: #22c55e;
-      cursor: pointer;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Execurive Roleplay | Blue City SA-MP</title>
+<link rel="icon" type="image/png" href="favicon.png">
+
+<style>
+:root{
+  --bg:#020617;
+  --panel:#0f172a;
+  --border:#1e293b;
+  --blue:#38bdf8;
+  --purple:#6366f1;
+  --green:#22c55e;
+  --gold:#facc15;
+  --red:#ef4444;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+}
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(900px 300px at top, rgba(56,189,248,.18), transparent),
+    radial-gradient(700px 250px at bottom, rgba(99,102,241,.14), transparent),
+    var(--bg);
+  color:var(--text);
+}
+
+/* ===== NAVBAR ===== */
+.nav{
+  position:sticky;
+  top:0;
+  z-index:999;
+  background:rgba(2,6,23,.8);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  max-width:1200px;
+  margin:auto;
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.nav-left{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.logo{
+  width:40px;height:40px;border-radius:12px;overflow:hidden;
+  box-shadow:0 0 18px rgba(56,189,248,.4);
+}
+.logo img{width:100%;height:100%}
+.nav-title{
+  font-weight:900;letter-spacing:2px;font-size:14px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.nav-right{display:flex;gap:10px;}
+.nav-right a{
+  padding:10px 16px;border-radius:12px;font-size:11px;
+  font-weight:900;letter-spacing:1.3px;text-decoration:none;color:var(--muted);
+}
+.nav-right a.active{
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:#020617;
+}
+
+/* ===== CONTENT ===== */
+.wrapper{max-width:1150px;margin:34px auto;padding:18px}
+
+.header{
+  background:linear-gradient(160deg,#020617,#0b1224);
+  border:1px solid var(--border);
+  border-radius:26px;padding:48px 22px;text-align:center;
+}
+.title{
+  font-size:38px;font-weight:900;letter-spacing:2px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{margin-top:8px;font-size:20px;font-weight:700;color:var(--blue);}
+.tagline{margin-top:12px;color:var(--muted)}
+
+.section{margin-top:64px}
+.section h3{
+  font-size:17px;margin-bottom:20px;padding-left:14px;
+  border-left:4px solid var(--blue);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:20px;padding:22px;transition:.3s;
+}
+.card:hover{
+  transform:translateY(-4px);border-color:var(--blue);
+  box-shadow:0 16px 34px rgba(56,189,248,.25);
+}
+.label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.value{font-size:17px;font-weight:900;color:var(--blue)}
+
+.status{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--green);}
+.pulse{
+  width:12px;height:12px;border-radius:50%;background:var(--green);
+  animation:pulse 1.6s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}
+  70%{box-shadow:0 0 0 14px rgba(34,197,94,0)}
+}
+
+.copy-btn{
+  margin-top:14px;width:100%;padding:12px;border-radius:14px;
+  border:1px solid var(--blue);background:linear-gradient(90deg,var(--blue),var(--purple));
+  font-weight:900;font-size:12px;cursor:pointer;
+}
+
+/* ===== STARTER PACKAGE (CLEAN VERSION) ===== */
+.starter-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 20px; padding: 25px;
+}
+.starter-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px; list-style: none;
+}
+.starter-list li {
+  padding: 12px 16px; background: rgba(255,255,255,0.02);
+  border-radius: 14px; border: 1px solid var(--border);
+  font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 10px;
+}
+.starter-list li::before { content: "▹"; color: var(--blue); font-weight: 900; }
+
+/* ===== MODAL SYSTEM ===== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(2,6,23,0.92); z-index: 2000;
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(10px);
+}
+.modal-content {
+  background: var(--panel); border: 1px solid var(--border);
+  padding: 30px; border-radius: 24px; text-align: center;
+  position: relative; width: 90%; max-width: 450px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+.modal-close {
+  position: absolute; top: 15px; right: 20px;
+  font-size: 24px; color: var(--muted); cursor: pointer;
+}
+
+/* EVENT MODAL INTERNAL */
+.eid-title { font-size: 18px; font-weight: 900; color: var(--green); margin-bottom: 20px; }
+.timer-grid { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+.timer-item { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; min-width: 60px; border: 1px solid var(--border); }
+.t-num { font-size: 20px; font-weight: 900; display: block; }
+.t-label { font-size: 9px; color: var(--muted); text-transform: uppercase; }
+
+.special-offer-box {
+  margin-top: 25px; padding: 20px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.05), rgba(15, 23, 42, 0.8));
+  border: 1px solid rgba(250, 204, 21, 0.4); text-align: left;
+}
+.offer-header { font-size: 13px; font-weight: 900; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.badge-now { background: var(--red); color: #fff; font-size: 9px; padding: 3px 6px; border-radius: 4px; animation: blink 1.2s infinite; }
+@keyframes blink { 50% { opacity: 0.6; } }
+.offer-list { list-style: none; margin-bottom: 12px; }
+.offer-list li { font-size: 15px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.offer-note { font-size: 10px; color: var(--muted); font-style: italic; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; }
+
+/* WHATSAPP MODAL INTERNAL */
+.wa-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.wa-item {
+  display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); padding: 15px; border-radius: 15px;
+  text-decoration: none; transition: 0.3s; text-align: left;
+}
+.wa-item:hover { border-color: var(--green); background: rgba(34, 197, 94, 0.05); }
+.wa-icon { width: 35px; height: 35px; flex-shrink: 0; }
+.wa-icon img { width: 100%; height: 100%; }
+.wa-text strong { display: block; font-size: 14px; color: var(--green); }
+.wa-text span { font-size: 11px; color: var(--muted); }
+
+/* LOADING */
+.loading{
+  position:fixed; inset:0; background:rgba(2,6,23,.85); backdrop-filter:blur(12px);
+  display:none; align-items:center; justify-content:center; z-index:999;
+}
+.loading-box{ background:#020617; padding:36px 44px; border-radius:24px; text-align:center; }
+.spinner{ width:54px; height:54px; border:6px solid rgba(56,189,248,.2); border-top:6px solid var(--blue); border-radius:50%; margin:0 auto 18px; animation:spin 1s linear infinite; }
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.footer{ margin-top:80px; text-align:center; font-size:12px; color:var(--muted); padding-bottom: 40px; }
+</style>
 </head>
+
 <body>
 
-<form method="POST" action="submit.php">
-  <h2>Form Aman 🔐</h2>
-  <input type="text" name="nama" placeholder="Nama" required>
-  <textarea name="pesan" placeholder="Pesan" required></textarea>
-  <button type="submit">Kirim</button>
-</form>
+<div class="nav">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <div class="logo"><img src="favicon.png"></div>
+      <div class="nav-title">EXECURIVE</div>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="active">HOME</a>
+      <a href="listtopup.html">LIST TOPUP</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="title">EXECURIVE ROLEPLAY</div>
+    <div class="subtitle">BLUE CITY • SA-MP SERVER</div>
+    <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
+  </div>
+
+  <div class="section">
+    <h3>SERVER INFORMATION</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="label">New IP</div>
+        <div class="value" id="ip">31.58.143.71:7008</div>
+        <button class="copy-btn" onclick="copyIP(this)">COPY IP</button>
+      </div>
+      <div class="card">
+        <div class="label">Server Status</div>
+        <div class="status"><div class="pulse"></div>ONLINE</div>
+      </div>
+      <div class="card">
+        <div class="label">Access System</div>
+        <div class="value">WHITELIST</div>
+      </div>
+      
+      <div class="card" onclick="openModal('eidModal')" style="cursor: pointer;">
+        <div class="label">ExeEvent</div>
+        <div class="value">2026 EVENT</div>
+        <div class="status" style="margin-top:5px; font-size:11px; color:var(--muted);">
+           <span style="color:var(--green)">●</span> Click to Open
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>STARTER PACKAGE</h3>
+    <div class="starter-card">
+      <ul class="starter-list">
+        <li>Starting Cash 100.000.000</li>
+        <li>Level Boost +4</li>
+        <li>Food & Drink x10</li>
+        <li>Roulette Spin x3</li>
+        <li>Vehicle (Sultan)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>OFFICIAL CONNECTIONS</h3>
+    <div class="grid">
+      <div class="card" onclick="openModal('waModal')" style="cursor: pointer; border-color: var(--green);">
+        <div class="label">Social Connections</div>
+        <div class="value">JOIN COMMUNITY</div>
+        <div class="status" style="margin-top:5px; font-size:11px; color:var(--muted);">
+           <span style="color:var(--green)">●</span> Click to Choose Group
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© Execurive Roleplay — Blue City Roleplay Experience</div>
+</div>
+
+<div class="modal-overlay" id="eidModal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('eidModal')">&times;</span>
+    <div class="eid-title">MENUJU IDUL FITRI 1447 H</div>
+    <div class="timer-grid">
+      <div class="timer-item"><span class="t-num" id="d-val">00</span><span class="t-label">Hari</span></div>
+      <div class="timer-item"><span class="t-num" id="h-val">00</span><span class="t-label">Jam</span></div>
+      <div class="timer-item"><span class="t-num" id="m-val">00</span><span class="t-label">Menit</span></div>
+      <div class="timer-item"><span class="t-num" id="s-val">00</span><span class="t-label">Detik</span></div>
+    </div>
+    <div style="font-size:11px; color:var(--muted); margin-bottom:20px;">
+      <span style="color:var(--green); font-weight:bold;">Mohon Maaf Lahir dan Batin</span>
+    </div>
+    <div class="special-offer-box">
+      <div class="offer-header">EVENT STARTERPACK <span class="badge-now">NOW!</span></div>
+      <ul class="offer-list">
+        <li>🎁 Rumah Gratis (1x Claim)</li>
+        <li>🎁 Mobil Import Turismo</li>
+      </ul>
+      <div class="offer-note"><strong>NOTE :</strong> Khusus warga baru. Tidak berlaku bagi yang sudah ambil starterpack biasa.</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="waModal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('waModal')">&times;</span>
+    <div style="font-size: 16px; font-weight: 900; margin-bottom: 20px;">OFFICIAL GROUPS</div>
+    <div class="wa-grid">
+      <a href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H" class="wa-item" target="_blank">
+        <div class="wa-icon"><img src="whatsappicon.png"></div>
+        <div class="wa-text"><strong>Announcement Channel</strong><span>Official Info & Updates</span></div>
+      </a>
+      <a href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho" class="wa-item" target="_blank">
+        <div class="wa-icon"><img src="whatsappicon.png"></div>
+        <div class="wa-text"><strong>Main Community</strong><span>Join Players & Chat</span></div>
+      </a>
+      <a href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc" class="wa-item" target="_blank">
+        <div class="wa-icon"><img src="whatsappicon.png"></div>
+        <div class="wa-text"><strong>Goodside Faction</strong><span>Gov & Law Enforcement</span></div>
+      </a>
+      <a href="https://chat.whatsapp.com/LfUW71S6w8M6QbTAsO5skZ" class="wa-item" target="_blank">
+        <div class="wa-icon"><img src="whatsappicon.png"></div>
+        <div class="wa-text"><strong>Badside Faction</strong><span>Criminal & Underground</span></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="loading" id="loading">
+  <div class="loading-box"><div class="spinner"></div><div>Copying...</div></div>
+</div>
+
+<script>
+function copyIP(btn){
+  document.getElementById("loading").style.display="flex";
+  setTimeout(()=>{
+    navigator.clipboard.writeText(document.getElementById("ip").innerText);
+    document.getElementById("loading").style.display="none";
+    btn.innerText="COPIED!";
+    setTimeout(()=>{ btn.innerText="COPY IP"; },2000);
+  },400);
+}
+
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+window.onclick = function(e) {
+  if (e.target.className === 'modal-overlay') { e.target.style.display = "none"; }
+}
+
+const eidDate = new Date("March 20, 2026 00:00:00").getTime(); 
+setInterval(function() {
+    const distance = eidDate - new Date().getTime();
+    document.getElementById("d-val").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+    document.getElementById("h-val").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    document.getElementById("m-val").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    document.getElementById("s-val").innerText = Math.floor((distance % (1000 * 60)) / 1000);
+}, 1000);
+</script>
 
 </body>
 </html>
