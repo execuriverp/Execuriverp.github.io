@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ExeChat V28 | Final Fix</title>
+    <title>ExeChat Pro | Advanced Global Chat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -10,139 +10,1183 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --primary: #3b82f6; --text: #fafafa; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.2s ease; }
-        body { background: #000; color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        :root {
+            --bg: #0f0f1e;
+            --surface: #1a1a2e;
+            --border: #16213e;
+            --primary: #00d4ff;
+            --secondary: #ff006e;
+            --accent: #8338ec;
+            --text: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --success: #06ffa5;
+            --warning: #ffb627;
+            --danger: #ff006e;
+            --light-bg: #16213e;
+        }
 
-        /* ROLE COLORS */
-        .name-owner { background: linear-gradient(90deg, #ff0, #f0f, #0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 11px; }
-        .admin-red { color: #ef4444 !important; font-weight: 800; font-size: 11px; }
-        .member { color: #3b82f6 !important; font-weight: 700; font-size: 11px; }
+        * {
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-        header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(9,9,11,0.8); backdrop-filter: blur(10px); z-index: 100; }
-        
-        /* CHAT AREA WA STYLE SIDE */
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: none; flex-direction: column; gap: 12px; background: radial-gradient(circle at center, #111, #000); }
-        .msg-row { display: flex; flex-direction: column; width: 100%; }
-        .msg-row.me { align-items: flex-end; }
-        .msg-row.other { align-items: flex-start; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
 
-        .bubble { background: var(--surface); border: 1px solid var(--border); padding: 12px 16px; border-radius: 18px; max-width: 80%; position: relative; cursor: pointer; }
-        .me .bubble { border-bottom-right-radius: 4px; border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
-        .other .bubble { border-bottom-left-radius: 4px; }
-        .owner-bubble { border: 1.5px solid #f59e0b !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+        body {
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a0033 50%, #0f0f1e 100%);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            background-attachment: fixed;
+        }
 
-        /* INPUT AREA */
-        footer { padding: 15px; background: #000; border-top: 1px solid var(--border); display: none; }
-        .input-group { max-width: 800px; margin: 0 auto; display: flex; gap: 10px; background: var(--surface); padding: 8px; border-radius: 20px; border: 1px solid var(--border); }
-        .input-group input { flex: 1; background: transparent; border: none; color: #fff; padding: 10px; outline: none; }
+        /* SCROLLBAR STYLING */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent), var(--primary));
+        }
+
+        /* HEADER STYLING */
+        header {
+            padding: 18px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(15, 15, 30, 0.9), rgba(26, 26, 46, 0.9));
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        #user-display {
+            font-size: 13px;
+            color: var(--text-dim);
+            background: rgba(0, 212, 255, 0.1);
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* CHAT BOX STYLING */
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            background: linear-gradient(to bottom, rgba(15, 15, 30, 0.95), rgba(26, 26, 46, 0.95));
+        }
+
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg-row.me {
+            align-items: flex-end;
+        }
+
+        .msg-row.other {
+            align-items: flex-start;
+        }
+
+        .msg-time {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            margin-left: 5px;
+        }
+
+        .msg-row.me .msg-time {
+            margin-right: 5px;
+            margin-left: 0;
+        }
+
+        .bubble {
+            background: linear-gradient(135deg, var(--light-bg), var(--surface));
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: 20px;
+            max-width: 75%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .bubble:hover {
+            background: linear-gradient(135deg, var(--surface), var(--light-bg));
+            border-color: var(--primary);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .me .bubble {
+            border-bottom-right-radius: 6px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(131, 56, 236, 0.15));
+            border-color: var(--primary);
+        }
+
+        .other .bubble {
+            border-bottom-left-radius: 6px;
+        }
+
+        .owner-bubble {
+            border: 1.5px solid var(--warning) !important;
+            box-shadow: 0 0 25px rgba(255, 182, 39, 0.3) !important;
+            background: linear-gradient(135deg, rgba(255, 182, 39, 0.1), rgba(255, 0, 110, 0.05)) !important;
+        }
+
+        .admin-bubble {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.2) !important;
+        }
+
+        .bubble-name {
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .name-owner {
+            background: linear-gradient(90deg, #ffb627, #ff006e, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .admin-red {
+            color: var(--danger) !important;
+            font-weight: 800;
+        }
+
+        .member {
+            color: var(--primary) !important;
+            font-weight: 700;
+        }
+
+        .role-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid var(--primary);
+        }
+
+        .reply-preview {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--primary);
+            color: var(--text-dim);
+        }
+
+        .reply-author {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .bubble-content {
+            word-break: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .msg-emoji {
+            display: inline-flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .emoji-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .emoji-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: var(--primary);
+        }
+
+        /* FOOTER / INPUT AREA */
+        footer {
+            padding: 20px;
+            background: linear-gradient(90deg, rgba(15, 15, 30, 0.95), rgba(26, 26, 46, 0.95));
+            border-top: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            backdrop-filter: blur(20px);
+        }
+
+        .input-group {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .input-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .input-group input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-send:active {
+            transform: translateY(0);
+        }
+
+        .input-tools {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        #reply-box {
+            display: none;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(131, 56, 236, 0.05));
+            padding: 12px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            font-size: 12px;
+            color: var(--text-dim);
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            animation: slideIn 0.3s ease;
+        }
+
+        #reply-info {
+            margin-bottom: 8px;
+        }
+
+        .cancel-reply {
+            color: var(--danger);
+            float: right;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .cancel-reply:hover {
+            transform: scale(1.1);
+        }
 
         /* MUTE CARD */
-        #mute-card { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: #ef4444; color: #fff; padding: 20px 40px; border-radius: 20px; z-index: 9999; display: none; text-align: center; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.5); }
+        #mute-card {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff006e, #ff6b35);
+            color: #fff;
+            padding: 30px 50px;
+            border-radius: 20px;
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(255, 0, 110, 0.5);
+            animation: slideDown 0.5s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%);
+            }
+        }
+
+        #mute-reason {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        #mute-timer {
+            font-size: 48px;
+            font-weight: 900;
+            margin-top: 15px;
+            font-variant-numeric: tabular-nums;
+        }
 
         /* AUTH MODAL */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .modal-content { background: var(--surface); padding: 30px; border-radius: 25px; width: 90%; max-width: 380px; border: 1px solid var(--border); }
-        input[type="text"], input[type="email"], input[type="password"] { width: 100%; background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 12px; margin-bottom: 10px; outline: none; }
-        .btn-main { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--primary); color: #fff; margin-top: 5px; }
-        
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--surface), var(--light-bg));
+            padding: 40px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 420px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .modal-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-main:active {
+            transform: translateY(0);
+        }
+
+        .btn-main.secondary {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-main.secondary:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .btn-main.danger {
+            background: linear-gradient(135deg, #ff006e, #ff6b35);
+        }
+
+        .btn-main.danger:hover {
+            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
+        }
+
+        .auth-switch {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-switch span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .auth-switch:hover {
+            color: var(--primary);
+        }
+
+        .security-info {
+            background: rgba(6, 255, 165, 0.1);
+            border: 1px solid rgba(6, 255, 165, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
         /* ADMIN PANEL */
-        #launcher { position: fixed; bottom: 100px; right: 20px; background: var(--primary); width: 50px; height: 50px; border-radius: 15px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 999; }
-        #panel { position: fixed; bottom: 160px; right: 20px; width: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 1000; }
+        #launcher {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
 
-        #ctx-menu { position: fixed; background: #222; border: 1px solid var(--border); border-radius: 12px; display: none; z-index: 5000; overflow: hidden; min-width: 140px; }
-        .ctx-item { padding: 12px 15px; font-size: 13px; cursor: pointer; }
-        .ctx-item:hover { background: var(--primary); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-        .full-screen { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        #launcher:hover {
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.6);
+        }
+
+        #panel {
+            position: fixed;
+            bottom: 170px;
+            right: 20px;
+            width: 350px;
+            max-height: 600px;
+            background: linear-gradient(135deg, var(--surface), var(--light-bg));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+            overflow-y: auto;
+            animation: slideUp 0.4s ease;
+        }
+
+        #panel h3 {
+            color: var(--primary);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-section {
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+
+        .panel-section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .panel-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 10px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+        }
+
+        .stat-value {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .admin-btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .admin-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+
+        .admin-btn.danger {
+            background: linear-gradient(135deg, #ff006e, #ff6b35);
+            color: #fff;
+        }
+
+        .admin-btn.warning {
+            background: linear-gradient(135deg, var(--warning), #ff8c00);
+            color: #fff;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        /* CONTEXT MENU */
+        #ctx-menu {
+            position: fixed;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: none;
+            z-index: 5000;
+            overflow: hidden;
+            min-width: 160px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.2s ease;
+        }
+
+        .ctx-item {
+            padding: 12px 18px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ctx-item:hover {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), rgba(131, 56, 236, 0.1));
+            color: var(--primary);
+        }
+
+        /* FULL SCREEN */
+        .full-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f0f1e, #1a0033);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .full-screen h1 {
+            font-size: 48px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .full-screen p {
+            font-size: 16px;
+            color: var(--text-dim);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 15px;
+            }
+
+            .header-title {
+                font-size: 14px;
+                letter-spacing: 1px;
+            }
+
+            #chat-box {
+                padding: 15px;
+            }
+
+            .bubble {
+                max-width: 85%;
+                font-size: 14px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 25px;
+            }
+
+            footer {
+                padding: 12px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .btn-send {
+                width: 100%;
+            }
+
+            #panel {
+                width: 90%;
+                max-width: 350px;
+                right: 5%;
+                bottom: 150px;
+            }
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-msg {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--success), #00d084);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 15px;
+            z-index: 9999;
+            display: none;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(6, 255, 165, 0.4);
+            animation: slideDown 0.5s ease;
+        }
+
+        .error-msg {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff006e, #ff6b35);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 15px;
+            z-index: 9999;
+            display: none;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.4);
+            animation: slideDown 0.5s ease;
+        }
     </style>
 </head>
 <body>
 
-<div id="mt-screen" class="full-screen"><h1>⚙️ MAINTENANCE</h1><p>Server sedang dalam perbaikan...</p></div>
+<div id="mt-screen" class="full-screen">
+    <div class="spinner"></div>
+    <h1>⚙️ MAINTENANCE</h1>
+    <p>Server sedang dalam perbaikan...</p>
+</div>
 
 <header>
-    <div style="display:flex; align-items:center; gap:10px">
-        <div onclick="openProfile()" style="cursor:pointer; background:var(--surface); padding:8px; border-radius:10px">⚙️</div>
-        <b>EXECHAT V28</b>
+    <div class="header-left">
+        <button class="header-btn" onclick="openProfile()">
+            <i class="fas fa-user-circle"></i>
+            PROFILE
+        </button>
+        <div style="display:flex; align-items:center; gap:12px">
+            <div class="status-indicator"></div>
+            <div class="header-title">⚡ EXECHAT PRO</div>
+        </div>
     </div>
-    <div id="user-display" style="font-size:12px; opacity:0.7">Offline</div>
+    <div id="user-display">
+        <i class="fas fa-wifi"></i>
+        <span>OFFLINE</span>
+    </div>
 </header>
 
 <div id="mute-card">
-    <b id="mute-reason">ANDA DIMUTE</b>
-    <div id="mute-timer" style="font-size: 30px; font-weight: 800; margin-top: 10px;">05:00</div>
+    <div id="mute-reason">ANDA DIMUTE</div>
+    <div id="mute-timer">05:00</div>
 </div>
 
 <div id="chat-box"></div>
 
 <footer id="chat-ui">
-    <div id="reply-box" style="display:none; background:rgba(255,255,255,0.05); padding:10px; border-radius:12px; margin-bottom:8px; font-size:11px; border-left:4px solid var(--primary)">
+    <div id="reply-box">
         <div id="reply-info"></div>
-        <span onclick="cancelReply()" style="color:red; float:right; cursor:pointer">Batal</span>
+        <span class="cancel-reply" onclick="cancelReply()"><i class="fas fa-times"></i> Batalkan</span>
     </div>
+    <div class="input-tools" id="input-tools"></div>
     <div class="input-group">
-        <input type="text" id="u-msg" placeholder="Ketik sesuatu..." onkeypress="if(event.key=='Enter') sendChat()">
-        <button onclick="sendChat()" style="background:var(--primary); border:none; color:#fff; padding:0 20px; border-radius:15px; font-weight:700">KIRIM</button>
+        <input type="text" id="u-msg" placeholder="💬 Ketik sesuatu..." onkeypress="if(event.key=='Enter') sendChat()">
+        <button class="btn-send" onclick="sendChat()">
+            <i class="fas fa-paper-plane"></i> KIRIM
+        </button>
     </div>
 </footer>
 
+<!-- AUTH MODAL -->
 <div id="modal-auth" class="modal">
     <div class="modal-content">
-        <h2 id="auth-title">Login ExeChat</h2>
+        <h2 class="modal-title">⚡ EXECHAT PRO</h2>
+        
+        <div class="security-info">
+            <i class="fas fa-shield-alt"></i>
+            <span>Email verification diperlukan untuk keamanan</span>
+        </div>
+
+        <div class="modal-tabs">
+            <button class="modal-tab active" onclick="switchAuthTab('login')">LOGIN</button>
+            <button class="modal-tab" onclick="switchAuthTab('register')">DAFTAR</button>
+        </div>
         
         <div id="form-login">
-            <input type="text" id="log-user" placeholder="Username">
-            <input type="password" id="log-pass" placeholder="Password">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="log-user" placeholder="Masukkan username">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="log-pass" placeholder="Masukkan password">
+            </div>
         </div>
 
         <div id="form-reg" style="display:none">
-            <input type="text" id="reg-user" placeholder="Buat Username">
-            <input type="email" id="reg-email" placeholder="Email Aktif">
-            <input type="password" id="reg-pass" placeholder="Password">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="reg-user" placeholder="Buat username unik">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="reg-email" placeholder="Email aktif Anda">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="reg-pass" placeholder="Min. 8 karakter">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-lock"></i> Konfirmasi Password</label>
+                <input type="password" id="reg-pass-conf" placeholder="Konfirmasi password">
+            </div>
         </div>
 
-        <button class="btn-main" onclick="handleAuth()">LANJUTKAN</button>
-        <p style="text-align:center; font-size:12px; cursor:pointer; margin-top:15px" onclick="toggleAuth()">
-            <span id="auth-switch-text">Belum punya akun? Daftar</span>
-        </p>
+        <button class="btn-main" onclick="handleAuth()">
+            <i class="fas fa-sign-in-alt"></i> LANJUTKAN
+        </button>
     </div>
 </div>
 
+<!-- PROFILE MODAL -->
 <div id="modal-profile" class="modal" style="display:none">
     <div class="modal-content">
-        <h3>ACCOUNT IDENTIFIER</h3>
-        <div style="background:#000; padding:15px; border-radius:15px; font-size:10px; color:#aaa; line-height:1.7; margin-bottom:15px">
-            UID: <span id="id-uid">-</span><br>
-            Provider: <span id="id-prov">password</span><br>
-            Created: <span id="id-cat">-</span><br>
-            Signed In: <span id="id-sin">-</span>
+        <h2 class="modal-title"><i class="fas fa-user-circle"></i> PROFIL ANDA</h2>
+        
+        <div style="background: rgba(0, 212, 255, 0.05); padding:20px; border-radius:15px; margin-bottom:20px; border: 1px solid var(--border)">
+            <div style="margin-bottom: 15px;">
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:5px">USERNAME</div>
+                <div style="font-size: 18px; font-weight: 700; color: var(--primary)" id="prof-username">-</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:5px">UID</div>
+                <div style="font-size: 11px; font-family: monospace; color: var(--text)" id="prof-uid">-</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:5px">ROLE</div>
+                <div style="font-size: 14px; font-weight: 700;">
+                    <span id="prof-role" style="background: rgba(0, 212, 255, 0.2); padding:5px 12px; border-radius:8px; color: var(--primary);">MEMBER</span>
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:5px">TERDAFTAR SEJAK</div>
+                <div style="font-size: 13px; color: var(--text)" id="prof-created">-</div>
+            </div>
+            <div>
+                <div style="font-size:12px; color:var(--text-dim); margin-bottom:5px">TERAKHIR LOGIN</div>
+                <div style="font-size: 13px; color: var(--text)" id="prof-signin">-</div>
+            </div>
         </div>
-        <button class="btn-main" style="background:#ef4444" onclick="logout()">LOGOUT</button>
-        <button class="btn-main" style="background:none; border:1px solid var(--border)" onclick="closeProfile()">TUTUP</button>
+
+        <div class="admin-btn-group">
+            <button class="btn-main danger" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> LOGOUT
+            </button>
+            <button class="btn-main secondary" onclick="closeProfile()">
+                <i class="fas fa-times"></i> TUTUP
+            </button>
+        </div>
     </div>
 </div>
 
+<!-- ADMIN PANEL -->
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
-    <b>ADMIN CONTROL</b>
-    <div id="owner-only" style="display:none; flex-direction:column; gap:8px">
-        <button class="btn-main" style="background:#ef4444" onclick="wipeChat()">🗑️ WIPE MESSAGES</button>
-        <button class="btn-main" id="btn-mt" onclick="togMT()">⚙️ MT: OFF</button>
-        <button class="btn-main" id="btn-gc" onclick="togGC()">🔒 GUEST: ON</button>
+    <h3><i class="fas fa-shield-alt"></i> ADMIN CONTROL</h3>
+    
+    <!-- STATISTICS -->
+    <div class="panel-section">
+        <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+            <i class="fas fa-chart-bar"></i> STATISTIK
+        </h4>
+        <div class="panel-stat">
+            <span class="stat-label">Total Pesan</span>
+            <span class="stat-value" id="stat-messages">0</span>
+        </div>
+        <div class="panel-stat">
+            <span class="stat-label">User Aktif</span>
+            <span class="stat-value" id="stat-users">0</span>
+        </div>
+        <div class="panel-stat">
+            <span class="stat-label">Status Server</span>
+            <span class="stat-value" style="color: var(--success);">✓ ONLINE</span>
+        </div>
     </div>
-    <hr style="border:0; border-top:1px solid var(--border)">
-    <input type="text" id="target-user" placeholder="Username Target">
-    <button class="btn-main" style="background:#ef4444" onclick="adminExec('banned')">BAN USER</button>
-    <button class="btn-main" onclick="adminExec('member')">UNBAN / RESET</button>
+
+    <!-- OWNER CONTROLS -->
+    <div id="owner-only" style="display:none">
+        <div class="panel-section">
+            <h4 style="font-size: 13px; color: var(--warning); margin-bottom: 10px;">
+                <i class="fas fa-crown"></i> OWNER TOOLS
+            </h4>
+            <div class="admin-btn-group">
+                <button class="admin-btn danger" onclick="wipeChat()">
+                    <i class="fas fa-trash"></i> WIPE CHAT
+                </button>
+                <button class="admin-btn warning" id="btn-mt" onclick="togMT()">
+                    <i class="fas fa-tools"></i> MT: OFF
+                </button>
+            </div>
+            <button class="admin-btn primary" id="btn-gc" style="width: 100%; margin-top: 8px;" onclick="togGC()">
+                <i class="fas fa-users"></i> GUEST: ON
+            </button>
+        </div>
+    </div>
+
+    <!-- USER MANAGEMENT -->
+    <div class="panel-section">
+        <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+            <i class="fas fa-user-shield"></i> USER MANAGEMENT
+        </h4>
+        <input type="text" id="target-user" placeholder="🔍 Username target">
+        <div class="admin-btn-group" style="margin-top: 10px;">
+            <button class="admin-btn danger" onclick="adminExec('banned')">
+                <i class="fas fa-ban"></i> BAN
+            </button>
+            <button class="admin-btn primary" onclick="adminExec('member')">
+                <i class="fas fa-undo"></i> RESET
+            </button>
+            <button class="admin-btn warning" onclick="adminExec('admin')">
+                <i class="fas fa-star"></i> ADMIN
+            </button>
+        </div>
+    </div>
+
+    <!-- MUTE MANAGEMENT -->
+    <div class="panel-section">
+        <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+            <i class="fas fa-volume-mute"></i> MUTE USER
+        </h4>
+        <input type="text" id="mute-user" placeholder="Username target">
+        <input type="number" id="mute-duration" placeholder="Durasi (menit)" style="margin-top: 8px;">
+        <button class="admin-btn warning" style="width: 100%; margin-top: 8px;" onclick="muteUser()">
+            <i class="fas fa-mute"></i> MUTE
+        </button>
+    </div>
+
+    <!-- BROADCAST -->
+    <div class="panel-section">
+        <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+            <i class="fas fa-bullhorn"></i> BROADCAST
+        </h4>
+        <input type="text" id="broadcast-msg" placeholder="Pesan broadcast">
+        <button class="admin-btn primary" style="width: 100%; margin-top: 8px;" onclick="sendBroadcast()">
+            <i class="fas fa-send"></i> KIRIM
+        </button>
+    </div>
 </div>
 
+<!-- CONTEXT MENU -->
 <div id="ctx-menu">
-    <div class="ctx-item" onclick="msgAction('reply')">Reply</div>
-    <div class="ctx-item" onclick="msgAction('copy')">Copy</div>
-    <div class="ctx-item" onclick="msgAction('tag')">Tag</div>
+    <div class="ctx-item" onclick="msgAction('reply')">
+        <i class="fas fa-reply"></i> Reply
+    </div>
+    <div class="ctx-item" onclick="msgAction('copy')">
+        <i class="fas fa-copy"></i> Salin
+    </div>
+    <div class="ctx-item" onclick="msgAction('tag')">
+        <i class="fas fa-at"></i> Tag
+    </div>
+    <div class="ctx-item" onclick="msgAction('pin')">
+        <i class="fas fa-thumbtack"></i> Pin
+    </div>
+    <div class="ctx-item" onclick="msgAction('react')">
+        <i class="fas fa-smile"></i> Reaksi
+    </div>
 </div>
+
+<!-- SUCCESS/ERROR MESSAGES -->
+<div id="success-msg" class="success-msg"></div>
+<div id="error-msg" class="error-msg"></div>
 
 <script>
     const firebaseConfig = {
@@ -154,15 +1198,42 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database(), auth = firebase.auth();
 
-    let myData = null, authMode = "login", roomData = {}, replyData = null, lastSend = 0, history = [];
+    let myData = null, authMode = "login", roomData = {}, replyData = null, lastSend = 0, history = [], userStats = {};
+    let messageCount = 0, userCount = 0;
 
-    // --- AUTH ---
+    // --- UTILITY FUNCTIONS ---
+    function showNotification(msg, type = 'success') {
+        const el = document.getElementById(type === 'success' ? 'success-msg' : 'error-msg');
+        el.textContent = msg;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        
+        if(diffMins < 1) return 'Baru saja';
+        if(diffMins < 60) return `${diffMins}m lalu`;
+        if(diffMins < 1440) return `${Math.floor(diffMins/60)}h lalu`;
+        return date.toLocaleDateString('id-ID');
+    }
+
+    // --- AUTH TAB SWITCHING ---
+    function switchAuthTab(tab) {
+        authMode = tab;
+        document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('form-reg').style.display = tab === 'register' ? 'block' : 'none';
+    }
+
+    // --- AUTHENTICATION ---
     function toggleAuth() {
         authMode = authMode === "login" ? "reg" : "login";
-        document.getElementById('auth-title').innerText = authMode === "login" ? "Login ExeChat" : "Daftar ExeChat";
-        document.getElementById('form-login').style.display = authMode === "login" ? "block" : "none";
-        document.getElementById('form-reg').style.display = authMode === "reg" ? "block" : "none";
-        document.getElementById('auth-switch-text').innerText = authMode === "login" ? "Belum punya akun? Daftar" : "Sudah punya akun? Login";
+        switchAuthTab(authMode);
     }
 
     async function handleAuth() {
@@ -171,21 +1242,52 @@
                 const u = document.getElementById('reg-user').value.toLowerCase().trim();
                 const e = document.getElementById('reg-email').value;
                 const p = document.getElementById('reg-pass').value;
-                if(!u || !e || !p) return alert("Isi semua!");
+                const pc = document.getElementById('reg-pass-conf').value;
+                
+                if(!u || !e || !p || !pc) return showNotification('Isi semua field!', 'error');
+                if(p !== pc) return showNotification('Password tidak cocok!', 'error');
+                if(p.length < 8) return showNotification('Password minimal 8 karakter!', 'error');
+                if(u.length < 3) return showNotification('Username minimal 3 karakter!', 'error');
+                
+                const userSnap = await db.ref("users/"+u).once("value");
+                if(userSnap.exists()) return showNotification('Username sudah terdaftar!', 'error');
+                
                 const res = await auth.createUserWithEmailAndPassword(e, p);
                 await res.user.sendEmailVerification();
-                await db.ref("users/"+u).set({ username: u, email: e, uid: res.user.uid, role: 'member', muteUntil: 0 });
-                alert("Cek email Bos untuk verifikasi!"); auth.signOut();
+                await db.ref("users/"+u).set({
+                    username: u,
+                    email: e,
+                    uid: res.user.uid,
+                    role: 'member',
+                    muteUntil: 0,
+                    joinedDate: Date.now(),
+                    messageCount: 0,
+                    warnings: 0
+                });
+                showNotification('Cek email untuk verifikasi! Silakan login setelah verifikasi.');
+                auth.signOut();
             } else {
                 const u = document.getElementById('log-user').value.toLowerCase().trim();
                 const p = document.getElementById('log-pass').value;
+                
+                if(!u || !p) return showNotification('Username dan password harus diisi!', 'error');
+                
                 const userSnap = await db.ref("users/"+u).once("value");
-                if(!userSnap.exists()) return alert("Username gak ada!");
-                const res = await auth.signInWithEmailAndPassword(userSnap.val().email, p);
-                if(!res.user.emailVerified) { alert("Verifikasi email dulu!"); auth.signOut(); }
-                else { location.reload(); }
+                if(!userSnap.exists()) return showNotification('Username tidak ditemukan!', 'error');
+                
+                const userData = userSnap.val();
+                const res = await auth.signInWithEmailAndPassword(userData.email, p);
+                if(!res.user.emailVerified) {
+                    showNotification('Verifikasi email dulu! Cek inbox Anda.', 'error');
+                    auth.signOut();
+                } else {
+                    showNotification('Login berhasil!');
+                    setTimeout(() => location.reload(), 1000);
+                }
             }
-        } catch(e) { alert(e.message); }
+        } catch(e) {
+            showNotification(e.message, 'error');
+        }
     }
 
     auth.onAuthStateChanged(user => {
@@ -195,31 +1297,54 @@
                     myData = { ...c.val(), id: c.key };
                     document.getElementById('modal-auth').style.display = 'none';
                     document.getElementById('chat-box').style.display = 'flex';
-                    document.getElementById('chat-ui').style.display = 'block';
-                    document.getElementById('user-display').innerText = myData.username.toUpperCase();
-                    if(myData.role === 'owner' || myData.role.includes('admin')) document.getElementById('launcher').style.display = 'flex';
-                    if(myData.role === 'owner') document.getElementById('owner-only').style.display = 'flex';
+                    document.getElementById('chat-ui').style.display = 'flex';
                     
-                    document.getElementById('id-uid').innerText = user.uid;
-                    document.getElementById('id-cat').innerText = user.metadata.creationTime;
-                    document.getElementById('id-sin').innerText = user.metadata.lastSignInTime;
+                    // Update header
+                    document.getElementById('user-display').innerHTML = `
+                        <i class="fas fa-circle" style="color: var(--success);"></i>
+                        <span>${myData.username.toUpperCase()}</span>
+                    `;
+                    
+                    // Show admin panel if authorized
+                    if(myData.role === 'owner' || myData.role === 'admin') {
+                        document.getElementById('launcher').style.display = 'flex';
+                    }
+                    if(myData.role === 'owner') {
+                        document.getElementById('owner-only').style.display = 'flex';
+                    }
                 });
             });
         }
     });
 
-    // --- CHAT ---
+    // --- CHAT FUNCTIONS ---
     function sendChat() {
-        if(Date.now() < myData.muteUntil) return;
+        if(myData.muteUntil && Date.now() < myData.muteUntil) {
+            showNotification('Anda sedang dimute!', 'error');
+            return;
+        }
+        
         const input = document.getElementById('u-msg'), txt = input.value.trim();
         if(!txt || !myData) return;
 
-        if(Date.now() - lastSend < 5000) return alert("Tunggu 5 detik!");
-        history.push(txt); if(history.length > 5) history.shift();
+        if(Date.now() - lastSend < 3000) {
+            showNotification('Tunggu 3 detik!', 'error');
+            return;
+        }
         
-        const isSpam = history.filter(x => x === txt).length >= 5;
-        const isCaps = history.filter(x => x === x.toUpperCase() && x.length > 3).length >= 5;
-        if(isSpam || isCaps) return startMute(isSpam ? "SPAM" : "FULL KAPITAL");
+        history.push(txt);
+        if(history.length > 10) history.shift();
+        
+        // Anti spam check
+        const isSpam = history.filter(x => x === txt).length >= 3;
+        const isCaps = history.filter(x => x === x.toUpperCase() && x.length > 5).length >= 3;
+        const isFlood = history.length >= 10;
+        
+        if(isSpam || isCaps || isFlood) {
+            const reason = isSpam ? 'SPAM' : isCaps ? 'FULL KAPITAL' : 'FLOOD';
+            startMute(reason);
+            return;
+        }
 
         db.ref("messages").push({
             nama: myData.username,
@@ -229,88 +1354,283 @@
             time: Date.now(),
             reply: replyData
         });
-        input.value = ""; lastSend = Date.now(); cancelReply();
+        
+        // Update message count
+        db.ref("users/" + myData.id + "/messageCount").transaction(val => (val || 0) + 1);
+        
+        input.value = "";
+        lastSend = Date.now();
+        cancelReply();
+        input.focus();
     }
 
-    db.ref("messages").limitToLast(50).on("value", s => {
-        const box = document.getElementById('chat-box'); box.innerHTML = "";
+    // --- MESSAGE RENDERING ---
+    db.ref("messages").limitToLast(100).on("value", s => {
+        const box = document.getElementById('chat-box');
+        box.innerHTML = "";
+        messageCount = 0;
+        
         s.forEach(snap => {
+            messageCount++;
             const d = snap.val();
+            const msgId = snap.key;
             const isMe = d.uid === (auth.currentUser ? auth.currentUser.uid : '');
             const row = document.createElement('div');
             row.className = `msg-row ${isMe ? 'me' : 'other'}`;
+            row.id = `msg-${msgId}`;
             
-            let nameCls = d.role === 'owner' ? 'name-owner' : (d.role.includes('admin') ? 'admin-red' : 'member');
-            let rplHtml = d.reply ? `<div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; font-size:10px; margin-bottom:5px"><b>@${d.reply.n}</b>: ${d.reply.p}</div>` : '';
+            let bubbleClass = 'bubble';
+            let roleIcon = '';
+            let roleBadge = '';
+            
+            if(d.role === 'owner') {
+                bubbleClass += ' owner-bubble';
+                roleIcon = '👑';
+                roleBadge = '<span class="role-badge" style="background: rgba(255, 182, 39, 0.2); border-color: var(--warning); color: var(--warning);">OWNER</span>';
+            } else if(d.role === 'admin') {
+                bubbleClass += ' admin-bubble';
+                roleIcon = '⚔️';
+                roleBadge = '<span class="role-badge" style="background: rgba(255, 0, 110, 0.2); border-color: var(--danger); color: var(--danger);">ADMIN</span>';
+            } else if(d.role === 'banned') {
+                return; // Skip banned users
+            }
+            
+            let rplHtml = d.reply ? `
+                <div class="reply-preview">
+                    <span class="reply-author">@${d.reply.n}</span><br>
+                    <span style="opacity: 0.8;">${d.reply.p.substring(0, 50)}</span>
+                </div>
+            ` : '';
+            
+            const timeStr = formatTime(d.time);
             
             row.innerHTML = `
-                <div class="bubble ${d.role==='owner'?'owner-bubble':''}" 
-                     oncontextmenu="showCtx(event,'${d.nama}','${d.pesan}')" 
-                     ondblclick="showCtx(event,'${d.nama}','${d.pesan}')">
-                    <div class="${nameCls}">${d.nama}</div>
+                <div class="msg-time">${timeStr}</div>
+                <div class="${bubbleClass}" 
+                     oncontextmenu="showCtx(event,'${d.nama}','${d.pesan}','${msgId}')" 
+                     ondblclick="showCtx(event,'${d.nama}','${d.pesan}','${msgId}')">
+                    <div class="bubble-name">
+                        <span class="${d.role === 'owner' ? 'name-owner' : d.role === 'admin' ? 'admin-red' : 'member'}">
+                            ${roleIcon} ${d.nama}
+                        </span>
+                        ${roleBadge}
+                    </div>
                     ${rplHtml}
-                    <div>${d.pesan}</div>
+                    <div class="bubble-content">${escapeHtml(d.pesan)}</div>
+                    <div class="msg-emoji" id="emoji-${msgId}"></div>
                 </div>
             `;
             box.appendChild(row);
         });
+        
+        updateStats();
         box.scrollTop = box.scrollHeight;
     });
 
-    // --- SYSTEM ---
+    // --- ESCAPE HTML FOR SECURITY ---
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // --- CONTEXT MENU ---
+    function showCtx(e, n, p, id) {
+        e.preventDefault();
+        const m = document.getElementById('ctx-menu');
+        m.style.display = 'block';
+        m.style.left = Math.min(e.pageX, window.innerWidth - 200) + 'px';
+        m.style.top = Math.min(e.pageY, window.innerHeight - 200) + 'px';
+        window.selMsg = { n, p, id };
+    }
+    
+    window.onclick = (e) => {
+        if(e.target.id !== 'ctx-menu') {
+            document.getElementById('ctx-menu').style.display = 'none';
+        }
+    };
+
+    function msgAction(a) {
+        const msg = window.selMsg;
+        if(a === 'copy') {
+            navigator.clipboard.writeText(msg.p);
+            showNotification('Disalin!');
+        }
+        if(a === 'reply') {
+            replyData = { n: msg.n, p: msg.p };
+            document.getElementById('reply-box').style.display = 'block';
+            document.getElementById('reply-info').innerHTML = `<strong style="color: var(--primary);">@${msg.n}</strong> <span style="opacity: 0.7;">${msg.p.substring(0, 40)}</span>`;
+            document.getElementById('u-msg').focus();
+        }
+        if(a === 'tag') {
+            document.getElementById('u-msg').value += `@${msg.n} `;
+            document.getElementById('u-msg').focus();
+        }
+        if(a === 'pin') {
+            if(myData.role === 'owner' || myData.role === 'admin') {
+                db.ref(`pinned/${msg.id}`).set({ user: msg.n, text: msg.p, time: Date.now() });
+                showNotification('Pesan dipinned!');
+            } else {
+                showNotification('Hanya admin yang bisa pin!', 'error');
+            }
+        }
+        if(a === 'react') {
+            document.getElementById('u-msg').value = msg.p + ' 👍 ';
+            document.getElementById('u-msg').focus();
+        }
+        document.getElementById('ctx-menu').style.display = 'none';
+    }
+
+    // --- ROOM STATUS ---
     db.ref("room_status").on("value", s => {
         roomData = s.val() || {};
-        document.getElementById('mt-screen').style.display = (roomData.maint && myData.role !== 'owner') ? 'flex' : 'none';
+        document.getElementById('mt-screen').style.display = (roomData.maint && myData && myData.role !== 'owner') ? 'flex' : 'none';
         if(roomData.theme) document.documentElement.style.setProperty('--primary', roomData.theme);
         document.getElementById('btn-mt').innerText = "⚙️ MT: " + (roomData.maint ? "ON" : "OFF");
         document.getElementById('btn-gc').innerText = "🔒 GUEST: " + (roomData.guest_chat ? "ON" : "OFF");
     });
 
-    function startMute(reason) {
-        db.ref("users/"+myData.id).update({ muteUntil: Date.now() + 300000 });
+    // --- MUTE SYSTEM ---
+    function startMute(reason, duration = 300) {
+        db.ref("users/"+myData.id).update({
+            muteUntil: Date.now() + (duration * 1000),
+            warnings: (myData.warnings || 0) + 1
+        });
+        
         document.getElementById('chat-ui').style.display = 'none';
         document.getElementById('mute-card').style.display = 'block';
-        document.getElementById('mute-reason').innerText = "MUTED: " + reason;
-        let sec = 300;
+        document.getElementById('mute-reason').innerText = `DIMUTE: ${reason}`;
+        
+        let sec = duration;
         const t = setInterval(() => {
             sec--;
             let m = Math.floor(sec/60), s = sec%60;
             document.getElementById('mute-timer').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(sec<=0) { clearInterval(t); location.reload(); }
+            if(sec<=0) {
+                clearInterval(t);
+                location.reload();
+            }
         }, 1000);
     }
 
-    function showCtx(e, n, p) {
-        e.preventDefault();
-        const m = document.getElementById('ctx-menu');
-        m.style.display = 'block'; m.style.left = e.pageX + 'px'; m.style.top = e.pageY + 'px';
-        window.selMsg = { n, p };
+    function muteUser() {
+        if(myData.role !== 'owner' && myData.role !== 'admin') return showNotification('Akses ditolak!', 'error');
+        
+        const user = document.getElementById('mute-user').value.toLowerCase().trim();
+        const duration = parseInt(document.getElementById('mute-duration').value) || 5;
+        
+        if(!user) return showNotification('Input username!', 'error');
+        
+        db.ref("users/" + user).update({
+            muteUntil: Date.now() + (duration * 60 * 1000)
+        });
+        
+        showNotification(`${user} dimute ${duration} menit!`);
+        document.getElementById('mute-user').value = '';
+        document.getElementById('mute-duration').value = '';
     }
-    window.onclick = () => document.getElementById('ctx-menu').style.display = 'none';
 
-    function msgAction(a) {
-        if(a === 'copy') navigator.clipboard.writeText(window.selMsg.p);
-        if(a === 'reply') {
-            replyData = window.selMsg;
-            document.getElementById('reply-box').style.display = 'block';
-            document.getElementById('reply-info').innerText = "Membalas @" + window.selMsg.n;
+    // --- ADMIN FUNCTIONS ---
+    function togMT() {
+        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        db.ref('room_status/maint').set(!roomData.maint);
+        showNotification('Maintenance mode: ' + (!roomData.maint ? 'ON' : 'OFF'));
+    }
+
+    function togGC() {
+        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        db.ref('room_status/guest_chat').set(!roomData.guest_chat);
+        showNotification('Guest chat: ' + (!roomData.guest_chat ? 'ON' : 'OFF'));
+    }
+
+    function wipeChat() {
+        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        if(confirm('⚠️ Hapus SEMUA pesan? (Tidak bisa dikembalikan!)')) {
+            db.ref("messages").remove();
+            showNotification('Chat diwipe!');
         }
-        if(a === 'tag') document.getElementById('u-msg').value += `@${window.selMsg.n} `;
     }
 
-    function togMT() { db.ref('room_status/maint').set(!roomData.maint); }
-    function togGC() { db.ref('room_status/guest_chat').set(!roomData.guest_chat); }
-    function wipeChat() { if(confirm("Hapus semua?")) db.ref("messages").remove(); }
     function adminExec(role) {
+        if(myData.role !== 'owner' && myData.role !== 'admin') return showNotification('Akses ditolak!', 'error');
+        
         const t = document.getElementById('target-user').value.toLowerCase().trim();
-        if(t) db.ref("users/"+t).update({role: role});
+        if(!t) return showNotification('Input username!', 'error');
+        
+        db.ref("users/"+t).once("value").then(snap => {
+            if(!snap.exists()) return showNotification('User tidak ditemukan!', 'error');
+            db.ref("users/"+t).update({ role: role });
+            showNotification(`${t} diatur sebagai ${role}!`);
+            document.getElementById('target-user').value = '';
+        });
     }
 
-    function openProfile() { document.getElementById('modal-profile').style.display = 'flex'; }
-    function closeProfile() { document.getElementById('modal-profile').style.display = 'none'; }
-    function togP() { const p = document.getElementById('panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
-    function logout() { auth.signOut().then(()=>location.reload()); }
-    function cancelReply() { replyData = null; document.getElementById('reply-box').style.display = 'none'; }
+    function sendBroadcast() {
+        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        const msg = document.getElementById('broadcast-msg').value.trim();
+        if(!msg) return showNotification('Input pesan!', 'error');
+        
+        db.ref("messages").push({
+            nama: 'SYSTEM BROADCAST',
+            pesan: '📢 ' + msg,
+            role: 'owner',
+            uid: 'system',
+            time: Date.now(),
+            isSystem: true
+        });
+        
+        showNotification('Broadcast terkirim!');
+        document.getElementById('broadcast-msg').value = '';
+    }
+
+    function updateStats() {
+        document.getElementById('stat-messages').textContent = messageCount;
+        
+        db.ref("users").once("value").then(s => {
+            let count = 0;
+            s.forEach(c => {
+                if(c.val().role !== 'banned') count++;
+            });
+            document.getElementById('stat-users').textContent = count;
+        });
+    }
+
+    // --- PROFILE MODAL ---
+    function openProfile() {
+        if(!myData) return;
+        document.getElementById('prof-username').textContent = myData.username;
+        document.getElementById('prof-uid').textContent = auth.currentUser.uid;
+        document.getElementById('prof-role').textContent = myData.role.toUpperCase();
+        document.getElementById('prof-created').textContent = new Date(myData.joinedDate).toLocaleDateString('id-ID');
+        document.getElementById('prof-signin').textContent = new Date(auth.currentUser.metadata.lastSignInTime).toLocaleDateString('id-ID');
+        document.getElementById('modal-profile').style.display = 'flex';
+    }
+
+    function closeProfile() {
+        document.getElementById('modal-profile').style.display = 'none';
+    }
+
+    function togP() {
+        const p = document.getElementById('panel');
+        p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function logout() {
+        if(confirm('Yakin ingin logout?')) {
+            auth.signOut().then(() => {
+                showNotification('Logout berhasil!');
+                setTimeout(() => location.reload(), 1000);
+            });
+        }
+    }
+
+    function cancelReply() {
+        replyData = null;
+        document.getElementById('reply-box').style.display = 'none';
+    }
+
+    // Auto update stats
+    setInterval(updateStats, 5000);
 </script>
 </body>
 </html>
