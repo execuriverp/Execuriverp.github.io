@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.1 - VIP Update</title>
+  <title>ExeMusic 3.1 - Updated</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -13,192 +13,813 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* CSS Root & Global tetap sama */
     :root {
-      --accent: #00ff88; --text: #ffffff; --text-dim: #b3b3b3; --bg: #050505;
-      --card-bg: #121212; --glass: rgba(255, 255, 255, 0.05); --danger: #ff3333;
-      --warning: #ffcc00; --tiktok-red: #ff0050; --gold: #ffd700; --purple: #bf00ff;
+      --accent: #00ff88; 
+      --text: #ffffff;
+      --text-dim: #b3b3b3;
+      --bg: #050505;
+      --card-bg: #121212;
+      --glass: rgba(255, 255, 255, 0.05);
+      --danger: #ff3333;
+      --warning: #ffcc00;
+      --tiktok-red: #ff0050;
+      --gold: #ffd700;
+      --purple: #bf00ff;
     }
 
-    /* --- THEME VARIATIONS (NEW) --- */
-    body.theme-vip { --accent: var(--purple); }
-    body.theme-admin { --accent: var(--gold); }
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
 
-    /* --- PROFILE UI REBORN --- */
-    .sheet { border-radius: 25px 25px 0 0; background: #111; }
-    .profile-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      overflow: hidden;
+    }
+
+    /* --- ROBLOX STYLE BROADCAST SYSTEM --- */
+    .sys-broadcast {
+        position: fixed;
+        top: -150px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 400px;
+        background: rgba(15, 15, 15, 0.95);
+        border-left: 4px solid var(--accent);
+        border-radius: 6px;
+        padding: 15px;
+        z-index: 12000;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: column;
+        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(10px);
+    }
+    .sys-broadcast.active { top: 20px; }
     
-    .vip-card {
-        background: linear-gradient(45deg, #1a1a1a, #222);
-        border: 1px solid var(--glass); border-radius: 15px;
-        padding: 15px; margin-top: 15px; position: relative; overflow: hidden;
+    .sb-content { display: flex; align-items: flex-start; gap: 12px; }
+    .sb-icon { font-size: 20px; color: var(--accent); margin-top: 2px; }
+    .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+    .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
+    
+    .sb-close {
+        position: absolute; top: 10px; right: 10px;
+        background: transparent; border: none; color: #666;
+        cursor: pointer; font-size: 16px; padding: 5px;
     }
-    .vip-card::after {
-        content: 'VIP'; position: absolute; top: -10px; right: -10px;
-        font-size: 40px; font-weight: 900; opacity: 0.05; transform: rotate(-20deg);
+    .sb-close:hover { color: white; }
+
+    .sb-progress {
+        width: 100%; height: 3px; background: #333;
+        margin-top: 12px; border-radius: 2px; overflow: hidden;
+    }
+    .sb-bar {
+        width: 100%; height: 100%; background: var(--accent);
+        transform-origin: left;
+    }
+    @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+    /* --- OVERLAYS --- */
+    .full-overlay {
+      position: fixed; inset: 0; background: #000; z-index: 10000;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 30px;
+    }
+    .full-overlay i { font-size: 60px; margin-bottom: 20px; }
+    .full-overlay h1 { font-size: 24px; color: var(--accent); }
+    .full-overlay p { color: var(--text-dim); margin-top: 10px; }
+    #bannedScreen h1 { color: var(--danger); }
+
+    #loadingCard {
+      position: absolute; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: 0.5s;
+    }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* --- MAIN APP --- */
+    .app {
+      background: rgba(18, 18, 18, 0.6);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 35px;
+      width: 95%; max-width: 400px; 
+      height: 95vh;
+      display: flex; flex-direction: column; 
+      padding: 25px; 
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    /* --- FOLLOW BUTTON ANIMATION --- */
-    #btnFollow { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    #btnFollow.followed { transform: scale(0); opacity: 0; pointer-events: none; }
+    .header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; margin-bottom: 15px; }
+    .header img { width: 110px; cursor: pointer; transition: 0.3s; }
+    .header img:active { transform: scale(0.9); }
+    
+    #topLoginBtn { 
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); 
+      color: white; padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer;
+      font-weight: 600; transition: 0.2s;
+    }
+    #topLoginBtn:hover { background: var(--accent); color: black; border-color: var(--accent); }
 
-    /* (Gunakan CSS sisanya dari kode lama kamu agar tampilan tidak berubah drastis) */
-    /* ... [Sisa CSS lamamu di sini] ... */
+    .cover-box {
+      flex: 1; width: 100%; border-radius: 25px;
+      background: #000; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden; position: relative; z-index: 1; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; }
+    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease; box-shadow: 0 0 15px var(--accent); }
+    .playing span { animation: wave 0.8s infinite ease-in-out; }
+    .playing span:nth-child(1) { animation-delay: 0.1s; }
+    .playing span:nth-child(2) { animation-delay: 0.3s; }
+    .playing span:nth-child(3) { animation-delay: 0.2s; }
+    .playing span:nth-child(4) { animation-delay: 0.4s; }
+    @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 50px; } }
+
+    .track-info { margin-bottom: 20px; flex-shrink: 0; text-align: left; }
+    #title { font-size: 22px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    
+    .user-row { display: flex; align-items: center; gap: 10px; }
+    #by { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    
+    #btnFollow { 
+      font-size: 12px; 
+      background: var(--tiktok-red); 
+      color: white; 
+      border: none; 
+      width: 22px; height: 22px; 
+      border-radius: 50%; 
+      font-weight: bold; 
+      cursor: pointer; 
+      display: none; 
+      transition: 0.2s; 
+      align-items: center; 
+      justify-content: center;
+    }
+    #btnFollow:active { transform: scale(0.9); }
+
+    .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; flex-shrink: 0; z-index: 5;}
+    .sys-tools { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 0 10px; }
+    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; opacity: 0.7; transition: 0.2s; }
+    .sys-tools button:hover { opacity: 1; transform: translateY(-2px); color: var(--accent); }
+    
+    .vol-row { display: flex; align-items: center; gap: 10px; padding: 0 5px; }
+    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; border-radius: 2px; }
+
+    .prog-area { margin-bottom: 20px; flex-shrink: 0; z-index: 5; }
+    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; border-radius: 2px; }
+    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; }
+
+    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 100; }
+    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); transition: 0.2s; }
+    .btn-play:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
+    .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; opacity: 0.9; }
+    .btn-sec:active { transform: scale(0.9); }
+
+    .footer { margin-top: auto; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 15px 30px; border-radius: 25px; flex-shrink: 0; z-index: 10; }
+    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; transition: 0.2s; }
+    .footer button:hover { opacity: 1; }
+    
+    .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
+
+    /* MODALS */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; backdrop-filter: blur(5px); }
+    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); border-top: 1px solid #333; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+
+    .song-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; transition: 0.2s; }
+    .song-item:hover { background: rgba(255,255,255,0.05); }
+    
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; font-size: 14px; }
+    .inp-dark:focus { border-color: var(--accent); }
+    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; color:black; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .prof-stat { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
+    .prof-stat div { text-align: center; }
+    .prof-stat b { display: block; font-size: 20px; color: white; }
+    .prof-stat span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+    .section-title { font-size: 12px; font-weight: bold; margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
+
+    .spotify-banner {
+      width: 100%; height: 120px;
+      background: linear-gradient(to bottom, var(--accent), #181818);
+      margin: -25px -25px 20px -25px;
+      border-radius: 30px 30px 0 0;
+      display: flex; align-items: flex-end; padding: 20px;
+      position: relative;
+    }
+    .spotify-avatar {
+      width: 80px; height: 80px; background: #222; 
+      border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center; font-size: 30px;
+      border: 3px solid #181818;
+      overflow: hidden;
+      position: relative;
+    }
+    .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-edit {
+        position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+        display: none; align-items: center; justify-content: center;
+        font-size: 14px; cursor: pointer; color: white;
+    }
+    .spotify-avatar:hover .avatar-edit { display: flex; }
+
+    .spotify-info { margin-left: 15px; }
+    .spotify-info h2 { font-size: 24px; margin: 0; }
+    
+    /* Updated Tag Styles */
+    .user-tag {
+      font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
+      text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
+    }
+    .tag-admin { background: #ff3333; color: #fff; }
+    .tag-owner { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-staff { background: #0088ff; color: #fff; }
+    .tag-executive { background: #aa00ff; color: #fff; }
+    .tag-user { background: #444; color: #eee; }
+    .tag-sepuh { background: #1a1a1a; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-rich { background: linear-gradient(45deg, gold, #fff); color: #000; }
+    .tag-galau { background: #555; color: #fff; font-style: italic; }
+    .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
+    .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
+    
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
+
+    /* About Modal Styling */
+    .about-box { font-size: 13px; line-height: 1.6; color: #ccc; }
+    .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .about-box p { margin-bottom: 10px; }
+    .about-box b { color: #fff; }
+    .rules-warn { background: rgba(255, 51, 51, 0.1); border-left: 3px solid var(--danger); padding: 10px; margin: 10px 0; border-radius: 4px; }
+
+    /* PROFILE MODAL OVERRIDES - Modern Spotify-inspired */
+    #modalProfile .sheet {
+      padding: 18px;
+      border-radius: 16px;
+      max-width: 420px;
+      background: linear-gradient(180deg, rgba(24,24,24,0.98), #0f0f0f);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    }
+    #modalProfile .spotify-banner {
+      height: 110px;
+      border-radius: 12px;
+      margin: -18px -18px 14px -18px;
+      padding: 14px;
+      display:flex; align-items:flex-end;
+      background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(10,10,10,0.9));
+    }
+    #modalProfile .spotify-avatar { width:76px; height:76px; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.04); }
+    #modalProfile .spotify-info h2 { margin:0; font-size:18px; display:flex; align-items:center; gap:8px; }
+    #modalProfile .prof-stat { gap:20px; margin: 12px 0; }
+    #modalProfile .btn-small { padding:8px 12px; border-radius:10px; font-size:13px; border:none; cursor:pointer; }
+    #modalProfile .settings-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    #modalProfile .field { margin-top:10px; }
+    #modalProfile .muted { color:#9a9a9a; font-size:12px; margin-top:6px; }
+
+    /* Role-based themes / glow */
+    .vip-theme { --accent: #ffb347; box-shadow: 0 10px 40px rgba(255,179,71,0.06); }
+    .vip-theme .btn-act { background: linear-gradient(90deg,#ffb347,#ff0050); color:#fff; }
+    .vip-theme .spotify-avatar { box-shadow: 0 8px 30px rgba(255,179,71,0.12); border-radius: 14px; }
+
+    .admin-theme { --accent: gold; box-shadow: 0 14px 50px rgba(255,215,0,0.08); }
+    .admin-theme .spotify-avatar { box-shadow: 0 12px 40px rgba(255,215,0,0.12); border-radius: 14px; border: 1px solid rgba(255,215,0,0.08); }
+
+    /* Follow button animation */
+    .follow-anim { transition: transform 0.18s ease, background 0.18s ease; }
+    .follow-anim.checked { transform: scale(0.95); }
+
+    /* keep responsive */
+    @media (max-width:420px) {
+      #modalProfile .sheet { margin: 0 8px; width: calc(100% - 16px); }
+    }
   </style>
 </head>
-<body id="mainBody">
+<body>
+
+  <div id="sysBroadcast" class="sys-broadcast">
+      <button class="sb-close" onclick="closeBroadcast()"><i class="fas fa-times"></i></button>
+      <div class="sb-content">
+          <i class="fas fa-bullhorn sb-icon"></i>
+          <div class="sb-text">
+              <h4>Announcement</h4>
+              <p id="sbMessage">Loading message...</p>
+          </div>
+      </div>
+      <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
+  </div>
+
+  <div id="mtScreen" class="full-overlay">
+    <i class="fas fa-tools" style="color: var(--accent)"></i>
+    <h1>Server Maintenance</h1>
+    <p>Kami sedang melakukan pembaruan sistem.<br>Mohon tunggu beberapa saat lagi.</p>
+  </div>
+
+  <div id="bannedScreen" class="full-overlay">
+    <i class="fas fa-user-slash" style="color: var(--danger)"></i>
+    <h1>Access Denied</h1>
+    <p>Akun anda telah diblokir secara permanen oleh admin.</p>
+  </div>
+
+  <div id="loadingCard"><div class="spinner"></div></div>
+  <div id="toast">Notification</div>
+
+  <div class="app">
+    <div class="header">
+        <img src="exemusic.png" alt="Logo" onclick="openAbout()">
+        <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
+    </div>
+
+    <div class="cover-box">
+      <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="track-info">
+      <div id="title">Loading Lagu...</div>
+      <div class="user-row">
+        <div id="by" onclick="viewCreator()">@system</div>
+        <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="sys-container">
+      <div class="sys-tools">
+        <button onclick="copyRawUrl()" title="Copy Url"><i class="fas fa-link"></i></button>
+        <button onclick="shareLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
+        <button onclick="downloadSong()" title="Download"><i class="fas fa-download"></i></button>
+        <button onclick="openReq()" title="Add/Request"><i class="fas fa-plus-circle"></i></button>
+      </div>
+      <div class="vol-row">
+        <i class="fas fa-volume-down" style="font-size:12px; color:#888"></i>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8">
+        <i class="fas fa-volume-up" style="font-size:12px; color:#fff"></i>
+      </div>
+    </div>
+
+    <div class="prog-area">
+      <input type="range" id="seek" value="0">
+      <div class="time">
+        <span id="cur">0:00</span>
+        <span id="dur">0:00</span>
+      </div>
+    </div>
+
+    <div class="main-ctrl">
+      <button class="btn-sec" onclick="prev()"><i class="fas fa-step-backward"></i></button>
+      <button class="btn-play" onclick="toggle()" id="playBtn"><i class="fas fa-play"></i></button>
+      <button class="btn-sec" onclick="next()"><i class="fas fa-step-forward"></i></button>
+    </div>
+
+    <div class="footer">
+      <button id="shuf" onclick="toggleShuffle()"><i class="fas fa-random"></i></button>
+      <button onclick="openList(false)"><i class="fas fa-list-ul"></i></button>
+      <button onclick="openList(true)"><i class="fas fa-heart"></i></button>
+      <button id="adminBtn" style="display:none; color:gold" onclick="openAdmin()"><i class="fas fa-shield-alt"></i></button>
+      <button id="rep" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 id="authTitle" style="text-align:center; margin-bottom:20px; color:var(--accent)">Login</h3>
+      <input id="authUser" class="inp-dark" placeholder="Username (Untuk Daftar)" style="display:none">
+      <input id="authEmail" class="inp-dark" placeholder="Email">
+      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
+      <button onclick="handleAuth()" id="authBtn" class="btn-act">MASUK</button>
+      <button onclick="toggleAuthMode()" id="authToggle" style="background:none; border:none; color:#888; width:100%; margin-top:15px; font-size:12px">Belum punya akun? Daftar</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <!-- Updated profile UI with change username/password + theme controls -->
+      <div class="spotify-banner">
+          <div class="spotify-avatar">
+              <img id="pAvatarImg" src="https://via.placeholder.com/150">
+              <div class="avatar-edit" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
+          </div>
+          <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
+          <div class="spotify-info">
+              <div style="display:flex; align-items:center; gap:8px">
+                  <h2 id="pUsername">User <span id="pBadge"></span></h2>
+              </div>
+              <div id="pTagDisplay"></div>
+          </div>
+      </div>
+
+      <div class="prof-stat">
+        <div><b id="pFol">0</b><span>Followers</span></div>
+        <div><b id="pFollowing">0</b><span>Following</span></div>
+      </div>
+
+      <!-- NEW: Username & Password change -->
+      <div class="section-title">Akun</div>
+      <div class="field">
+        <input id="newUsername" class="inp-dark" placeholder="Ganti Username">
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn-small btn-act" onclick="changeUsername()">SIMPAN USERNAME</button>
+          <button class="btn-small" onclick="document.getElementById('newUsername').value = ''">RESET</button>
+        </div>
+        <div id="usernameNote" class="muted">Anda dapat mengganti username sekali setiap 7 hari.</div>
+      </div>
+
+      <div class="field">
+        <input id="newPass" type="password" class="inp-dark" placeholder="Ganti Password">
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn-small btn-act" onclick="changePassword()">GANTI PASSWORD</button>
+          <button class="btn-small" onclick="document.getElementById('newPass').value = ''">RESET</button>
+        </div>
+        <div id="passwordNote" class="muted">Untuk keamanan, Anda mungkin diminta login ulang sebelum mengganti password.</div>
+      </div>
+
+      <!-- NEW: Theme controls for VIP/Admin -->
+      <div class="section-title">Theme & VIP</div>
+      <div id="themeControls" class="settings-row" style="display:none">
+        <button class="btn-small" onclick="changeTheme('default')">Default</button>
+        <button class="btn-small" onclick="changeTheme('vip-theme')">VIP Glow</button>
+        <button class="btn-small" onclick="changeTheme('admin-theme')">Admin Gold</button>
+      </div>
+
+      <div class="section-title">Postingan Saya</div>
+      <div id="myPostList" style="max-height: 200px; overflow-y: auto;"></div>
+      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#222; color:#ff3333; margin-top:20px; border:1px solid #333">LOGOUT</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
+          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
+          <div class="spotify-info">
+              <div style="display:flex; align-items:center; gap:5px">
+                  <h2 id="vName">@creator</h2>
+                  <span id="vBadge"></span>
+              </div>
+              <div id="vTagDisplay"></div> </div>
+      </div>
+      <div class="prof-stat">
+        <div><b id="vFol">0</b><span>Followers</span></div>
+      </div>
+      <div class="section-title">Lagu Terupload</div>
+      <div id="creatorPostList"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Upload Lagu</h3>
+      <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
+          <b>Warning:</b> Dilarang mengupload konten sara, pornografi audio, atau lagu yang merusak telinga (earrape). Pelanggaran = <b>BANNED PERMANENT</b>.
+      </div>
+      <div id="uploadFormUser" style="display:none">
+          <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
+          <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top Only)">
+          <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
+      </div>
+      <div id="uploadFormGuest">
+          <input id="guestName" class="inp-dark" placeholder="Nama Anda">
+          <input id="guestLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
+          <input id="guestUrl" class="inp-dark" placeholder="Link MP3 Top4Top">
+          <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white">WHATSAPP REQUEST</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet"><div id="songContainer"></div></div>
+  </div>
+
+  <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="about-box">
+        <h3>ExeMusic v3.1 Elite</h3>
+        <p>Selamat datang di platform sharing musik <b>ExecuriveRP</b>. Di sini kamu bebas mengekspresikan karyamu melalui audio.</p>
+        
+        <p><b>Fitur Utama:</b><br>
+        • High Quality Audio Streaming.<br>
+        • Social Following & System Badge.<br>
+        • Deep Linking (Share lagu ke teman dengan ID).<br>
+        • Anti-Spam System (Cooldown upload).</p>
+
+        <p><b>Penghasilan & Reward:</b> Dapatkan <b>17ribu/1dolar</b> dari Hexky jika followers/favoritmu mencapai target tertentu.</p>
+        
+        <p><b>Badge Original User:</b> Kumpulkan <b>50 followers</b> untuk mendapatkan Centang Biru otomatis di profilmu.</p>
+
+        <p><b>VIP:</b> Dapatkan VIP dan buka lebih banyak fitur menarik! Fitur utama: Tanpa cooldown upload, durasi MP3 5 jam, bebas request lagu, dan akses Tag/Theme eksklusif.</p>
+        
+        <div class="rules-warn">
+            <b>PERATURAN:</b> Akun yang mengupload konten ilegal akan dihapus permanen tanpa peringatan.
+        </div>
+        <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // FIREBASE CONFIG (Tetap pakai milikmu)
-    const firebaseConfig = { /* ... paste configmu ... */ };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
+      authDomain: "exemusic-execuriverp.firebaseapp.com",
+      databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "exemusic-execuriverp",
+      storageBucket: "exemusic-execuriverp.firebasestorage.app",
+      messagingSenderId: "722057744401",
+      appId: "1:722057744401:web:cd6a6a103692059bda61b0",
+      measurementId: "G-2P56Y7QQ18"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // VARIABEL GLOBAL (isShuf sekarang FALSE default)
     let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
     let userData = null;
-    let userFavs = {}; // Sekarang pakai object untuk Firebase
+    let fav = []; // moved to Firebase per-user; fallback for guests remains empty
     const audio = new Audio();
+    let broadcastTimeout;
 
-    // 1. MONITORING DATA USER & ROLE
+    // Tambahan tag keren dan lucu
+    function getTagHTML(tag) {
+      if(!tag || tag === "none") return '';
+      const t = tag.toLowerCase();
+      return `<span class="user-tag tag-${t}">${tag}</span>`;
+    }
+
+    // REALTIME MONITORING
+    db.ref('settings').on('value', s => {
+        const val = s.val();
+        if(!val) return;
+        if(val.mt === true) {
+            db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
+                if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
+            });
+        } else { document.getElementById('mtScreen').style.display = 'none'; }
+        if(val.announcement) triggerBroadcast(val.announcement);
+    });
+
+    function triggerBroadcast(msg) {
+        const el = document.getElementById('sysBroadcast');
+        const bar = document.getElementById('sbBar');
+        el.classList.remove('active');
+        bar.style.animation = 'none';
+        void bar.offsetWidth; 
+        document.getElementById('sbMessage').innerText = msg;
+        setTimeout(() => {
+            el.classList.add('active');
+            bar.style.animation = 'countDown 15s linear forwards';
+        }, 100);
+        clearTimeout(broadcastTimeout);
+        broadcastTimeout = setTimeout(closeBroadcast, 15000);
+    }
+
+    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
+
+    // AUTH & USER DATA (extended)
     auth.onAuthStateChanged(u => {
       if(u) {
-        // Sync Favorit dari Firebase
-        db.ref(`users/${u.uid}/favorites`).on('value', s => { userFavs = s.val() || {}; });
-
+        // load user profile & favorites + theme
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
           if(!userData) return;
-          
-          // Apply Theme Berdasarkan Role
-          document.getElementById('mainBody').className = `theme-${userData.role || 'user'}`;
-          
-          // Update UI Profile
+          if(userData.banned === true) {
+              document.getElementById('bannedScreen').style.display = 'flex';
+              auth.signOut(); return;
+          }
           document.getElementById('topLoginBtn').textContent = userData.username;
-          if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
+          document.getElementById('pUsername').innerText = userData.username;
+          document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
+          document.getElementById('pFol').innerText = userData.followers || 0;
+          document.getElementById('pFollowing').innerText = userData.following || 0;
+          document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
+          document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+
+          // role-based UI
+          if(userData.role === 'Admin') document.getElementById('adminBtn').style.display = 'block';
+          document.getElementById('uploadFormUser').style.display = 'block';
+          document.getElementById('uploadFormGuest').style.display = 'none';
+          document.getElementById('btnFollow').style.display = 'flex';
+          // theme controls visibility for Vip/Admin
+          document.getElementById('themeControls').style.display = (userData.role === 'Vip' || userData.role === 'Admin') ? 'flex' : 'none';
+
+          // apply theme from user profile
+          document.body.classList.remove('vip-theme','admin-theme');
+          if(userData.theme) document.body.classList.add(userData.theme);
+
+          updateFollowUI();
         });
+
+        // favorites listener
+        db.ref('users/' + u.uid + '/favorites').on('value', fSnap => {
+          const val = fSnap.val();
+          if(val) fav = Object.keys(val).map(k => val[k]); else fav = [];
+        });
+      } else {
+        document.getElementById('topLoginBtn').textContent = "Login";
+        document.getElementById('btnFollow').style.display = 'none';
+        document.getElementById('adminBtn').style.display = 'none';
+        fav = JSON.parse(localStorage.getItem("exeFav") || "[]"); // guest fallback
+        userData = null;
       }
+      document.getElementById('loadingCard').style.display = 'none';
     });
 
-    // 2. LOGIKA NEXT/PREV SEKUENSIAL (Jika Shuffle OFF)
-    function next() { 
-        if(isShuf) {
-            setup(Math.floor(Math.random() * songs.length));
-        } else {
-            let nextIdx = (i + 1) % songs.length;
-            setup(nextIdx);
-        }
+    // SONGS DATA with deep linking remains same
+    // ...existing code...
+
+    // UPLOAD LOGIC WITH VIP BYPASS + DURATION CHECK
+    async function confirmAndSave() {
+      const title = document.getElementById('rLagu').value;
+      const url = document.getElementById('rUrl').value;
+
+      if(!title || !url) return msg("Isi semua data!");
+
+      // Cooldown Check (30 Menit) - Vip/Admin bypass
+      const lastUpload = userData?.lastUpload || 0;
+      const now = Date.now();
+      const diff = (now - lastUpload) / 1000 / 60; // in minutes
+
+      if(userData?.role !== 'Vip' && userData?.role !== 'Admin' && diff < 30) {
+          return Swal.fire({
+              icon: 'error',
+              title: 'Sabar...',
+              text: `Tunggu ${Math.ceil(30 - diff)} menit lagi untuk upload lagu berikutnya.`,
+              background: '#181818', color: '#fff'
+          });
+      }
+
+      // confirm then check duration (max 5 hours)
+      Swal.fire({
+          title: 'Are you sure?',
+          text: "Jika lagu ini melanggar rules kami (Sara, Porn, Earrape), akun anda akan kami BANNED PERMANENT!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#00ff88',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, Saya Tanggung Jawab',
+          background: '#181818',
+          color: '#fff'
+      }).then(async (result) => {
+          if (result.isConfirmed) {
+              const ok = await checkAudioDuration(url, 5*3600);
+              if(!ok) return msg("Durasi audio melebihi 5 jam atau metadata tidak terbaca.");
+              saveMusic(title, url);
+          }
+      });
     }
 
-    // 3. FITUR FOLLOW ALA TIKTOK (Anti-Spam)
+    function checkAudioDuration(url, maxSeconds) {
+      return new Promise((resolve) => {
+        try {
+          const a = new Audio();
+          let resolved = false;
+          const timer = setTimeout(() => { if(!resolved){ resolved = true; resolve(false); a.src=''; } }, 7000);
+          a.addEventListener('loadedmetadata', () => {
+            if(resolved) return;
+            resolved = true;
+            clearTimeout(timer);
+            const dur = a.duration || 0;
+            a.src = '';
+            resolve(isFinite(dur) && dur <= maxSeconds);
+          }, { once: true });
+          a.addEventListener('error', () => { if(!resolved){ resolved = true; clearTimeout(timer); resolve(false); } }, { once: true });
+          a.src = url;
+        } catch (e) { resolve(false); }
+      });
+    }
+
+    function saveMusic(t, u) {
+      const newSong = {
+          title: t,
+          url: u,
+          uid: auth.currentUser.uid,
+          by: userData.username,
+          timestamp: Date.now()
+      };
+
+      db.ref('songs').push(newSong).then(() => {
+          db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
+          msg("Berhasil diposting!");
+          closeModal();
+          document.getElementById('rLagu').value = "";
+          document.getElementById('rUrl').value = "";
+      });
+    }
+
+    // CORE AUDIO CONTROLS - fix next/prev sequential when shuffle OFF
+    function next() { if(isShuf) setup(Math.floor(Math.random()*songs.length)); else setup((i+1) < songs.length ? (i+1) : 0); }
+    function prev() { if(isShuf) setup(Math.floor(Math.random()*songs.length)); else setup((i-1) >= 0 ? (i-1) : (songs.length-1)); }
+
+    // FOLLOWERS LOGIC - fixed & records follower IDs under current user's following
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
       const targetUid = songs[i].uid;
-      if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
+      const me = auth.currentUser.uid;
+      if(!targetUid || targetUid === me) return msg("Gak bisa follow diri sendiri");
 
-      const followPath = `follows/${targetUid}/${auth.currentUser.uid}`;
-      const myFollowingPath = `users/${auth.currentUser.uid}/following_list/${targetUid}`;
-      
-      const snap = await db.ref(followPath).get();
+      const followRef = db.ref('follows/' + targetUid + '/' + me);
+      const myFollowingRef = db.ref('users/' + me + '/following/' + targetUid);
+      const followersCountRef = db.ref('users/' + targetUid + '/followers');
+
+      const snap = await followRef.get();
       const btn = document.getElementById('btnFollow');
+      btn.classList.add('follow-anim');
 
       if(snap.exists()) {
-          // Unfollow
-          await db.ref(followPath).remove();
-          await db.ref(myFollowingPath).remove();
-          db.ref(`users/${targetUid}/followers`).transaction(c => (c || 0) - 1);
-          msg("Berhenti mengikuti");
+        // unfollow
+        await followRef.remove();
+        await myFollowingRef.remove();
+        followersCountRef.transaction(c => (c || 0) - 1);
+        btn.innerHTML = '<i class="fas fa-plus"></i>';
+        btn.style.background = 'var(--tiktok-red)';
+        btn.classList.remove('checked');
       } else {
-          // Follow
-          await db.ref(followPath).set(true);
-          await db.ref(myFollowingPath).set(true);
-          db.ref(`users/${targetUid}/followers`).transaction(c => (c || 0) + 1);
-          btn.innerHTML = '<i class="fas fa-check"></i>';
-          btn.classList.add('followed');
-          msg("Mengikuti!");
+        // follow
+        await followRef.set(true);
+        await myFollowingRef.set(true);
+        followersCountRef.transaction(c => (c || 0) + 1);
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.style.background = '#444';
+        btn.classList.add('checked');
       }
+      setTimeout(()=>btn.classList.remove('follow-anim'), 250);
     }
 
-    // 4. FAVORIT DATABASE (Pindah dari LocalStorage)
-    function toggleFav(songKey, e) {
+    async function updateFollowUI() {
+      if(!auth.currentUser || !songs[i]?.uid) return;
+      const target = songs[i].uid;
+      const me = auth.currentUser.uid;
+      const s = await db.ref('users/' + target + '/followers').get();
+      document.getElementById('pFol').innerText = s.val() || 0;
+      const isFollowing = await db.ref('users/' + me + '/following/' + target).get();
+      const btn = document.getElementById('btnFollow');
+      if(isFollowing.exists()) { btn.innerHTML = '<i class="fas fa-check"></i>'; btn.style.background = '#444'; btn.classList.add('checked'); }
+      else { btn.innerHTML = '<i class="fas fa-plus"></i>'; btn.style.background = 'var(--tiktok-red)'; btn.classList.remove('checked'); }
+    }
+
+    // FAVORITES: move to Firebase under users/{uid}/favorites
+    async function toggleFav(u, e) {
       e.stopPropagation();
-      if(!auth.currentUser) return msg("Login untuk simpan favorit!");
-      
-      const favRef = db.ref(`users/${auth.currentUser.uid}/favorites/${songKey}`);
-      if(userFavs[songKey]) {
-          favRef.remove();
-      } else {
-          favRef.set(true);
+      if(!auth.currentUser) {
+        // guest fallback to localStorage (maintain compatibility)
+        fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u];
+        localStorage.setItem("exeFav", JSON.stringify(fav));
+        openList(false);
+        return;
+      }
+      const key = encodeURIComponent(u);
+      const ref = db.ref('users/' + auth.currentUser.uid + '/favorites/' + key);
+      const snap = await ref.get();
+      if(snap.exists()) await ref.remove();
+      else await ref.set(u);
+      openList(false);
+    }
+
+    // Change Username & Password + cooldown logic
+    async function changeUsername() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      const newName = document.getElementById('newUsername').value.trim();
+      if(!newName) return msg("Masukkan username baru");
+      const last = userData?.lastNameChange || 0;
+      const now = Date.now();
+      const days = (now - last) / 1000 / 60 / 60 / 24;
+      if(days < 7) return msg(`Anda dapat mengganti username lagi dalam ${Math.ceil(7 - days)} hari.`);
+      await db.ref('users/' + auth.currentUser.uid).update({ username: newName, lastNameChange: Date.now() });
+      try { await auth.currentUser.updateProfile({ displayName: newName }); } catch(e) {}
+      msg("Username berhasil diperbarui.");
+    }
+
+    async function changePassword() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      const np = document.getElementById('newPass').value;
+      if(!np || np.length < 6) return msg("Password minimal 6 karakter");
+      try {
+        await auth.currentUser.updatePassword(np);
+        msg("Password berhasil diperbarui.");
+        document.getElementById('newPass').value = "";
+      } catch (err) {
+        msg("Gagal mengganti password. Silakan login ulang dan coba lagi.");
       }
     }
 
-    // 5. UPDATE PROFILE & PASSWORD (7 Days Delay)
-    async function updateAccount(type) {
-        const now = Date.now();
-        const lastChange = userData.lastNameChange || 0;
-        const diffDays = (now - lastChange) / (1000 * 60 * 60 * 24);
-
-        if(diffDays < 7 && userData.role === 'user') {
-            return msg(`Tunggu ${Math.ceil(7 - diffDays)} hari lagi untuk ganti data.`);
-        }
-
-        if(type === 'username') {
-            const newName = prompt("Masukkan Username Baru:");
-            if(newName) {
-                await db.ref(`users/${auth.currentUser.uid}`).update({ 
-                    username: newName, 
-                    lastNameChange: now 
-                });
-                msg("Username diganti!");
-            }
-        }
+    // Theme change (VIP/Admin only)
+    async function changeTheme(theme) {
+      if(!auth.currentUser || !userData) return msg("Login dulu!");
+      if(!(userData.role === 'Vip' || userData.role === 'Admin')) return msg("Hanya VIP/Admin yang dapat mengganti tema.");
+      await db.ref('users/' + auth.currentUser.uid).update({ theme });
+      document.body.classList.remove('vip-theme','admin-theme');
+      if(theme) document.body.classList.add(theme);
+      msg("Tema diperbarui.");
     }
-
-    // 6. BYPASS COOLDOWN UNTUK VIP/ADMIN
-    function saveMusic(t, u) {
-        const isPrivileged = (userData.role === 'vip' || userData.role === 'admin');
-        const lastUpload = userData.lastUpload || 0;
-        const diff = (Date.now() - lastUpload) / 1000 / 60;
-
-        if(!isPrivileged && diff < 30) {
-            return msg("Tunggu cooldown 30 menit!");
-        }
-
-        const newSong = {
-            title: t, url: u, uid: auth.currentUser.uid,
-            by: userData.username, timestamp: Date.now()
-        };
-        
-        db.ref('songs').push(newSong).then(() => {
-            db.ref(`users/${auth.currentUser.uid}`).update({ lastUpload: Date.now() });
-            msg("Berhasil diposting!");
-            closeModal();
-        });
-    }
-
-    // Perbaikan About/Logo Content
-    function openAbout() {
-        const aboutContent = `
-            <div class="about-box">
-                <h3>ExeMusic v3.1 Elite</h3>
-                <p>Dapatkan <b>VIP</b> dan buka fitur menarik!</p>
-                <div class="vip-card">
-                    <small>Benefit VIP:</small><br>
-                    • Tanpa Cooldown Upload (0m)<br>
-                    • Durasi MP3 hingga 5 Jam<br>
-                    • Akses Ganti Theme & Tag Eksklusif<br>
-                    • Request Lagu Prioritas ke Hexky
-                </div>
-                <button onclick="closeModal()" class="btn-act">MENGERTI</button>
-            </div>
-        `;
-        // Masukkan ke modal about
-        document.querySelector('#modalAbout .sheet').innerHTML = aboutContent;
-        document.getElementById('modalAbout').style.display = 'block';
-    }
-
-    // Sisa fungsi core (setup, play, toggle, dll) tetap menggunakan logikamu.
   </script>
 </body>
 </html>
