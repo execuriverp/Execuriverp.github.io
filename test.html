@@ -81,6 +81,23 @@
     }
     @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
     @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
+    @keyframes disco-heartbeat { 
+      0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+      10% { transform: scale(1.05); box-shadow: 0 25px 60px var(--accent)80; } 
+      20% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+      30% { transform: scale(1.08); box-shadow: 0 30px 70px var(--accent); } 
+      40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+      100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+    }
+    @keyframes rainbow-glow { 
+      0% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
+      16% { border-color: #ff7f00; box-shadow: inset 0 0 20px #ff7f00, 0 20px 50px #ff7f0080; } 
+      33% { border-color: #ffff00; box-shadow: inset 0 0 20px #ffff00, 0 20px 50px #ffff0080; } 
+      50% { border-color: #00ff00; box-shadow: inset 0 0 20px #00ff00, 0 20px 50px #00ff0080; } 
+      66% { border-color: #0000ff; box-shadow: inset 0 0 20px #0000ff, 0 20px 50px #0000ff80; } 
+      83% { border-color: #8b00ff; box-shadow: inset 0 0 20px #8b00ff, 0 20px 50px #8b00ff80; } 
+      100% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
+    }
 
     /* --- OVERLAYS --- */
     .full-overlay {
@@ -539,58 +556,80 @@
     function applyDiscoMode(color) {
         document.documentElement.style.setProperty('--accent', color);
         
-        // Background berubah dengan tint dari disco color
+        // Background tetap gelap, cuma ambil tint sedikit
         const rgb = parseInt(color.slice(1), 16);
         const r = (rgb >> 16) & 255;
         const g = (rgb >> 8) & 255;
         const b = rgb & 255;
-        const darkColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
-        const cardColor = `rgba(${r}, ${g}, ${b}, 0.25)`;
-        
-        document.documentElement.style.setProperty('--bg', `#0a0a0a`);
-        document.documentElement.style.setProperty('--card-bg', cardColor);
         
         const app = document.querySelector('.app');
         if(app) {
-            app.style.animation = 'disco-pulse 0.6s infinite';
-            app.style.background = `rgba(${r}, ${g}, ${b}, 0.2)`;
-            app.style.borderColor = color;
+            // Rainbow effect jika color is rainbow code, otherwise heartbeat
+            if(color.toLowerCase() === '#rainbow') {
+                app.style.animation = 'rainbow-glow 3s infinite linear';
+            } else {
+                app.style.animation = 'disco-heartbeat 0.8s infinite';
+                app.style.borderColor = color;
+                app.style.borderWidth = '2px';
+            }
+            app.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
+            app.style.boxShadow = `inset 0 0 30px rgba(${r}, ${g}, ${b}, 0.1), 0 0 40px ${color}60`;
         }
         
-        // Body background juga ikut vibes
-        document.body.style.background = `linear-gradient(135deg, #0a0a0a 0%, rgba(${r}, ${g}, ${b}, 0.1) 100%)`;
+        // Body background tetap dark
+        document.body.style.background = '#050505';
         
-        // Update button colors dynamically
+        // Update button colors dynamically dengan glow besar
         document.querySelectorAll('.btn-act').forEach(btn => {
             btn.style.background = color;
-            btn.style.boxShadow = `0 0 20px ${color}80`;
+            btn.style.boxShadow = `0 0 25px ${color}, 0 0 50px ${color}40`;
+            btn.style.transform = 'scale(1.02)';
         });
         
         document.querySelectorAll('.btn-play').forEach(btn => {
             btn.style.background = color;
-            btn.style.boxShadow = `0 0 30px ${color}`;
+            btn.style.boxShadow = `0 0 40px ${color}, 0 0 80px ${color}40`;
         });
         
-        // Update eq color dengan glow
+        // Update eq color dengan glow lebih besar
         document.querySelectorAll('.eq span').forEach(span => {
             span.style.background = color;
-            span.style.boxShadow = `0 0 20px ${color}`;
+            span.style.boxShadow = `0 0 25px ${color}, 0 0 50px ${color}60`;
         });
         
         // Update broadcast bar
         const sbBar = document.getElementById('sbBar');
-        if(sbBar) sbBar.style.background = color;
+        if(sbBar) {
+            sbBar.style.background = color;
+            sbBar.style.boxShadow = `0 0 15px ${color}`;
+        }
         
-        // System container jadi lebih colorful
+        // System container jadi lebih colorful dengan border
         document.querySelectorAll('.sys-container').forEach(el => {
-            el.style.background = `rgba(${r}, ${g}, ${b}, 0.1)`;
-            el.style.borderColor = `${color}40`;
+            el.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
+            el.style.border = `1px solid ${color}40`;
+            el.style.boxShadow = `inset 0 0 15px rgba(${r}, ${g}, ${b}, 0.1)`;
         });
         
-        // Modal sheets
+        // Modal sheets dengan gradient
         document.querySelectorAll('.sheet').forEach(el => {
-            el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.15) 0%, #181818 100%)`;
+            el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.08) 0%, #181818 100%)`;
+            el.style.borderTop = `2px solid ${color}80`;
         });
+        
+        // Title jadi lebih colorful
+        const title = document.getElementById('title');
+        if(title) {
+            title.style.color = color;
+            title.style.textShadow = `0 0 20px ${color}80`;
+        }
+        
+        // "By" text juga
+        const byEl = document.getElementById('by');
+        if(byEl) {
+            byEl.style.color = color;
+            byEl.style.textShadow = `0 0 10px ${color}60`;
+        }
     }
 
     function resetTheme() {
@@ -598,19 +637,22 @@
         document.documentElement.style.setProperty('--bg', '#050505');
         document.documentElement.style.setProperty('--card-bg', '#121212');
         
-        document.body.style.background = 'var(--bg)';
+        document.body.style.background = '#050505';
         
         const app = document.querySelector('.app');
         if(app) {
             app.style.animation = 'none';
             app.style.background = 'rgba(18, 18, 18, 0.6)';
             app.style.borderColor = 'rgba(255,255,255,0.08)';
+            app.style.borderWidth = '1px';
+            app.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5)';
         }
         
         // Reset button colors
         document.querySelectorAll('.btn-act').forEach(btn => {
             btn.style.background = 'var(--accent)';
             btn.style.boxShadow = 'none';
+            btn.style.transform = 'scale(1)';
         });
         
         document.querySelectorAll('.btn-play').forEach(btn => {
@@ -626,18 +668,37 @@
         
         // Reset broadcast
         const sbBar = document.getElementById('sbBar');
-        if(sbBar) sbBar.style.background = 'var(--accent)';
+        if(sbBar) {
+            sbBar.style.background = 'var(--accent)';
+            sbBar.style.boxShadow = 'none';
+        }
         
         // System container
         document.querySelectorAll('.sys-container').forEach(el => {
             el.style.background = 'rgba(255,255,255,0.03)';
-            el.style.borderColor = '';
+            el.style.border = '1px solid rgba(255,255,255,0.05)';
+            el.style.boxShadow = 'none';
         });
         
         // Modal sheets
         document.querySelectorAll('.sheet').forEach(el => {
             el.style.background = '#181818';
+            el.style.borderTop = '1px solid #333';
         });
+        
+        // Title reset
+        const title = document.getElementById('title');
+        if(title) {
+            title.style.color = '';
+            title.style.textShadow = '0 0 10px rgba(0,0,0,0.5)';
+        }
+        
+        // "By" reset
+        const byEl = document.getElementById('by');
+        if(byEl) {
+            byEl.style.color = 'var(--accent)';
+            byEl.style.textShadow = 'none';
+        }
     }
 
     // AUTH & USER DATA
