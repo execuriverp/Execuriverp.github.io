@@ -715,6 +715,26 @@
             box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
             overflow-y: auto;
             animation: slideUp 0.4s ease;
+            user-select: none;
+            cursor: grab;
+        }
+
+        #panel.dragging {
+            cursor: grabbing;
+            box-shadow: 0 30px 80px rgba(0, 212, 255, 0.4);
+        }
+
+        #panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: grab;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        #panel-header:active {
+            cursor: grabbing;
         }
 
         #panel h3 {
@@ -1081,7 +1101,12 @@
 <!-- ADMIN PANEL -->
 <div id="launcher" onclick="togP()">🛡️</div>
 <div id="panel">
-    <h3><i class="fas fa-shield-alt"></i> ADMIN CONTROL</h3>
+    <div id="panel-header">
+        <h3 style="margin: 0;"><i class="fas fa-shield-alt"></i> ADMIN CONTROL</h3>
+        <button onclick="togP()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px; padding: 0;">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
     
     <!-- STATISTICS -->
     <div class="panel-section">
@@ -1109,7 +1134,7 @@
                 <i class="fas fa-crown"></i> OWNER TOOLS
             </h4>
             <div class="admin-btn-group">
-                <button class="admin-btn danger" onclick="wipeChat()">
+                <button class="admin-btn danger" onclick="handleClearChat()">
                     <i class="fas fa-trash"></i> WIPE CHAT
                 </button>
                 <button class="admin-btn warning" id="btn-mt" onclick="togMT()">
@@ -1122,6 +1147,17 @@
         </div>
     </div>
 
+    <!-- ANNOUNCEMENT SECTION -->
+    <div class="panel-section">
+        <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+            <i class="fas fa-bullhorn"></i> ANNOUNCEMENT
+        </h4>
+        <input type="text" id="announce-input" placeholder="Tulis announcement...">
+        <button class="admin-btn primary" style="width: 100%; margin-top: 8px;" onclick="() => executeCommand('/announce ' + document.getElementById('announce-input').value)">
+            <i class="fas fa-send"></i> KIRIM
+        </button>
+    </div>
+
     <!-- USER MANAGEMENT -->
     <div class="panel-section">
         <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
@@ -1129,14 +1165,14 @@
         </h4>
         <input type="text" id="target-user" placeholder="🔍 Username target">
         <div class="admin-btn-group" style="margin-top: 10px;">
-            <button class="admin-btn danger" onclick="adminExec('banned')">
+            <button class="admin-btn danger" onclick="() => executeCommand('/ban ' + document.getElementById('target-user').value)">
                 <i class="fas fa-ban"></i> BAN
             </button>
-            <button class="admin-btn primary" onclick="adminExec('member')">
-                <i class="fas fa-undo"></i> RESET
+            <button class="admin-btn primary" onclick="() => executeCommand('/unban ' + document.getElementById('target-user').value)">
+                <i class="fas fa-undo"></i> UNBAN
             </button>
-            <button class="admin-btn warning" onclick="adminExec('admin')">
-                <i class="fas fa-star"></i> ADMIN
+            <button class="admin-btn warning" onclick="() => executeCommand('/promote ' + document.getElementById('target-user').value)">
+                <i class="fas fa-star"></i> PROMOTE
             </button>
         </div>
     </div>
@@ -1148,19 +1184,22 @@
         </h4>
         <input type="text" id="mute-user" placeholder="Username target">
         <input type="number" id="mute-duration" placeholder="Durasi (menit)" style="margin-top: 8px;">
-        <button class="admin-btn warning" style="width: 100%; margin-top: 8px;" onclick="muteUser()">
-            <i class="fas fa-mute"></i> MUTE
+        <input type="text" id="mute-reason" placeholder="Alasan" style="margin-top: 8px;">
+        <button class="admin-btn warning" style="width: 100%; margin-top: 8px;" onclick="() => executeCommand('/mute @' + document.getElementById('mute-user').value + ' ' + document.getElementById('mute-duration').value + ' ' + document.getElementById('mute-reason').value)">
+            <i class="fas fa-volume-mute"></i> MUTE
         </button>
     </div>
 
-    <!-- BROADCAST -->
+    <!-- ADMIN COMMANDS -->
     <div class="panel-section">
         <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
-            <i class="fas fa-bullhorn"></i> BROADCAST
+            <i class="fas fa-terminal"></i> COMMANDS
         </h4>
-        <input type="text" id="broadcast-msg" placeholder="Pesan broadcast">
-        <button class="admin-btn primary" style="width: 100%; margin-top: 8px;" onclick="sendBroadcast()">
-            <i class="fas fa-send"></i> KIRIM
+        <button class="admin-btn primary" style="width: 100%;" onclick="() => executeCommand('/ahelp')">
+            <i class="fas fa-question-circle"></i> /ahelp
+        </button>
+        <button class="admin-btn primary" style="width: 100%; margin-top: 8px;" onclick="() => executeCommand('/alog')">
+            <i class="fas fa-history"></i> /alog
         </button>
     </div>
 </div>
@@ -1200,6 +1239,41 @@
 
     let myData = null, authMode = "login", roomData = {}, replyData = null, lastSend = 0, history = [], userStats = {};
     let messageCount = 0, userCount = 0;
+    let draggedPanel = false, offsetX = 0, offsetY = 0;
+    let commandHistory = [];
+    let adminLogs = [];
+    let privateChats = {};
+    let userMessageCount = {};
+
+    // --- COMMAND SYSTEM ---
+    const COMMAND_LIST = {
+        user: {
+            help: { desc: 'Tampilkan semua command', usage: '/help' },
+            pm: { desc: 'Kirim pesan pribadi', usage: '/pm @username <pesan>' },
+            whisper: { desc: 'Kirim pesan pribadi (alias pm)', usage: '/whisper @username <pesan>' },
+            me: { desc: 'Role play action', usage: '/me <action>' },
+            afk: { desc: 'Set status away', usage: '/afk <reason>' },
+            back: { desc: 'Set status online', usage: '/back' },
+            clear: { desc: 'Clear chat (personal view)', usage: '/clear' },
+            stats: { desc: 'Lihat statistik Anda', usage: '/stats' }
+        },
+        admin: {
+            ahelp: { desc: 'Tampilkan admin command', usage: '/ahelp', perms: ['admin'] },
+            mute: { desc: 'Mute user', usage: '/mute @username <menit> <reason>', perms: ['admin'] },
+            unmute: { desc: 'Unmute user', usage: '/unmute @username', perms: ['admin'] },
+            kick: { desc: 'Kick user dari chat', usage: '/kick @username <reason>', perms: ['admin'] },
+            ban: { desc: 'Ban user permanen', usage: '/ban @username <reason>', perms: ['admin'] },
+            unban: { desc: 'Unban user', usage: '/unban @username', perms: ['admin'] },
+            promote: { desc: 'Promosi admin', usage: '/promote @username', perms: ['owner'] },
+            demote: { desc: 'Demote admin', usage: '/demote @username', perms: ['owner'] },
+            warn: { desc: 'Kasih warning ke user', usage: '/warn @username <reason>', perms: ['admin'] },
+            clearchat: { desc: 'Wipe semua chat', usage: '/clearchat', perms: ['owner'] },
+            announce: { desc: 'Buat announcement', usage: '/announce <pesan>', perms: ['admin'] },
+            alog: { desc: 'Lihat admin logs', usage: '/alog [page]', perms: ['admin'] },
+            setreason: { desc: 'Set alasan jika ga ada di command', usage: '/setreason <reason>', perms: ['admin'] },
+            adel: { desc: 'Admin delete pesan', usage: '/adel (reply ke pesan)', perms: ['admin'] }
+        }
+    };
 
     // --- UTILITY FUNCTIONS ---
     function showNotification(msg, type = 'success') {
@@ -1221,13 +1295,583 @@
         return date.toLocaleDateString('id-ID');
     }
 
-    // --- AUTH TAB SWITCHING ---
-    function switchAuthTab(tab) {
-        authMode = tab;
-        document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
-        document.getElementById('form-reg').style.display = tab === 'register' ? 'block' : 'none';
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // --- PERMISSION CHECK ---
+    function hasPermission(action) {
+        if(!myData) return false;
+        if(myData.role === 'owner') return true;
+        if(myData.role === 'banned') return false;
+        
+        // Check role-based permissions
+        const rolePerms = myData.permissions || {};
+        return rolePerms[action] || false;
+    }
+
+    function addAdminLog(admin, action, target, reason, extra = '') {
+        const logEntry = {
+            time: Date.now(),
+            admin: admin,
+            action: action,
+            target: target,
+            reason: reason,
+            extra: extra
+        };
+        adminLogs.push(logEntry);
+        db.ref('admin_logs').push(logEntry);
+        if(adminLogs.length > 100) adminLogs.shift();
+    }
+
+    // --- COMMAND PARSER ---
+    function parseCommand(text) {
+        if(!text.startsWith('/')) return null;
+        
+        const parts = text.slice(1).split(/\s+/);
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+        
+        return { cmd, args, fullCmd: text };
+    }
+
+    async function executeCommand(text) {
+        const command = parseCommand(text);
+        if(!command) return false;
+
+        const { cmd, args } = command;
+        
+        // USER COMMANDS
+        if(cmd === 'help') return showHelpCommand();
+        if(cmd === 'pm' || cmd === 'whisper') return handlePM(args);
+        if(cmd === 'me') return handleMeCommand(args.join(' '));
+        if(cmd === 'afk') return handleAFK(args.join(' '));
+        if(cmd === 'back') return handleBack();
+        if(cmd === 'clear') return handleClear();
+        if(cmd === 'stats') return handleStatsCommand();
+        
+        // ADMIN COMMANDS
+        if(cmd === 'ahelp') return showAdminHelpCommand();
+        if(cmd === 'mute') return handleMute(args);
+        if(cmd === 'unmute') return handleUnmute(args);
+        if(cmd === 'warn') return handleWarn(args);
+        if(cmd === 'ban') return handleBan(args);
+        if(cmd === 'unban') return handleUnban(args);
+        if(cmd === 'promote') return handlePromote(args);
+        if(cmd === 'demote') return handleDemote(args);
+        if(cmd === 'announce') return handleAnnounce(args.join(' '));
+        if(cmd === 'alog') return handleALog(args[0]);
+        if(cmd === 'clearchat') return handleClearChat();
+        if(cmd === 'kick') return handleKick(args);
+        if(cmd === 'adel') return handleAdminDelete(replyData);
+        
+        // Unknown command - show only to user
+        return showCommandError(`Unknown command: /${cmd}`);
+    }
+
+    function showCommandError(msg) {
+        const err = document.createElement('div');
+        err.style.cssText = `
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 110, 0.9);
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-size: 12px;
+            z-index: 9999;
+            border-left: 4px solid var(--primary);
+        `;
+        err.textContent = `[SYSTEM] ${msg}`;
+        err.innerHTML = `<span style="color: var(--text-dim);">Only you can read this</span><br>${err.textContent}`;
+        document.body.appendChild(err);
+        setTimeout(() => err.remove(), 4000);
+    }
+
+    // --- COMMAND HANDLERS ---
+    function showHelpCommand() {
+        let helpText = '📋 USER COMMANDS:\n━━━━━━━━━━━━━━━━━━━\n';
+        Object.entries(COMMAND_LIST.user).forEach(([key, val]) => {
+            helpText += `/${key} - ${val.desc}\n`;
+        });
+        
+        sendSystemMessage('[SYSTEM]', helpText);
+        return true;
+    }
+
+    function showAdminHelpCommand() {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        let helpText = '⚔️ ADMIN COMMANDS:\n━━━━━━━━━━━━━━━━━━━\n';
+        Object.entries(COMMAND_LIST.admin).forEach(([key, val]) => {
+            helpText += `/${key} - ${val.desc}\n`;
+        });
+        
+        sendSystemMessage('[ADMIN]', helpText);
+        return true;
+    }
+
+    function handlePM(args) {
+        if(args.length < 2) {
+            showCommandError('Usage: /pm @username <message>');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const msg = args.slice(1).join(' ');
+        
+        db.ref('messages').push({
+            nama: myData.username,
+            pesan: msg,
+            role: myData.role,
+            uid: myData.uid,
+            time: Date.now(),
+            isPM: true,
+            pmTarget: target,
+            pmFrom: myData.username
+        });
+        
+        showNotification(`PM sent to @${target}`);
+        return true;
+    }
+
+    function handleMeCommand(action) {
+        db.ref('messages').push({
+            nama: myData.username,
+            pesan: `* ${myData.username} ${action}`,
+            role: myData.role,
+            uid: myData.uid,
+            time: Date.now(),
+            isAction: true
+        });
+        return true;
+    }
+
+    function handleAFK(reason) {
+        db.ref('users/' + myData.id).update({ status: 'AFK', afkReason: reason || 'AFK' });
+        sendSystemMessage('[SYSTEM]', `${myData.username} is now AFK: ${reason || 'No reason'}`);
+        return true;
+    }
+
+    function handleBack() {
+        db.ref('users/' + myData.id).update({ status: 'online', afkReason: '' });
+        sendSystemMessage('[SYSTEM]', `${myData.username} is back online!`);
+        return true;
+    }
+
+    function handleClear() {
+        document.getElementById('chat-box').innerHTML = '';
+        return true;
+    }
+
+    function handleStatsCommand() {
+        const stats = `
+📊 YOUR STATS:
+━━━━━━━━━━━━━━━━━━━
+Messages: ${myData.messageCount || 0}
+Warnings: ${myData.warnings || 0}
+Status: ${myData.status || 'Online'}
+Role: ${myData.role.toUpperCase()}
+`;
+        sendSystemMessage('[SYSTEM]', stats);
+        return true;
+    }
+
+    async function handleMute(args) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(args.length < 2) {
+            showCommandError('Usage: /mute @username <minutes> [reason]');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const duration = parseInt(args[1]) || 5;
+        const reason = args.slice(2).join(' ') || 'No reason';
+        
+        const snap = await db.ref('users/' + target).once('value');
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        db.ref('users/' + target).update({
+            muteUntil: Date.now() + (duration * 60 * 1000),
+            lastMuteReason: reason
+        });
+        
+        const msg = `[ADMCMD] @${target} has been muted by @${myData.username} for ${duration} min.\nReason: ${reason}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'MUTE', target, reason, `${duration} min`);
+        return true;
+    }
+
+    async function handleUnmute(args) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(args.length < 1) {
+            showCommandError('Usage: /unmute @username');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const snap = await db.ref('users/' + target).once('value');
+        
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        db.ref('users/' + target).update({ muteUntil: 0 });
+        const msg = `[ADMCMD] @${target} has been unmuted by @${myData.username}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'UNMUTE', target, 'Manual unmute', '');
+        return true;
+    }
+
+    async function handleWarn(args) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(args.length < 2) {
+            showCommandError('Usage: /warn @username <reason>');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const reason = args.slice(1).join(' ');
+        
+        const snap = await db.ref('users/' + target).once('value');
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        const user = snap.val();
+        const newWarnings = (user.warnings || 0) + 1;
+        
+        db.ref('users/' + target).update({ warnings: newWarnings });
+        
+        const msg = `[ADMCMD] @${target} has been warned by @${myData.username}. (${newWarnings}/3)\nReason: ${reason}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'WARN', target, reason, `Warnings: ${newWarnings}/3`);
+        
+        if(newWarnings >= 3) {
+            db.ref('users/' + target).update({ role: 'banned' });
+            sendSystemMessage('[ADMCMD]', `[ADMCMD] @${target} has been auto-banned! (3 warnings reached)`);
+        }
+        
+        return true;
+    }
+
+    async function handleBan(args) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(args.length < 2) {
+            showCommandError('Usage: /ban @username <reason>');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const reason = args.slice(1).join(' ');
+        
+        const snap = await db.ref('users/' + target).once('value');
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        db.ref('users/' + target).update({ role: 'banned', banReason: reason });
+        const msg = `[ADMCMD] @${target} has been banned by @${myData.username}.\nReason: ${reason}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'BAN', target, reason, 'Permanent');
+        return true;
+    }
+
+    async function handleUnban(args) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(args.length < 1) {
+            showCommandError('Usage: /unban @username');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const snap = await db.ref('users/' + target).once('value');
+        
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        db.ref('users/' + target).update({ role: 'member', banReason: '' });
+        const msg = `[ADMCMD] @${target} has been unbanned by @${myData.username}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'UNBAN', target, 'Manual unban', '');
+        return true;
+    }
+
+    async function handleKick(args) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(args.length < 2) {
+            showCommandError('Usage: /kick @username <reason>');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const reason = args.slice(1).join(' ');
+        
+        const msg = `[ADMCMD] @${target} has been kicked by @${myData.username}.\nReason: ${reason}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'KICK', target, reason, '');
+        return true;
+    }
+
+    async function handlePromote(args) {
+        if(!hasPermission('admin') || myData.role !== 'owner') {
+            showCommandError('Owner only!');
+            return true;
+        }
+        
+        if(args.length < 1) {
+            showCommandError('Usage: /promote @username');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const snap = await db.ref('users/' + target).once('value');
+        
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        db.ref('users/' + target).update({ 
+            role: 'admin',
+            permissions: {
+                mute: true,
+                kick: true,
+                ban: false,
+                promote: false,
+                announce: true,
+                admin: true
+            }
+        });
+        
+        const msg = `[ADMCMD] @${target} has been promoted to ADMIN by @${myData.username}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'PROMOTE', target, 'Promoted to Admin', '');
+        return true;
+    }
+
+    async function handleDemote(args) {
+        if(myData.role !== 'owner') {
+            showCommandError('Owner only!');
+            return true;
+        }
+        
+        if(args.length < 1) {
+            showCommandError('Usage: /demote @username');
+            return true;
+        }
+        
+        const target = args[0].replace('@', '').toLowerCase();
+        const snap = await db.ref('users/' + target).once('value');
+        
+        if(!snap.exists()) {
+            showCommandError('User not found!');
+            return true;
+        }
+        
+        db.ref('users/' + target).update({ 
+            role: 'member',
+            permissions: {}
+        });
+        
+        const msg = `[ADMCMD] @${target} has been demoted to MEMBER by @${myData.username}`;
+        sendSystemMessage('[ADMCMD]', msg);
+        addAdminLog(myData.username, 'DEMOTE', target, 'Demoted to Member', '');
+        return true;
+    }
+
+    function handleAnnounce(text) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(!text) {
+            showCommandError('Usage: /announce <message>');
+            return true;
+        }
+        
+        const announcement = `
+╔════════════════════════════════╗
+║  📢 ANNOUNCEMENT (by ${myData.username})
+║════════════════════════════════
+║  ${text}
+║════════════════════════════════╗
+`;
+        
+        db.ref('messages').push({
+            nama: '[ANNOUNCEMENT]',
+            pesan: announcement,
+            role: 'admin',
+            uid: 'announcement',
+            time: Date.now(),
+            isAnnouncement: true,
+            announcedBy: myData.username
+        });
+        
+        addAdminLog(myData.username, 'ANNOUNCE', 'ALL', text, '');
+        return true;
+    }
+
+    function handleALog(page = '1') {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        const p = parseInt(page) || 1;
+        const perPage = 5;
+        const start = (p - 1) * perPage;
+        const logs = adminLogs.slice(start, start + perPage);
+        
+        let logText = `⚔️ ADMIN LOGS (Page ${p}):\n━━━━━━━━━━━━━━━━━━━\n`;
+        logs.forEach(log => {
+            const time = new Date(log.time).toLocaleTimeString('id-ID');
+            logText += `[${time}] ${log.admin} -> ${log.action} @${log.target}\nReason: ${log.reason}\n\n`;
+        });
+        
+        sendSystemMessage('[ALOG]', logText);
+        return true;
+    }
+
+    async function handleAdminDelete(replyData) {
+        if(!hasPermission('admin')) {
+            showCommandError('You do not have permission!');
+            return true;
+        }
+        
+        if(!replyData) {
+            showCommandError('You must reply to a message to delete it!');
+            return true;
+        }
+        
+        // Find and remove the message
+        db.ref('messages').once('value').then(snapshot => {
+            snapshot.forEach(child => {
+                const msg = child.val();
+                if(msg.nama === replyData.n && msg.pesan === replyData.p) {
+                    child.ref.remove();
+                    sendSystemMessage('[ADMCMD]', `[ADMCMD] Message from @${replyData.n} has been deleted by @${myData.username}`);
+                    addAdminLog(myData.username, 'DELETE', replyData.n, 'Message deleted', replyData.p.substring(0, 30));
+                    cancelReply();
+                }
+            });
+        });
+        
+        return true;
+    }
+
+    function handleClearChat() {
+        if(myData.role !== 'owner') {
+            showCommandError('Owner only!');
+            return true;
+        }
+        
+        db.ref('messages').remove();
+        sendSystemMessage('[BOT]', '[BOT] Chat cleared by owner!');
+        addAdminLog(myData.username, 'CLEARCHAT', 'ALL', 'Owner clear chat', '');
+        return true;
+    }
+
+    function sendSystemMessage(author, text) {
+        db.ref('messages').push({
+            nama: author,
+            pesan: text,
+            role: author.includes('BOT') || author.includes('SYSTEM') ? 'system' : 'admin',
+            uid: 'system',
+            time: Date.now(),
+            isSystem: true
+        });
+    }
+
+    // --- BOT ANTI SPAM SYSTEM ---
+    function checkBotAutoMute() {
+        // Count messages dari user terakhir 1 menit
+        db.ref('messages').limitToLast(50).once('value', snapshot => {
+            const userMsgs = {};
+            const now = Date.now();
+            
+            snapshot.forEach(child => {
+                const msg = child.val();
+                if(now - msg.time < 60000) { // 1 menit terakhir
+                    userMsgs[msg.uid] = (userMsgs[msg.uid] || 0) + 1;
+                }
+            });
+            
+            // Auto mute if spam detected
+            Object.entries(userMsgs).forEach(([uid, count]) => {
+                if(count >= 5) {
+                    db.ref('messages').limitToLast(50).once('value', snap => {
+                        snap.forEach(child => {
+                            if(child.val().uid === uid) {
+                                const user = child.val().nama;
+                                if(!myData || child.val().uid !== myData.uid) {
+                                    const duration = 5;
+                                    db.ref('users').orderByChild('uid').equalTo(uid).once('value', userSnap => {
+                                        userSnap.forEach(u => {
+                                            db.ref('users/' + u.key).update({
+                                                muteUntil: Date.now() + (duration * 60 * 1000)
+                                            });
+                                        });
+                                    });
+                                    
+                                    sendSystemMessage('[BOT]', `[BOT] @${user} has been muted for ${duration} min.\nReason: Spam`);
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    }
+
+    // --- AUTO WIPE CHAT IF TOO MANY MESSAGES ---
+    function checkChatOverflow() {
+        db.ref('messages').once('value', snapshot => {
+            if(snapshot.numChildren() > 100) {
+                db.ref('messages').remove();
+                sendSystemMessage('[BOT]', '[BOT] Chat auto-wiped!\nReason: Too many messages (100+)');
+            }
+        });
     }
 
     // --- AUTHENTICATION ---
@@ -1312,6 +1956,25 @@
                     if(myData.role === 'owner') {
                         document.getElementById('owner-only').style.display = 'flex';
                     }
+                    
+                    // Set default permissions for admin/owner
+                    if(!myData.permissions) {
+                        let perms = {};
+                        if(myData.role === 'owner') {
+                            perms = {
+                                mute: true, kick: true, ban: true, promote: true,
+                                demote: true, announce: true, admin: true, delete: true
+                            };
+                        } else if(myData.role === 'admin') {
+                            perms = {
+                                mute: true, kick: true, announce: true, admin: true, delete: true
+                            };
+                        }
+                        if(Object.keys(perms).length > 0) {
+                            db.ref("users/" + c.key).update({ permissions: perms });
+                            myData.permissions = perms;
+                        }
+                    }
                 });
             });
         }
@@ -1326,6 +1989,14 @@
         
         const input = document.getElementById('u-msg'), txt = input.value.trim();
         if(!txt || !myData) return;
+
+        // Handle commands
+        if(txt.startsWith('/')) {
+            executeCommand(txt);
+            input.value = '';
+            input.focus();
+            return;
+        }
 
         if(Date.now() - lastSend < 3000) {
             showNotification('Tunggu 3 detik!', 'error');
@@ -1362,6 +2033,10 @@
         lastSend = Date.now();
         cancelReply();
         input.focus();
+        
+        // Check for spam patterns
+        checkBotAutoMute();
+        checkChatOverflow();
     }
 
     // --- MESSAGE RENDERING ---
@@ -1371,17 +2046,71 @@
         messageCount = 0;
         
         s.forEach(snap => {
-            messageCount++;
             const d = snap.val();
             const msgId = snap.key;
             const isMe = d.uid === (auth.currentUser ? auth.currentUser.uid : '');
+            
+            // Skip banned users' messages
+            if(d.role === 'banned') return;
+            
+            // Skip private messages not meant for this user
+            if(d.isPM && d.pmTarget !== myData.username && !isMe) return;
+            
+            messageCount++;
             const row = document.createElement('div');
+            
+            // SYSTEM MESSAGE STYLE
+            if(d.isSystem || d.isAnnouncement) {
+                row.style.cssText = `
+                    width: 100%;
+                    text-align: center;
+                    margin: 15px 0;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                const msgBox = document.createElement('div');
+                msgBox.style.cssText = `
+                    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(131, 56, 236, 0.1));
+                    border: 1px solid var(--border);
+                    padding: 15px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                    color: var(--text-dim);
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                    max-width: 80%;
+                    margin: 0 auto;
+                `;
+                msgBox.textContent = d.pesan;
+                row.appendChild(msgBox);
+                box.appendChild(row);
+                return;
+            }
+            
+            // ACTION MESSAGE STYLE (/me)
+            if(d.isAction) {
+                row.style.cssText = `
+                    width: 100%;
+                    text-align: center;
+                    margin: 8px 0;
+                    color: var(--text-dim);
+                    font-style: italic;
+                    font-size: 13px;
+                    animation: slideIn 0.3s ease;
+                `;
+                row.textContent = d.pesan;
+                box.appendChild(row);
+                return;
+            }
+            
+            // NORMAL MESSAGE STYLE
             row.className = `msg-row ${isMe ? 'me' : 'other'}`;
             row.id = `msg-${msgId}`;
             
             let bubbleClass = 'bubble';
             let roleIcon = '';
             let roleBadge = '';
+            let pmBadge = '';
             
             if(d.role === 'owner') {
                 bubbleClass += ' owner-bubble';
@@ -1391,14 +2120,16 @@
                 bubbleClass += ' admin-bubble';
                 roleIcon = '⚔️';
                 roleBadge = '<span class="role-badge" style="background: rgba(255, 0, 110, 0.2); border-color: var(--danger); color: var(--danger);">ADMIN</span>';
-            } else if(d.role === 'banned') {
-                return; // Skip banned users
+            }
+            
+            if(d.isPM) {
+                pmBadge = '<span class="role-badge" style="background: rgba(131, 56, 236, 0.3); border-color: var(--accent); color: var(--accent);">🔒 PM</span>';
             }
             
             let rplHtml = d.reply ? `
                 <div class="reply-preview">
                     <span class="reply-author">@${d.reply.n}</span><br>
-                    <span style="opacity: 0.8;">${d.reply.p.substring(0, 50)}</span>
+                    <span style="opacity: 0.8;">${escapeHtml(d.reply.p).substring(0, 50)}</span>
                 </div>
             ` : '';
             
@@ -1407,13 +2138,14 @@
             row.innerHTML = `
                 <div class="msg-time">${timeStr}</div>
                 <div class="${bubbleClass}" 
-                     oncontextmenu="showCtx(event,'${d.nama}','${d.pesan}','${msgId}')" 
-                     ondblclick="showCtx(event,'${d.nama}','${d.pesan}','${msgId}')">
+                     oncontextmenu="showCtx(event,'${d.nama}','${escapeHtml(d.pesan).replace(/'/g, "\\'")}','${msgId}')" 
+                     ondblclick="showCtx(event,'${d.nama}','${escapeHtml(d.pesan).replace(/'/g, "\\'")}','${msgId}')">
                     <div class="bubble-name">
                         <span class="${d.role === 'owner' ? 'name-owner' : d.role === 'admin' ? 'admin-red' : 'member'}">
                             ${roleIcon} ${d.nama}
                         </span>
                         ${roleBadge}
+                        ${pmBadge}
                     </div>
                     ${rplHtml}
                     <div class="bubble-content">${escapeHtml(d.pesan)}</div>
@@ -1426,13 +2158,6 @@
         updateStats();
         box.scrollTop = box.scrollHeight;
     });
-
-    // --- ESCAPE HTML FOR SECURITY ---
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
 
     // --- CONTEXT MENU ---
     function showCtx(e, n, p, id) {
@@ -1459,7 +2184,7 @@
         if(a === 'reply') {
             replyData = { n: msg.n, p: msg.p };
             document.getElementById('reply-box').style.display = 'block';
-            document.getElementById('reply-info').innerHTML = `<strong style="color: var(--primary);">@${msg.n}</strong> <span style="opacity: 0.7;">${msg.p.substring(0, 40)}</span>`;
+            document.getElementById('reply-info').innerHTML = `<strong style="color: var(--primary);">@${msg.n}</strong> <span style="opacity: 0.7;">${escapeHtml(msg.p).substring(0, 40)}</span>`;
             document.getElementById('u-msg').focus();
         }
         if(a === 'tag') {
@@ -1467,15 +2192,16 @@
             document.getElementById('u-msg').focus();
         }
         if(a === 'pin') {
-            if(myData.role === 'owner' || myData.role === 'admin') {
+            if(hasPermission('admin')) {
                 db.ref(`pinned/${msg.id}`).set({ user: msg.n, text: msg.p, time: Date.now() });
                 showNotification('Pesan dipinned!');
+                addAdminLog(myData.username, 'PIN_MESSAGE', msg.n, 'Message pinned', msg.p.substring(0, 30));
             } else {
-                showNotification('Hanya admin yang bisa pin!', 'error');
+                showCommandError('Hanya admin yang bisa pin!');
             }
         }
         if(a === 'react') {
-            document.getElementById('u-msg').value = msg.p + ' 👍 ';
+            document.getElementById('u-msg').value += `${msg.p} 👍 `;
             document.getElementById('u-msg').focus();
         }
         document.getElementById('ctx-menu').style.display = 'none';
@@ -1514,37 +2240,29 @@
     }
 
     function muteUser() {
-        if(myData.role !== 'owner' && myData.role !== 'admin') return showNotification('Akses ditolak!', 'error');
-        
         const user = document.getElementById('mute-user').value.toLowerCase().trim();
         const duration = parseInt(document.getElementById('mute-duration').value) || 5;
+        const reason = document.getElementById('mute-reason').value || 'No reason';
         
         if(!user) return showNotification('Input username!', 'error');
-        
-        db.ref("users/" + user).update({
-            muteUntil: Date.now() + (duration * 60 * 1000)
-        });
-        
-        showNotification(`${user} dimute ${duration} menit!`);
-        document.getElementById('mute-user').value = '';
-        document.getElementById('mute-duration').value = '';
+        executeCommand(`/mute @${user} ${duration} ${reason}`);
     }
 
-    // --- ADMIN FUNCTIONS ---
+    // --- ADMIN FUNCTIONS (LEGACY) ---
     function togMT() {
-        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        if(myData.role !== 'owner') return showCommandError('Owner only!');
         db.ref('room_status/maint').set(!roomData.maint);
         showNotification('Maintenance mode: ' + (!roomData.maint ? 'ON' : 'OFF'));
     }
 
     function togGC() {
-        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        if(myData.role !== 'owner') return showCommandError('Owner only!');
         db.ref('room_status/guest_chat').set(!roomData.guest_chat);
         showNotification('Guest chat: ' + (!roomData.guest_chat ? 'ON' : 'OFF'));
     }
 
     function wipeChat() {
-        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        if(myData.role !== 'owner') return showCommandError('Owner only!');
         if(confirm('⚠️ Hapus SEMUA pesan? (Tidak bisa dikembalikan!)')) {
             db.ref("messages").remove();
             showNotification('Chat diwipe!');
@@ -1552,13 +2270,13 @@
     }
 
     function adminExec(role) {
-        if(myData.role !== 'owner' && myData.role !== 'admin') return showNotification('Akses ditolak!', 'error');
+        if(!hasPermission('admin')) return showCommandError('Akses ditolak!');
         
         const t = document.getElementById('target-user').value.toLowerCase().trim();
         if(!t) return showNotification('Input username!', 'error');
         
         db.ref("users/"+t).once("value").then(snap => {
-            if(!snap.exists()) return showNotification('User tidak ditemukan!', 'error');
+            if(!snap.exists()) return showCommandError('User tidak ditemukan!');
             db.ref("users/"+t).update({ role: role });
             showNotification(`${t} diatur sebagai ${role}!`);
             document.getElementById('target-user').value = '';
@@ -1566,21 +2284,11 @@
     }
 
     function sendBroadcast() {
-        if(myData.role !== 'owner') return showNotification('Owner only!', 'error');
+        if(myData.role !== 'owner') return showCommandError('Owner only!');
         const msg = document.getElementById('broadcast-msg').value.trim();
         if(!msg) return showNotification('Input pesan!', 'error');
         
-        db.ref("messages").push({
-            nama: 'SYSTEM BROADCAST',
-            pesan: '📢 ' + msg,
-            role: 'owner',
-            uid: 'system',
-            time: Date.now(),
-            isSystem: true
-        });
-        
-        showNotification('Broadcast terkirim!');
-        document.getElementById('broadcast-msg').value = '';
+        executeCommand(`/announce ${msg}`);
     }
 
     function updateStats() {
@@ -1613,6 +2321,38 @@
     function togP() {
         const p = document.getElementById('panel');
         p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+        if(p.style.display === 'flex') {
+            setupPanelDragging();
+        }
+    }
+
+    function setupPanelDragging() {
+        const panel = document.getElementById('panel');
+        const header = document.getElementById('panel-header');
+        
+        if(!header) return;
+        
+        header.addEventListener('mousedown', (e) => {
+            draggedPanel = true;
+            offsetX = e.clientX - panel.offsetLeft;
+            offsetY = e.clientY - panel.offsetTop;
+            panel.classList.add('dragging');
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if(draggedPanel) {
+                panel.style.position = 'fixed';
+                panel.style.right = 'auto';
+                panel.style.bottom = 'auto';
+                panel.style.left = (e.clientX - offsetX) + 'px';
+                panel.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            draggedPanel = false;
+            panel.classList.remove('dragging');
+        });
     }
 
     function logout() {
@@ -1629,8 +2369,13 @@
         document.getElementById('reply-box').style.display = 'none';
     }
 
-    // Auto update stats
-    setInterval(updateStats, 5000);
+    // Auto update stats dan bot checks
+    setInterval(() => {
+        updateStats();
+        checkBotAutoMute();
+        checkChatOverflow();
+    }, 5000);
+
 </script>
 </body>
 </html>
