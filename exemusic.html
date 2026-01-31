@@ -468,7 +468,7 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    let songs = [], i = 0, isShuf = true, isRepeat = false, isLoginMode = true;
+    let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
     let userData = null;
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     const audio = new Audio();
