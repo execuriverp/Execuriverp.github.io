@@ -98,6 +98,26 @@
       83% { border-color: #8b00ff; box-shadow: inset 0 0 20px #8b00ff, 0 20px 50px #8b00ff80; } 
       100% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
     }
+    @keyframes snowfall { 
+      0% { transform: translateY(-10px) translateX(0); opacity: 1; } 
+      90% { opacity: 1; } 
+      100% { transform: translateY(100vh) translateX(100px); opacity: 0; } 
+    }
+    @keyframes sway { 
+      0%, 100% { transform: translateX(0); } 
+      50% { transform: translateX(30px); } 
+    }
+    .snowflake { 
+      position: fixed; 
+      top: -10px; 
+      color: #00d4ff; 
+      font-size: 1.5em; 
+      font-family: Arial, sans-serif; 
+      text-shadow: 0 0 5px #00d4ff; 
+      z-index: 1;
+      pointer-events: none;
+      animation: snowfall linear forwards;
+    }
 
     /* --- OVERLAYS --- */
     .full-overlay {
@@ -494,6 +514,8 @@
     let discoModeActive = false;
     let discoColor = "#00ff88";
     let lastDiscoUser = null;
+    let iceModeActive = false;
+    let snowflakeInterval = null;
 
     // Tambahan tag keren dan lucu
     function getTagHTML(tag) {
@@ -553,8 +575,48 @@
 
     function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
 
+    function createSnowflake() {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.textContent = '❄';
+        snowflake.style.left = Math.random() * window.innerWidth + 'px';
+        const duration = Math.random() * 5 + 8;
+        const delay = Math.random() * 0.5;
+        snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards, sway ${Math.random() * 2 + 2}s ease-in-out infinite`;
+        document.body.appendChild(snowflake);
+        
+        setTimeout(() => snowflake.remove(), (duration + delay) * 1000);
+    }
+
+    function startSnowfall() {
+        if(snowflakeInterval) clearInterval(snowflakeInterval);
+        snowflakeInterval = setInterval(createSnowflake, 300);
+        // Create initial snowflakes
+        for(let i = 0; i < 15; i++) {
+            setTimeout(() => createSnowflake(), i * 100);
+        }
+    }
+
+    function stopSnowfall() {
+        if(snowflakeInterval) {
+            clearInterval(snowflakeInterval);
+            snowflakeInterval = null;
+        }
+        document.querySelectorAll('.snowflake').forEach(flake => flake.remove());
+    }
+
     function applyDiscoMode(color) {
         document.documentElement.style.setProperty('--accent', color);
+        
+        // Check jika ice mode
+        if(color.toLowerCase() === '#ice') {
+            iceModeActive = true;
+            color = '#00d4ff'; // Blizzard blue
+            document.documentElement.style.setProperty('--accent', color);
+        } else {
+            iceModeActive = false;
+            stopSnowfall();
+        }
         
         // Background tetap gelap, cuma ambil tint sedikit
         const rgb = parseInt(color.slice(1), 16);
@@ -564,8 +626,13 @@
         
         const app = document.querySelector('.app');
         if(app) {
-            // Rainbow effect jika color is rainbow code, otherwise heartbeat
-            if(color.toLowerCase() === '#rainbow') {
+            // Rainbow effect jika color is rainbow code, ice mode heartbeat, otherwise disco heartbeat
+            if(color.toLowerCase() === '#00d4ff') {
+                app.style.animation = 'disco-heartbeat 0.8s infinite';
+                app.style.borderColor = color;
+                app.style.borderWidth = '2px';
+                startSnowfall();
+            } else if(color.toLowerCase().includes('rainbow')) {
                 app.style.animation = 'rainbow-glow 3s infinite linear';
             } else {
                 app.style.animation = 'disco-heartbeat 0.8s infinite';
@@ -640,6 +707,12 @@
         document.documentElement.style.setProperty('--card-bg', '#121212');
         
         document.body.style.background = '#050505';
+        
+        // Stop snowfall jika active
+        if(iceModeActive) {
+            stopSnowfall();
+            iceModeActive = false;
+        }
         
         const app = document.querySelector('.app');
         if(app) {
