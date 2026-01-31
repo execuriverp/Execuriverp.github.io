@@ -254,6 +254,7 @@
     .tag-galau { background: #555; color: #fff; font-style: italic; }
     .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
     .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
+    .tag-vip { background: #ffb347; color: #000; } /* VIP tag */
     
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
@@ -446,7 +447,7 @@
       <!-- NEW: Theme controls for VIP/Admin -->
       <div class="section-title">Theme & VIP</div>
       <div id="themeControls" class="settings-row" style="display:none">
-        <button class="btn-small" onclick="changeTheme('default')">Default</button>
+        <button class="btn-small" onclick="changeTheme('')">Default</button>
         <button class="btn-small" onclick="changeTheme('vip-theme')">VIP Glow</button>
         <button class="btn-small" onclick="changeTheme('admin-theme')">Admin Gold</button>
       </div>
@@ -544,11 +545,11 @@
 
     let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
     let userData = null;
-    let fav = []; // moved to Firebase per-user; fallback for guests remains empty
+    let fav = []; // will be filled from Firebase for logged users; local fallback for guests
     const audio = new Audio();
     let broadcastTimeout;
 
-    // Tambahan tag keren dan lucu
+    // Tag helper
     function getTagHTML(tag) {
       if(!tag || tag === "none") return '';
       const t = tag.toLowerCase();
@@ -560,9 +561,13 @@
         const val = s.val();
         if(!val) return;
         if(val.mt === true) {
-            db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
-                if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
-            });
+            if(auth.currentUser && auth.currentUser.uid) {
+              db.ref('users/' + auth.currentUser.uid + '/role').once('value', r => {
+                  if(r.val() !== 'Admin') document.getElementById('mtScreen').style.display = 'flex';
+              });
+            } else {
+              document.getElementById('mtScreen').style.display = 'flex';
+            }
         } else { document.getElementById('mtScreen').style.display = 'none'; }
         if(val.announcement) triggerBroadcast(val.announcement);
     });
@@ -618,7 +623,7 @@
           updateFollowUI();
         });
 
-        // favorites listener
+        // favorites listener (users/{uid}/favorites)
         db.ref('users/' + u.uid + '/favorites').on('value', fSnap => {
           const val = fSnap.val();
           if(val) fav = Object.keys(val).map(k => val[k]); else fav = [];
@@ -633,8 +638,43 @@
       document.getElementById('loadingCard').style.display = 'none';
     });
 
-    // SONGS DATA with deep linking remains same
-    // ...existing code...
+    // SONGS DATA WITH DEEP LINKING
+    db.ref('songs').on('value', snap => {
+      const val = snap.val();
+      if(val) {
+        songs = Object.keys(val).map(k => ({...val[k], key: k}));
+        
+        // Cek ID di URL (execuriverp.github.io/exemusic?id=0)
+        const urlParams = new URLSearchParams(window.location.search);
+        const songId = urlParams.get('id');
+        
+        if(audio.src === "") {
+            if(songId && songs[songId]) {
+                setup(parseInt(songId), false);
+            } else {
+                setup(0, false);
+            }
+        }
+      }
+    });
+
+    async function setup(idx, play = true) {
+      if(!songs[idx]) return;
+      i = idx;
+      
+      // Update URL without refresh
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + i;
+      window.history.pushState({path:newUrl},'',newUrl);
+
+      audio.src = songs[i].url;
+      document.getElementById('title').textContent = songs[i].title;
+      const cRef = await db.ref('users/' + songs[i].uid).get();
+      const cData = cRef.val();
+      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
+      if(play) { audio.play().catch(()=>{}); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      updateFollowUI();
+    }
 
     // UPLOAD LOGIC WITH VIP BYPASS + DURATION CHECK
     async function confirmAndSave() {
@@ -715,14 +755,27 @@
       });
     }
 
-    // CORE AUDIO CONTROLS - fix next/prev sequential when shuffle OFF
+    // CORE AUDIO CONTROLS
+    function toggle() {
+      if(audio.paused) { audio.play().catch(()=>{}); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
+    }
     function next() { if(isShuf) setup(Math.floor(Math.random()*songs.length)); else setup((i+1) < songs.length ? (i+1) : 0); }
     function prev() { if(isShuf) setup(Math.floor(Math.random()*songs.length)); else setup((i-1) >= 0 ? (i-1) : (songs.length-1)); }
+    
+    audio.ontimeupdate = () => {
+      document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
+      document.getElementById('cur').textContent = fmt(audio.currentTime);
+      document.getElementById('dur').textContent = fmt(audio.duration);
+    };
+    document.getElementById('seek').oninput = (e) => { if(audio.duration) audio.currentTime = (e.target.value/100)*audio.duration; };
+    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
+    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
 
     // FOLLOWERS LOGIC - fixed & records follower IDs under current user's following
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
-      const targetUid = songs[i].uid;
+      const targetUid = songs[i]?.uid;
       const me = auth.currentUser.uid;
       if(!targetUid || targetUid === me) return msg("Gak bisa follow diri sendiri");
 
@@ -784,6 +837,87 @@
       openList(false);
     }
 
+    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
+    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
+    function copyRawUrl() { if(songs[i]) { navigator.clipboard.writeText(songs[i].url); msg("Link audio disalin"); } }
+    
+    function shareLink() { 
+        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        navigator.clipboard.writeText(link); 
+        msg("Link lagu dengan ID disalin"); 
+    }
+    
+    function downloadSong() { if(songs[i]) window.open(songs[i].url); }
+    function openReq() { document.getElementById('modalReq').style.display='block'; }
+    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
+    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
+    function openAdmin() { if(userData?.role === 'Admin') window.location.href = 'admmenu.html'; }
+
+    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
+    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+
+    function openProfile() { 
+        if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
+        else {
+            const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
+            document.getElementById('myPostList').innerHTML = myPosts.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><span>${s.title}</span><small><i class="fas fa-play"></i></small></div>`).join('') || '<p style="text-align:center;color:#777;padding:10px">Belum ada postingan</p>';
+            document.getElementById('modalProfile').style.display = 'block';
+        }
+    }
+    
+    async function viewCreator() {
+        const s = songs[i]; if(!s?.uid) return;
+        const cRef = await db.ref('users/' + s.uid).get();
+        const cData = cRef.val();
+        document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
+        document.getElementById('vName').innerHTML = "@" + s.by + ((cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+        document.getElementById('vFol').innerText = cData?.followers || 0;
+        document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+        const creatorSongs = songs.filter(x => x.uid === s.uid);
+        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+        document.getElementById('modalCreator').style.display = 'block';
+    }
+
+    async function openList(f) {
+      const c = document.getElementById('songContainer');
+      const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
+      c.innerHTML = '<p style="text-align:center; padding:20px; color:#555">Memuat...</p>';
+      let html = "";
+      for(let s of l) {
+          const uRef = await db.ref('users/' + s.uid).get();
+          const uData = uRef.val();
+          const badge = (uData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          html += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`;
+      }
+      if(html === "") c.innerHTML = '<p style="text-align:center; padding:20px; color:#777">Tidak ada lagu.</p>'; else c.innerHTML = html;
+      document.getElementById('modalList').style.display='block';
+    }
+
+    function handleAuth() {
+      const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
+      if(isLoginMode) auth.signInWithEmailAndPassword(e, p).then(closeModal).catch(err => msg(err.message));
+      else {
+        const u = document.getElementById('authUser').value || 'User';
+        auth.createUserWithEmailAndPassword(e, p).then(res => {
+          const payload = { username: u, role: 'User', followers: 0, following: 0, tag: 'user', theme: '' };
+          db.ref('users/' + res.user.uid).set(payload);
+          closeModal();
+        }).catch(err => msg(err.message));
+      }
+    }
+
+    function uploadAvatar(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("Profil Updated!"));
+        };
+        reader.readAsDataURL(file);
+    }
+
     // Change Username & Password + cooldown logic
     async function changeUsername() {
       if(!auth.currentUser) return msg("Login dulu!");
@@ -820,6 +954,9 @@
       if(theme) document.body.classList.add(theme);
       msg("Tema diperbarui.");
     }
+
+    // Utility: close modals on back
+    window.addEventListener('popstate', () => closeModal());
   </script>
 </body>
 </html>
