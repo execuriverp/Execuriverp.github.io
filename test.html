@@ -83,10 +83,9 @@
     @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
     @keyframes disco-heartbeat { 
       0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-      10% { transform: scale(1.05); box-shadow: 0 25px 60px var(--accent)80; } 
-      20% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-      30% { transform: scale(1.08); box-shadow: 0 30px 70px var(--accent); } 
+      20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent)80; } 
       40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+      60% { transform: scale(1.03); box-shadow: 0 30px 70px var(--accent); } 
       100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
     }
     @keyframes rainbow-glow { 
@@ -100,14 +99,10 @@
     }
     @keyframes snowfall { 
       0% { transform: translateY(-10px) translateX(0); opacity: 1; } 
-      90% { opacity: 1; } 
+      25% { transform: translateY(25vh) translateX(15px); opacity: 1; }
+      50% { transform: translateY(50vh) translateX(-10px); opacity: 1; }
+      75% { transform: translateY(75vh) translateX(20px); opacity: 1; }
       100% { transform: translateY(100vh) translateX(0); opacity: 0; } 
-    }
-    @keyframes sway { 
-      0%, 100% { transform: translateX(0); } 
-      25% { transform: translateX(15px); }
-      50% { transform: translateX(-10px); }
-      75% { transform: translateX(20px); }
     }
     .snowflake { 
       position: fixed; 
@@ -584,8 +579,7 @@
         snowflake.style.left = Math.random() * window.innerWidth + 'px';
         const duration = Math.random() * 5 + 8; // 8-13 detik jatuh
         const delay = Math.random() * 0.5;
-        const swayDuration = Math.random() * 5 + 5; // 5-10 detik sway - lebih lambat dan halus!
-        snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards, sway ${swayDuration}s ease-in-out infinite`;
+        snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards`;
         document.body.appendChild(snowflake);
         
         setTimeout(() => snowflake.remove(), (duration + delay) * 1000);
@@ -631,14 +625,14 @@
         if(app) {
             // Rainbow effect jika color is rainbow code, ice mode heartbeat, otherwise disco heartbeat
             if(color.toLowerCase() === '#00d4ff') {
-                app.style.animation = 'disco-heartbeat 0.8s infinite';
+                app.style.animation = 'disco-heartbeat 1.2s infinite';
                 app.style.borderColor = color;
                 app.style.borderWidth = '2px';
                 startSnowfall();
             } else if(color.toLowerCase().includes('rainbow')) {
                 app.style.animation = 'rainbow-glow 3s infinite linear';
             } else {
-                app.style.animation = 'disco-heartbeat 0.8s infinite';
+                app.style.animation = 'disco-heartbeat 1.2s infinite';
                 app.style.borderColor = color;
                 app.style.borderWidth = '2px';
             }
