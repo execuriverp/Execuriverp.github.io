@@ -538,43 +538,105 @@
 
     function applyDiscoMode(color) {
         document.documentElement.style.setProperty('--accent', color);
+        
+        // Background berubah dengan tint dari disco color
+        const rgb = parseInt(color.slice(1), 16);
+        const r = (rgb >> 16) & 255;
+        const g = (rgb >> 8) & 255;
+        const b = rgb & 255;
+        const darkColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
+        const cardColor = `rgba(${r}, ${g}, ${b}, 0.25)`;
+        
+        document.documentElement.style.setProperty('--bg', `#0a0a0a`);
+        document.documentElement.style.setProperty('--card-bg', cardColor);
+        
         const app = document.querySelector('.app');
         if(app) {
             app.style.animation = 'disco-pulse 0.6s infinite';
+            app.style.background = `rgba(${r}, ${g}, ${b}, 0.2)`;
+            app.style.borderColor = color;
         }
+        
+        // Body background juga ikut vibes
+        document.body.style.background = `linear-gradient(135deg, #0a0a0a 0%, rgba(${r}, ${g}, ${b}, 0.1) 100%)`;
+        
         // Update button colors dynamically
         document.querySelectorAll('.btn-act').forEach(btn => {
             btn.style.background = color;
+            btn.style.boxShadow = `0 0 20px ${color}80`;
         });
+        
         document.querySelectorAll('.btn-play').forEach(btn => {
             btn.style.background = color;
-            btn.style.boxShadow = `0 0 25px ${color}80`;
+            btn.style.boxShadow = `0 0 30px ${color}`;
         });
-        // Update eq color
+        
+        // Update eq color dengan glow
         document.querySelectorAll('.eq span').forEach(span => {
             span.style.background = color;
-            span.style.boxShadow = `0 0 15px ${color}`;
+            span.style.boxShadow = `0 0 20px ${color}`;
+        });
+        
+        // Update broadcast bar
+        const sbBar = document.getElementById('sbBar');
+        if(sbBar) sbBar.style.background = color;
+        
+        // System container jadi lebih colorful
+        document.querySelectorAll('.sys-container').forEach(el => {
+            el.style.background = `rgba(${r}, ${g}, ${b}, 0.1)`;
+            el.style.borderColor = `${color}40`;
+        });
+        
+        // Modal sheets
+        document.querySelectorAll('.sheet').forEach(el => {
+            el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.15) 0%, #181818 100%)`;
         });
     }
 
     function resetTheme() {
         document.documentElement.style.setProperty('--accent', '#00ff88');
+        document.documentElement.style.setProperty('--bg', '#050505');
+        document.documentElement.style.setProperty('--card-bg', '#121212');
+        
+        document.body.style.background = 'var(--bg)';
+        
         const app = document.querySelector('.app');
         if(app) {
             app.style.animation = 'none';
+            app.style.background = 'rgba(18, 18, 18, 0.6)';
+            app.style.borderColor = 'rgba(255,255,255,0.08)';
         }
+        
         // Reset button colors
         document.querySelectorAll('.btn-act').forEach(btn => {
             btn.style.background = 'var(--accent)';
+            btn.style.boxShadow = 'none';
         });
+        
         document.querySelectorAll('.btn-play').forEach(btn => {
             btn.style.background = 'var(--accent)';
             btn.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)';
         });
+        
         // Reset eq color
         document.querySelectorAll('.eq span').forEach(span => {
             span.style.background = 'var(--accent)';
             span.style.boxShadow = '0 0 15px var(--accent)';
+        });
+        
+        // Reset broadcast
+        const sbBar = document.getElementById('sbBar');
+        if(sbBar) sbBar.style.background = 'var(--accent)';
+        
+        // System container
+        document.querySelectorAll('.sys-container').forEach(el => {
+            el.style.background = 'rgba(255,255,255,0.03)';
+            el.style.borderColor = '';
+        });
+        
+        // Modal sheets
+        document.querySelectorAll('.sheet').forEach(el => {
+            el.style.background = '#181818';
         });
     }
 
