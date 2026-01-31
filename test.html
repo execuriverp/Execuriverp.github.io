@@ -148,11 +148,11 @@
       flex: 1; width: 100%; border-radius: 25px;
       background: #000; display: flex; align-items: center; justify-content: center;
       margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);
-      overflow: hidden; position: relative; z-index: 1; 
+      overflow: hidden; position: relative; z-index: 10; 
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; }
+    .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; position: relative; z-index: 15; }
     .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease; box-shadow: 0 0 15px var(--accent); }
     .playing span { animation: wave 0.8s infinite ease-in-out; }
     .playing span:nth-child(1) { animation-delay: 0.1s; }
@@ -195,7 +195,7 @@
     #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; border-radius: 2px; }
     .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; }
 
-    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 100; }
+    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 110; }
     .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); transition: 0.2s; }
     .btn-play:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
     .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; opacity: 0.9; }
@@ -572,8 +572,8 @@
                 app.style.borderColor = color;
                 app.style.borderWidth = '2px';
             }
-            app.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
-            app.style.boxShadow = `inset 0 0 30px rgba(${r}, ${g}, ${b}, 0.1), 0 0 40px ${color}60`;
+            app.style.background = `rgba(${r}, ${g}, ${b}, 0.05)`;
+            app.style.boxShadow = `0 0 40px ${color}60`;
         }
         
         // Body background tetap dark
