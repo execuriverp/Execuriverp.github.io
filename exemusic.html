@@ -565,6 +565,11 @@
     async function setup(idx, play = true) {
       if(!songs[idx]) return;
       i = idx;
+      
+      // Update URL without refresh
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + i;
+      window.history.pushState({path:newUrl},'',newUrl);
+
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
       const cRef = await db.ref('users/' + songs[i].uid).get();
@@ -582,16 +587,16 @@
         
         if(!title || !url) return msg("Isi semua data!");
         
-        // Cooldown Check (5 Menit)
+        // Cooldown Check (30 Menit)
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
         const diff = (now - lastUpload) / 1000 / 60; // dalam menit
         
-        if(diff < 5 && userData.role !== 'admin') {
+        if(diff < 30 && userData.role !== 'admin') {
             return Swal.fire({
                 icon: 'error',
                 title: 'Sabar...',
-                text: `Tunggu ${Math.ceil(5 - diff)} menit lagi untuk upload lagu berikutnya.`,
+                text: `Tunggu ${Math.ceil(30 - diff)} menit lagi untuk upload lagu berikutnya.`,
                 background: '#181818', color: '#fff'
             });
         }
@@ -637,7 +642,7 @@
       else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
     }
     function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
-    function prev() { setup((i-1+songs.length)%songs.length); }
+    function prev() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i-1+songs.length)%songs.length); }
     
     audio.ontimeupdate = () => {
       document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
