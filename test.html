@@ -213,7 +213,7 @@
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
 
     .spotify-banner {
-      width: 100%; height: 120px;
+      width: 100%; height: 140px;
       background: linear-gradient(to bottom, var(--accent), #181818);
       margin: -25px -25px 20px -25px;
       border-radius: 30px 30px 0 0;
@@ -221,12 +221,13 @@
       position: relative;
     }
     .spotify-avatar {
-      width: 80px; height: 80px; background: #222; 
-      border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      width: 90px; height: 90px; background: #222; 
+      border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 20px rgba(0,255,136,0.1);
       display: flex; align-items: center; justify-content: center; font-size: 30px;
       border: 3px solid #181818;
       overflow: hidden;
       position: relative;
+      flex-shrink: 0;
     }
     .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .avatar-edit {
@@ -236,8 +237,9 @@
     }
     .spotify-avatar:hover .avatar-edit { display: flex; }
 
-    .spotify-info { margin-left: 15px; }
-    .spotify-info h2 { font-size: 24px; margin: 0; }
+    .spotify-info { margin-left: 15px; flex: 1; }
+    .spotify-info h2 { font-size: 20px; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px; }
+    .spotify-bio { font-size: 12px; color: var(--text-dim); line-height: 1.3; margin-top: 4px; }
     
     /* Updated Tag Styles */
     .user-tag {
@@ -254,7 +256,7 @@
     .tag-galau { background: #555; color: #fff; font-style: italic; }
     .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
     .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
-    .tag-vip { background: #ffb347; color: #000; } /* VIP tag */
+    .tag-vip { background: #ffb347; color: #000; }
     
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
@@ -267,35 +269,64 @@
 
     /* PROFILE MODAL OVERRIDES - Modern Spotify-inspired */
     #modalProfile .sheet {
-      padding: 18px;
-      border-radius: 16px;
+      padding: 0;
+      border-radius: 20px;
       max-width: 420px;
       background: linear-gradient(180deg, rgba(24,24,24,0.98), #0f0f0f);
       box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      overflow: hidden;
     }
+    #modalProfile .sheet > div:not(.spotify-banner) {
+      padding: 0 25px;
+    }
+    #modalProfile .sheet > .section-title {
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+    #modalProfile .sheet > .prof-stat {
+      padding: 0 25px;
+    }
+    #modalProfile .sheet > .field {
+      padding: 0 25px;
+    }
+    #modalProfile .sheet > #myPostList {
+      padding: 0 25px;
+    }
+    #modalProfile .sheet > button {
+      margin-left: 25px;
+      margin-right: 25px;
+      margin-bottom: 25px;
+      width: calc(100% - 50px);
+    }
+    
     #modalProfile .spotify-banner {
-      height: 110px;
-      border-radius: 12px;
-      margin: -18px -18px 14px -18px;
-      padding: 14px;
+      height: 140px;
+      border-radius: 0;
+      margin: 0;
+      padding: 20px;
       display:flex; align-items:flex-end;
-      background: linear-gradient(135deg, rgba(40,40,40,0.9), rgba(10,10,10,0.9));
+      background: linear-gradient(135deg, rgba(40,40,40,0.95), rgba(10,10,10,0.95));
     }
-    #modalProfile .spotify-avatar { width:76px; height:76px; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.04); }
-    #modalProfile .spotify-info h2 { margin:0; font-size:18px; display:flex; align-items:center; gap:8px; }
-    #modalProfile .prof-stat { gap:20px; margin: 12px 0; }
-    #modalProfile .btn-small { padding:8px 12px; border-radius:10px; font-size:13px; border:none; cursor:pointer; }
+    #modalProfile .spotify-avatar { width:90px; height:90px; border-radius:16px; overflow:hidden; border:3px solid rgba(0,255,136,0.1); }
+    #modalProfile .spotify-info h2 { margin:0; font-size:20px; display:flex; align-items:center; gap:8px; }
+    #modalProfile .prof-stat { gap:20px; margin: 18px 0; }
+    #modalProfile .btn-small { padding:8px 12px; border-radius:10px; font-size:13px; border:none; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:0.2s; }
+    #modalProfile .btn-small:hover { background:rgba(0,255,136,0.2); }
     #modalProfile .settings-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
     #modalProfile .field { margin-top:10px; }
     #modalProfile .muted { color:#9a9a9a; font-size:12px; margin-top:6px; }
+    #modalProfile .bio-input { width:100%; height:60px; padding:10px; background:#0a0a0a; border:1px solid #333; border-radius:8px; color:white; font-size:12px; resize:none; }
+    #modalProfile .bio-input:focus { border-color:var(--accent); }
+    #modalProfile .btn-vip { background:linear-gradient(90deg,#ffb347,#ff0050); color:white; width:100%; padding:12px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; margin-top:12px; transition:0.2s; }
+    #modalProfile .btn-vip:hover { transform:translateY(-2px); box-shadow:0 5px 20px rgba(255,179,71,0.3); }
 
     /* Role-based themes / glow */
-    .vip-theme { --accent: #ffb347; box-shadow: 0 10px 40px rgba(255,179,71,0.06); }
+    .vip-theme { --accent: #ffb347; }
     .vip-theme .btn-act { background: linear-gradient(90deg,#ffb347,#ff0050); color:#fff; }
-    .vip-theme .spotify-avatar { box-shadow: 0 8px 30px rgba(255,179,71,0.12); border-radius: 14px; }
+    .vip-theme .spotify-avatar { box-shadow: 0 8px 30px rgba(255,179,71,0.12), 0 0 20px rgba(255,179,71,0.08) !important; }
 
-    .admin-theme { --accent: gold; box-shadow: 0 14px 50px rgba(255,215,0,0.08); }
-    .admin-theme .spotify-avatar { box-shadow: 0 12px 40px rgba(255,215,0,0.12); border-radius: 14px; border: 1px solid rgba(255,215,0,0.08); }
+    .admin-theme { --accent: gold; }
+    .admin-theme .spotify-avatar { box-shadow: 0 12px 40px rgba(255,215,0,0.12), 0 0 20px rgba(255,215,0,0.08) !important; }
 
     /* Follow button animation */
     .follow-anim { transition: transform 0.18s ease, background 0.18s ease; }
@@ -404,7 +435,6 @@
 
   <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <!-- Updated profile UI with change username/password + theme controls -->
       <div class="spotify-banner">
           <div class="spotify-avatar">
               <img id="pAvatarImg" src="https://via.placeholder.com/150">
@@ -412,10 +442,9 @@
           </div>
           <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
           <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:8px">
-                  <h2 id="pUsername">User <span id="pBadge"></span></h2>
-              </div>
+              <h2 id="pUsername">User <span id="pBadge"></span></h2>
               <div id="pTagDisplay"></div>
+              <div class="spotify-bio" id="pBio">Belum ada bio</div>
           </div>
       </div>
 
@@ -424,7 +453,13 @@
         <div><b id="pFollowing">0</b><span>Following</span></div>
       </div>
 
-      <!-- NEW: Username & Password change -->
+      <div class="section-title">Profil</div>
+      <div class="field">
+        <label style="font-size:12px; color:#888">Bio Singkat</label>
+        <textarea id="pBioInput" class="bio-input" placeholder="Tulis bio singkat Anda..."></textarea>
+        <button class="btn-small" onclick="saveBio()"><i class="fas fa-save"></i> SIMPAN BIO</button>
+      </div>
+
       <div class="section-title">Akun</div>
       <div class="field">
         <input id="newUsername" class="inp-dark" placeholder="Ganti Username">
@@ -444,13 +479,13 @@
         <div id="passwordNote" class="muted">Untuk keamanan, Anda mungkin diminta login ulang sebelum mengganti password.</div>
       </div>
 
-      <!-- NEW: Theme controls for VIP/Admin -->
       <div class="section-title">Theme & VIP</div>
       <div id="themeControls" class="settings-row" style="display:none">
         <button class="btn-small" onclick="changeTheme('')">Default</button>
         <button class="btn-small" onclick="changeTheme('vip-theme')">VIP Glow</button>
         <button class="btn-small" onclick="changeTheme('admin-theme')">Admin Gold</button>
       </div>
+      <button class="btn-vip" id="vipBtn" onclick="buyVip()" style="display:none"><i class="fas fa-crown"></i> BELI VIP</button>
 
       <div class="section-title">Postingan Saya</div>
       <div id="myPostList" style="max-height: 200px; overflow-y: auto;"></div>
@@ -463,11 +498,10 @@
       <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
           <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
           <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:5px">
-                  <h2 id="vName">@creator</h2>
-                  <span id="vBadge"></span>
-              </div>
-              <div id="vTagDisplay"></div> </div>
+              <h2 id="vName">@creator <span id="vBadge"></span></h2>
+              <div id="vTagDisplay"></div>
+              <div class="spotify-bio" id="vBio"></div>
+          </div>
       </div>
       <div class="prof-stat">
         <div><b id="vFol">0</b><span>Followers</span></div>
@@ -545,7 +579,7 @@
 
     let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
     let userData = null;
-    let fav = []; // will be filled from Firebase for logged users; local fallback for guests
+    let fav = [];
     const audio = new Audio();
     let broadcastTimeout;
 
@@ -563,7 +597,8 @@
         if(val.mt === true) {
             if(auth.currentUser && auth.currentUser.uid) {
               db.ref('users/' + auth.currentUser.uid + '/role').once('value', r => {
-                  if(r.val() !== 'Admin') document.getElementById('mtScreen').style.display = 'flex';
+                  const role = r.val() ? r.val().toLowerCase() : '';
+                  if(role !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
               });
             } else {
               document.getElementById('mtScreen').style.display = 'flex';
@@ -589,10 +624,9 @@
 
     function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
 
-    // AUTH & USER DATA (extended)
+    // AUTH & USER DATA
     auth.onAuthStateChanged(u => {
       if(u) {
-        // load user profile & favorites + theme
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
           if(!userData) return;
@@ -605,25 +639,29 @@
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
           document.getElementById('pFol').innerText = userData.followers || 0;
           document.getElementById('pFollowing').innerText = userData.following || 0;
+          document.getElementById('pBio').innerText = userData.bio || 'Belum ada bio';
+          document.getElementById('pBioInput').value = userData.bio || '';
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
 
-          // role-based UI
-          if(userData.role === 'Admin') document.getElementById('adminBtn').style.display = 'block';
+          // role-based UI (case-insensitive)
+          const roleLC = userData.role ? userData.role.toLowerCase() : '';
+          if(roleLC === 'admin') document.getElementById('adminBtn').style.display = 'block';
+          else document.getElementById('adminBtn').style.display = 'none';
+          
           document.getElementById('uploadFormUser').style.display = 'block';
           document.getElementById('uploadFormGuest').style.display = 'none';
           document.getElementById('btnFollow').style.display = 'flex';
-          // theme controls visibility for Vip/Admin
-          document.getElementById('themeControls').style.display = (userData.role === 'Vip' || userData.role === 'Admin') ? 'flex' : 'none';
+          
+          document.getElementById('themeControls').style.display = (roleLC === 'vip' || roleLC === 'admin') ? 'flex' : 'none';
+          document.getElementById('vipBtn').style.display = (roleLC === 'vip' || roleLC === 'admin') ? 'none' : 'block';
 
-          // apply theme from user profile
           document.body.classList.remove('vip-theme','admin-theme');
           if(userData.theme) document.body.classList.add(userData.theme);
 
           updateFollowUI();
         });
 
-        // favorites listener (users/{uid}/favorites)
         db.ref('users/' + u.uid + '/favorites').on('value', fSnap => {
           const val = fSnap.val();
           if(val) fav = Object.keys(val).map(k => val[k]); else fav = [];
@@ -632,7 +670,8 @@
         document.getElementById('topLoginBtn').textContent = "Login";
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('adminBtn').style.display = 'none';
-        fav = JSON.parse(localStorage.getItem("exeFav") || "[]"); // guest fallback
+        document.getElementById('vipBtn').style.display = 'none';
+        fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
         userData = null;
       }
       document.getElementById('loadingCard').style.display = 'none';
@@ -644,7 +683,6 @@
       if(val) {
         songs = Object.keys(val).map(k => ({...val[k], key: k}));
         
-        // Cek ID di URL (execuriverp.github.io/exemusic?id=0)
         const urlParams = new URLSearchParams(window.location.search);
         const songId = urlParams.get('id');
         
@@ -662,7 +700,6 @@
       if(!songs[idx]) return;
       i = idx;
       
-      // Update URL without refresh
       const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + i;
       window.history.pushState({path:newUrl},'',newUrl);
 
@@ -683,12 +720,12 @@
 
       if(!title || !url) return msg("Isi semua data!");
 
-      // Cooldown Check (30 Menit) - Vip/Admin bypass
       const lastUpload = userData?.lastUpload || 0;
       const now = Date.now();
-      const diff = (now - lastUpload) / 1000 / 60; // in minutes
+      const diff = (now - lastUpload) / 1000 / 60;
+      const roleLC = userData.role ? userData.role.toLowerCase() : '';
 
-      if(userData?.role !== 'Vip' && userData?.role !== 'Admin' && diff < 30) {
+      if(roleLC !== 'vip' && roleLC !== 'admin' && diff < 30) {
           return Swal.fire({
               icon: 'error',
               title: 'Sabar...',
@@ -697,7 +734,6 @@
           });
       }
 
-      // confirm then check duration (max 5 hours)
       Swal.fire({
           title: 'Are you sure?',
           text: "Jika lagu ini melanggar rules kami (Sara, Porn, Earrape), akun anda akan kami BANNED PERMANENT!",
@@ -772,7 +808,7 @@
     document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
     audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
 
-    // FOLLOWERS LOGIC - fixed & records follower IDs under current user's following
+    // FOLLOWERS LOGIC
     async function followUser() {
       if(!auth.currentUser) return msg("Login dulu!");
       const targetUid = songs[i]?.uid;
@@ -788,7 +824,6 @@
       btn.classList.add('follow-anim');
 
       if(snap.exists()) {
-        // unfollow
         await followRef.remove();
         await myFollowingRef.remove();
         followersCountRef.transaction(c => (c || 0) - 1);
@@ -796,7 +831,6 @@
         btn.style.background = 'var(--tiktok-red)';
         btn.classList.remove('checked');
       } else {
-        // follow
         await followRef.set(true);
         await myFollowingRef.set(true);
         followersCountRef.transaction(c => (c || 0) + 1);
@@ -819,11 +853,10 @@
       else { btn.innerHTML = '<i class="fas fa-plus"></i>'; btn.style.background = 'var(--tiktok-red)'; btn.classList.remove('checked'); }
     }
 
-    // FAVORITES: move to Firebase under users/{uid}/favorites
+    // FAVORITES: Firebase
     async function toggleFav(u, e) {
       e.stopPropagation();
       if(!auth.currentUser) {
-        // guest fallback to localStorage (maintain compatibility)
         fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u];
         localStorage.setItem("exeFav", JSON.stringify(fav));
         openList(false);
@@ -852,7 +885,8 @@
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function toggleAuthMode() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
-    function openAdmin() { if(userData?.role === 'Admin') window.location.href = 'admmenu.html'; }
+    function buyVip() { window.open("https://wa.me/62895329018240?text=Halo%20saya%20inggin%20membeli%20vip%20di%20execurive%20music%20bisa%20sebutkan%20harga%20perbulan%20nya?"); }
+    function openAdmin() { if(userData?.role && userData.role.toLowerCase() === 'admin') window.location.href = 'admmenu.html'; }
 
     function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
     function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
@@ -875,6 +909,7 @@
         document.getElementById('vName').innerHTML = "@" + s.by + ((cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
         document.getElementById('vFol').innerText = cData?.followers || 0;
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+        document.getElementById('vBio').innerText = cData?.bio || '';
         const creatorSongs = songs.filter(x => x.uid === s.uid);
         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
         document.getElementById('modalCreator').style.display = 'block';
@@ -901,7 +936,7 @@
       else {
         const u = document.getElementById('authUser').value || 'User';
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          const payload = { username: u, role: 'User', followers: 0, following: 0, tag: 'user', theme: '' };
+          const payload = { username: u, role: 'User', followers: 0, following: 0, tag: 'user', theme: '', bio: '' };
           db.ref('users/' + res.user.uid).set(payload);
           closeModal();
         }).catch(err => msg(err.message));
@@ -918,7 +953,13 @@
         reader.readAsDataURL(file);
     }
 
-    // Change Username & Password + cooldown logic
+    async function saveBio() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      const bio = document.getElementById('pBioInput').value.trim();
+      await db.ref('users/' + auth.currentUser.uid).update({ bio });
+      msg("Bio berhasil diperbarui.");
+    }
+
     async function changeUsername() {
       if(!auth.currentUser) return msg("Login dulu!");
       const newName = document.getElementById('newUsername').value.trim();
@@ -930,6 +971,7 @@
       await db.ref('users/' + auth.currentUser.uid).update({ username: newName, lastNameChange: Date.now() });
       try { await auth.currentUser.updateProfile({ displayName: newName }); } catch(e) {}
       msg("Username berhasil diperbarui.");
+      document.getElementById('newUsername').value = "";
     }
 
     async function changePassword() {
@@ -945,17 +987,16 @@
       }
     }
 
-    // Theme change (VIP/Admin only)
     async function changeTheme(theme) {
       if(!auth.currentUser || !userData) return msg("Login dulu!");
-      if(!(userData.role === 'Vip' || userData.role === 'Admin')) return msg("Hanya VIP/Admin yang dapat mengganti tema.");
+      const roleLC = userData.role ? userData.role.toLowerCase() : '';
+      if(!(roleLC === 'vip' || roleLC === 'admin')) return msg("Hanya VIP/Admin yang dapat mengganti tema.");
       await db.ref('users/' + auth.currentUser.uid).update({ theme });
       document.body.classList.remove('vip-theme','admin-theme');
       if(theme) document.body.classList.add(theme);
       msg("Tema diperbarui.");
     }
 
-    // Utility: close modals on back
     window.addEventListener('popstate', () => closeModal());
   </script>
 </body>
