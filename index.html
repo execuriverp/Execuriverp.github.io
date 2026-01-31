@@ -87,6 +87,70 @@ body{
   color:#020617;
 }
 
+/* ===== NEW EXEMUSIC PROMO BAR ===== */
+.exemusic-bar {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(99, 102, 241, 0.1));
+  border-bottom: 1px solid var(--border);
+  padding: 8px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  overflow: hidden;
+  position: relative;
+}
+.exemusic-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  animation: slideIn 0.8s ease-out;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.music-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--purple);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  animation: pulse-music 2s infinite;
+}
+@keyframes pulse-music { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+.music-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+.music-text span {
+  color: var(--purple);
+  text-transform: uppercase;
+  font-size: 10px;
+  margin-right: 5px;
+  border: 1px solid var(--purple);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.btn-listen {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid var(--purple);
+  color: var(--purple);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 900;
+  transition: 0.3s;
+}
+.exemusic-content:hover .btn-listen {
+  background: var(--purple);
+  color: white;
+}
+
 /* ===== CONTENT ===== */
 .wrapper{max-width:1150px;margin:34px auto;padding:18px}
 
@@ -347,6 +411,9 @@ body{
   .grid{gap:16px}
   .card{padding:18px}
   .copy-btn{padding:11px;font-size:11px}
+  
+  .exemusic-bar { gap: 8px; }
+  .music-text { font-size: 10px; }
 }
 </style>
 </head>
@@ -364,6 +431,14 @@ body{
       <a href="listtopup.html">LIST TOPUP</a>
     </div>
   </div>
+</div>
+
+<div class="exemusic-bar">
+  <a href="https://execuriverp.github.io/exemusic" target="_blank" class="exemusic-content">
+    <div class="music-icon">♫</div>
+    <div class="music-text"><span>LIVE</span> Execurive Music Streaming - Dengarkan Musik Sekarang!</div>
+    <div class="btn-listen">OPEN</div>
+  </a>
 </div>
 
 <div class="wrapper">
