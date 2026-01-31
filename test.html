@@ -410,13 +410,57 @@
               </div>
               <div id="pTagDisplay"></div> </div>
       </div>
-      <div class="prof-stat">
-        <div><b id="pFol">0</b><span>Followers</span></div>
-        <div><b id="pFollowing">0</b><span>Following</span></div>
+      
+      <!-- PROFILE TABS -->
+      <div style="display:flex; gap:10px; margin:20px 0; border-bottom:1px solid #333; padding-bottom:10px;">
+        <button id="tabProfile" class="active" onclick="switchProfileTab('profile')" style="background:none; border:none; color:white; padding:10px 20px; cursor:pointer; border-bottom:2px solid var(--accent); text-transform:uppercase; font-weight:bold; font-size:12px;">Profil Saya</button>
+        <button id="tabAccount" onclick="switchProfileTab('account')" style="background:none; border:none; color:#666; padding:10px 20px; cursor:pointer; border-bottom:2px solid transparent; text-transform:uppercase; font-weight:bold; font-size:12px;">Manajemen Akun</button>
       </div>
-      <div class="section-title">Postingan Saya</div>
-      <div id="myPostList" style="max-height: 200px; overflow-y: auto;"></div>
-      <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#222; color:#ff3333; margin-top:20px; border:1px solid #333">LOGOUT</button>
+
+      <!-- PROFILE TAB -->
+      <div id="profileTab" style="display:block;">
+        <div class="prof-stat">
+          <div><b id="pFol">0</b><span>Followers</span></div>
+          <div><b id="pFollowing">0</b><span>Following</span></div>
+        </div>
+        <div class="section-title">Postingan Saya</div>
+        <div id="myPostList" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+
+      <!-- ACCOUNT TAB -->
+      <div id="accountTab" style="display:none;">
+        <div style="padding:15px 0;">
+          <div style="margin-bottom:20px;">
+            <h4 style="color:var(--accent); font-size:12px; margin-bottom:10px; text-transform:uppercase;">Email</h4>
+            <p id="pEmail" style="color:#ddd; font-size:13px; word-break:break-all;"></p>
+          </div>
+
+          <button onclick="openChangeNameModal()" class="btn-act" style="margin-bottom:10px;">Ubah Nama Pengguna</button>
+          <button onclick="openChangePasswordModal()" class="btn-act" style="background:#ff6b6b; margin-bottom:10px;">Ubah Password</button>
+          <button onclick="auth.signOut(); location.reload()" class="btn-act" style="background:#222; color:#ff3333; border:1px solid #333">LOGOUT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalChangeNames" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:20px; color:var(--accent)">Ubah Nama Pengguna</h3>
+      <input id="cnPass" type="password" class="inp-dark" placeholder="Password Saat Ini">
+      <input id="cnNewName" class="inp-dark" placeholder="Nama Pengguna Baru">
+      <button onclick="handleChangeName()" class="btn-act">Ubah Nama</button>
+      <p id="cnMsg" style="text-align:center; color:#ff6b6b; font-size:12px; margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="modalChangePass" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:20px; color:var(--accent)">Ubah Password</h3>
+      <input id="cpOldPass" type="password" class="inp-dark" placeholder="Password Lama">
+      <input id="cpNewPass" type="password" class="inp-dark" placeholder="Password Baru (Min. 6 karakter)">
+      <input id="cpConfirm" type="password" class="inp-dark" placeholder="Konfirmasi Password Baru">
+      <button onclick="handleChangePassword()" class="btn-act">Ubah Password</button>
+      <p id="cpMsg" style="text-align:center; color:#ff6b6b; font-size:12px; margin-top:10px;"></p>
     </div>
   </div>
 
@@ -793,6 +837,12 @@
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
+          // Sensor email
+          const email = u.email || "";
+          const [name, domain] = email.split('@');
+          const sensoredEmail = name.slice(0, Math.max(1, Math.floor(name.length / 3))) + '*'.repeat(Math.max(3, name.length - 2)) + '@' + domain;
+          document.getElementById('pEmail').innerText = sensoredEmail;
+          
           if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
           document.getElementById('uploadFormUser').style.display = 'block';
           document.getElementById('uploadFormGuest').style.display = 'none';
@@ -940,8 +990,13 @@
       if(!auth.currentUser || !songs[i].uid) return;
       const s = await db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).get();
       const btn = document.getElementById('btnFollow');
-      btn.innerHTML = s.exists() ? '<i class="fas fa-check"></i>' : '<i class="fas fa-plus"></i>';
-      btn.style.background = s.exists() ? "#444" : "var(--tiktok-red)";
+      if(s.exists()) {
+        btn.style.display = 'none'; // Hide button jika sudah follow
+      } else {
+        btn.style.display = 'flex';
+        btn.innerHTML = '<i class="fas fa-plus"></i>';
+        btn.style.background = "var(--tiktok-red)";
+      }
     }
 
     // UTILS
@@ -1024,6 +1079,125 @@
             db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("Profil Updated!"));
         };
         reader.readAsDataURL(file);
+    }
+
+    // PROFILE MANAGEMENT FUNCTIONS
+    function switchProfileTab(tab) {
+      const profileTab = document.getElementById('profileTab');
+      const accountTab = document.getElementById('accountTab');
+      const btnProfile = document.getElementById('tabProfile');
+      const btnAccount = document.getElementById('tabAccount');
+      
+      if(tab === 'profile') {
+        profileTab.style.display = 'block';
+        accountTab.style.display = 'none';
+        btnProfile.style.color = 'white';
+        btnProfile.style.borderBottomColor = 'var(--accent)';
+        btnAccount.style.color = '#666';
+        btnAccount.style.borderBottomColor = 'transparent';
+      } else {
+        profileTab.style.display = 'none';
+        accountTab.style.display = 'block';
+        btnProfile.style.color = '#666';
+        btnProfile.style.borderBottomColor = 'transparent';
+        btnAccount.style.color = 'white';
+        btnAccount.style.borderBottomColor = 'var(--accent)';
+      }
+    }
+
+    function openChangeNameModal() {
+      document.getElementById('cnMsg').innerText = '';
+      document.getElementById('cnPass').value = '';
+      document.getElementById('cnNewName').value = '';
+      document.getElementById('modalChangeNames').style.display = 'block';
+    }
+
+    async function handleChangeName() {
+      const password = document.getElementById('cnPass').value;
+      const newName = document.getElementById('cnNewName').value;
+      const msgEl = document.getElementById('cnMsg');
+      
+      if(!newName || !password) return msgEl.innerText = 'Isi semua field!';
+      if(newName.length < 3) return msgEl.innerText = 'Nama minimal 3 karakter!';
+      
+      const lastChange = userData.lastNameChange || 0;
+      const now = Date.now();
+      const diffDays = (now - lastChange) / (1000 * 60 * 60 * 24);
+      
+      if(diffDays < 7) {
+        msgEl.innerText = `Tunggu ${Math.ceil(7 - diffDays)} hari lagi!`;
+        msgEl.style.color = '#ff6b6b';
+        return;
+      }
+      
+      // Re-authenticate dengan password
+      const credential = firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, password);
+      
+      try {
+        await auth.currentUser.reauthenticateWithCredential(credential);
+        await db.ref('users/' + auth.currentUser.uid).update({
+          username: newName,
+          lastNameChange: Date.now()
+        });
+        msgEl.innerText = 'Nama berhasil diubah!';
+        msgEl.style.color = 'var(--accent)';
+        setTimeout(() => {
+          document.getElementById('modalChangeNames').style.display = 'none';
+          msg('Nama pengguna telah diperbarui!');
+        }, 1500);
+      } catch(err) {
+        msgEl.innerText = 'Password salah!';
+        msgEl.style.color = '#ff6b6b';
+      }
+    }
+
+    function openChangePasswordModal() {
+      document.getElementById('cpMsg').innerText = '';
+      document.getElementById('cpOldPass').value = '';
+      document.getElementById('cpNewPass').value = '';
+      document.getElementById('cpConfirm').value = '';
+      document.getElementById('modalChangePass').style.display = 'block';
+    }
+
+    async function handleChangePassword() {
+      const oldPass = document.getElementById('cpOldPass').value;
+      const newPass = document.getElementById('cpNewPass').value;
+      const confirm = document.getElementById('cpConfirm').value;
+      const msgEl = document.getElementById('cpMsg');
+      
+      if(!oldPass || !newPass || !confirm) return msgEl.innerText = 'Isi semua field!';
+      if(newPass.length < 6) return msgEl.innerText = 'Password minimal 6 karakter!';
+      if(newPass !== confirm) return msgEl.innerText = 'Password tidak cocok!';
+      
+      const lastChange = userData.lastPasswordChange || 0;
+      const now = Date.now();
+      const diffDays = (now - lastChange) / (1000 * 60 * 60 * 24);
+      
+      if(diffDays < 7) {
+        msgEl.innerText = `Tunggu ${Math.ceil(7 - diffDays)} hari lagi!`;
+        msgEl.style.color = '#ff6b6b';
+        return;
+      }
+      
+      // Re-authenticate
+      const credential = firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, oldPass);
+      
+      try {
+        await auth.currentUser.reauthenticateWithCredential(credential);
+        await auth.currentUser.updatePassword(newPass);
+        await db.ref('users/' + auth.currentUser.uid).update({
+          lastPasswordChange: Date.now()
+        });
+        msgEl.innerText = 'Password berhasil diubah!';
+        msgEl.style.color = 'var(--accent)';
+        setTimeout(() => {
+          document.getElementById('modalChangePass').style.display = 'none';
+          msg('Password telah diperbarui!');
+        }, 1500);
+      } catch(err) {
+        msgEl.innerText = 'Password lama salah!';
+        msgEl.style.color = '#ff6b6b';
+      }
     }
   </script>
 </body>
