@@ -577,8 +577,8 @@
         snowflake.className = 'snowflake';
         snowflake.textContent = '❄';
         snowflake.style.left = Math.random() * window.innerWidth + 'px';
-        const duration = Math.random() * 5 + 8; // 8-13 detik jatuh
-        const delay = Math.random() * 0.5;
+        const duration = Math.random() * 3 + 4; // 4-7 detik jatuh - lebih ringan dan cepat!
+        const delay = Math.random() * 0.3;
         snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards`;
         document.body.appendChild(snowflake);
         
