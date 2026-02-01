@@ -14,89 +14,156 @@
 
     <style>
         :root {
-            --bg: #030305; --panel: #0a0a0f; --accent: #00f3ff;
-            --danger: #ff0055; --warning: #ffcc00; --success: #00ff99;
-            --border: rgba(0, 243, 255, 0.2);
-            --glass: rgba(255, 255, 255, 0.03);
+            --accent: #00ff88; 
+            --text: #ffffff;
+            --text-dim: #b3b3b3;
+            --bg: #050505;
+            --card-bg: #121212;
+            --glass: rgba(255, 255, 255, 0.05);
+            --danger: #ff3333;
+            --warning: #ffcc00;
+            --tiktok-red: #ff0050;
+            --gold: #ffd700;
             --purple: #bf00ff;
-            --glow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
 
-        body { 
-            background: var(--bg); color: #e0e6ed; margin: 0; 
-            font-family: 'Rajdhani', sans-serif; display: flex; 
-            height: 100vh; overflow: hidden; 
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
         }
 
-        /* --- SIDEBAR --- */
-        .sidebar { 
-            width: 280px; background: var(--panel); 
-            border-right: 1px solid var(--border); 
+        /* --- ROBLOX STYLE BROADCAST SYSTEM --- */
+        .sys-broadcast {
+                position: fixed;
+                top: -150px; 
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 400px;
+                background: rgba(15, 15, 15, 0.95);
+                border-left: 4px solid var(--accent);
+                border-radius: 6px;
+                padding: 15px;
+                z-index: 12000;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+                display: flex;
+                flex-direction: column;
+                transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                backdrop-filter: blur(10px);
+        }
+        .sys-broadcast.active { top: 20px; }
+    
+        .sb-content { display: flex; align-items: flex-start; gap: 12px; }
+        .sb-icon { font-size: 20px; color: var(--accent); margin-top: 2px; }
+        .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
+    
+        .sb-close {
+                position: absolute; top: 10px; right: 10px;
+                background: transparent; border: none; color: #666;
+                cursor: pointer; font-size: 16px; padding: 5px;
+        }
+        .sb-close:hover { color: white; }
+
+        .sb-progress {
+                width: 100%; height: 3px; background: #333;
+                margin-top: 12px; border-radius: 2px; overflow: hidden;
+        }
+        .sb-bar {
+                width: 100%; height: 100%; background: var(--accent);
+                transform-origin: left;
+        }
+        @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+        @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
+        @keyframes disco-heartbeat { 
+            0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+            20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent)80; } 
+            40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+            60% { transform: scale(1.03); box-shadow: 0 30px 70px var(--accent); } 
+            100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
+        }
+        @keyframes rainbow-glow { 
+            0% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
+            16% { border-color: #ff7f00; box-shadow: inset 0 0 20px #ff7f00, 0 20px 50px #ff7f0080; } 
+            33% { border-color: #ffff00; box-shadow: inset 0 0 20px #ffff00, 0 20px 50px #ffff0080; } 
+            50% { border-color: #00ff00; box-shadow: inset 0 0 20px #00ff00, 0 20px 50px #00ff0080; } 
+            66% { border-color: #0000ff; box-shadow: inset 0 0 20px #0000ff, 0 20px 50px #0000ff80; } 
+            83% { border-color: #8b00ff; box-shadow: inset 0 0 20px #8b00ff, 0 20px 50px #8b00ff80; } 
+            100% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
+        }
+        @keyframes snowfall { 
+            0% { transform: translateY(-10px) translateX(0); opacity: 1; } 
+            25% { transform: translateY(25vh) translateX(15px); opacity: 1; }
+            50% { transform: translateY(50vh) translateX(-10px); opacity: 1; }
+            75% { transform: translateY(75vh) translateX(20px); opacity: 1; }
+            100% { transform: translateY(100vh) translateX(0); opacity: 0; } 
+        }
+        .snowflake { 
+            position: fixed; 
+            top: -10px; 
+            color: #00d4ff; 
+            font-size: 1.5em; 
+            font-family: Arial, sans-serif; 
+            text-shadow: 0 0 5px #00d4ff; 
+            z-index: 1;
+            pointer-events: none;
+            animation: snowfall linear forwards;
+        }
+
+        /* --- OVERLAYS --- */
+        .full-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 30px;
+        }
+        .full-overlay i { font-size: 60px; margin-bottom: 20px; }
+        .full-overlay h1 { font-size: 24px; color: var(--accent); }
+        .full-overlay p { color: var(--text-dim); margin-top: 10px; }
+        #bannedScreen h1 { color: var(--danger); }
+
+        #loadingCard {
+            position: absolute; inset: 0; background: var(--bg); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.5s;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- MAIN APP --- */
+        .app {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 35px;
+            width: 95%; max-width: 400px; 
+            height: 95vh;
             display: flex; flex-direction: column; 
-            padding: 25px; position: relative;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            padding: 25px; 
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        .nav-btn { 
-            background: none; border: none; color: #5a616b; 
-            padding: 15px; text-align: left; cursor: pointer; 
-            display: flex; align-items: center; gap: 15px; 
-            border-radius: 8px; font-weight: bold; margin-bottom: 10px; 
-            transition: 0.3s; font-size: 14px; letter-spacing: 1px;
-        }
+        /* --- Reused admin UI styles (buttons/cards/table) --- */
+        .card { background: rgba(10,10,15,0.9); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.04); }
+        .cyber-table { width:100%; border-collapse: collapse; }
+        .cyber-table th { padding: 12px; color: var(--accent); text-align:left; }
+        .cyber-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: 'JetBrains Mono'; font-size:13px; }
 
-        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
-        .nav-btn.active { 
-            color: var(--accent); background: rgba(0, 243, 255, 0.1); 
-            border-left: 4px solid var(--accent);
-        }
+        .btn { padding: 8px 12px; border:1px solid var(--accent); background:transparent; color:var(--accent); border-radius:6px; cursor:pointer }
+        .btn:hover { background:var(--accent); color:#000 }
 
-        /* --- MAIN VIEW --- */
-        .main-view { flex: 1; padding: 40px; overflow-y: auto; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.5s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .badge-tag { font-size:10px; padding:4px 8px; border-radius:6px }
+        .tag-admin { background: #ff3333; color:#fff }
 
-        /* --- UI CARDS --- */
-        .card { 
-            background: rgba(10, 10, 15, 0.9); border: 1px solid var(--border); 
-            padding: 25px; border-radius: 12px; margin-bottom: 25px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* --- CYBER TABLE --- */
-        .cyber-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .cyber-table th { text-align: left; padding: 15px; color: var(--accent); font-size: 12px; border-bottom: 2px solid var(--border); }
-        .cyber-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: 'JetBrains Mono'; font-size: 13px; }
-
-        /* --- TAGS --- */
-        .badge-tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
-        .tag-owner { background: #ffcc00; color: #000; box-shadow: 0 0 10px #ffcc00; }
-        .tag-admin { background: var(--danger); color: #fff; }
-        .tag-user { background: #333; color: #ccc; }
-
-        /* --- INPUTS & BUTTONS --- */
-        .cyber-input { 
-            background: #000; border: 1px solid var(--border); padding: 12px; 
-            color: var(--accent); font-family: 'JetBrains Mono'; width: 100%; 
-            border-radius: 6px; box-sizing: border-box; margin-bottom: 10px;
-        }
-
-        .btn { 
-            padding: 10px 20px; border: 1px solid var(--accent); background: transparent;
-            color: var(--accent); cursor: pointer; font-weight: bold; font-family: 'Rajdhani';
-            transition: 0.3s; text-transform: uppercase; border-radius: 4px;
-        }
-        .btn:hover { background: var(--accent); color: #000; box-shadow: var(--glow); }
-        .btn-danger { border-color: var(--danger); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: #fff; }
-
-        /* --- LOCK SCREEN --- */
-        #lockScreen { 
-            position: fixed; inset: 0; background: #000; z-index: 9999; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        /* responsive tweaks */
+        @media (max-width: 600px) { .sidebar { width: 200px } .main-view { padding: 20px } }
     </style>
 </head>
 <body>
@@ -136,11 +203,29 @@
 
         <div class="card">
             <h3 style="color: var(--accent);">GLOBAL_ANNOUNCEMENT</h3>
-            <textarea id="bcInput" class="cyber-input" style="height: 100px;" placeholder="Type broadcast message..."></textarea>
-            <div style="display:flex; gap:10px;">
-                <button class="btn" onclick="sendBC()">SEND_BROADCAST</button>
-                <button class="btn btn-danger" onclick="clearBC()">DELETE_BC</button>
+            <textarea id="bcInput" class="cyber-input" style="height: 80px;" placeholder="Type announcement (persistent)..."></textarea>
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <button class="btn" onclick="sendBC()">SEND_ANNOUNCEMENT</button>
+                <button class="btn btn-danger" onclick="clearBC()">DELETE_ANNOUNCEMENT</button>
                 <button class="btn" style="margin-left:auto" onclick="toggleMT()">TOGGLE_MAINTENANCE</button>
+            </div>
+
+            <h3 style="color: var(--accent);">TRANSIENT BROADCAST (AUTO-DELETE 15s)</h3>
+            <input id="tbInput" class="cyber-input" placeholder="Transient broadcast text (auto-clear 15s)">
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <button class="btn" onclick="sendTransientBroadcast()">SEND_TRANSIENT</button>
+                <button class="btn btn-danger" onclick="clearTransientBroadcast()">DELETE_TRANSIENT</button>
+                <div style="margin-left:auto; color:#888; align-self:center; font-size:12px">Auto-clears in 15s</div>
+            </div>
+
+            <h3 style="color: var(--accent);">DISCO MODE</h3>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                <button class="btn" onclick="setDiscoMode('#00ff88')">DEFAULT</button>
+                <button class="btn" onclick="setDiscoMode('#00d4ff')">ICE</button>
+                <button class="btn" onclick="setDiscoMode('rainbow')">RAINBOW</button>
+                <input id="discoCustom" class="cyber-input" placeholder="#hex or 'ice' or 'rainbow'" style="width:140px">
+                <button class="btn" onclick="setDiscoMode(document.getElementById('discoCustom').value)">SET</button>
+                <button class="btn btn-danger" onclick="stopDisco()">STOP</button>
             </div>
         </div>
     </div>
@@ -205,16 +290,17 @@
     const auth = firebase.auth();
     let secretCode = "";
     let mtState = false;
+    let broadcastTimeout;
 
-    // --- SECURITY ---
+    // Reuse helpers from testings.html logic adapted for admin panel
     function generateCaptcha() {
         const c = document.getElementById('capCanvas');
         const ctx = c.getContext('2d');
         secretCode = Math.random().toString(36).substring(2, 7).toUpperCase();
         ctx.fillStyle = "#000"; ctx.fillRect(0,0,220,70);
         ctx.font = "bold 32px 'JetBrains Mono'";
-        ctx.fillStyle = "#00f3ff"; ctx.textAlign = "center";
-        ctx.shadowBlur = 10; ctx.shadowColor = "#00f3ff";
+        ctx.fillStyle = "var(--accent)"; ctx.textAlign = "center";
+        ctx.shadowBlur = 10; ctx.shadowColor = "var(--accent)";
         ctx.fillText(secretCode, 110, 45);
     }
 
@@ -227,6 +313,42 @@
         }
     }
 
+    // Broadcast helper (auto-hide 15s and remove settings/broadcast after 15s if set)
+    function triggerBroadcast(msg) {
+        const el = document.getElementById('sysBroadcast');
+        const bar = document.getElementById('sbBar');
+        el.classList.remove('active');
+        bar.style.animation = 'none';
+        void bar.offsetWidth;
+        document.getElementById('sbMessage').innerText = msg;
+        setTimeout(() => {
+            el.classList.add('active');
+            bar.style.animation = 'countDown 15s linear forwards';
+        }, 100);
+        clearTimeout(broadcastTimeout);
+        broadcastTimeout = setTimeout(() => {
+            el.classList.remove('active');
+            // clear transient broadcast node if present
+            db.ref('settings/broadcast').once('value').then(s => {
+                const v = s.val();
+                if(v && v.ts && Date.now() - v.ts >= 15000) db.ref('settings/broadcast').remove();
+            });
+        }, 15000);
+    }
+
+    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
+
+    function startSnowfall() { /* omitted for admin UI */ }
+    function stopSnowfall() { /* omitted for admin UI */ }
+
+    function applyDiscoMode(color) {
+        document.documentElement.style.setProperty('--accent', color);
+    }
+
+    function resetTheme() { document.documentElement.style.setProperty('--accent', '#00ff88'); }
+
+    function addLog(msg) { const time = new Date().toLocaleTimeString(); db.ref('logs').push({msg, time}); }
+
     // --- CORE ---
     function initApp() {
         // Sync Users
@@ -236,11 +358,14 @@
             snap.forEach(child => {
                 const u = child.val(); const uid = child.key; count++;
                 const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
+                const folCount = Array.isArray(u?.followers) ? u.followers.length : (u?.followers || 0);
+                const lastUpload = u?.lastUpload || 0;
+                const cdText = lastUpload ? `${Math.max(0, Math.ceil((30 - ((Date.now()-lastUpload)/1000/60)) ) )}m` : 'READY';
                 html += `<tr>
                     <td><b>${u.username}</b><br><small style="color:#444">${uid}</small></td>
-                    <td><button class="btn btn-outline" style="padding:2px 10px" onclick="changeTag('${uid}')"><span class="badge-tag ${tagClass}">${u.tag || 'USER'}</span></button></td>
-                    <td><button class="btn btn-outline" onclick="setFollowers('${uid}')">${u.followers || 0} FLS</button></td>
-                    <td><button class="btn" onclick="resetCD('${uid}')">${u.lastUpload ? 'RESET' : 'CLEAN'}</button></td>
+                    <td><button class="btn" onclick="changeTag('${uid}')"><span class="badge-tag ${tagClass}">${u.tag || 'USER'}</span></button></td>
+                    <td><button class="btn" onclick="openManageFollowers('${uid}')">${folCount} FLS</button></td>
+                    <td><button class="btn" onclick="resetCD('${uid}')">${cdText}</button></td>
                     <td><button class="btn btn-danger" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button></td>
                 </tr>`;
             });
@@ -263,36 +388,108 @@
             document.getElementById('count-s').innerText = count;
         });
 
-        // Maintenance Status
-        db.ref('settings/mt').on('value', s => {
-            mtState = s.val();
+        // Maintenance Status + disco / announcement watcher
+        db.ref('settings').on('value', s => {
+            const val = s.val() || {};
+            mtState = val.mt || false;
             document.getElementById('mt-text').innerText = mtState ? "MAINTENANCE" : "ONLINE";
             document.getElementById('mt-text').style.color = mtState ? "var(--danger)" : "var(--success)";
+
+            if(val.announcement) triggerBroadcast(val.announcement);
+            if(val.discoMode) { applyDiscoMode(val.discoColor || '#00ff88'); }
+        });
+
+        // Listen transient broadcast node (settings/broadcast) for auto-delete messages
+        db.ref('settings/broadcast').on('value', snap => {
+            const v = snap.val();
+            if(v && v.text) {
+                triggerBroadcast(v.text);
+                // ensure removal after 15s from server side safety
+                setTimeout(() => {
+                    db.ref('settings/broadcast').once('value').then(s => {
+                        const cur = s.val();
+                        if(cur && cur.ts && Date.now() - cur.ts >= 15000) db.ref('settings/broadcast').remove();
+                    });
+                }, 16000);
+            }
         });
 
         // Logs
-        db.ref('logs').limitToLast(30).on('value', snap => {
+        db.ref('logs').limitToLast(100).on('value', snap => {
             let h = '';
             snap.forEach(c => {
                 const l = c.val();
                 h += `<div><span style="color:#444">[${l.time}]</span> ${l.msg}</div>`;
             });
             const box = document.getElementById('logTerminal');
-            box.innerHTML = h; box.scrollTop = box.scrollHeight;
+            if(box) { box.innerHTML = h; box.scrollTop = box.scrollHeight; }
         });
     }
 
     // --- ACTIONS ---
+    function openManageFollowers(uid) {
+        // open modal to manage followers for uid
+        const modalHtml = `
+            <div style="padding:10px">
+              <h3>Manage Followers for ${uid}</h3>
+              <div><button class='btn' onclick="injectRandomFollowers('${uid}', 1)">Add 1 Fake</button> <button class='btn' onclick="injectRandomFollowers('${uid}',5)">Add 5 Fake</button> <button class='btn btn-danger' onclick="clearFakeFollowers('${uid}')">Clear Fake</button></div>
+            </div>`;
+        Swal.fire({ title: 'Manage Followers', html: modalHtml, width: 600, background: '#0a0a0f' });
+    }
+
+    function injectRandomFollowers(uid, count) {
+        db.ref('users/'+uid).once('value').then(s => {
+            const u = s.val() || {};
+            const followers = Array.isArray(u.followers) ? u.followers : [];
+                for(let i=0;i<count;i++) {
+                    const f = 'User_'+(Math.floor(Math.random()*900000)+10000);
+                    followers.push(f);
+                    // also set follows/{uid}/{f} for per-UID tracking
+                    db.ref('follows/' + uid + '/' + f).set(true);
+                }
+            db.ref('users/'+uid).update({followers}).then(()=>{
+                addLog(`Injected ${count} fake followers to ${uid}`);
+                Swal.close();
+            });
+        });
+    }
+
+    function clearFakeFollowers(uid) {
+        db.ref('users/'+uid).once('value').then(s => {
+            const data = s.val() || {};
+            let followers = Array.isArray(data.followers) ? data.followers : [];
+            const fake = followers.filter(f => f.startsWith('User_'));
+            followers = followers.filter(f => !f.startsWith('User_'));
+            // remove per-UID follows entries for fake followers
+            const updates = {};
+            fake.forEach(f => updates['/follows/' + uid + '/' + f] = null);
+            updates['/users/' + uid + '/followers'] = followers;
+            db.ref().update(updates).then(() => Swal.fire('Done', 'Cleared fake followers', 'success'));
+        });
+    }
+
     function setFollowers(uid) {
         Swal.fire({
             title: 'SET_FOLLOWERS',
             input: 'number',
-            background: '#0a0a0f', color: '#fff', confirmButtonColor: '#00f3ff'
+            background: '#0a0a0f', color: '#fff', confirmButtonColor: 'var(--accent)'
         }).then(r => {
             if(r.value) {
-                db.ref('users/'+uid).update({followers: parseInt(r.value)});
-                addLog(`Injected ${r.value} followers to ${uid}`);
-            }
+                const v = parseInt(r.value);
+                if(isNaN(v)) return Swal.fire('Invalid', 'Not a number', 'error');
+                const ref = db.ref('users/' + uid);
+                ref.once('value').then(s => {
+                    const data = s.val() || {};
+                    const followers = [];
+                    const updates = {};
+                    for(let i=0;i<v;i++){
+                        const f = 'User_'+(Math.floor(Math.random()*900000)+10000);
+                        followers.push(f);
+                        updates['/follows/' + uid + '/' + f] = true;
+                    }
+                    updates['/users/' + uid + '/followers'] = followers;
+                    db.ref().update(updates).then(() => Swal.fire('Done', 'Set followers to '+v, 'success'));
+                });
         });
     }
 
@@ -316,7 +513,8 @@
         db.ref('songs').push({
             title, artist, url, cover,
             uid: "SYSTEM_ADMIN",
-            by: "ADMIN"
+            by: "ADMIN",
+            uploadedAt: Date.now()
         });
         addLog(`Added manual song: ${title}`);
         Swal.fire('Success', 'Music Archived', 'success');
@@ -335,10 +533,17 @@
     function clearBC() { db.ref('settings/announcement').remove(); }
     function toggleMT() { db.ref('settings').update({mt: !mtState}); }
 
-    function addLog(msg) {
-        const time = new Date().toLocaleTimeString();
-        db.ref('logs').push({msg, time});
+    // Transient broadcast: write to settings/broadcast with timestamp so triggerBroadcast can auto-clear
+    function sendTransientBroadcast(){
+        const v = document.getElementById('tbInput').value;
+        if(!v) return Swal.fire('Empty', 'Enter a message for transient broadcast', 'error');
+        const payload = { text: v, lasttext: v, ts: Date.now() };
+        db.ref('settings/broadcast').set(payload);
+        triggerBroadcast(v);
+        addLog(`Transient Broadcast: ${v}`);
     }
+
+    function clearTransientBroadcast(){ db.ref('settings/broadcast').remove(); addLog('Cleared transient broadcast'); }
 
     function switchView(id) {
         document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
