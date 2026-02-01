@@ -210,7 +210,22 @@
 
     .prog-area { margin-bottom: 20px; flex-shrink: 0; z-index: 5; }
     #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; border-radius: 2px; }
-    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; }
+    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; position: relative; align-items: center; }
+    
+    /* LOADING SPINNER */
+    .loading-spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0, 255, 136, 0.3);
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+      margin: 0 auto;
+    }
+    .loading-spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .dur-wrapper { display: flex; align-items: center; gap: 6px; }
 
     .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 110; }
     .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); transition: 0.2s; }
@@ -292,17 +307,19 @@
       text-align: center;
       padding: 15px;
       border-radius: 10px;
-      background: rgba(0,255,136,0.05);
+      background: rgba(0,255,136,0.03);
       transition: all 0.2s ease;
+      border: 1px solid rgba(0,255,136,0.1);
     }
     .profile-stat-item:hover {
-      background: rgba(0,255,136,0.1);
+      background: rgba(0,255,136,0.08);
       transform: translateY(-2px);
+      border-color: rgba(0,255,136,0.2);
     }
     .profile-stat-item b { 
       display: block; 
       font-size: 24px; 
-      color: var(--accent);
+      color: #fff;
       margin-bottom: 5px;
     }
     .profile-stat-item span { 
@@ -600,7 +617,10 @@
       <input type="range" id="seek" value="0">
       <div class="time">
         <span id="cur">0:00</span>
-        <span id="dur">0:00</span>
+        <div class="dur-wrapper">
+          <div class="loading-spinner" id="loadSpinner"></div>
+          <span id="dur">0:00</span>
+        </div>
       </div>
     </div>
 
@@ -714,10 +734,17 @@
               </div>
               <div id="vTagDisplay"></div> </div>
       </div>
-      <div class="prof-stat">
-        <div><b id="vFol">0</b><span>Followers</span></div>
+      <div class="profile-stats-grid">
+        <div class="profile-stat-item">
+          <b id="vFol">0</b>
+          <span>Followers</span>
+        </div>
+        <div class="profile-stat-item">
+          <b id="vCreatorFollowBtn" style="cursor:pointer; transition:0.2s">Follow</b>
+          <span onclick="followCreator()" style="cursor:pointer; color:var(--accent); font-weight:600; font-size:11px">KLIK</span>
+        </div>
       </div>
-      <div class="section-title">Lagu Terupload</div>
+      <div class="section-title">📝 Lagu Terupload</div>
       <div id="creatorPostList"></div>
     </div>
   </div>
@@ -1105,8 +1132,32 @@
         // Cek ID di URL (execuriverp.github.io/exemusic?id=0)
         const urlParams = new URLSearchParams(window.location.search);
         const songId = urlParams.get('id');
+        const profileUid = urlParams.get('profile_userid');
         
-        if(audio.src === "") {
+        if(profileUid && auth.currentUser) {
+          // Open profile dengan deep link
+          if(profileUid === auth.currentUser.uid) {
+            openProfile();
+          } else {
+            // Buka profile orang lain
+            db.ref('users/' + profileUid).get().then(snap => {
+              if(snap.exists()) {
+                const userData = snap.val();
+                document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((userData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+                document.getElementById('vFol').innerText = userData?.followers || 0;
+                document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
+                
+                const creatorSongs = songs.filter(x => x.uid === profileUid);
+                document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+                
+                document.getElementById('modalCreator').dataset.creatorUid = profileUid;
+                updateCreatorFollowUI(profileUid);
+                document.getElementById('modalCreator').style.display = 'block';
+              }
+            });
+          }
+        } else if(audio.src === "") {
             if(songId && songs[songId]) {
                 setup(parseInt(songId), false);
             } else {
@@ -1202,6 +1253,22 @@
       document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
       document.getElementById('cur').textContent = fmt(audio.currentTime);
       document.getElementById('dur').textContent = fmt(audio.duration);
+      // Hide spinner when duration is available
+      if(audio.duration > 0) {
+        document.getElementById('loadSpinner').classList.remove('show');
+      }
+    };
+    
+    // Show loading spinner when song starts playing (duration not yet loaded)
+    audio.onplay = () => {
+      if(audio.duration === 0 || isNaN(audio.duration)) {
+        document.getElementById('loadSpinner').classList.add('show');
+      }
+    };
+    
+    // Hide spinner when metadata is loaded
+    audio.onloadedmetadata = () => {
+      document.getElementById('loadSpinner').classList.remove('show');
     };
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
     document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
@@ -1263,7 +1330,15 @@
     }
     
     async function viewCreator() {
-        const s = songs[i]; if(!s.uid) return;
+        const s = songs[i]; 
+        if(!s.uid) return;
+        
+        // Jika creator adalah user sendiri, buka profile modal
+        if(auth.currentUser && s.uid === auth.currentUser.uid) {
+            openProfile();
+            return;
+        }
+        
         const cRef = await db.ref('users/' + s.uid).get();
         const cData = cRef.val();
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
@@ -1272,7 +1347,56 @@
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
         const creatorSongs = songs.filter(x => x.uid === s.uid);
         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+        
+        // Set data untuk follow button
+        document.getElementById('modalCreator').dataset.creatorUid = s.uid;
+        
+        // Update follow button state
+        updateCreatorFollowUI(s.uid);
+        
         document.getElementById('modalCreator').style.display = 'block';
+    }
+
+    async function updateCreatorFollowUI(creatorUid) {
+      if(!auth.currentUser) return;
+      const isFollowing = await db.ref('follows/' + creatorUid + '/' + auth.currentUser.uid).get();
+      const btnText = document.getElementById('vCreatorFollowBtn');
+      
+      if(isFollowing.exists()) {
+        btnText.innerText = 'Following ✓';
+        btnText.style.color = 'var(--accent)';
+      } else {
+        btnText.innerText = 'Follow';
+        btnText.style.color = '#ddd';
+      }
+    }
+
+    async function followCreator() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      
+      const creatorUid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!creatorUid || creatorUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
+      
+      const fRef = db.ref('follows/' + creatorUid + '/' + auth.currentUser.uid);
+      const snap = await fRef.get();
+      
+      try {
+        if(snap.exists()) {
+            await fRef.remove();
+            db.ref('users/' + creatorUid + '/followers').transaction(c => (c || 0) - 1);
+            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
+            msg("Unfollowed!");
+        } else {
+            await fRef.set(true);
+            db.ref('users/' + creatorUid + '/followers').transaction(c => (c || 0) + 1);
+            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
+            msg("Followed! ✅");
+        }
+        // Update button
+        await updateCreatorFollowUI(creatorUid);
+      } catch(err) {
+        msg("Error: " + err.message);
+      }
     }
 
     async function openList(f) {
