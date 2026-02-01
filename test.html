@@ -1085,6 +1085,12 @@
         }
     }
 
+    // FUNCTION: Generate fake follower dengan format User_randomnumber
+    function generateFakeFollower() {
+      const randomNum = Math.floor(Math.random() * 999999) + 10000;
+      return `User_${randomNum}`;
+    }
+
     // AUTH & USER DATA
     auth.onAuthStateChanged(u => {
       if(u) {
@@ -1098,10 +1104,11 @@
           document.getElementById('topLoginBtn').textContent = userData.username;
           document.getElementById('pUsername').innerText = userData.username;
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
-          document.getElementById('pFol').innerText = userData.followers || 0;
-          document.getElementById('pFollowing').innerText = userData.following || 0;
+          document.getElementById('pFol').innerText = (Array.isArray(userData.followers) ? userData.followers.length : userData.followers) || 0;
+          document.getElementById('pFollowing').innerText = (Array.isArray(userData.following) ? userData.following.length : userData.following) || 0;
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
-          document.getElementById('pBadge').innerHTML = (userData.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          const followerCount = Array.isArray(userData.followers) ? userData.followers.length : userData.followers || 0;
+          document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
           // Sensor email
           const email = u.email || "";
@@ -1144,8 +1151,9 @@
               if(snap.exists()) {
                 const userData = snap.val();
                 document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
-                document.getElementById('vName').innerHTML = "@" + userData.username + ((userData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
-                document.getElementById('vFol').innerText = userData?.followers || 0;
+                const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+                document.getElementById('vFol').innerText = followerCountView;
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
                 
                 const creatorSongs = songs.filter(x => x.uid === profileUid);
@@ -1179,7 +1187,8 @@
       document.getElementById('title').textContent = songs[i].title;
       const cRef = await db.ref('users/' + songs[i].uid).get();
       const cData = cRef.val();
-      const badge = (cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
+      const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
       if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
       updateFollowUI();
@@ -1279,21 +1288,38 @@
       if(!auth.currentUser) return msg("Login dulu!");
       const targetUid = songs[i].uid;
       if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
-      const fRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
-      const snap = await fRef.get();
-      const btn = document.getElementById('btnFollow');
       
       try {
-        if(snap.exists()) {
-            await fRef.remove();
-            db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
-            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
-            msg("Unfollowed!");
+        const targetRef = db.ref('users/' + targetUid);
+        const currentRef = db.ref('users/' + auth.currentUser.uid);
+        
+        const targetSnap = await targetRef.get();
+        const currentSnap = await currentRef.get();
+        
+        const targetData = targetSnap.val();
+        const currentData = currentSnap.val();
+        
+        const targetFollowers = Array.isArray(targetData?.followers) ? [...targetData.followers] : [];
+        const currentFollowing = Array.isArray(currentData?.following) ? [...currentData.following] : [];
+        
+        const isFollowing = targetFollowers.includes(auth.currentUser.uid);
+        
+        if(isFollowing) {
+          // Unfollow
+          const newFollowers = targetFollowers.filter(uid => uid !== auth.currentUser.uid);
+          const newFollowing = currentFollowing.filter(uid => uid !== targetUid);
+          
+          await targetRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Unfollowed!");
         } else {
-            await fRef.set(true);
-            db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
-            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
-            msg("Followed! ✅");
+          // Follow
+          const newFollowers = [...targetFollowers, auth.currentUser.uid];
+          const newFollowing = [...currentFollowing, targetUid];
+          
+          await targetRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Followed! ✅");
         }
         // Update button state immediately
         await updateFollowUI();
@@ -1304,9 +1330,12 @@
 
     async function updateFollowUI() {
       if(!auth.currentUser || !songs[i].uid) return;
-      const s = await db.ref('follows/' + songs[i].uid + '/' + auth.currentUser.uid).get();
+      const targetSnap = await db.ref('users/' + songs[i].uid).get();
+      const targetData = targetSnap.val();
+      const targetFollowers = Array.isArray(targetData?.followers) ? targetData.followers : [];
+      
       const btn = document.getElementById('btnFollow');
-      if(s.exists()) {
+      if(targetFollowers.includes(auth.currentUser.uid)) {
         btn.style.display = 'none'; // Hide button jika sudah follow
       } else {
         btn.style.display = 'flex';
@@ -1341,9 +1370,10 @@
         
         const cRef = await db.ref('users/' + s.uid).get();
         const cData = cRef.val();
+        const followerCountCreator = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
-        document.getElementById('vName').innerHTML = "@" + s.by + ((cData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
-        document.getElementById('vFol').innerText = cData?.followers || 0;
+        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+        document.getElementById('vFol').innerText = followerCountCreator;
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
         const creatorSongs = songs.filter(x => x.uid === s.uid);
         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
@@ -1359,10 +1389,13 @@
 
     async function updateCreatorFollowUI(creatorUid) {
       if(!auth.currentUser) return;
-      const isFollowing = await db.ref('follows/' + creatorUid + '/' + auth.currentUser.uid).get();
+      const creatorSnap = await db.ref('users/' + creatorUid).get();
+      const creatorData = creatorSnap.val();
+      const creatorFollowers = Array.isArray(creatorData?.followers) ? creatorData.followers : [];
+      
       const btnText = document.getElementById('vCreatorFollowBtn');
       
-      if(isFollowing.exists()) {
+      if(creatorFollowers.includes(auth.currentUser.uid)) {
         btnText.innerText = 'Following ✓';
         btnText.style.color = 'var(--accent)';
       } else {
@@ -1377,20 +1410,37 @@
       const creatorUid = document.getElementById('modalCreator').dataset.creatorUid;
       if(!creatorUid || creatorUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
       
-      const fRef = db.ref('follows/' + creatorUid + '/' + auth.currentUser.uid);
-      const snap = await fRef.get();
-      
       try {
-        if(snap.exists()) {
-            await fRef.remove();
-            db.ref('users/' + creatorUid + '/followers').transaction(c => (c || 0) - 1);
-            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
-            msg("Unfollowed!");
+        const creatorRef = db.ref('users/' + creatorUid);
+        const currentRef = db.ref('users/' + auth.currentUser.uid);
+        
+        const creatorSnap = await creatorRef.get();
+        const currentSnap = await currentRef.get();
+        
+        const creatorData = creatorSnap.val();
+        const currentData = currentSnap.val();
+        
+        const creatorFollowers = Array.isArray(creatorData?.followers) ? [...creatorData.followers] : [];
+        const currentFollowing = Array.isArray(currentData?.following) ? [...currentData.following] : [];
+        
+        const isFollowing = creatorFollowers.includes(auth.currentUser.uid);
+        
+        if(isFollowing) {
+          // Unfollow
+          const newFollowers = creatorFollowers.filter(uid => uid !== auth.currentUser.uid);
+          const newFollowing = currentFollowing.filter(uid => uid !== creatorUid);
+          
+          await creatorRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Unfollowed!");
         } else {
-            await fRef.set(true);
-            db.ref('users/' + creatorUid + '/followers').transaction(c => (c || 0) + 1);
-            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
-            msg("Followed! ✅");
+          // Follow
+          const newFollowers = [...creatorFollowers, auth.currentUser.uid];
+          const newFollowing = [...currentFollowing, creatorUid];
+          
+          await creatorRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Followed! ✅");
         }
         // Update button
         await updateCreatorFollowUI(creatorUid);
@@ -1407,7 +1457,8 @@
       for(let s of l) {
           const uRef = await db.ref('users/' + s.uid).get();
           const uData = uRef.val();
-          const badge = (uData?.followers >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          const followerCount = Array.isArray(uData?.followers) ? uData.followers.length : uData?.followers || 0;
+          const badge = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           html += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`;
       }
       c.innerHTML = html;
@@ -1438,7 +1489,20 @@
       else {
         const u = document.getElementById('authUser').value;
         auth.createUserWithEmailAndPassword(e, p).then(res => {
-          db.ref('users/' + res.user.uid).set({ username: u, role: 'user', followers: 0, following: 0, tag: 'user' });
+          // Generate 3-5 fake followers dengan format User_randomnumber
+          const fakeFollowerCount = Math.floor(Math.random() * 3) + 3; // 3-5 fake followers
+          const fakeFollowers = [];
+          for(let i = 0; i < fakeFollowerCount; i++) {
+            fakeFollowers.push(generateFakeFollower());
+          }
+          
+          db.ref('users/' + res.user.uid).set({ 
+            username: u, 
+            role: 'user', 
+            followers: fakeFollowers, 
+            following: [], 
+            tag: 'user' 
+          });
           closeModal();
         }).catch(err => msg(err.message));
       }
