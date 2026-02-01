@@ -211,7 +211,7 @@
     <div style="width: 420px; text-align: center; border: 3px solid #00ff88; padding: 60px 40px; background: #0a0a0f; border-radius: 12px; box-shadow: 0 0 50px rgba(0,255,136,0.4); z-index: 100000;">
         <h2 style="color: #00ff88; letter-spacing: 6px; margin-bottom: 35px; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,136,0.5);">SECURITY_GATE</h2>
         
-        <canvas id="capCanvas" width="220" height="70" style="margin: 30px auto; display: block; border: 3px solid #00ff88; background:#000; border-radius: 8px; box-shadow: 0 0 20px rgba(0,255,136,0.3);"></canvas>
+        <canvas id="capCanvas" width="320" height="90" style="margin: 30px auto; display: block; border: 3px solid #00ff88; background:#000; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,136,0.35); width:320px; height:90px;"></canvas>
         
         <input type="text" id="capInput" placeholder="ENTER_ACCESS_CODE" style="text-align:center; width:100%; padding:14px; margin:25px 0; background:#1a1a1a; border:2px solid #00ff88; color:#00ff88; border-radius:6px; font-family: 'JetBrains Mono'; font-size: 14px; font-weight: bold;">
         
@@ -340,31 +340,38 @@
     function generateCaptcha() {
         const c = document.getElementById('capCanvas');
         if(!c) return;
+        // ensure canvas internal size matches displayed size
+        c.width = 320; c.height = 90;
         const ctx = c.getContext('2d');
         secretCode = Math.random().toString(36).substring(2, 7).toUpperCase();
-        
-        // Clear canvas - black background
-        ctx.fillStyle = "#000000"; 
-        ctx.fillRect(0, 0, 220, 70);
-        
-        // Add green glow effect to background
-        ctx.strokeStyle = "#00ff88";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(2, 2, 216, 66);
-        
-        // Draw text with glow
-        ctx.font = "bold 40px 'JetBrains Mono'";
-        ctx.fillStyle = "#00ff88";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        
-        // Create glow effect by drawing multiple times
-        ctx.shadowColor = "#00ff88";
-        ctx.shadowBlur = 15;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        
-        ctx.fillText(secretCode, 110, 35);
+
+        // Clear canvas
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0,0,c.width,c.height);
+
+        // Border and subtle grid
+        ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 4;
+        ctx.strokeRect(2,2,c.width-4,c.height-4);
+
+        ctx.strokeStyle = 'rgba(0,255,136,0.06)'; ctx.lineWidth = 1;
+        for(let x=0;x<c.width;x+=20){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,c.height); ctx.stroke(); }
+
+        // Draw text with strong contrast: black stroke + bright green fill
+        const x = c.width/2, y = c.height/2;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = 'bold 46px Arial';
+
+        // big glow
+        ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 28;
+
+        // stroke (outline) to ensure readability on any background
+        ctx.lineWidth = 8; ctx.strokeStyle = '#000'; ctx.strokeText(secretCode, x, y);
+        // fill bright
+        ctx.fillStyle = '#00ff88'; ctx.fillText(secretCode, x, y);
+
+        // reset shadow for cleanliness
+        ctx.shadowBlur = 0;
     }
 
     function verifyAccess() {
