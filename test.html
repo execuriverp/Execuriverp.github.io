@@ -1214,14 +1214,24 @@
       if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
       const fRef = db.ref('follows/' + targetUid + '/' + auth.currentUser.uid);
       const snap = await fRef.get();
-      if(snap.exists()) {
-          await fRef.remove();
-          db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
-          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
-      } else {
-          await fRef.set(true);
-          db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
-          db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
+      const btn = document.getElementById('btnFollow');
+      
+      try {
+        if(snap.exists()) {
+            await fRef.remove();
+            db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) - 1);
+            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) - 1);
+            msg("Unfollowed!");
+        } else {
+            await fRef.set(true);
+            db.ref('users/' + targetUid + '/followers').transaction(c => (c || 0) + 1);
+            db.ref('users/' + auth.currentUser.uid + '/following').transaction(c => (c || 0) + 1);
+            msg("Followed! ✅");
+        }
+        // Update button state immediately
+        await updateFollowUI();
+      } catch(err) {
+        msg("Error: " + err.message);
       }
     }
 
