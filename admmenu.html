@@ -643,11 +643,13 @@
         const rows = document.querySelectorAll(`#${id} tbody tr`);
         rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(q.toLowerCase()) ? '' : 'none');
     }
-
     window.onload = function() {
         document.body.classList.add('locked');
-        generateCaptcha();
-        // Prevent initiating app until login
+        // ensure lock screen is visible
+        const ls = document.getElementById('lockScreen'); if(ls) ls.style.display = 'flex';
+        // render captcha a couple times to ensure visibility on all browsers
+        setTimeout(() => generateCaptcha(), 50);
+        setTimeout(() => generateCaptcha(), 300);
     };
 </script>
 
