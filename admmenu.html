@@ -1,215 +1,393 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Execurive Roleplay</title>
+    <title>Admin Dashboard - Execurive Roleplay</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Animasi Smooth untuk Panel Notifikasi */
-        #notificationPanel {
-            transition: all 0.3s ease-in-out;
-            transform: translateY(-20px);
-            opacity: 0;
-            pointer-events: none;
-        }
-        #notificationPanel.active {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-morphism { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .sidebar-item:hover { background-color: #f1f5f9; transform: translateX(5px); transition: all 0.2s; }
+        .stat-card { transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        /* Notif Panel Style */
+        #notifPanel { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); opacity: 0; }
+        #notifPanel.show { transform: translateX(0); opacity: 1; }
+        .notif-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="text-gray-800">
 
-    <nav class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider text-red-500">EXECURIVE <span class="text-white">ADM</span></h1>
-            
-            <div class="flex items-center space-x-6">
-                <div class="relative cursor-pointer" id="bellIcon">
-                    <i class="fa-solid fa-bell text-xl hover:text-red-400 transition"></i>
-                    <span id="notifBadge" class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-white border-r border-gray-200 hidden md:block">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-red-600">EXECURIVE</h1>
+                <p class="text-xs text-gray-500 font-semibold tracking-widest uppercase">Admin Panel</p>
+            </div>
+            <nav class="mt-4 px-4 space-y-2">
+                <a href="#" class="flex items-center p-3 sidebar-item rounded-xl text-red-600 bg-red-50 font-medium">
+                    <i class="fa-solid fa-gauge-high mr-3"></i> Dashboard
+                </a>
+                <a href="#users-section" class="flex items-center p-3 sidebar-item rounded-xl text-gray-600">
+                    <i class="fa-solid fa-users mr-3"></i> Manage Users
+                </a>
+                <a href="#songs-section" class="flex items-center p-3 sidebar-item rounded-xl text-gray-600">
+                    <i class="fa-solid fa-music mr-3"></i> Songs List
+                </a>
+                <a href="#notif-section" class="flex items-center p-3 sidebar-item rounded-xl text-gray-600">
+                    <i class="fa-solid fa-paper-plane mr-3"></i> Send Broadcast
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1">
+            <header class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40 p-4">
+                <div class="flex justify-between items-center">
+                    <div class="relative w-96">
+                        <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" placeholder="Search user or song..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all">
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="relative cursor-pointer p-2 hover:bg-gray-100 rounded-full transition" id="bellBtn">
+                            <i class="fa-solid fa-bell text-xl text-gray-600"></i>
+                            <span id="notifCount" class="absolute top-1 right-1 bg-red-600 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full hidden notif-badge">0</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 border-l pl-4">
+                            <img src="https://ui-avatars.com/api/?name=Hexky+Admin&background=dc2626&color=fff" class="w-10 h-10 rounded-full border-2 border-red-100">
+                            <div>
+                                <p class="text-sm font-bold leading-none">Hexky</p>
+                                <span class="text-[10px] text-red-600 font-bold uppercase">Execurive Roleplay</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Users</p>
+                                <h3 class="text-3xl font-bold mt-1" id="totalUsers">0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-users text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Songs</p>
+                                <h3 class="text-3xl font-bold mt-1" id="totalSongs">0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-music text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">System Status</p>
+                                <h3 class="text-xl font-bold mt-1 text-green-500">Active</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-shield-check text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <button class="bg-red-600 hover:bg-red-700 px-4 py-1.5 rounded-lg text-sm font-semibold transition shadow-md">
-                    Logout
-                </button>
-            </div>
-        </div>
-    </nav>
+                <div id="notif-section" class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8 overflow-hidden">
+                    <div class="bg-slate-900 p-4 flex justify-between items-center">
+                        <h2 class="text-white font-bold flex items-center">
+                            <i class="fa-solid fa-bullhorn mr-2"></i> Push Notification Center
+                        </h2>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="space-y-4 border-r pr-0 lg:pr-8 border-gray-100">
+                            <h3 class="font-semibold text-gray-700">Broadcast ke Semua User</h3>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Pesan</label>
+                                <textarea id="globalMsg" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none" rows="2" placeholder="Tulis pengumuman..."></textarea>
+                            </div>
+                            <div class="flex space-x-2">
+                                <select id="globalType" class="bg-gray-50 border border-gray-200 rounded-xl px-3 text-sm outline-none">
+                                    <option value="admin">📢 Admin Info</option>
+                                    <option value="system">⚙️ System Update</option>
+                                </select>
+                                <button onclick="sendGlobalNotif()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-xl transition shadow-lg shadow-red-200">
+                                    Kirim Global
+                                </button>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="font-semibold text-gray-700 text-yellow-600">Peringatan Pelanggaran (Personal)</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">UID Target</label>
+                                    <input type="text" id="targetUid" class="w-full p-2 border border-gray-200 rounded-lg text-sm" placeholder="Paste UID...">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Tipe</label>
+                                    <select id="privateType" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-50">
+                                        <option value="violation">⚠️ Pelanggaran</option>
+                                        <option value="follow">👤 Follow Info</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="text" id="privateMsg" class="w-full p-2 border border-gray-200 rounded-lg text-sm" placeholder="Contoh: Akun Anda dipantau karena spam.">
+                            <button onclick="sendPrivateNotif()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 rounded-xl transition shadow-lg shadow-yellow-100">
+                                Kirim Peringatan
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-    <div id="notificationPanel" class="fixed top-16 right-4 w-80 md:w-96 glass-effect shadow-2xl rounded-xl border border-gray-200 z-[60] overflow-hidden">
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <h3 class="font-bold text-gray-800">Notifikasi</h3>
-            <button id="closeNotif" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+                <div id="users-section" class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-xl font-bold tracking-tight">User Management</h2>
+                        <span class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded-full">LIVE DATA</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold tracking-widest">
+                                <tr>
+                                    <th class="px-6 py-4">User</th>
+                                    <th class="px-6 py-4">Email / UID</th>
+                                    <th class="px-6 py-4">Role</th>
+                                    <th class="px-6 py-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody" class="divide-y divide-gray-50 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="songs-section" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="text-xl font-bold tracking-tight">Song Repository</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold tracking-widest">
+                                <tr>
+                                    <th class="px-6 py-4">Song Details</th>
+                                    <th class="px-6 py-4">Uploader</th>
+                                    <th class="px-6 py-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="songTableBody" class="divide-y divide-gray-50 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="notifPanel" class="fixed top-20 right-6 w-85 md:w-96 bg-white shadow-2xl rounded-2xl border border-gray-100 z-50 overflow-hidden flex flex-col max-h-[500px]">
+        <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
+            <h3 class="font-bold text-gray-700">Recent Notifications</h3>
+            <button id="closeNotif" class="text-gray-400 hover:text-gray-900"><i class="fa-solid fa-times"></i></button>
         </div>
-        <div id="notifList" class="max-height-[400px] overflow-y-auto p-2 space-y-2" style="max-height: 400px;">
-            <p class="text-center text-gray-400 py-4 text-sm">Tidak ada notifikasi baru</p>
+        <div id="notifList" class="overflow-y-auto p-2 space-y-1">
+            <p class="text-center text-gray-400 py-8 text-sm">Belum ada notifikasi.</p>
         </div>
     </div>
 
-    <main class="container mx-auto p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-lg font-bold mb-4 flex items-center">
-                    <i class="fa-solid fa-paper-plane mr-2 text-blue-500"></i> Kirim Notifikasi Global
-                </h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Notifikasi</label>
-                        <select id="notifType" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
-                            <option value="admin">Pesan Admin (Merah)</option>
-                            <option value="system">Info Sistem (Biru)</option>
-                            <option value="upload">Update Lagu (Hijau)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Isi Pesan</label>
-                        <textarea id="notifMessage" rows="3" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Tulis pengumuman..."></textarea>
-                    </div>
-                    <button onclick="sendGlobalNotif()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition">
-                        Kirim ke Semua User
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-lg font-bold mb-4 flex items-center">
-                    <i class="fa-solid fa-triangle-exclamation mr-2 text-yellow-500"></i> Kirim Peringatan User
-                </h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">UID User (ID Firebase)</label>
-                        <input type="text" id="targetUid" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-yellow-500 outline-none" placeholder="Masukkan UID User...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Pelanggaran</label>
-                        <input type="text" id="violationText" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-yellow-500 outline-none" placeholder="Contoh: Spam chat atau Toxic...">
-                    </div>
-                    <button onclick="sendPrivateNotif()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 rounded-lg transition">
-                        Kirim Peringatan
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, remove, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Ganti dengan Config Firebase Hexky!
         const firebaseConfig = {
-          apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
-          authDomain: "exemusic-execuriverp.firebaseapp.com",
-          databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
-          projectId: "exemusic-execuriverp",
-          storageBucket: "exemusic-execuriverp.firebasestorage.app",
-          messagingSenderId: "722057744401",
-          appId: "1:722057744401:web:cd6a6a103692059bda61b0",
+            apiKey: "AIzaSy...", // GANTI DENGAN PUNYAMU
+            databaseURL: "https://proyek-hexky-default-rtdb.firebaseio.com", // GANTI DENGAN PUNYAMU
+            projectId: "proyek-hexky",
+            storageBucket: "proyek-hexky.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
 
-        // --- FUNGSI ADMIN: KIRIM NOTIF ---
+        // State Management
+        let currentUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("Admin logged in:", user.uid);
+            } else {
+                window.location.href = "login.html"; // Redirect jika tidak login
+            }
+        });
+
+        // --- NOTIFICATION ENGINE ---
+        const bellBtn = document.getElementById('bellBtn');
+        const notifPanel = document.getElementById('notifPanel');
+        const notifList = document.getElementById('notifList');
+        const notifCount = document.getElementById('notifCount');
+
+        bellBtn.onclick = () => notifPanel.classList.toggle('show');
+        document.getElementById('closeNotif').onclick = () => notifPanel.classList.remove('show');
+
+        // Listen for Global Notifications
+        onValue(ref(db, 'notifications'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const list = Object.entries(data).reverse();
+                notifCount.innerText = list.length;
+                notifCount.classList.remove('hidden');
+                
+                notifList.innerHTML = "";
+                list.forEach(([id, val]) => {
+                    notifList.innerHTML += `
+                        <div class="p-3 hover:bg-red-50 rounded-xl transition flex items-start space-x-3 border-l-4 ${getNotifColor(val.type)}">
+                            <div class="mt-1">${getNotifIcon(val.type)}</div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-800">${val.text}</p>
+                                <span class="text-[10px] text-gray-400 font-semibold">${new Date(val.timestamp).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        });
+
+        function getNotifIcon(type) {
+            if(type === 'admin') return '🛡️';
+            if(type === 'system') return '⚙️';
+            if(type === 'violation') return '⚠️';
+            return 'ℹ️';
+        }
+
+        function getNotifColor(type) {
+            if(type === 'admin') return 'border-red-500';
+            if(type === 'violation') return 'border-yellow-500';
+            return 'border-blue-500';
+        }
+
+        // --- ADMIN SEND FUNCTIONS ---
         window.sendGlobalNotif = function() {
-            const type = document.getElementById('notifType').value;
-            const text = document.getElementById('notifMessage').value;
-            
-            if(!text) return alert("Isi pesan dulu, Hexky!");
+            const text = document.getElementById('globalMsg').value;
+            const type = document.getElementById('globalType').value;
+            if(!text) return alert("Pesan tidak boleh kosong!");
 
             push(ref(db, 'notifications'), {
-                type: type,
                 text: text,
-                fromName: 'Admin Hexky',
+                type: type,
+                from: "Admin Hexky",
                 timestamp: serverTimestamp()
             }).then(() => {
-                alert("Notifikasi global terkirim!");
-                document.getElementById('notifMessage').value = "";
-            });
+                alert("Berhasil broadcast!");
+                document.getElementById('globalMsg').value = "";
+            }).catch(e => alert("Error: " + e.message));
         };
 
         window.sendPrivateNotif = function() {
             const uid = document.getElementById('targetUid').value;
-            const text = document.getElementById('violationText').value;
-
-            if(!uid || !text) return alert("UID dan Alasan harus diisi!");
+            const text = document.getElementById('privateMsg').value;
+            const type = document.getElementById('privateType').value;
+            
+            if(!uid || !text) return alert("Lengkapi data!");
 
             push(ref(db, `users/${uid}/notifications`), {
-                type: 'violation',
                 text: text,
-                fromName: 'Admin System',
+                type: type,
                 timestamp: serverTimestamp()
             }).then(() => {
                 alert("Peringatan terkirim ke user!");
-                document.getElementById('violationText').value = "";
+                document.getElementById('privateMsg').value = "";
             });
         };
 
-        // --- FUNGSI UI: MENAMPILKAN NOTIF ---
-        const bellIcon = document.getElementById('bellIcon');
-        const notifPanel = document.getElementById('notificationPanel');
-        const notifList = document.getElementById('notifList');
-        const badge = document.getElementById('notifBadge');
+        // --- CORE FEATURES (USERS & SONGS) ---
+        onValue(ref(db, 'users'), (snapshot) => {
+            const users = snapshot.val();
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = "";
+            let count = 0;
 
-        // Toggle Panel
-        bellIcon.onclick = () => notifPanel.classList.toggle('active');
-        document.getElementById('closeNotif').onclick = () => notifPanel.classList.remove('active');
-
-        // Listen Notif Global
-        onValue(ref(db, 'notifications'), (snapshot) => {
-            const data = snapshot.val();
-            if(data) {
-                renderNotifications(data);
+            for (let uid in users) {
+                count++;
+                const user = users[uid];
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-500 text-xs">
+                                ${user.username ? user.username[0].toUpperCase() : 'U'}
+                            </div>
+                            <span class="font-semibold">${user.username || 'Anonymous'}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-xs text-gray-500">${user.email || 'No Email'}</p>
+                            <p class="text-[10px] font-mono text-gray-400">${uid}</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 ${user.tag === 'Admin' || user.tag === 'Owner' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'} rounded-md text-[10px] font-bold">
+                                ${user.tag || 'USER'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 space-x-2">
+                            <button onclick="editUser('${uid}')" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-edit"></i></button>
+                            <button onclick="deleteUser('${uid}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
             }
+            document.getElementById('totalUsers').innerText = count;
         });
 
-        function renderNotifications(data) {
-            notifList.innerHTML = "";
-            const items = Object.values(data).reverse(); // Terbaru di atas
-            
-            badge.innerText = items.length;
-            badge.classList.remove('hidden');
+        onValue(ref(db, 'songs'), (snapshot) => {
+            const songs = snapshot.val();
+            const tableBody = document.getElementById('songTableBody');
+            tableBody.innerHTML = "";
+            let count = 0;
 
-            items.forEach(item => {
-                const icon = getIcon(item.type);
-                const time = new Date(item.timestamp).toLocaleTimeString();
-                
-                const html = `
-                    <div class="flex items-start p-3 hover:bg-gray-50 rounded-lg transition border-l-4 ${getBorderColor(item.type)} mb-2">
-                        <div class="mr-3 mt-1">${icon}</div>
-                        <div>
-                            <p class="text-sm text-gray-800 font-medium">${item.text}</p>
-                            <span class="text-[10px] text-gray-400">${time}</span>
-                        </div>
-                    </div>
+            for (let id in songs) {
+                count++;
+                const song = songs[id];
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <p class="font-bold text-gray-800">${song.title}</p>
+                            <p class="text-xs text-gray-400">${song.artist || 'Unknown'}</p>
+                        </td>
+                        <td class="px-6 py-4 text-xs font-medium text-gray-500">
+                            ${song.uploaderName || 'System'}
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="deleteSong('${id}')" class="bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-600 p-2 rounded-lg transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
                 `;
-                notifList.innerHTML += html;
-            });
-        }
+            }
+            document.getElementById('totalSongs').innerText = count;
+        });
 
-        function getIcon(type) {
-            if(type === 'admin') return '<i class="fa-solid fa-shield text-red-500"></i>';
-            if(type === 'violation') return '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
-            if(type === 'upload') return '<i class="fa-solid fa-music text-green-500"></i>';
-            return '<i class="fa-solid fa-circle-info text-blue-500"></i>';
-        }
+        // Global Action Handlers
+        window.deleteUser = (uid) => { if(confirm('Hapus user ini?')) remove(ref(db, `users/${uid}`)); };
+        window.deleteSong = (id) => { if(confirm('Hapus lagu ini?')) remove(ref(db, `songs/${id}`)); };
+        window.editUser = (uid) => { 
+            const newTag = prompt("Masukkan Role Baru (Admin/Owner/User):");
+            if(newTag) update(ref(db, `users/${uid}`), { tag: newTag });
+        };
 
-        function getBorderColor(type) {
-            if(type === 'admin') return 'border-red-500';
-            if(type === 'violation') return 'border-yellow-500';
-            if(type === 'upload') return 'border-green-500';
-            return 'border-blue-500';
-        }
     </script>
 </body>
 </html>
