@@ -20,7 +20,6 @@
             --text-dim: #b3b3b3;
             --bg: #050505;
             --card-bg: #121212;
-            --glass: rgba(255, 255, 255, 0.05);
             --danger: #ff3333;
             --warning: #ffcc00;
             --success: #00ff88;
@@ -43,25 +42,23 @@
         body.locked .sys-broadcast, 
         body.locked .sidebar, 
         body.locked .main-view { display: none !important; }
-        
         body.locked #lockScreen { display: flex !important; }
 
         /* --- UI COMPONENTS --- */
         .sys-broadcast {
-                position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
-                width: 90%; max-width: 400px; background: rgba(15, 15, 15, 0.95);
-                border-left: 4px solid var(--accent); border-radius: 6px; padding: 15px;
-                z-index: 12000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-                display: flex; flex-direction: column; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                backdrop-filter: blur(10px);
+            position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: rgba(15, 15, 15, 0.95);
+            border-left: 4px solid var(--accent); border-radius: 6px; padding: 15px;
+            z-index: 12000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; transition: top 0.5s;
+            backdrop-filter: blur(10px);
         }
         .sys-broadcast.active { top: 20px; }
         .sb-content { display: flex; align-items: flex-start; gap: 12px; }
         .sb-icon { font-size: 20px; color: var(--accent); margin-top: 2px; }
-        .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
-        .sb-close { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; font-size: 16px; padding: 5px; }
-        .sb-close:hover { color: white; }
+        .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); }
+        .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; }
+        .sb-close { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; }
         .sb-progress { width: 100%; height: 3px; background: #333; margin-top: 12px; border-radius: 2px; overflow: hidden; }
         .sb-bar { width: 100%; height: 100%; background: var(--accent); transform-origin: left; }
         @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
@@ -69,15 +66,14 @@
         /* --- APP LAYOUT --- */
         .sidebar { width: 250px; background: rgba(10,10,15,0.8); border-right: 1px solid rgba(255,255,255,0.08); padding: 20px; display: flex; flex-direction: column; position: fixed; left: 0; top: 0; height: 100vh; }
         .sidebar .nav-btn { width: 100%; padding: 12px; margin: 5px 0; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); cursor: pointer; border-radius: 6px; text-align: left; transition: 0.3s; font-family: 'JetBrains Mono'; font-size: 12px; }
-        .sidebar .nav-btn:hover { color: var(--accent); border-color: var(--accent); }
-        .sidebar .nav-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(0,255,136,0.1); }
+        .sidebar .nav-btn:hover, .sidebar .nav-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(0,255,136,0.1); }
 
         .main-view { margin-left: 250px; flex: 1; overflow-y: auto; padding: 30px; height: 100vh; display: flex; flex-direction: column; }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- GENERIC STYLES --- */
+        /* --- STYLES --- */
         .card { background: rgba(10,10,15,0.9); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.04); margin-bottom: 20px; }
         .cyber-table { width:100%; border-collapse: collapse; }
         .cyber-table th { padding: 12px; color: var(--accent); text-align:left; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -86,7 +82,7 @@
         .btn { padding: 8px 12px; border:1px solid var(--accent); background:transparent; color:var(--accent); border-radius:6px; cursor:pointer; font-family: 'JetBrains Mono'; font-size: 11px; transition: 0.2s; }
         .btn:hover { background:var(--accent); color:#000; box-shadow: 0 0 10px var(--accent); }
         .btn-danger { border-color: var(--danger); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: #000; box-shadow: 0 0 10px var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #000; }
         
         .cyber-input { background: #111; border: 1px solid rgba(255,255,255,0.1); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 12px; width: 100%; margin-bottom: 10px; }
         .cyber-input:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(0,255,136,0.3); }
@@ -109,10 +105,7 @@
 <div class="sys-broadcast" id="sysBroadcast">
     <div class="sb-content">
         <div class="sb-icon"><i class="fas fa-megaphone"></i></div>
-        <div class="sb-text">
-            <h4>SYSTEM</h4>
-            <p id="sbMessage"></p>
-        </div>
+        <div class="sb-text"><h4>SYSTEM</h4><p id="sbMessage"></p></div>
     </div>
     <button class="sb-close" onclick="closeBroadcast()">✕</button>
     <div class="sb-progress"><div class="sb-bar" id="sbBar"></div></div>
@@ -128,11 +121,17 @@
 
         <div style="display:flex; flex-direction: column; align-items:center; justify-content:center; margin-bottom: 20px;">
             <small style="color: #666; font-family: 'JetBrains Mono'; margin-bottom: 5px;">SECURITY CODE:</small>
-            <div id="capFallback" style="color: #00ff88; font-family: 'JetBrains Mono'; letter-spacing: 5px; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,136,0.5);">-----</div>
+            <div id="capFallback" style="color: #00ff88; font-family: 'JetBrains Mono'; letter-spacing: 5px; font-size: 24px; font-weight: bold;">-----</div>
             <button class="btn" style="margin-top: 10px;" onclick="generateCaptcha()"><i class="fas fa-sync"></i> REGENERATE</button>
         </div>
 
-        <input type="text" id="capInput" placeholder="ENTER CODE ABOVE" class="cyber-input" style="text-align:center; font-size: 16px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">
+        <input type="text" id="capInput" 
+               placeholder="ENTER CODE ABOVE" 
+               class="cyber-input" 
+               style="text-align:center; font-size: 16px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;"
+               onpaste="return false;" 
+               ondrop="return false;" 
+               autocomplete="off">
         
         <button class="btn" style="width:100%; padding:14px; font-size: 14px; font-weight: bold; background: rgba(0,255,136,0.1);" onclick="verifyAccess()">ACCESS PANEL</button>
     </div>
@@ -170,10 +169,6 @@
                 <button class="btn btn-danger" onclick="clearBC()">CLEAR</button>
                 <button class="btn" style="margin-left:auto" onclick="toggleMT()">MAINTENANCE MODE</button>
             </div>
-
-            <h3 style="color: var(--accent); margin-bottom:10px;">FAST MESSAGE (15s DELETE)</h3>
-            <input id="tbInput" class="cyber-input" placeholder="Pesan cepat (auto hilang dalam 15 detik)">
-            <button class="btn" onclick="sendTransientBroadcast()">SEND FAST MESSAGE</button>
         </div>
         
         <div class="card">
@@ -196,7 +191,9 @@
                     <thead>
                         <tr><th>USER INFO</th><th>ROLE TAG</th><th>FOLLOWERS</th><th>COOLDOWN</th><th>ACTION</th></tr>
                     </thead>
-                    <tbody id="userList"></tbody>
+                    <tbody id="userList">
+                        <tr><td colspan="5" style="text-align:center; color:#666;">LOADING DATABASE... OR NO DATA FOUND.</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -218,9 +215,7 @@
         <div class="card">
             <input type="text" class="cyber-input" placeholder="Search songs..." onkeyup="searchTable('songTable', this.value)">
             <table class="cyber-table" id="songTable">
-                <thead>
-                    <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTION</th></tr>
-                </thead>
+                <thead><tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTION</th></tr></thead>
                 <tbody id="songList"></tbody>
             </table>
         </div>
@@ -250,69 +245,37 @@
     let mtState = false;
     let broadcastTimeout;
 
-    // --- CAPTCHA SYSTEM (FIXED) ---
+    // --- CAPTCHA SYSTEM ---
     function generateCaptcha() {
         const c = document.getElementById('capCanvas');
         if(!c) return;
-        
-        // Setup Canvas Resolution
-        c.width = 320; 
-        c.height = 90;
+        c.width = 320; c.height = 90;
         const ctx = c.getContext('2d');
 
-        // 1. GENERATE CODE: Pastikan 5 karakter selalu
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         secretCode = "";
         for (let i = 0; i < 5; i++) {
             secretCode += chars.charAt(Math.floor(Math.random() * chars.length));
         }
 
-        // 2. BACKGROUND: Pakai warna solid gelap agar kontras tinggi
-        ctx.fillStyle = "#021a15"; 
-        ctx.fillRect(0, 0, c.width, c.height);
-
-        // 3. NOISE: Tambah sedikit bintik agar terlihat "cyber" tapi tidak mengganggu
-        for(let i=0; i<30; i++){
-            ctx.fillStyle = Math.random() > 0.5 ? '#00ff88' : '#fff';
-            ctx.globalAlpha = 0.2;
-            ctx.fillRect(Math.random()*c.width, Math.random()*c.height, 2, 2);
-        }
-        ctx.globalAlpha = 1.0; // Reset alpha
-
-        // 4. GRID LINES: Garis tipis di belakang
-        ctx.strokeStyle = "rgba(0, 255, 136, 0.2)";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for(let x=0; x<c.width; x+=30) { ctx.moveTo(x,0); ctx.lineTo(x,c.height); }
-        ctx.stroke();
-
-        // 5. DRAW TEXT: Bagian paling penting
-        ctx.font = 'bold 48px Courier New'; // Font monospace standar
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.fillStyle = "#021a15"; ctx.fillRect(0, 0, c.width, c.height);
         
-        const centerX = c.width / 2;
-        const centerY = c.height / 2;
-
-        // Shadow/Glow effect (Tipis saja supaya tidak blur)
-        ctx.shadowColor = "#00ff88";
-        ctx.shadowBlur = 15;
+        // Grid & Noise
+        ctx.strokeStyle = "rgba(0, 255, 136, 0.2)"; ctx.lineWidth = 1; ctx.beginPath();
+        for(let x=0; x<c.width; x+=30) { ctx.moveTo(x,0); ctx.lineTo(x,c.height); } ctx.stroke();
         
-        // Text Color (Solid Bright Green)
+        ctx.font = 'bold 48px Courier New'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        
+        ctx.shadowColor = "#00ff88"; ctx.shadowBlur = 15;
         ctx.fillStyle = "#00ff88";
-        ctx.fillText(secretCode, centerX, centerY);
+        ctx.fillText(secretCode, c.width/2, c.height/2);
 
-        // Reset shadow untuk outline agar tajam
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = "#003322";
-        ctx.lineWidth = 2;
-        ctx.strokeText(secretCode, centerX, centerY);
+        ctx.shadowBlur = 0; ctx.strokeStyle = "#003322"; ctx.lineWidth = 2;
+        ctx.strokeText(secretCode, c.width/2, c.height/2);
 
-        // 6. UPDATE FALLBACK: Jika canvas gagal, user tetap bisa baca teks di div bawahnya
         const fb = document.getElementById('capFallback');
         if(fb) fb.innerText = secretCode;
-
-        console.log("Captcha Generated: " + secretCode); // Debug di console
+        console.log("Code: " + secretCode);
     }
 
     function verifyAccess() {
@@ -320,42 +283,32 @@
         if(input === secretCode) {
             document.body.classList.remove('locked');
             document.getElementById('lockScreen').style.display = 'none';
-            // Start App Logic
             initApp();
-            Swal.fire({
-                title: 'ACCESS GRANTED',
-                text: 'Welcome back, Administrator.',
-                icon: 'success',
-                background: '#000',
-                color: '#00ff88',
-                timer: 1500,
-                showConfirmButton: false
-            });
+            Swal.fire({ title: 'ACCESS GRANTED', text: 'Welcome back, Hexky.', icon: 'success', background: '#000', color: '#00ff88', timer: 1500, showConfirmButton: false });
         } else {
-            Swal.fire({
-                title: 'ACCESS DENIED',
-                text: 'Invalid Security Code!',
-                icon: 'error',
-                background: '#000',
-                color: '#ff3333'
-            });
+            Swal.fire({ title: 'ACCESS DENIED', text: 'Invalid Security Code!', icon: 'error', background: '#000', color: '#ff3333' });
             generateCaptcha();
             document.getElementById('capInput').value = '';
         }
     }
 
-    // --- APP LOGIC ---
+    // --- APP LOGIC (FIXED USER LOADING) ---
     function initApp() {
         // Sync Users
         db.ref('users').on('value', snap => {
             const list = document.getElementById('userList');
+            if(!snap.exists()) {
+                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:#ff3333;'>DATA NOT FOUND (CHECK DATABASE RULES OR EMPTY DATA)</td></tr>";
+                document.getElementById('count-u').innerText = "0";
+                return;
+            }
+
             let html = ''; let count = 0;
             snap.forEach(child => {
                 const u = child.val(); const uid = child.key; count++;
                 const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
                 const folCount = Array.isArray(u?.followers) ? u.followers.length : (u?.followers || 0);
                 
-                // Cooldown logic
                 const lastUpload = u?.lastUpload || 0;
                 let cdText = 'READY';
                 if(lastUpload) {
@@ -364,20 +317,18 @@
                 }
 
                 html += `<tr>
-                    <td>
-                        <b style="color:#fff">${u.username || 'Unknown'}</b><br>
-                        <span style="font-size:10px; color:#666">${uid}</span>
-                    </td>
+                    <td><b style="color:#fff">${u.username || 'Unknown'}</b><br><span style="font-size:10px; color:#666">${uid}</span></td>
                     <td><button class="btn" onclick="changeTag('${uid}')"><span class="badge-tag ${tagClass}">${u.tag || 'USER'}</span></button></td>
                     <td><button class="btn" onclick="openManageFollowers('${uid}')">${folCount} Followers</button></td>
                     <td><button class="btn" onclick="resetCD('${uid}')">${cdText}</button></td>
-                    <td>
-                        <button class="btn btn-danger" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button>
-                    </td>
+                    <td><button class="btn btn-danger" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button></td>
                 </tr>`;
             });
             list.innerHTML = html;
             document.getElementById('count-u').innerText = count;
+        }, (error) => {
+            console.error(error);
+            Swal.fire('Database Error', 'Gagal mengambil data user: ' + error.message, 'error');
         });
 
         // Sync Songs
@@ -387,9 +338,7 @@
             snap.forEach(child => {
                 const s = child.val(); count++;
                 html += `<tr>
-                    <td>${s.title}</td>
-                    <td>${s.artist}</td>
-                    <td>${s.uid || 'SYSTEM'}</td>
+                    <td>${s.title}</td><td>${s.artist}</td><td>${s.uid || 'SYSTEM'}</td>
                     <td><button class="btn btn-danger" onclick="delSong('${child.key}')"><i class="fas fa-trash"></i> DELETE</button></td>
                 </tr>`;
             });
@@ -400,169 +349,68 @@
         // Sync Logs
         db.ref('logs').limitToLast(50).on('value', snap => {
             let h = '';
-            snap.forEach(c => {
-                const l = c.val();
-                h += `<div style="margin-bottom:4px; border-bottom:1px solid #111; padding-bottom:2px;">
-                        <span style="color:#666">[${l.time}]</span> ${l.msg}
-                      </div>`;
-            });
-            const box = document.getElementById('logTerminal');
-            if(box) { box.innerHTML = h; box.scrollTop = box.scrollHeight; }
+            snap.forEach(c => { const l = c.val(); h += `<div style="margin-bottom:4px; border-bottom:1px solid #111; padding-bottom:2px;"><span style="color:#666">[${l.time}]</span> ${l.msg}</div>`; });
+            const box = document.getElementById('logTerminal'); if(box) { box.innerHTML = h; box.scrollTop = box.scrollHeight; }
         });
 
-        // Listen for Maintenance & Disco
         db.ref('settings').on('value', s => {
-            const val = s.val() || {};
-            mtState = val.mt || false;
+            const val = s.val() || {}; mtState = val.mt || false;
             const mtEl = document.getElementById('mt-text');
-            if(mtEl) {
-                mtEl.innerText = mtState ? "MAINTENANCE ACTIVE" : "SYSTEM ONLINE";
-                mtEl.style.color = mtState ? "var(--danger)" : "var(--success)";
-            }
+            if(mtEl) { mtEl.innerText = mtState ? "MAINTENANCE ACTIVE" : "SYSTEM ONLINE"; mtEl.style.color = mtState ? "var(--danger)" : "var(--success)"; }
             if(val.discoMode) applyDiscoMode(val.discoColor);
         });
     }
 
     // --- ACTIONS ---
-    function addLog(msg) { 
-        const time = new Date().toLocaleTimeString(); 
-        db.ref('logs').push({msg, time}); 
-    }
+    function addLog(msg) { db.ref('logs').push({msg, time: new Date().toLocaleTimeString()}); }
 
     function manualAddSong() {
         const title = document.getElementById('addTitle').value;
         const artist = document.getElementById('addArtist').value;
         const url = document.getElementById('addUrl').value;
         const cover = document.getElementById('addCover').value;
-
         if(!title || !url) return Swal.fire('Error', 'Title & URL wajib diisi!', 'error');
 
-        db.ref('songs').push({
-            title, artist, url, cover,
-            uid: "ADMIN_CONSOLE",
-            by: "ADMIN",
-            uploadedAt: Date.now()
-        });
-        addLog(`Admin uploaded song: ${title}`);
-        Swal.fire('Success', 'Lagu berhasil ditambahkan', 'success');
-        
-        // Clear inputs
-        document.getElementById('addTitle').value = "";
-        document.getElementById('addUrl').value = "";
+        db.ref('songs').push({ title, artist, url, cover, uid: "ADMIN_CONSOLE", by: "ADMIN", uploadedAt: Date.now() });
+        addLog(`Admin uploaded song: ${title}`); Swal.fire('Success', 'Lagu berhasil ditambahkan', 'success');
+        document.getElementById('addTitle').value = ""; document.getElementById('addUrl').value = "";
     }
 
     function delSong(id) {
-        Swal.fire({
-            title: 'Hapus Lagu?',
-            text: "Lagu ini akan hilang permanen!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ff3333',
-            confirmButtonText: 'Ya, Hapus!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                db.ref('songs/'+id).remove();
-                addLog(`Deleted song ID: ${id}`);
-                Swal.fire('Deleted!', 'Lagu dihapus.', 'success');
-            }
-        })
+        Swal.fire({ title: 'Hapus Lagu?', text: "Permanen!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ff3333', confirmButtonText: 'Hapus!' })
+        .then((r) => { if (r.isConfirmed) { db.ref('songs/'+id).remove(); addLog(`Deleted song ID: ${id}`); Swal.fire('Deleted!', 'Lagu dihapus.', 'success'); }})
     }
 
-    function toggleBan(uid, status) {
-        db.ref('users/'+uid).update({banned: !status});
-        addLog(`${status ? 'Unbanned' : 'Banned'} User: ${uid}`);
-    }
+    function toggleBan(uid, status) { db.ref('users/'+uid).update({banned: !status}); addLog(`${status ? 'Unbanned' : 'Banned'} User: ${uid}`); }
 
     function changeTag(uid) {
-        Swal.fire({
-            title: 'Change User Tag',
-            input: 'select',
-            inputOptions: { 'user':'User', 'vvip':'VVIP', 'sepuh':'Sepuh', 'admin':'Admin', 'owner':'Owner' },
-            background: '#121212', color: '#fff'
-        }).then(r => {
-            if(r.value) {
-                db.ref('users/'+uid).update({tag: r.value});
-                addLog(`Changed tag for ${uid} to ${r.value}`);
-            }
-        });
+        Swal.fire({ title: 'Change User Tag', input: 'select', inputOptions: { 'user':'User', 'vvip':'VVIP', 'sepuh':'Sepuh', 'admin':'Admin', 'owner':'Owner' }, background: '#121212', color: '#fff' })
+        .then(r => { if(r.value) { db.ref('users/'+uid).update({tag: r.value}); addLog(`Changed tag for ${uid} to ${r.value}`); }});
     }
 
-    function resetCD(uid) {
-        db.ref('users/'+uid+'/lastUpload').remove();
-        addLog(`Reset Cooldown for ${uid}`);
-        Swal.fire('Done', 'Cooldown reset!', 'success');
-    }
+    function resetCD(uid) { db.ref('users/'+uid+'/lastUpload').remove(); addLog(`Reset Cooldown for ${uid}`); Swal.fire('Done', 'Cooldown reset!', 'success'); }
 
-    // Broadcasts
     function sendBC() {
         const v = document.getElementById('bcInput').value;
-        if(v) {
-            db.ref('settings').update({announcement: v});
-            addLog(`Global Announcement: ${v}`);
-            Swal.fire('Sent', 'Pengumuman dikirim', 'success');
-        }
+        if(v) { db.ref('settings').update({announcement: v}); addLog(`Global Announcement: ${v}`); Swal.fire('Sent', 'Pengumuman dikirim', 'success'); }
     }
     function clearBC() { db.ref('settings/announcement').remove(); }
     
-    function sendTransientBroadcast() {
-        const v = document.getElementById('tbInput').value;
-        if(v) {
-            db.ref('settings/broadcast').set({ text: v, ts: Date.now() });
-            addLog(`Fast Msg: ${v}`);
-            triggerBroadcast(v);
-        }
-    }
-    
-    function toggleMT() {
-        db.ref('settings').update({mt: !mtState});
-        addLog(`Toggled Maintenance to ${!mtState}`);
-    }
+    function toggleMT() { db.ref('settings').update({mt: !mtState}); addLog(`Toggled Maintenance to ${!mtState}`); }
 
-    // Broadcast UI Display
-    function triggerBroadcast(msg) {
-        const el = document.getElementById('sysBroadcast');
-        const bar = document.getElementById('sbBar');
-        if(!el) return;
-        
-        document.getElementById('sbMessage').innerText = msg;
-        el.classList.add('active');
-        bar.style.animation = 'none';
-        void bar.offsetWidth; // trigger reflow
-        bar.style.animation = 'countDown 15s linear forwards';
-        
-        clearTimeout(broadcastTimeout);
-        broadcastTimeout = setTimeout(() => {
-            el.classList.remove('active');
-        }, 15000);
-    }
-    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
-
-    // Disco Modes
     function setDiscoMode(color) {
-        if(color === 'rainbow') {
-            db.ref('settings').update({discoMode: true, discoColor: 'rainbow'});
-        } else {
-            db.ref('settings').update({discoMode: true, discoColor: color});
-        }
+        if(color === 'rainbow') db.ref('settings').update({discoMode: true, discoColor: 'rainbow'});
+        else db.ref('settings').update({discoMode: true, discoColor: color});
     }
-    function stopDisco() {
-        db.ref('settings').update({discoMode: false});
-        document.documentElement.style.setProperty('--accent', '#00ff88');
-    }
+    function stopDisco() { db.ref('settings').update({discoMode: false}); document.documentElement.style.setProperty('--accent', '#00ff88'); }
     function applyDiscoMode(color) {
         if(!color) return;
         if(color === 'rainbow') {
-            // Simple random color implementation for rainbow effect
             document.documentElement.style.setProperty('--accent', `hsl(${Math.random()*360}, 100%, 50%)`);
-            setTimeout(() => {
-                if(mtState || color === 'rainbow') applyDiscoMode('rainbow');
-            }, 500);
-        } else {
-            document.documentElement.style.setProperty('--accent', color);
-        }
+            setTimeout(() => { if(mtState || color === 'rainbow') applyDiscoMode('rainbow'); }, 500);
+        } else { document.documentElement.style.setProperty('--accent', color); }
     }
 
-    // Navigation
     function switchView(id) {
         document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -570,55 +418,28 @@
         event.currentTarget.classList.add('active');
     }
 
-    function searchTable(tableId, query) {
-        const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-        rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
-            row.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
-        });
+    function searchTable(tId, q) {
+        document.querySelectorAll(`#${tId} tbody tr`).forEach(r => r.style.display = r.innerText.toLowerCase().includes(q.toLowerCase()) ? '' : 'none');
     }
 
-    // Manage Followers (Fake)
     function openManageFollowers(uid) {
-        Swal.fire({
-            title: 'Manage Followers',
-            html: `
-                <button class='btn' onclick="injectFake('${uid}', 10)">+10 Fake</button>
-                <button class='btn' onclick="injectFake('${uid}', 100)">+100 Fake</button>
-                <button class='btn btn-danger' onclick="clearFake('${uid}')">Clear Fakes</button>
-            `,
-            background: '#121212', color: '#fff', showConfirmButton: false
-        });
+        Swal.fire({ title: 'Manage Followers', html: `<button class='btn' onclick="injectFake('${uid}', 10)">+10 Fake</button> <button class='btn' onclick="injectFake('${uid}', 100)">+100 Fake</button> <button class='btn btn-danger' onclick="clearFake('${uid}')">Clear Fakes</button>`, background: '#121212', color: '#fff', showConfirmButton: false });
     }
-    
-    // Global scope helpers for SweetAlert access
-    window.injectFake = (uid, amount) => {
+    window.injectFake = (uid, amt) => {
         db.ref('users/'+uid).once('value').then(s => {
-            let u = s.val();
-            let followers = u.followers || [];
-            for(let i=0; i<amount; i++) followers.push("User_"+Math.floor(Math.random()*999999));
-            db.ref('users/'+uid).update({followers});
-            Swal.fire('Added', `${amount} followers added`, 'success');
+            let u = s.val(); let followers = u.followers || [];
+            for(let i=0; i<amt; i++) followers.push("User_"+Math.floor(Math.random()*999999));
+            db.ref('users/'+uid).update({followers}); Swal.fire('Added', `${amt} followers`, 'success');
         });
     };
     window.clearFake = (uid) => {
         db.ref('users/'+uid).once('value').then(s => {
-            let u = s.val();
-            let followers = (u.followers || []).filter(f => !f.toString().startsWith("User_"));
-            db.ref('users/'+uid).update({followers});
-            Swal.fire('Cleared', `Fake followers removed`, 'success');
+            let u = s.val(); let followers = (u.followers || []).filter(f => !f.toString().startsWith("User_"));
+            db.ref('users/'+uid).update({followers}); Swal.fire('Cleared', `Fake removed`, 'success');
         });
     };
 
-    // --- INITIALIZATION ---
-    window.onload = function() {
-        // Generate Captcha immediately
-        setTimeout(generateCaptcha, 100);
-        
-        // Prevent right click (Security feature)
-        document.addEventListener('contextmenu', event => event.preventDefault());
-    };
-
+    window.onload = function() { setTimeout(generateCaptcha, 100); document.addEventListener('contextmenu', event => event.preventDefault()); };
 </script>
 </body>
 </html>
