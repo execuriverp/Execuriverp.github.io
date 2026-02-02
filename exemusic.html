@@ -154,12 +154,149 @@
     .header img { width: 110px; cursor: pointer; transition: 0.3s; }
     .header img:active { transform: scale(0.9); }
     
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    
+    #btnNotif {
+      position: relative;
+      width: 42px; height: 42px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: 0.2s;
+    }
+    #btnNotif:hover { background: var(--accent); color: black; border-color: var(--accent); }
+    #btnNotif:active { transform: scale(0.95); }
+    #btnNotif .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      min-width: 18px;
+      height: 18px;
+      background: var(--danger);
+      border-radius: 9px;
+      font-size: 10px;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    #btnNotif .notif-badge.show { display: flex; }
+    
     #topLoginBtn { 
       background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); 
       color: white; padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer;
       font-weight: 600; transition: 0.2s;
     }
     #topLoginBtn:hover { background: var(--accent); color: black; border-color: var(--accent); }
+
+    /* Notif/Chat panel - TikTok/ML style */
+    .notif-panel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: calc(100vw - 40px);
+      max-width: 360px;
+      max-height: 70vh;
+      background: rgba(24, 24, 24, 0.98);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+      z-index: 2500;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      animation: notifPanelIn 0.25s ease;
+    }
+    .notif-panel.show { display: flex; }
+    @keyframes notifPanelIn {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .notif-panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .notif-panel-header h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notif-panel-close {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .notif-panel-close:hover { color: white; }
+    .notif-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 8px 0;
+      min-height: 120px;
+      max-height: 60vh;
+    }
+    .notif-list::-webkit-scrollbar { width: 6px; }
+    .notif-list::-webkit-scrollbar-track { background: #111; border-radius: 10px; }
+    .notif-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+    .notif-item {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: background 0.2s;
+      cursor: default;
+    }
+    .notif-item:hover { background: rgba(255,255,255,0.04); }
+    .notif-item-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .notif-item-icon.admin { background: rgba(255,51,51,0.2); color: #ff6b6b; }
+    .notif-item-icon.violation { background: rgba(255,204,0,0.2); color: var(--warning); }
+    .notif-item-icon.upload { background: rgba(0,255,136,0.15); color: var(--accent); }
+    .notif-item-icon.follow { background: rgba(255,0,80,0.15); color: var(--tiktok-red); }
+    .notif-item-icon.system { background: rgba(0,212,255,0.15); color: #00d4ff; }
+    .notif-item-body { flex: 1; min-width: 0; }
+    .notif-item-body .n-text { font-size: 13px; color: #ddd; line-height: 1.4; }
+    .notif-item-body .n-time { font-size: 11px; color: #666; margin-top: 4px; }
+    .notif-empty {
+      padding: 30px 20px;
+      text-align: center;
+      color: #555;
+      font-size: 13px;
+    }
+    @media (max-width: 480px) {
+      .notif-panel {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+      }
+    }
 
     .cover-box {
       flex: 1; width: 100%; border-radius: 25px;
@@ -604,7 +741,23 @@
   <div class="app">
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
-        <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
+        <div class="header-right">
+          <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
+            <i class="fas fa-bell"></i>
+            <span id="notifBadge" class="notif-badge"></span>
+          </button>
+          <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
+        </div>
+    </div>
+
+    <div id="notifPanel" class="notif-panel">
+      <div class="notif-panel-header">
+        <h3><i class="fas fa-comment-dots"></i> Notifikasi</h3>
+        <button class="notif-panel-close" onclick="closeNotifPanel()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="notifList" class="notif-list">
+        <div class="notif-empty">Memuat...</div>
+      </div>
     </div>
 
     <div class="cover-box">
@@ -881,6 +1034,8 @@
     let lastDiscoUser = null;
     let iceModeActive = false;
     let snowflakeInterval = null;
+    let notifList = [];
+    const lastReadNotifTimeKey = 'exeNotifRead';
 
     // Tambahan tag keren dan lucu
     function getTagHTML(tag) {
@@ -922,6 +1077,85 @@
             applyDiscoMode(discoColor);
         }
     });
+
+    // NOTIFICATIONS: global + per-user
+    function loadNotifs() {
+      db.ref('notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
+        const val = snap.val();
+        const list = [];
+        if (val) Object.keys(val).forEach(k => list.push({ ...val[k], id: 'g_' + k }));
+        mergeAndRenderNotifs(list, 'global');
+      });
+      auth.onAuthStateChanged(u => {
+        if (!u) { mergeAndRenderNotifs([], 'user'); return; }
+        db.ref('users/' + u.uid + '/notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
+          const val = snap.val();
+          const list = [];
+          if (val) Object.keys(val).forEach(k => list.push({ ...val[k], id: 'u_' + k }));
+          mergeAndRenderNotifs(list, 'user');
+        });
+      });
+    }
+    let _globalNotifs = [];
+    let _userNotifs = [];
+    function mergeAndRenderNotifs(list, source) {
+      if (source === 'global') _globalNotifs = list;
+      else _userNotifs = list;
+      notifList = [..._globalNotifs, ..._userNotifs].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      renderNotifList();
+      updateNotifBadge();
+    }
+    function timeAgo(ts) {
+      if (!ts) return '';
+      const s = Math.floor((Date.now() - ts) / 1000);
+      if (s < 60) return 'Baru saja';
+      if (s < 3600) return Math.floor(s / 60) + ' menit lalu';
+      if (s < 86400) return Math.floor(s / 3600) + ' jam lalu';
+      if (s < 604800) return Math.floor(s / 86400) + ' hari lalu';
+      return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    }
+    function renderNotifList() {
+      const el = document.getElementById('notifList');
+      if (!el) return;
+      if (!notifList.length) {
+        el.innerHTML = '<div class="notif-empty">Belum ada notifikasi</div>';
+        return;
+      }
+      const typeIcon = { admin: 'fa-shield-alt', violation: 'fa-exclamation-triangle', upload: 'fa-music', follow: 'fa-user-plus', system: 'fa-info-circle' };
+      el.innerHTML = notifList.map(n => {
+        const type = (n.type || 'system');
+        const icon = typeIcon[type] || 'fa-bell';
+        return '<div class="notif-item"><div class="notif-item-icon ' + type + '"><i class="fas ' + icon + '"></i></div><div class="notif-item-body"><div class="n-text">' + escapeHtml(n.text || n.message || '') + '</div><div class="n-time">' + timeAgo(n.timestamp) + '</div></div></div>';
+      }).join('');
+    }
+    function updateNotifBadge() {
+      const lastRead = parseInt(localStorage.getItem(lastReadNotifTimeKey) || '0', 10);
+      const count = notifList.filter(n => (n.timestamp || 0) > lastRead).length;
+      const badge = document.getElementById('notifBadge');
+      if (badge) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.classList.toggle('show', count > 0);
+      }
+    }
+    function toggleNotifPanel() {
+      const panel = document.getElementById('notifPanel');
+      if (panel.classList.toggle('show')) {
+        localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
+        updateNotifBadge();
+      }
+    }
+    function closeNotifPanel() {
+      document.getElementById('notifPanel').classList.remove('show');
+      localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
+      updateNotifBadge();
+    }
+    document.addEventListener('click', function(e) {
+      const panel = document.getElementById('notifPanel');
+      const btn = document.getElementById('btnNotif');
+      if (panel && panel.classList.contains('show') && !panel.contains(e.target) && btn && !btn.contains(e.target))
+        closeNotifPanel();
+    });
+    loadNotifs();
 
     function triggerBroadcast(msg) {
         const el = document.getElementById('sysBroadcast');
@@ -1318,6 +1552,12 @@
         
         db.ref('songs').push(newSong).then(() => {
             db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
+            db.ref('notifications').push({
+              type: 'upload',
+              text: userData.username + ' mengupload: ' + t,
+              fromName: userData.username,
+              timestamp: Date.now()
+            });
             msg("Berhasil diposting!");
             closeModal();
             document.getElementById('rLagu').value = "";
@@ -1394,6 +1634,13 @@
           
           await targetRef.update({ followers: newFollowers });
           await currentRef.update({ following: newFollowing });
+          db.ref('users/' + targetUid + '/notifications').push({
+            type: 'follow',
+            text: userData.username + ' mulai mengikuti kamu',
+            fromName: userData.username,
+            fromUid: auth.currentUser.uid,
+            timestamp: Date.now()
+          });
           msg("Followed! ✅");
         }
         // Update button state immediately
@@ -1515,6 +1762,13 @@
           
           await creatorRef.update({ followers: newFollowers });
           await currentRef.update({ following: newFollowing });
+          db.ref('users/' + creatorUid + '/notifications').push({
+            type: 'follow',
+            text: userData.username + ' mulai mengikuti kamu',
+            fromName: userData.username,
+            fromUid: auth.currentUser.uid,
+            timestamp: Date.now()
+          });
           msg("Followed! ✅");
         }
         // Update button
