@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
@@ -22,9 +23,8 @@
             --glass: rgba(255, 255, 255, 0.05);
             --danger: #ff3333;
             --warning: #ffcc00;
-            --tiktok-red: #ff0050;
-            --gold: #ffd700;
-            --purple: #bf00ff;
+            --success: #00ff88;
+            --border: rgba(255,255,255,0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -39,140 +39,36 @@
             display: flex;
         }
 
-        body.locked { background: #000; }
-        body.locked .sys-broadcast { display: none !important; }
-        body.locked .sidebar { display: none !important; }
+        /* Lock Screen Mode */
+        body.locked .sys-broadcast, 
+        body.locked .sidebar, 
         body.locked .main-view { display: none !important; }
+        
         body.locked #lockScreen { display: flex !important; }
 
-        /* --- ROBLOX STYLE BROADCAST SYSTEM --- */
+        /* --- UI COMPONENTS --- */
         .sys-broadcast {
-                position: fixed;
-                top: -150px; 
-                left: 50%;
-                transform: translateX(-50%);
-                width: 90%;
-                max-width: 400px;
-                background: rgba(15, 15, 15, 0.95);
-                border-left: 4px solid var(--accent);
-                border-radius: 6px;
-                padding: 15px;
-                z-index: 12000;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-                display: flex;
-                flex-direction: column;
-                transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+                width: 90%; max-width: 400px; background: rgba(15, 15, 15, 0.95);
+                border-left: 4px solid var(--accent); border-radius: 6px; padding: 15px;
+                z-index: 12000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+                display: flex; flex-direction: column; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 backdrop-filter: blur(10px);
         }
         .sys-broadcast.active { top: 20px; }
-    
         .sb-content { display: flex; align-items: flex-start; gap: 12px; }
         .sb-icon { font-size: 20px; color: var(--accent); margin-top: 2px; }
         .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
-    
-        .sb-close {
-                position: absolute; top: 10px; right: 10px;
-                background: transparent; border: none; color: #666;
-                cursor: pointer; font-size: 16px; padding: 5px;
-        }
+        .sb-close { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; font-size: 16px; padding: 5px; }
         .sb-close:hover { color: white; }
-
-        .sb-progress {
-                width: 100%; height: 3px; background: #333;
-                margin-top: 12px; border-radius: 2px; overflow: hidden;
-        }
-        .sb-bar {
-                width: 100%; height: 100%; background: var(--accent);
-                transform-origin: left;
-        }
+        .sb-progress { width: 100%; height: 3px; background: #333; margin-top: 12px; border-radius: 2px; overflow: hidden; }
+        .sb-bar { width: 100%; height: 100%; background: var(--accent); transform-origin: left; }
         @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-        @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
-        @keyframes disco-heartbeat { 
-            0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-            20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent)80; } 
-            40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-            60% { transform: scale(1.03); box-shadow: 0 30px 70px var(--accent); } 
-            100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-        }
-        @keyframes rainbow-glow { 
-            0% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
-            16% { border-color: #ff7f00; box-shadow: inset 0 0 20px #ff7f00, 0 20px 50px #ff7f0080; } 
-            33% { border-color: #ffff00; box-shadow: inset 0 0 20px #ffff00, 0 20px 50px #ffff0080; } 
-            50% { border-color: #00ff00; box-shadow: inset 0 0 20px #00ff00, 0 20px 50px #00ff0080; } 
-            66% { border-color: #0000ff; box-shadow: inset 0 0 20px #0000ff, 0 20px 50px #0000ff80; } 
-            83% { border-color: #8b00ff; box-shadow: inset 0 0 20px #8b00ff, 0 20px 50px #8b00ff80; } 
-            100% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
-        }
-        @keyframes snowfall { 
-            0% { transform: translateY(-10px) translateX(0); opacity: 1; } 
-            25% { transform: translateY(25vh) translateX(15px); opacity: 1; }
-            50% { transform: translateY(50vh) translateX(-10px); opacity: 1; }
-            75% { transform: translateY(75vh) translateX(20px); opacity: 1; }
-            100% { transform: translateY(100vh) translateX(0); opacity: 0; } 
-        }
-        .snowflake { 
-            position: fixed; 
-            top: -10px; 
-            color: #00d4ff; 
-            font-size: 1.5em; 
-            font-family: Arial, sans-serif; 
-            text-shadow: 0 0 5px #00d4ff; 
-            z-index: 1;
-            pointer-events: none;
-            animation: snowfall linear forwards;
-        }
 
-        /* --- OVERLAYS --- */
-        .full-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 30px;
-        }
-        .full-overlay i { font-size: 60px; margin-bottom: 20px; }
-        .full-overlay h1 { font-size: 24px; color: var(--accent); }
-        .full-overlay p { color: var(--text-dim); margin-top: 10px; }
-        #bannedScreen h1 { color: var(--danger); }
-
-        #loadingCard {
-            position: absolute; inset: 0; background: var(--bg); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.5s;
-        }
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- MAIN APP --- */
-        .app {
-            background: rgba(18, 18, 18, 0.6);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 35px;
-            width: 95%; max-width: 400px; 
-            height: 95vh;
-            display: flex; flex-direction: column; 
-            padding: 25px; 
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        /* --- Reused admin UI styles (buttons/cards/table) --- */
-        .card { background: rgba(10,10,15,0.9); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.04); }
-        .cyber-table { width:100%; border-collapse: collapse; }
-        .cyber-table th { padding: 12px; color: var(--accent); text-align:left; }
-        .cyber-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: 'JetBrains Mono'; font-size:13px; }
-
-        .btn { padding: 8px 12px; border:1px solid var(--accent); background:transparent; color:var(--accent); border-radius:6px; cursor:pointer }
-        .btn:hover { background:var(--accent); color:#000 }
-        .btn-danger { border-color: var(--danger); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: #000; }
-
-        .cyber-input { background: #111; border: 1px solid rgba(255,255,255,0.1); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 12px; }
-        .cyber-input:focus { border-color: var(--accent); }
-
+        /* --- APP LAYOUT --- */
         .sidebar { width: 250px; background: rgba(10,10,15,0.8); border-right: 1px solid rgba(255,255,255,0.08); padding: 20px; display: flex; flex-direction: column; position: fixed; left: 0; top: 0; height: 100vh; }
-        .sidebar .nav-btn { width: 100%; padding: 12px; margin: 5px 0; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); cursor: pointer; border-radius: 6px; text-align: left; transition: 0.3s; }
+        .sidebar .nav-btn { width: 100%; padding: 12px; margin: 5px 0; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); cursor: pointer; border-radius: 6px; text-align: left; transition: 0.3s; font-family: 'JetBrains Mono'; font-size: 12px; }
         .sidebar .nav-btn:hover { color: var(--accent); border-color: var(--accent); }
         .sidebar .nav-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(0,255,136,0.1); }
 
@@ -181,18 +77,35 @@
         .view-section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* --- GENERIC STYLES --- */
+        .card { background: rgba(10,10,15,0.9); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.04); margin-bottom: 20px; }
+        .cyber-table { width:100%; border-collapse: collapse; }
+        .cyber-table th { padding: 12px; color: var(--accent); text-align:left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .cyber-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: 'JetBrains Mono'; font-size:13px; }
+        
+        .btn { padding: 8px 12px; border:1px solid var(--accent); background:transparent; color:var(--accent); border-radius:6px; cursor:pointer; font-family: 'JetBrains Mono'; font-size: 11px; transition: 0.2s; }
+        .btn:hover { background:var(--accent); color:#000; box-shadow: 0 0 10px var(--accent); }
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #000; box-shadow: 0 0 10px var(--danger); }
+        
+        .cyber-input { background: #111; border: 1px solid rgba(255,255,255,0.1); color: var(--text); padding: 10px 12px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 12px; width: 100%; margin-bottom: 10px; }
+        .cyber-input:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(0,255,136,0.3); }
+
+        /* --- LOCK SCREEN --- */
         #lockScreen { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; flex-direction: column; justify-content: center; align-items: center; width: 100vw; height: 100vh; }
+        
+        .badge-tag { font-size:10px; padding:4px 8px; border-radius:6px; font-weight: bold; }
+        .tag-user { background: #333; color:#fff; }
+        .tag-sepuh { background: #ffcc00; color:#000; }
+        .tag-vvip { background: #bf00ff; color:#fff; }
+        .tag-admin { background: #ff3333; color:#fff; }
+        .tag-owner { background: #00ff88; color:#000; border: 1px solid #fff; }
 
-        .badge-tag { font-size:10px; padding:4px 8px; border-radius:6px }
-        .tag-admin { background: #ff3333; color:#fff }
-
-        /* responsive tweaks */
-        @media (max-width: 600px) { .sidebar { width: 200px } .main-view { margin-left: 200px; padding: 20px } }
+        @media (max-width: 600px) { .sidebar { width: 0; display: none; } .main-view { margin-left: 0; padding: 15px; } }
     </style>
 </head>
 <body class="locked">
 
-<!-- ROBLOX STYLE BROADCAST -->
 <div class="sys-broadcast" id="sysBroadcast">
     <div class="sb-content">
         <div class="sb-icon"><i class="fas fa-megaphone"></i></div>
@@ -202,33 +115,31 @@
         </div>
     </div>
     <button class="sb-close" onclick="closeBroadcast()">✕</button>
-    <div class="sb-progress">
-        <div class="sb-bar" id="sbBar"></div>
-    </div>
+    <div class="sb-progress"><div class="sb-bar" id="sbBar"></div></div>
 </div>
 
 <div id="lockScreen">
-    <div style="width: 420px; text-align: center; border: 3px solid #00ff88; padding: 60px 40px; background: #0a0a0f; border-radius: 12px; box-shadow: 0 0 50px rgba(0,255,136,0.4); z-index: 100000;">
-        <h2 style="color: #00ff88; letter-spacing: 6px; margin-bottom: 35px; font-size: 28px; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,136,0.5);">SECURITY_GATE</h2>
+    <div style="width: 420px; text-align: center; border: 3px solid #00ff88; padding: 40px; background: #0a0a0f; border-radius: 12px; box-shadow: 0 0 50px rgba(0,255,136,0.2); z-index: 100000; position: relative;">
+        <h2 style="color: #00ff88; letter-spacing: 4px; margin-bottom: 20px; font-family: 'Rajdhani'; font-size: 32px;">SECURITY_GATE</h2>
         
-        <canvas id="capCanvas" width="320" height="90" style="margin: 30px auto; display: block; border: 4px solid #00ff88; background: linear-gradient(180deg, #1a4d4d 0%, #0a1515 100%); border-radius: 8px; box-shadow: 0 0 60px rgba(0,255,136,0.7), inset 0 0 20px rgba(0,255,136,0.2); width:320px; height:90px;"></canvas>
-
-        <!-- Visible fallback and regenerate control (helps when canvas rendering fails) -->
-        <div style="display:flex; gap:8px; align-items:center; justify-content:center; margin-top:15px; background:rgba(0,255,136,0.12); padding:12px 15px; border-radius:8px; border:2px solid rgba(0,255,136,0.4);">
-            <div id="capFallback" style="color:#00ff88; font-family: 'JetBrains Mono'; letter-spacing:8px; font-size:24px; opacity:1; font-weight:bold; text-shadow: 0 0 20px rgba(0,255,136,0.9);"></div>
-            <button class="btn" style="padding:6px 10px; height:36px;" onclick="generateCaptcha()">REGENERATE</button>
+        <div style="background: #000; border: 2px solid #333; border-radius: 8px; padding: 5px; margin-bottom: 15px;">
+            <canvas id="capCanvas" width="320" height="90" style="display: block; margin: 0 auto; width: 100%; max-width: 320px; height: 90px;"></canvas>
         </div>
 
-        <input type="text" id="capInput" placeholder="ENTER_ACCESS_CODE" style="text-align:center; width:100%; padding:14px; margin:25px 0; background:#1a1a1a; border:2px solid #00ff88; color:#00ff88; border-radius:6px; font-family: 'JetBrains Mono'; font-size: 14px; font-weight: bold;">
+        <div style="display:flex; flex-direction: column; align-items:center; justify-content:center; margin-bottom: 20px;">
+            <small style="color: #666; font-family: 'JetBrains Mono'; margin-bottom: 5px;">SECURITY CODE:</small>
+            <div id="capFallback" style="color: #00ff88; font-family: 'JetBrains Mono'; letter-spacing: 5px; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,136,0.5);">-----</div>
+            <button class="btn" style="margin-top: 10px;" onclick="generateCaptcha()"><i class="fas fa-sync"></i> REGENERATE</button>
+        </div>
 
-        <button style="width:100%; padding:14px; margin-top:25px; border:2px solid #00ff88; background:transparent; color:#00ff88; border-radius:6px; cursor:pointer; font-weight:bold; font-size: 14px; transition: 0.3s; font-family: 'JetBrains Mono';" onmouseover="this.style.background='#00ff88'; this.style.color='#000'" onmouseout="this.style.background='transparent'; this.style.color='#00ff88'" onclick="verifyAccess()">LOGIN</button>
-
-        <small style="display:block; margin-top:30px; color:#00ff88; opacity:0.6; letter-spacing: 1px;">INPUT THE CODE TO CONTINUE</small>
+        <input type="text" id="capInput" placeholder="ENTER CODE ABOVE" class="cyber-input" style="text-align:center; font-size: 16px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">
+        
+        <button class="btn" style="width:100%; padding:14px; font-size: 14px; font-weight: bold; background: rgba(0,255,136,0.1);" onclick="verifyAccess()">ACCESS PANEL</button>
     </div>
 </div>
 
 <div class="sidebar">
-    <div style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 40px;">
+    <div style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 40px; font-family: 'Rajdhani';">
         <span style="color: var(--accent);">EXE</span>.OVERLORD <small style="font-size: 10px; color: var(--danger);">V5.PRO</small>
     </div>
     
@@ -238,79 +149,77 @@
     <button class="nav-btn" onclick="switchView('logs')"><i class="fas fa-terminal"></i> SYSTEM LOGS</button>
     
     <div style="margin-top: auto;">
-        <button class="btn btn-danger" style="width: 100%;" onclick="location.href='testings.html'">BACK TO APP</button>
+        <button class="btn btn-danger" style="width: 100%;" onclick="location.href='testings.html'">EXIT SYSTEM</button>
     </div>
 </div>
 
 <div class="main-view">
     <div id="view-dash" class="view-section active">
-        <h1>COMMAND_CENTER</h1>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-            <div class="card"><small>ENTITIES</small><div style="font-size: 30px;" id="count-u">0</div></div>
-            <div class="card"><small>AUDIO_FILES</small><div style="font-size: 30px;" id="count-s">0</div></div>
-            <div class="card"><small>MAINTENANCE</small><div id="mt-text" style="font-weight: bold; margin-top:5px">ONLINE</div></div>
+        <h1 style="font-family:'Rajdhani'; color: var(--accent);">COMMAND_CENTER</h1>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
+            <div class="card"><small style="color:#888">TOTAL USERS</small><div style="font-size: 30px; font-family:'Rajdhani'" id="count-u">0</div></div>
+            <div class="card"><small style="color:#888">AUDIO FILES</small><div style="font-size: 30px; font-family:'Rajdhani'" id="count-s">0</div></div>
+            <div class="card"><small style="color:#888">SYSTEM STATUS</small><div id="mt-text" style="font-weight: bold; margin-top:5px; font-family:'JetBrains Mono'">ONLINE</div></div>
         </div>
 
         <div class="card">
-            <h3 style="color: var(--accent);">GLOBAL_ANNOUNCEMENT</h3>
-            <textarea id="bcInput" class="cyber-input" style="height: 80px;" placeholder="Type announcement (persistent)..."></textarea>
-            <div style="display:flex; gap:10px; margin-bottom:12px;">
-                <button class="btn" onclick="sendBC()">SEND_ANNOUNCEMENT</button>
-                <button class="btn btn-danger" onclick="clearBC()">DELETE_ANNOUNCEMENT</button>
-                <button class="btn" style="margin-left:auto" onclick="toggleMT()">TOGGLE_MAINTENANCE</button>
+            <h3 style="color: var(--accent); margin-bottom:10px;">GLOBAL BROADCAST</h3>
+            <textarea id="bcInput" class="cyber-input" style="height: 60px;" placeholder="Isi pengumuman permanen..."></textarea>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn" onclick="sendBC()">SEND</button>
+                <button class="btn btn-danger" onclick="clearBC()">CLEAR</button>
+                <button class="btn" style="margin-left:auto" onclick="toggleMT()">MAINTENANCE MODE</button>
             </div>
 
-            <h3 style="color: var(--accent);">TRANSIENT BROADCAST (AUTO-DELETE 15s)</h3>
-            <input id="tbInput" class="cyber-input" placeholder="Transient broadcast text (auto-clear 15s)">
-            <div style="display:flex; gap:10px; margin-bottom:12px;">
-                <button class="btn" onclick="sendTransientBroadcast()">SEND_TRANSIENT</button>
-                <button class="btn btn-danger" onclick="clearTransientBroadcast()">DELETE_TRANSIENT</button>
-                <div style="margin-left:auto; color:#888; align-self:center; font-size:12px">Auto-clears in 15s</div>
-            </div>
-
-            <h3 style="color: var(--accent);">DISCO MODE</h3>
-            <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-                <button class="btn" onclick="setDiscoMode('#00ff88')">DEFAULT</button>
-                <button class="btn" onclick="setDiscoMode('#00d4ff')">ICE</button>
-                <button class="btn" onclick="setDiscoMode('rainbow')">RAINBOW</button>
-                <input id="discoCustom" class="cyber-input" placeholder="#hex or 'ice' or 'rainbow'" style="width:140px">
-                <button class="btn" onclick="setDiscoMode(document.getElementById('discoCustom').value)">SET</button>
-                <button class="btn btn-danger" onclick="stopDisco()">STOP</button>
+            <h3 style="color: var(--accent); margin-bottom:10px;">FAST MESSAGE (15s DELETE)</h3>
+            <input id="tbInput" class="cyber-input" placeholder="Pesan cepat (auto hilang dalam 15 detik)">
+            <button class="btn" onclick="sendTransientBroadcast()">SEND FAST MESSAGE</button>
+        </div>
+        
+        <div class="card">
+            <h3 style="color: var(--accent); margin-bottom:10px;">VISUAL CONTROL</h3>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn" onclick="setDiscoMode('#00ff88')">DEFAULT GREEN</button>
+                <button class="btn" onclick="setDiscoMode('#00d4ff')">ICE BLUE</button>
+                <button class="btn" onclick="setDiscoMode('rainbow')">RAINBOW MODE</button>
+                <button class="btn btn-danger" onclick="stopDisco()">STOP EFFECTS</button>
             </div>
         </div>
     </div>
 
     <div id="view-users" class="view-section">
-        <h1>USER_OPERATIONS</h1>
+        <h1 style="font-family:'Rajdhani';">USER_OPERATIONS</h1>
         <div class="card">
-            <input type="text" class="cyber-input" placeholder="SEARCH_USER..." onkeyup="searchTable('userTable', this.value)">
-            <table class="cyber-table" id="userTable">
-                <thead>
-                    <tr><th>USER_INFO</th><th>TAG</th><th>FOLLOWERS</th><th>CD_STATUS</th><th>ACTION</th></tr>
-                </thead>
-                <tbody id="userList"></tbody>
-            </table>
+            <input type="text" class="cyber-input" placeholder="Cari user (Username/ID)..." onkeyup="searchTable('userTable', this.value)">
+            <div style="overflow-x:auto;">
+                <table class="cyber-table" id="userTable">
+                    <thead>
+                        <tr><th>USER INFO</th><th>ROLE TAG</th><th>FOLLOWERS</th><th>COOLDOWN</th><th>ACTION</th></tr>
+                    </thead>
+                    <tbody id="userList"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <div id="view-songs" class="view-section">
-        <h1>MUSIC_ARCHIVE</h1>
+        <h1 style="font-family:'Rajdhani';">MUSIC_ARCHIVE</h1>
         <div class="card" style="border-left: 4px solid var(--success);">
-            <h3 style="color: var(--success);">ADD_NEW_INDEX</h3>
+            <h3 style="color: var(--success); margin-bottom:10px;">ADD NEW SONG (MANUAL)</h3>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <input type="text" id="addTitle" class="cyber-input" placeholder="Song Title">
                 <input type="text" id="addArtist" class="cyber-input" placeholder="Artist Name">
                 <input type="text" id="addUrl" class="cyber-input" placeholder="Audio URL (.mp3)">
                 <input type="text" id="addCover" class="cyber-input" placeholder="Cover URL (Image)">
             </div>
-            <button class="btn" style="width: 100%; border-color: var(--success); color: var(--success);" onclick="manualAddSong()">PUSH_TO_DATABASE</button>
+            <button class="btn" style="width: 100%; margin-top:10px; border-color: var(--success); color: var(--success);" onclick="manualAddSong()">UPLOAD TO DATABASE</button>
         </div>
 
         <div class="card">
-            <input type="text" class="cyber-input" placeholder="SEARCH_SONGS..." onkeyup="searchTable('songTable', this.value)">
+            <input type="text" class="cyber-input" placeholder="Search songs..." onkeyup="searchTable('songTable', this.value)">
             <table class="cyber-table" id="songTable">
                 <thead>
-                    <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER_ID</th><th>CONTROL</th></tr>
+                    <tr><th>TITLE</th><th>ARTIST</th><th>UPLOADER</th><th>ACTION</th></tr>
                 </thead>
                 <tbody id="songList"></tbody>
             </table>
@@ -318,9 +227,9 @@
     </div>
 
     <div id="view-logs" class="view-section">
-        <h1>SYSTEM_LOGS</h1>
-        <div id="logTerminal" style="background:#000; height: 500px; overflow-y:auto; padding:20px; border: 1px solid var(--border); font-family:'JetBrains Mono'; font-size:12px; color:var(--success);"></div>
-        <button class="btn btn-danger" style="margin-top:10px" onclick="db.ref('logs').remove()">WIPE_LOGS</button>
+        <h1 style="font-family:'Rajdhani';">SYSTEM_LOGS</h1>
+        <div id="logTerminal" style="background:#050505; height: 500px; overflow-y:auto; padding:20px; border: 1px solid var(--border); font-family:'JetBrains Mono'; font-size:11px; color:var(--success);"></div>
+        <button class="btn btn-danger" style="margin-top:10px" onclick="db.ref('logs').remove()">CLEAR ALL LOGS</button>
     </div>
 </div>
 
@@ -337,115 +246,105 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const auth = firebase.auth();
     let secretCode = "";
     let mtState = false;
     let broadcastTimeout;
 
-    // Reuse helpers from testings.html logic adapted for admin panel
+    // --- CAPTCHA SYSTEM (FIXED) ---
     function generateCaptcha() {
         const c = document.getElementById('capCanvas');
         if(!c) return;
-        // ensure canvas internal size matches displayed size
-        c.width = 320; c.height = 90;
+        
+        // Setup Canvas Resolution
+        c.width = 320; 
+        c.height = 90;
         const ctx = c.getContext('2d');
-        secretCode = Math.random().toString(36).substring(2, 7).toUpperCase();
 
-        // Clear canvas with gradient background
-        ctx.clearRect(0,0,c.width,c.height);
-        const gradient = ctx.createLinearGradient(0, 0, 0, c.height);
-        gradient.addColorStop(0, '#1a4d4d');
-        gradient.addColorStop(0.5, '#0f2a2a');
-        gradient.addColorStop(1, '#0a1515');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0,0,c.width,c.height);
-
-        // subtle noise dots for anti-ocr and visual texture
-        for(let i=0;i<40;i++){
-            ctx.fillStyle = 'rgba(255,255,255,' + (Math.random()*0.06) + ')';
-            ctx.fillRect(Math.random()*c.width, Math.random()*c.height, 1 + Math.random()*2, 1 + Math.random()*2);
+        // 1. GENERATE CODE: Pastikan 5 karakter selalu
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        secretCode = "";
+        for (let i = 0; i < 5; i++) {
+            secretCode += chars.charAt(Math.floor(Math.random() * chars.length));
         }
 
-        // Border and subtle grid
-        ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 4;
-        ctx.strokeRect(2,2,c.width-4,c.height-4);
+        // 2. BACKGROUND: Pakai warna solid gelap agar kontras tinggi
+        ctx.fillStyle = "#021a15"; 
+        ctx.fillRect(0, 0, c.width, c.height);
 
-        ctx.strokeStyle = 'rgba(0,255,136,0.06)'; ctx.lineWidth = 1;
-        for(let x=0;x<c.width;x+=20){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,c.height); ctx.stroke(); }
+        // 3. NOISE: Tambah sedikit bintik agar terlihat "cyber" tapi tidak mengganggu
+        for(let i=0; i<30; i++){
+            ctx.fillStyle = Math.random() > 0.5 ? '#00ff88' : '#fff';
+            ctx.globalAlpha = 0.2;
+            ctx.fillRect(Math.random()*c.width, Math.random()*c.height, 2, 2);
+        }
+        ctx.globalAlpha = 1.0; // Reset alpha
 
-        // Draw text with multiple strokes + fill for maximum contrast
-        const x = c.width/2, y = c.height/2;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = 'bold 46px Arial';
-        ctx.globalCompositeOperation = 'source-over';
+        // 4. GRID LINES: Garis tipis di belakang
+        ctx.strokeStyle = "rgba(0, 255, 136, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for(let x=0; x<c.width; x+=30) { ctx.moveTo(x,0); ctx.lineTo(x,c.height); }
+        ctx.stroke();
 
-        // Dark outline untuk maximum contrast
-        ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 30;
-        ctx.lineWidth = 14; ctx.strokeStyle = '#000'; ctx.strokeText(secretCode, x, y);
-        ctx.lineWidth = 5; ctx.strokeStyle = '#003d2e'; ctx.strokeText(secretCode, x, y);
+        // 5. DRAW TEXT: Bagian paling penting
+        ctx.font = 'bold 48px Courier New'; // Font monospace standar
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        const centerX = c.width / 2;
+        const centerY = c.height / 2;
 
-        // Bright fill dengan glow
-        ctx.fillStyle = '#00ff88'; ctx.fillText(secretCode, x, y);
+        // Shadow/Glow effect (Tipis saja supaya tidak blur)
+        ctx.shadowColor = "#00ff88";
+        ctx.shadowBlur = 15;
+        
+        // Text Color (Solid Bright Green)
+        ctx.fillStyle = "#00ff88";
+        ctx.fillText(secretCode, centerX, centerY);
 
-        // Extra glow layer
-        ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 50;
-        ctx.fillStyle = 'rgba(0,255,136,0.5)';
-        ctx.fillText(secretCode, x, y);
+        // Reset shadow untuk outline agar tajam
         ctx.shadowBlur = 0;
+        ctx.strokeStyle = "#003322";
+        ctx.lineWidth = 2;
+        ctx.strokeText(secretCode, centerX, centerY);
 
-        // Also update visible fallback (plain text) so admin can always read code
-        const fb = document.getElementById('capFallback'); if(fb) fb.innerText = secretCode;
-        const inp = document.getElementById('capInput'); if(inp) inp.setAttribute('aria-label', 'Enter access code');
+        // 6. UPDATE FALLBACK: Jika canvas gagal, user tetap bisa baca teks di div bawahnya
+        const fb = document.getElementById('capFallback');
+        if(fb) fb.innerText = secretCode;
+
+        console.log("Captcha Generated: " + secretCode); // Debug di console
     }
 
     function verifyAccess() {
-        if(document.getElementById('capInput').value.toUpperCase() === secretCode) {
+        const input = document.getElementById('capInput').value.toUpperCase().trim();
+        if(input === secretCode) {
             document.body.classList.remove('locked');
             document.getElementById('lockScreen').style.display = 'none';
-            setTimeout(initApp, 100);
+            // Start App Logic
+            initApp();
+            Swal.fire({
+                title: 'ACCESS GRANTED',
+                text: 'Welcome back, Administrator.',
+                icon: 'success',
+                background: '#000',
+                color: '#00ff88',
+                timer: 1500,
+                showConfirmButton: false
+            });
         } else {
-            alert('WRONG_CODE'); 
+            Swal.fire({
+                title: 'ACCESS DENIED',
+                text: 'Invalid Security Code!',
+                icon: 'error',
+                background: '#000',
+                color: '#ff3333'
+            });
             generateCaptcha();
+            document.getElementById('capInput').value = '';
         }
     }
 
-    // Broadcast helper (auto-hide 15s and remove settings/broadcast after 15s if set)
-    function triggerBroadcast(msg) {
-        const el = document.getElementById('sysBroadcast');
-        const bar = document.getElementById('sbBar');
-        el.classList.remove('active');
-        bar.style.animation = 'none';
-        void bar.offsetWidth;
-        document.getElementById('sbMessage').innerText = msg;
-        setTimeout(() => {
-            el.classList.add('active');
-            bar.style.animation = 'countDown 15s linear forwards';
-        }, 100);
-        clearTimeout(broadcastTimeout);
-        broadcastTimeout = setTimeout(() => {
-            el.classList.remove('active');
-            // clear transient broadcast node if present
-            db.ref('settings/broadcast').once('value').then(s => {
-                const v = s.val();
-                if(v && v.ts && Date.now() - v.ts >= 15000) db.ref('settings/broadcast').remove();
-            });
-        }, 15000);
-    }
-
-    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
-
-    function startSnowfall() { /* omitted for admin UI */ }
-    function stopSnowfall() { /* omitted for admin UI */ }
-
-    function applyDiscoMode(color) {
-        document.documentElement.style.setProperty('--accent', color);
-    }
-
-    function resetTheme() { document.documentElement.style.setProperty('--accent', '#00ff88'); }
-
-    function addLog(msg) { const time = new Date().toLocaleTimeString(); db.ref('logs').push({msg, time}); }
-
-    // --- CORE ---
+    // --- APP LOGIC ---
     function initApp() {
         // Sync Users
         db.ref('users').on('value', snap => {
@@ -455,14 +354,26 @@
                 const u = child.val(); const uid = child.key; count++;
                 const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
                 const folCount = Array.isArray(u?.followers) ? u.followers.length : (u?.followers || 0);
+                
+                // Cooldown logic
                 const lastUpload = u?.lastUpload || 0;
-                const cdText = lastUpload ? `${Math.max(0, Math.ceil((30 - ((Date.now()-lastUpload)/1000/60)) ) )}m` : 'READY';
+                let cdText = 'READY';
+                if(lastUpload) {
+                    const diffMins = (Date.now() - lastUpload) / 1000 / 60;
+                    if(diffMins < 30) cdText = Math.ceil(30 - diffMins) + 'm LEFT';
+                }
+
                 html += `<tr>
-                    <td><b>${u.username}</b><br><small style="color:#444">${uid}</small></td>
+                    <td>
+                        <b style="color:#fff">${u.username || 'Unknown'}</b><br>
+                        <span style="font-size:10px; color:#666">${uid}</span>
+                    </td>
                     <td><button class="btn" onclick="changeTag('${uid}')"><span class="badge-tag ${tagClass}">${u.tag || 'USER'}</span></button></td>
-                    <td><button class="btn" onclick="openManageFollowers('${uid}')">${folCount} FLS</button></td>
+                    <td><button class="btn" onclick="openManageFollowers('${uid}')">${folCount} Followers</button></td>
                     <td><button class="btn" onclick="resetCD('${uid}')">${cdText}</button></td>
-                    <td><button class="btn btn-danger" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button>
+                    </td>
                 </tr>`;
             });
             list.innerHTML = html;
@@ -476,126 +387,46 @@
             snap.forEach(child => {
                 const s = child.val(); count++;
                 html += `<tr>
-                    <td>${s.title}</td><td>${s.artist}</td><td>${s.uid || 'SYSTEM'}</td>
-                    <td><button class="btn btn-danger" onclick="delSong('${child.key}')"><i class="fas fa-trash"></i></button></td>
+                    <td>${s.title}</td>
+                    <td>${s.artist}</td>
+                    <td>${s.uid || 'SYSTEM'}</td>
+                    <td><button class="btn btn-danger" onclick="delSong('${child.key}')"><i class="fas fa-trash"></i> DELETE</button></td>
                 </tr>`;
             });
             list.innerHTML = html;
             document.getElementById('count-s').innerText = count;
         });
 
-        // Maintenance Status + disco / announcement watcher
-        db.ref('settings').on('value', s => {
-            const val = s.val() || {};
-            mtState = val.mt || false;
-            document.getElementById('mt-text').innerText = mtState ? "MAINTENANCE" : "ONLINE";
-            document.getElementById('mt-text').style.color = mtState ? "var(--danger)" : "var(--success)";
-
-            if(val.announcement) triggerBroadcast(val.announcement);
-            if(val.discoMode) { applyDiscoMode(val.discoColor || '#00ff88'); }
-        });
-
-        // Listen transient broadcast node (settings/broadcast) for auto-delete messages
-        db.ref('settings/broadcast').on('value', snap => {
-            const v = snap.val();
-            if(v && v.text) {
-                triggerBroadcast(v.text);
-                // ensure removal after 15s from server side safety
-                setTimeout(() => {
-                    db.ref('settings/broadcast').once('value').then(s => {
-                        const cur = s.val();
-                        if(cur && cur.ts && Date.now() - cur.ts >= 15000) db.ref('settings/broadcast').remove();
-                    });
-                }, 16000);
-            }
-        });
-
-        // Logs
-        db.ref('logs').limitToLast(100).on('value', snap => {
+        // Sync Logs
+        db.ref('logs').limitToLast(50).on('value', snap => {
             let h = '';
             snap.forEach(c => {
                 const l = c.val();
-                h += `<div><span style="color:#444">[${l.time}]</span> ${l.msg}</div>`;
+                h += `<div style="margin-bottom:4px; border-bottom:1px solid #111; padding-bottom:2px;">
+                        <span style="color:#666">[${l.time}]</span> ${l.msg}
+                      </div>`;
             });
             const box = document.getElementById('logTerminal');
             if(box) { box.innerHTML = h; box.scrollTop = box.scrollHeight; }
         });
+
+        // Listen for Maintenance & Disco
+        db.ref('settings').on('value', s => {
+            const val = s.val() || {};
+            mtState = val.mt || false;
+            const mtEl = document.getElementById('mt-text');
+            if(mtEl) {
+                mtEl.innerText = mtState ? "MAINTENANCE ACTIVE" : "SYSTEM ONLINE";
+                mtEl.style.color = mtState ? "var(--danger)" : "var(--success)";
+            }
+            if(val.discoMode) applyDiscoMode(val.discoColor);
+        });
     }
 
     // --- ACTIONS ---
-    function openManageFollowers(uid) {
-        // open modal to manage followers for uid
-        const modalHtml = `
-            <div style="padding:10px">
-              <h3>Manage Followers for ${uid}</h3>
-              <div><button class='btn' onclick="injectRandomFollowers('${uid}', 1)">Add 1 Fake</button> <button class='btn' onclick="injectRandomFollowers('${uid}',5)">Add 5 Fake</button> <button class='btn btn-danger' onclick="clearFakeFollowers('${uid}')">Clear Fake</button></div>
-            </div>`;
-        Swal.fire({ title: 'Manage Followers', html: modalHtml, width: 600, background: '#0a0a0f' });
-    }
-
-    function injectRandomFollowers(uid, count) {
-        db.ref('users/'+uid).once('value').then(s => {
-            const u = s.val() || {};
-            const followers = Array.isArray(u.followers) ? u.followers : [];
-                for(let i=0;i<count;i++) {
-                    const f = 'User_'+(Math.floor(Math.random()*900000)+10000);
-                    followers.push(f);
-                    // also set follows/{uid}/{f} for per-UID tracking
-                    db.ref('follows/' + uid + '/' + f).set(true);
-                }
-            db.ref('users/'+uid).update({followers}).then(()=>{
-                addLog(`Injected ${count} fake followers to ${uid}`);
-                Swal.close();
-            });
-        });
-    }
-
-    function clearFakeFollowers(uid) {
-        db.ref('users/'+uid).once('value').then(s => {
-            const data = s.val() || {};
-            let followers = Array.isArray(data.followers) ? data.followers : [];
-            const fake = followers.filter(f => f.startsWith('User_'));
-            followers = followers.filter(f => !f.startsWith('User_'));
-            // remove per-UID follows entries for fake followers
-            const updates = {};
-            fake.forEach(f => updates['/follows/' + uid + '/' + f] = null);
-            updates['/users/' + uid + '/followers'] = followers;
-            db.ref().update(updates).then(() => Swal.fire('Done', 'Cleared fake followers', 'success'));
-        });
-    }
-
-    function setFollowers(uid) {
-        Swal.fire({
-            title: 'SET_FOLLOWERS',
-            input: 'number',
-            background: '#0a0a0f', color: '#fff', confirmButtonColor: 'var(--accent)'
-        }).then(r => {
-            if(r.value) {
-                const v = parseInt(r.value);
-                if(isNaN(v)) return Swal.fire('Invalid', 'Not a number', 'error');
-                const ref = db.ref('users/' + uid);
-                ref.once('value').then(s => {
-                    const data = s.val() || {};
-                    const followers = [];
-                    const updates = {};
-                    for(let i=0;i<v;i++){
-                        const f = 'User_'+(Math.floor(Math.random()*900000)+10000);
-                        followers.push(f);
-                        updates['/follows/' + uid + '/' + f] = true;
-                    }
-                    updates['/users/' + uid + '/followers'] = followers;
-                    db.ref().update(updates).then(() => Swal.fire('Done', 'Set followers to '+v, 'success'));
-                });
-        });
-    }
-
-    function changeTag(uid) {
-        Swal.fire({
-            title: 'CHANGE_TAG',
-            input: 'select',
-            inputOptions: { 'user':'USER', 'sepuh':'SEPUH', 'vvip':'VVIP', 'admin':'ADMIN', 'owner':'OWNER' },
-            background: '#0a0a0f', color: '#fff'
-        }).then(r => { if(r.value) db.ref('users/'+uid).update({tag: r.value}); });
+    function addLog(msg) { 
+        const time = new Date().toLocaleTimeString(); 
+        db.ref('logs').push({msg, time}); 
     }
 
     function manualAddSong() {
@@ -604,65 +435,134 @@
         const url = document.getElementById('addUrl').value;
         const cover = document.getElementById('addCover').value;
 
-        if(!title || !url) return Swal.fire('Error', 'Minimal Title & URL!', 'error');
+        if(!title || !url) return Swal.fire('Error', 'Title & URL wajib diisi!', 'error');
 
         db.ref('songs').push({
             title, artist, url, cover,
-            uid: "SYSTEM_ADMIN",
+            uid: "ADMIN_CONSOLE",
             by: "ADMIN",
             uploadedAt: Date.now()
         });
-        addLog(`Added manual song: ${title}`);
-        Swal.fire('Success', 'Music Archived', 'success');
+        addLog(`Admin uploaded song: ${title}`);
+        Swal.fire('Success', 'Lagu berhasil ditambahkan', 'success');
+        
+        // Clear inputs
+        document.getElementById('addTitle').value = "";
+        document.getElementById('addUrl').value = "";
     }
 
     function delSong(id) {
-        if(confirm('Wipe this song?')) {
-            db.ref('songs/'+id).remove();
-            addLog(`Deleted song ID: ${id}`);
+        Swal.fire({
+            title: 'Hapus Lagu?',
+            text: "Lagu ini akan hilang permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff3333',
+            confirmButtonText: 'Ya, Hapus!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                db.ref('songs/'+id).remove();
+                addLog(`Deleted song ID: ${id}`);
+                Swal.fire('Deleted!', 'Lagu dihapus.', 'success');
+            }
+        })
+    }
+
+    function toggleBan(uid, status) {
+        db.ref('users/'+uid).update({banned: !status});
+        addLog(`${status ? 'Unbanned' : 'Banned'} User: ${uid}`);
+    }
+
+    function changeTag(uid) {
+        Swal.fire({
+            title: 'Change User Tag',
+            input: 'select',
+            inputOptions: { 'user':'User', 'vvip':'VVIP', 'sepuh':'Sepuh', 'admin':'Admin', 'owner':'Owner' },
+            background: '#121212', color: '#fff'
+        }).then(r => {
+            if(r.value) {
+                db.ref('users/'+uid).update({tag: r.value});
+                addLog(`Changed tag for ${uid} to ${r.value}`);
+            }
+        });
+    }
+
+    function resetCD(uid) {
+        db.ref('users/'+uid+'/lastUpload').remove();
+        addLog(`Reset Cooldown for ${uid}`);
+        Swal.fire('Done', 'Cooldown reset!', 'success');
+    }
+
+    // Broadcasts
+    function sendBC() {
+        const v = document.getElementById('bcInput').value;
+        if(v) {
+            db.ref('settings').update({announcement: v});
+            addLog(`Global Announcement: ${v}`);
+            Swal.fire('Sent', 'Pengumuman dikirim', 'success');
         }
     }
-
-    function resetCD(uid) { db.ref('users/'+uid+'/lastUpload').remove(); addLog(`Reset Cooldown: ${uid}`); }
-    function toggleBan(uid, status) { db.ref('users/'+uid).update({banned: !status}); addLog(`Ban Toggle: ${uid}`); }
-    function sendBC() { const v = document.getElementById('bcInput').value; db.ref('settings').update({announcement: v}); addLog(`Broadcast: ${v}`); }
     function clearBC() { db.ref('settings/announcement').remove(); }
-    function toggleMT() { db.ref('settings').update({mt: !mtState}); }
-
-    // Transient broadcast: write to settings/broadcast with timestamp so triggerBroadcast can auto-clear
-    function sendTransientBroadcast(){
+    
+    function sendTransientBroadcast() {
         const v = document.getElementById('tbInput').value;
-        if(!v) return Swal.fire('Empty', 'Enter a message for transient broadcast', 'error');
-        const payload = { text: v, lasttext: v, ts: Date.now() };
-        db.ref('settings/broadcast').set(payload);
-        triggerBroadcast(v);
-        addLog(`Transient Broadcast: ${v}`);
+        if(v) {
+            db.ref('settings/broadcast').set({ text: v, ts: Date.now() });
+            addLog(`Fast Msg: ${v}`);
+            triggerBroadcast(v);
+        }
+    }
+    
+    function toggleMT() {
+        db.ref('settings').update({mt: !mtState});
+        addLog(`Toggled Maintenance to ${!mtState}`);
     }
 
-    function clearTransientBroadcast(){ db.ref('settings/broadcast').remove(); addLog('Cleared transient broadcast'); }
+    // Broadcast UI Display
+    function triggerBroadcast(msg) {
+        const el = document.getElementById('sysBroadcast');
+        const bar = document.getElementById('sbBar');
+        if(!el) return;
+        
+        document.getElementById('sbMessage').innerText = msg;
+        el.classList.add('active');
+        bar.style.animation = 'none';
+        void bar.offsetWidth; // trigger reflow
+        bar.style.animation = 'countDown 15s linear forwards';
+        
+        clearTimeout(broadcastTimeout);
+        broadcastTimeout = setTimeout(() => {
+            el.classList.remove('active');
+        }, 15000);
+    }
+    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
 
-    // Disco mode functions
+    // Disco Modes
     function setDiscoMode(color) {
-        if(!color) return;
-        if(color.toLowerCase() === 'rainbow') {
-            document.documentElement.style.setProperty('--accent', '#ff0000');
+        if(color === 'rainbow') {
             db.ref('settings').update({discoMode: true, discoColor: 'rainbow'});
-        } else if(color.toLowerCase() === 'ice') {
-            document.documentElement.style.setProperty('--accent', '#00d4ff');
-            db.ref('settings').update({discoMode: true, discoColor: '#00d4ff'});
-        } else if(color.startsWith('#')) {
-            document.documentElement.style.setProperty('--accent', color);
+        } else {
             db.ref('settings').update({discoMode: true, discoColor: color});
         }
-        addLog(`Disco Mode: ${color}`);
     }
-
     function stopDisco() {
-        document.documentElement.style.setProperty('--accent', '#00ff88');
         db.ref('settings').update({discoMode: false});
-        addLog('Disco mode disabled');
+        document.documentElement.style.setProperty('--accent', '#00ff88');
+    }
+    function applyDiscoMode(color) {
+        if(!color) return;
+        if(color === 'rainbow') {
+            // Simple random color implementation for rainbow effect
+            document.documentElement.style.setProperty('--accent', `hsl(${Math.random()*360}, 100%, 50%)`);
+            setTimeout(() => {
+                if(mtState || color === 'rainbow') applyDiscoMode('rainbow');
+            }, 500);
+        } else {
+            document.documentElement.style.setProperty('--accent', color);
+        }
     }
 
+    // Navigation
     function switchView(id) {
         document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -670,19 +570,55 @@
         event.currentTarget.classList.add('active');
     }
 
-    function searchTable(id, q) {
-        const rows = document.querySelectorAll(`#${id} tbody tr`);
-        rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(q.toLowerCase()) ? '' : 'none');
+    function searchTable(tableId, query) {
+        const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+        });
     }
-    window.onload = function() {
-        document.body.classList.add('locked');
-        // ensure lock screen is visible
-        const ls = document.getElementById('lockScreen'); if(ls) ls.style.display = 'flex';
-        // render captcha a couple times to ensure visibility on all browsers
-        setTimeout(() => generateCaptcha(), 50);
-        setTimeout(() => generateCaptcha(), 300);
-    };
-</script>
 
+    // Manage Followers (Fake)
+    function openManageFollowers(uid) {
+        Swal.fire({
+            title: 'Manage Followers',
+            html: `
+                <button class='btn' onclick="injectFake('${uid}', 10)">+10 Fake</button>
+                <button class='btn' onclick="injectFake('${uid}', 100)">+100 Fake</button>
+                <button class='btn btn-danger' onclick="clearFake('${uid}')">Clear Fakes</button>
+            `,
+            background: '#121212', color: '#fff', showConfirmButton: false
+        });
+    }
+    
+    // Global scope helpers for SweetAlert access
+    window.injectFake = (uid, amount) => {
+        db.ref('users/'+uid).once('value').then(s => {
+            let u = s.val();
+            let followers = u.followers || [];
+            for(let i=0; i<amount; i++) followers.push("User_"+Math.floor(Math.random()*999999));
+            db.ref('users/'+uid).update({followers});
+            Swal.fire('Added', `${amount} followers added`, 'success');
+        });
+    };
+    window.clearFake = (uid) => {
+        db.ref('users/'+uid).once('value').then(s => {
+            let u = s.val();
+            let followers = (u.followers || []).filter(f => !f.toString().startsWith("User_"));
+            db.ref('users/'+uid).update({followers});
+            Swal.fire('Cleared', `Fake followers removed`, 'success');
+        });
+    };
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+        // Generate Captcha immediately
+        setTimeout(generateCaptcha, 100);
+        
+        // Prevent right click (Security feature)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    };
+
+</script>
 </body>
 </html>
