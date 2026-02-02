@@ -550,9 +550,81 @@
     .about-box p { margin-bottom: 10px; }
     .about-box b { color: #fff; }
     .rules-warn { background: rgba(255, 51, 51, 0.1); border-left: 3px solid var(--danger); padding: 10px; margin: 10px 0; border-radius: 4px; }
+  
+    /* Guest Banner */
+    .guest-banner {
+      position: fixed;
+      bottom: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      background: rgba(20, 20, 20, 0.98);
+      border-radius: 12px;
+      padding: 16px;
+      z-index: 12001;
+      box-shadow: 0 -5px 30px rgba(0,0,0,0.8);
+      transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(15px);
+    }
+    .guest-banner.show { bottom: 20px; }
+    
+    .guest-content { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    
+    .guest-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px; font-weight: 700; flex-shrink: 0;
+    }
+    
+    .guest-info { flex: 1; }
+    .guest-info h4 { font-size: 13px; color: #888; margin-bottom: 2px; font-weight: 400; }
+    .guest-info p { font-size: 15px; color: white; font-weight: 600; }
+    
+    .guest-btn {
+      width: 100%; padding: 12px; background: #1877f2; color: white;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: 0.2s;
+    }
+    .guest-btn:hover { background: #166fe5; }
+    
+    .guest-close {
+      position: absolute; top: 8px; right: 8px; background: transparent;
+      border: none; color: #666; font-size: 16px; cursor: pointer; padding: 4px 8px;
+    }
+    .guest-close:hover { color: white; }
+
+    /* Language Toggle */
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    
+    .lang-toggle {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 6px 12px; font-size: 11px; color: white;
+      cursor: pointer; font-weight: 600; transition: 0.2s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .lang-toggle:hover { background: rgba(255,255,255,0.15); }
+    .lang-toggle i { font-size: 12px; }
+
   </style>
 </head>
 <body>
+
+  <!-- Guest Continue Banner -->
+  <div class="guest-banner" id="guestBanner">
+    <button class="guest-close" onclick="closeGuestBanner()">×</button>
+    <div class="guest-content">
+      <div class="guest-avatar" id="guestAvatar">G</div>
+      <div class="guest-info">
+        <h4 id="guestLabel">Lanjutkan sebagai</h4>
+        <p id="guestName">Guest User</p>
+      </div>
+    </div>
+    <button class="guest-btn" id="guestBtn" onclick="openModal()">Lanjutkan sebagai Guest</button>
+  </div>
+
+
 
   <div id="sysBroadcast" class="sys-broadcast">
       <button class="sb-close" onclick="closeBroadcast()"><i class="fas fa-times"></i></button>
@@ -584,7 +656,13 @@
   <div class="app">
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
-        <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
+        <div class="header-right">
+          <button class="lang-toggle" onclick="toggleLanguage()">
+            <i class="fas fa-globe"></i>
+            <span id="langText">ID</span>
+          </button>
+          <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
+        </div>
     </div>
 
     <div class="cover-box">
@@ -826,6 +904,7 @@
     let discoColor = "#00ff88";
     let lastDiscoUser = null;
     let iceModeActive = false;
+    let currentLang = 'id';
     let snowflakeInterval = null;
 
     // Tambahan tag keren dan lucu
@@ -1482,7 +1561,101 @@
     
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
-    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function openAbout() { 
+      // Update about modal content dynamically
+      const aboutContent = currentLang === 'id' ? `
+        <h3 style="color: var(--accent); margin-bottom: 15px;">📱 Tentang ExeMusic 3.1</h3>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,255,136,0.05); border-radius: 10px; border-left: 3px solid var(--accent);">
+          <p style="font-size: 13px; line-height: 1.6; color: #ddd;">
+            ExeMusic adalah platform streaming musik berkualitas tinggi yang memungkinkan Anda mendengarkan dan berbagi musik favorit dengan komunitas global. Nikmati pengalaman mendengarkan musik tanpa batas dengan kualitas audio terbaik.
+          </p>
+        </div>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">🎵 Cara Upload Musik</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: #bbb; margin-bottom: 15px;">
+          <strong>Sudah Login dengan Gmail?</strong><br>
+          Anda dapat mengupload musik dengan mudah menggunakan URL dari layanan hosting seperti <strong>Top4top</strong>. Cukup masukkan URL musik dan judul lagu, musik Anda akan langsung tersedia untuk didengarkan oleh pengguna lain.
+        </p>
+        <div style="padding: 12px; background: rgba(255,107,107,0.1); border-radius: 8px; border-left: 3px solid #ff6b6b; margin-bottom: 20px;">
+          <p style="font-size: 12px; color: #ff6b6b; margin: 0;">
+            <strong>Belum Login?</strong> Jangan khawatir! Isi form upload yang tersedia, dan musik Anda akan dikirim ke WhatsApp admin untuk ditinjau. Setelah disetujui, musik Anda akan diupload oleh admin.
+          </p>
+        </div>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">✨ Fitur Utama</h3>
+        <ul style="list-style: none; padding: 0; font-size: 13px; line-height: 2; color: #bbb;">
+          <li>🎧 <strong>High Quality Streaming:</strong> Kualitas audio crystal clear tanpa kompresi berlebihan</li>
+          <li>👥 <strong>Social Following:</strong> Ikuti artist favorit dan dapatkan notifikasi musik baru</li>
+          <li>🏆 <strong>Badge System:</strong> Raih badge eksklusif berdasarkan aktivitas Anda</li>
+          <li>🔗 <strong>Deep Linking:</strong> Bagikan lagu dengan ID unik untuk akses langsung</li>
+          <li>🛡️ <strong>Anti-Spam Protection:</strong> Sistem cooldown upload menjaga kualitas konten</li>
+        </ul>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">💰 Penghasilan & Reward</h3>
+        <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px; border: 2px solid gold; margin-bottom: 20px;">
+          <p style="font-size: 13px; line-height: 1.6; color: #ddd; margin: 0;">
+            Dapatkan <strong>Benefit VIP atau $0.99 (Rp 16.000)</strong> dari admin saat followers/favorit Anda mencapai target milestone! Semakin banyak yang menyukai karya Anda, semakin besar reward yang bisa Anda dapatkan.
+          </p>
+        </div>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">❄️ Event Spesial</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: #bbb;">
+          Kami secara berkala mengadakan event spesial dengan tema unik! Saat ini tersedia <strong>Ice Rainbow Theme</strong> - tema eksklusif dengan efek visual salju yang memukau dan border rainbow glow yang dinamis. Aktifkan melalui admin untuk mendapatkan pengalaman visual yang luar biasa!
+        </p>
+        
+        <p style="text-align: center; color: #666; font-size: 11px; margin-top: 25px;">
+          Versi 3.1 • © 2025 ExeMusic
+        </p>
+      ` : `
+        <h3 style="color: var(--accent); margin-bottom: 15px;">📱 About ExeMusic 3.1</h3>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,255,136,0.05); border-radius: 10px; border-left: 3px solid var(--accent);">
+          <p style="font-size: 13px; line-height: 1.6; color: #ddd;">
+            ExeMusic is a high-quality music streaming platform that allows you to listen and share your favorite music with a global community. Enjoy unlimited music listening experience with the best audio quality.
+          </p>
+        </div>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">🎵 How to Upload Music</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: #bbb; margin-bottom: 15px;">
+          <strong>Already Logged In with Gmail?</strong><br>
+          You can easily upload music using URL from hosting services like <strong>Top4top</strong>. Just enter the music URL and song title, your music will be immediately available for other users to listen to.
+        </p>
+        <div style="padding: 12px; background: rgba(255,107,107,0.1); border-radius: 8px; border-left: 3px solid #ff6b6b; margin-bottom: 20px;">
+          <p style="font-size: 12px; color: #ff6b6b; margin: 0;">
+            <strong>Not Logged In?</strong> Don't worry! Fill out the available upload form, and your music will be sent to admin's WhatsApp for review. Once approved, your music will be uploaded by admin.
+          </p>
+        </div>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">✨ Main Features</h3>
+        <ul style="list-style: none; padding: 0; font-size: 13px; line-height: 2; color: #bbb;">
+          <li>🎧 <strong>High Quality Streaming:</strong> Crystal clear audio quality without excessive compression</li>
+          <li>👥 <strong>Social Following:</strong> Follow favorite artists and get new music notifications</li>
+          <li>🏆 <strong>Badge System:</strong> Earn exclusive badges based on your activity</li>
+          <li>🔗 <strong>Deep Linking:</strong> Share songs with unique ID for direct access</li>
+          <li>🛡️ <strong>Anti-Spam Protection:</strong> Upload cooldown system maintains content quality</li>
+        </ul>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">💰 Earnings & Rewards</h3>
+        <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px; border: 2px solid gold; margin-bottom: 20px;">
+          <p style="font-size: 13px; line-height: 1.6; color: #ddd; margin: 0;">
+            Get <strong>VIP Benefit or $0.99 (IDR 16,000)</strong> from admin when your followers/favorites reach milestone targets! The more people like your work, the bigger rewards you can get.
+          </p>
+        </div>
+        
+        <h3 style="color: var(--accent); margin: 20px 0 10px;">❄️ Special Events</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: #bbb;">
+          We regularly hold special events with unique themes! Currently available <strong>Ice Rainbow Theme</strong> - exclusive theme with stunning snow visual effects and dynamic rainbow glow border. Activate through admin to get an extraordinary visual experience!
+        </p>
+        
+        <p style="text-align: center; color: #666; font-size: 11px; margin-top: 25px;">
+          Version 3.1 • © 2025 ExeMusic
+        </p>
+      `;
+      
+      document.getElementById('aboutContent').innerHTML = aboutContent;
+      document.getElementById('modalAbout').style.display='block'; 
+    }
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
@@ -1723,6 +1896,70 @@
         msgEl.classList.add('show', 'error');
       }
     }
+  
+
+    // ===== LANGUAGE SYSTEM =====
+    function toggleLanguage() {
+      currentLang = currentLang === 'id' ? 'en' : 'id';
+      document.getElementById('langText').innerText = currentLang.toUpperCase();
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      const translations = {
+        id: {
+          'guestLabel': 'Lanjutkan sebagai',
+          'guestBtn': 'Lanjutkan sebagai {name}',
+          'loginBtn': 'Masuk',
+          'title': 'Loading Lagu...',
+          'uploadBtn': 'Upload Musik',
+          'profileBtn': 'Profil'
+        },
+        en: {
+          'guestLabel': 'Continue as',
+          'guestBtn': 'Continue as {name}',
+          'loginBtn': 'Sign In',
+          'title': 'Loading Song...',
+          'uploadBtn': 'Upload Music',
+          'profileBtn': 'Profile'
+        }
+      };
+      
+      const lang = translations[currentLang];
+      
+      // Update guest banner
+      const guestLabel = document.getElementById('guestLabel');
+      if(guestLabel) guestLabel.innerText = lang.guestLabel;
+      
+      // Update buttons
+      const loginBtn = document.getElementById('topLoginBtn');
+      if(loginBtn && (loginBtn.innerText.includes('Log-in') || loginBtn.innerText.includes('Sign In'))) {
+        loginBtn.innerText = lang.loginBtn;
+      }
+    }
+
+    // ===== GUEST BANNER FUNCTIONS =====
+    function showGuestBanner(email) {
+      const banner = document.getElementById('guestBanner');
+      const avatar = document.getElementById('guestAvatar');
+      const name = document.getElementById('guestName');
+      const btn = document.getElementById('guestBtn');
+      
+      const firstLetter = email.charAt(0).toUpperCase();
+      avatar.innerText = firstLetter;
+      name.innerText = email;
+      
+      const labelText = currentLang === 'id' ? 'Lanjutkan sebagai' : 'Continue as';
+      btn.innerText = labelText + ' ' + email.split('@')[0];
+      
+      setTimeout(() => banner.classList.add('show'), 500);
+    }
+
+    function closeGuestBanner() {
+      document.getElementById('guestBanner').classList.remove('show');
+    }
+
+
   </script>
 </body>
 </html>
