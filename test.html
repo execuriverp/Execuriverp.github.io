@@ -642,11 +642,15 @@
   <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 id="authTitle" style="text-align:center; margin-bottom:20px; color:var(--accent)">Login ke ExeMusic</h3>
-      <input id="authUser" class="inp-dark" placeholder="Username (Untuk Daftar)" style="display:none">
-      <input id="authEmail" class="inp-dark" placeholder="Email">
-      <input id="authPass" type="password" class="inp-dark" placeholder="Password">
-      <button onclick="handleAuth()" id="authBtn" class="btn-act">MASUK</button>
-      <button onclick="toggleAuthMode()" id="authToggle" style="background:none; border:none; color:#888; width:100%; margin-top:15px; font-size:12px">Belum punya akun? Daftar</button>
+      <div id="usernameSection" style="display:none; margin-bottom:15px;">
+        <p style="font-size:12px; color:#888; text-align:center; margin-bottom:10px;">👋 Selamat datang! Buat username Anda:</p>
+        <input id="authUser" class="inp-dark" placeholder="Username (min 3 karakter)">
+      </div>
+      <button onclick="handleGoogleAuth()" id="googleAuthBtn" class="btn-act" style="background:#fff; color:#000; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600;">
+        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        <span id="googleBtnText">Masuk dengan Google</span>
+      </button>
+      <p style="font-size:11px; color:#888; text-align:center; margin-top:15px;">🔒 Login aman dengan akun Google Anda</p>
     </div>
   </div>
 
@@ -1476,43 +1480,97 @@
         msg("Link lagu dengan ID disalin"); 
     }
     
-    function downloadSong() { window.open(songs[i].url); }
-    function openReq() { document.getElementById('modalReq').style.display='block'; }
-    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    
+    let isFirstTimeUser = false;
+
+    function handleGoogleAuth() {
+      if(isFirstTimeUser) {
+        // Complete registration
+        const username = document.getElementById('authUser').value.trim();
+        
+        if(!username || username.length < 3) {
+          msg('❌ Username minimal 3 karakter!');
+          return;
+        }
+        
+        const user = auth.currentUser;
+        if(!user) {
+          msg('❌ Session expired, silakan coba lagi');
+          isFirstTimeUser = false;
+          document.getElementById('usernameSection').style.display = 'none';
+          document.getElementById('googleBtnText').innerText = 'Masuk dengan Google';
+          return;
+        }
+        
+        // Generate 3-5 fake followers
+        const fakeFollowerCount = Math.floor(Math.random() * 3) + 3;
+        const fakeFollowers = [];
+        for(let i = 0; i < fakeFollowerCount; i++) {
+          fakeFollowers.push(generateFakeFollower());
+        }
+        
+        // Simpan data user ke database
+        db.ref('users/' + user.uid).set({
+          username: username,
+          email: user.email,
+          avatar: user.photoURL || "https://via.placeholder.com/150",
+          role: 'user',
+          followers: fakeFollowers,
+          following: [],
+          tag: 'user',
+          createdAt: Date.now()
+        }).then(() => {
+          isFirstTimeUser = false;
+          document.getElementById('usernameSection').style.display = 'none';
+          document.getElementById('googleBtnText').innerText = 'Masuk dengan Google';
+          closeModal();
+          msg('✅ Akun berhasil dibuat! Selamat datang ' + username + '!');
+        }).catch(err => {
+          msg('❌ Gagal menyimpan data: ' + err.message);
+        });
+      } else {
+        // Google Sign-In
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
+        
+        auth.signInWithPopup(provider)
+          .then(result => {
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Cek apakah user baru
+            if(isNewUser) {
+              isFirstTimeUser = true;
+              // Tampilkan form username
+              document.getElementById('googleBtnText').innerText = 'Buat Akun';
+              document.getElementById('usernameSection').style.display = 'block';
+              msg('👋 Selamat datang! Buat username Anda untuk melanjutkan.');
+            } else {
+              // User lama, langsung masuk
+              closeModal();
+              msg('✅ Selamat datang kembali!');
+            }
+          })
+          .catch(err => {
+            if(err.code === 'auth/popup-closed-by-user') {
+              msg('⚠️ Login dibatalkan');
+            } else if(err.code === 'auth/cancelled-popup-request') {
+              // Ignore
+            } else {
+              msg('❌ Gagal login: ' + err.message);
+            }
+          });
+      }
+    }
+    
     function toggleAuthMode() { 
-      isLoginMode = !isLoginMode; 
-      document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Daftar"; 
-      document.getElementById('authUser').style.display = isLoginMode ? "none" : "block"; 
-      document.getElementById('authConfirmPass').style.display = isLoginMode ? "none" : "block"; 
-      document.getElementById('authBtn').innerText = isLoginMode ? "MASUK" : "DAFTAR";
+      // Not used anymore - Google Sign-In only
     }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
 
-    function handleAuth() {
-      const e = document.getElementById('authEmail').value, p = document.getElementById('authPass').value;
-      if(isLoginMode) auth.signInWithEmailAndPassword(e, p).then(closeModal).catch(err => msg(err.message));
-      else {
-        const u = document.getElementById('authUser').value;
-        auth.createUserWithEmailAndPassword(e, p).then(res => {
-          // Generate 3-5 fake followers dengan format User_randomnumber
-          const fakeFollowerCount = Math.floor(Math.random() * 3) + 3; // 3-5 fake followers
-          const fakeFollowers = [];
-          for(let i = 0; i < fakeFollowerCount; i++) {
-            fakeFollowers.push(generateFakeFollower());
-          }
-          
-          db.ref('users/' + res.user.uid).set({ 
-            username: u, 
-            role: 'user', 
-            followers: fakeFollowers, 
-            following: [], 
-            tag: 'user' 
-          });
-          closeModal();
-        }).catch(err => msg(err.message));
-      }
-    }
 
     function uploadAvatar(input) {
         const file = input.files[0];
