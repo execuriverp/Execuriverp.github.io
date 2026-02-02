@@ -1480,8 +1480,18 @@
         msg("Link lagu dengan ID disalin"); 
     }
     
-    
+    function downloadSong() { window.open(songs[i].url); }
+    function openReq() { document.getElementById('modalReq').style.display='block'; }
+    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function toggleAuthMode() { /* Google Sign-In only - not used */ }
+    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
+    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
+
     let isFirstTimeUser = false;
+
+    function handleAuth() {
+      /* Old function - replaced by handleGoogleAuth */
+    }
 
     function handleGoogleAuth() {
       if(isFirstTimeUser) {
@@ -1564,13 +1574,6 @@
           });
       }
     }
-    
-    function toggleAuthMode() { 
-      // Not used anymore - Google Sign-In only
-    }
-    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
-    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
-
 
     function uploadAvatar(input) {
         const file = input.files[0];
