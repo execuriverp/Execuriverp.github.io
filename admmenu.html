@@ -26,7 +26,9 @@
             --border: rgba(255,255,255,0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        /* Allow selection only on inputs */
+        input, textarea { user-select: text; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -129,8 +131,11 @@
                placeholder="ENTER CODE ABOVE" 
                class="cyber-input" 
                style="text-align:center; font-size: 16px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;"
-               onpaste="return false;" 
-               ondrop="return false;" 
+               onpaste="return false" 
+               oncopy="return false" 
+               oncut="return false" 
+               ondrag="return false" 
+               ondrop="return false" 
                autocomplete="off">
         
         <button class="btn" style="width:100%; padding:14px; font-size: 14px; font-weight: bold; background: rgba(0,255,136,0.1);" onclick="verifyAccess()">ACCESS PANEL</button>
@@ -192,7 +197,7 @@
                         <tr><th>USER INFO</th><th>ROLE TAG</th><th>FOLLOWERS</th><th>COOLDOWN</th><th>ACTION</th></tr>
                     </thead>
                     <tbody id="userList">
-                        <tr><td colspan="5" style="text-align:center; color:#666;">LOADING DATABASE... OR NO DATA FOUND.</td></tr>
+                        <tr><td colspan="5" style="text-align:center; color:#666;">CONNECTING TO FIREBASE...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -243,7 +248,6 @@
     const db = firebase.database();
     let secretCode = "";
     let mtState = false;
-    let broadcastTimeout;
 
     // --- CAPTCHA SYSTEM ---
     function generateCaptcha() {
@@ -260,7 +264,6 @@
 
         ctx.fillStyle = "#021a15"; ctx.fillRect(0, 0, c.width, c.height);
         
-        // Grid & Noise
         ctx.strokeStyle = "rgba(0, 255, 136, 0.2)"; ctx.lineWidth = 1; ctx.beginPath();
         for(let x=0; x<c.width; x+=30) { ctx.moveTo(x,0); ctx.lineTo(x,c.height); } ctx.stroke();
         
@@ -275,7 +278,6 @@
 
         const fb = document.getElementById('capFallback');
         if(fb) fb.innerText = secretCode;
-        console.log("Code: " + secretCode);
     }
 
     function verifyAccess() {
@@ -286,30 +288,41 @@
             initApp();
             Swal.fire({ title: 'ACCESS GRANTED', text: 'Welcome back, Hexky.', icon: 'success', background: '#000', color: '#00ff88', timer: 1500, showConfirmButton: false });
         } else {
-            Swal.fire({ title: 'ACCESS DENIED', text: 'Invalid Security Code!', icon: 'error', background: '#000', color: '#ff3333' });
+            Swal.fire({ title: 'ACCESS DENIED', text: 'Invalid Code!', icon: 'error', background: '#000', color: '#ff3333' });
             generateCaptcha();
             document.getElementById('capInput').value = '';
         }
     }
 
-    // --- APP LOGIC (FIXED USER LOADING) ---
+    // --- APP LOGIC (UPDATED FOR JSON STRUCTURE) ---
     function initApp() {
         // Sync Users
         db.ref('users').on('value', snap => {
             const list = document.getElementById('userList');
             if(!snap.exists()) {
-                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:#ff3333;'>DATA NOT FOUND (CHECK DATABASE RULES OR EMPTY DATA)</td></tr>";
+                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:#ff3333;'>DATABASE USERS KOSONG ATAU TERKUNCI</td></tr>";
                 document.getElementById('count-u').innerText = "0";
                 return;
             }
 
             let html = ''; let count = 0;
             snap.forEach(child => {
-                const u = child.val(); const uid = child.key; count++;
-                const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
-                const folCount = Array.isArray(u?.followers) ? u.followers.length : (u?.followers || 0);
+                const u = child.val(); 
+                const uid = child.key; 
+                count++;
                 
-                const lastUpload = u?.lastUpload || 0;
+                // Logic untuk membaca followers berdasarkan JSON (bisa Angka, bisa Array)
+                let folCount = 0;
+                if(Array.isArray(u.followers)) {
+                    folCount = u.followers.length;
+                } else if(u.followers && typeof u.followers === 'object') {
+                    folCount = Object.keys(u.followers).length;
+                } else {
+                    folCount = u.followers || 0;
+                }
+
+                const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
+                const lastUpload = u.lastUpload || 0;
                 let cdText = 'READY';
                 if(lastUpload) {
                     const diffMins = (Date.now() - lastUpload) / 1000 / 60;
@@ -326,9 +339,6 @@
             });
             list.innerHTML = html;
             document.getElementById('count-u').innerText = count;
-        }, (error) => {
-            console.error(error);
-            Swal.fire('Database Error', 'Gagal mengambil data user: ' + error.message, 'error');
         });
 
         // Sync Songs
@@ -428,13 +438,18 @@
     window.injectFake = (uid, amt) => {
         db.ref('users/'+uid).once('value').then(s => {
             let u = s.val(); let followers = u.followers || [];
+            // Handle if followers is 0 or undefined, convert to array
+            if(!Array.isArray(followers)) followers = [];
+            
             for(let i=0; i<amt; i++) followers.push("User_"+Math.floor(Math.random()*999999));
             db.ref('users/'+uid).update({followers}); Swal.fire('Added', `${amt} followers`, 'success');
         });
     };
     window.clearFake = (uid) => {
         db.ref('users/'+uid).once('value').then(s => {
-            let u = s.val(); let followers = (u.followers || []).filter(f => !f.toString().startsWith("User_"));
+            let u = s.val(); 
+            if(!Array.isArray(u.followers)) return Swal.fire('Clean', 'No followers to clear', 'info');
+            let followers = u.followers.filter(f => !f.toString().startsWith("User_"));
             db.ref('users/'+uid).update({followers}); Swal.fire('Cleared', `Fake removed`, 'success');
         });
     };
