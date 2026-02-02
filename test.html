@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.1 - Updated</title>
+  <title>ExeMusic 3.1 - Elite Edition</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -38,48 +38,138 @@
       overflow: hidden;
     }
 
-    /* --- ROBLOX STYLE BROADCAST SYSTEM --- */
+    /* --- MODERN BROADCAST SYSTEM --- */
     .sys-broadcast {
         position: fixed;
-        top: -150px; 
+        top: -200px; 
         left: 50%;
         transform: translateX(-50%);
         width: 90%;
-        max-width: 400px;
-        background: rgba(15, 15, 15, 0.95);
-        border-left: 4px solid var(--accent);
-        border-radius: 6px;
-        padding: 15px;
+        max-width: 420px;
+        background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(18, 18, 18, 0.95) 100%);
+        border: 2px solid var(--accent);
+        border-radius: 20px;
+        padding: 20px;
         z-index: 12000;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3), 0 0 100px rgba(0, 0, 0, 0.8);
         display: flex;
         flex-direction: column;
-        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        backdrop-filter: blur(10px);
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        animation: broadcast-glow 3s ease-in-out infinite;
     }
-    .sys-broadcast.active { top: 20px; }
     
-    .sb-content { display: flex; align-items: flex-start; gap: 12px; }
-    .sb-icon { font-size: 20px; color: var(--accent); margin-top: 2px; }
-    .sb-text h4 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-    .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
+    @keyframes broadcast-glow {
+        0%, 100% { box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3), 0 0 100px rgba(0, 0, 0, 0.8); }
+        50% { box-shadow: 0 20px 80px rgba(0, 255, 136, 0.5), 0 0 120px rgba(0, 255, 136, 0.2); }
+    }
+    
+    .sys-broadcast.active { 
+        top: 30px;
+        animation: broadcast-glow 3s ease-in-out infinite, broadcast-shake 0.5s ease-in-out;
+    }
+    
+    @keyframes broadcast-shake {
+        0%, 100% { transform: translateX(-50%) rotate(0deg); }
+        25% { transform: translateX(-50%) rotate(-2deg); }
+        75% { transform: translateX(-50%) rotate(2deg); }
+    }
+    
+    .sb-content { 
+        display: flex; 
+        align-items: flex-start; 
+        gap: 15px;
+        position: relative;
+    }
+    
+    .sb-icon { 
+        font-size: 28px; 
+        color: var(--accent); 
+        margin-top: 2px;
+        animation: icon-pulse 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 10px var(--accent));
+    }
+    
+    @keyframes icon-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .sb-text h4 { 
+        margin: 0; 
+        font-size: 16px; 
+        color: var(--accent); 
+        text-transform: uppercase; 
+        letter-spacing: 2px;
+        font-weight: 800;
+        text-shadow: 0 0 10px var(--accent);
+        animation: text-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes text-glow {
+        0%, 100% { text-shadow: 0 0 10px var(--accent); }
+        50% { text-shadow: 0 0 20px var(--accent), 0 0 30px var(--accent); }
+    }
+    
+    .sb-text p { 
+        margin: 8px 0 0; 
+        font-size: 13px; 
+        color: #fff; 
+        line-height: 1.6;
+        font-weight: 500;
+    }
     
     .sb-close {
-        position: absolute; top: 10px; right: 10px;
-        background: transparent; border: none; color: #666;
-        cursor: pointer; font-size: 16px; padding: 5px;
+        position: absolute; 
+        top: -5px; 
+        right: -5px;
+        background: rgba(255, 255, 255, 0.1); 
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        color: var(--accent);
+        cursor: pointer; 
+        font-size: 14px; 
+        padding: 8px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
     }
-    .sb-close:hover { color: white; }
+    
+    .sb-close:hover { 
+        background: var(--accent);
+        color: #000;
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 0 20px var(--accent);
+    }
 
     .sb-progress {
-        width: 100%; height: 3px; background: #333;
-        margin-top: 12px; border-radius: 2px; overflow: hidden;
+        width: 100%; 
+        height: 4px; 
+        background: rgba(255, 255, 255, 0.1);
+        margin-top: 15px; 
+        border-radius: 10px; 
+        overflow: hidden;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
     }
+    
     .sb-bar {
-        width: 100%; height: 100%; background: var(--accent);
+        width: 100%; 
+        height: 100%; 
+        background: linear-gradient(90deg, var(--accent), #00dd7a);
         transform-origin: left;
+        box-shadow: 0 0 10px var(--accent);
+        border-radius: 10px;
     }
-    @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    
+    @keyframes countDown { 
+        from { transform: scaleX(1); } 
+        to { transform: scaleX(0); } 
+    }
     @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
     @keyframes disco-heartbeat { 
       0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
@@ -431,6 +521,105 @@
       border: 1px solid #ff6b6b;
     }
 
+    /* ABOUT MODAL ENHANCED STYLES */
+    .about-box { 
+      font-size: 13px; 
+      line-height: 1.8; 
+      color: #ddd; 
+    }
+    
+    .about-box h3 { 
+      color: var(--accent); 
+      margin-bottom: 15px; 
+      border-bottom: 2px solid var(--accent); 
+      padding-bottom: 8px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    
+    .about-box h4 {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      margin: 20px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .about-box h4 i {
+      color: var(--accent);
+      font-size: 18px;
+    }
+    
+    .about-box p { 
+      margin-bottom: 15px;
+      color: #bbb;
+    }
+    
+    .about-box b { 
+      color: #fff;
+      font-weight: 600;
+    }
+    
+    .feature-list {
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid var(--accent);
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+    }
+    
+    .feature-list li {
+      margin-bottom: 10px;
+      padding-left: 10px;
+      list-style: none;
+      position: relative;
+    }
+    
+    .feature-list li:before {
+      content: "▸";
+      color: var(--accent);
+      position: absolute;
+      left: -10px;
+      font-weight: bold;
+    }
+    
+    .rules-warn { 
+      background: rgba(255, 51, 51, 0.15); 
+      border-left: 4px solid var(--danger); 
+      padding: 15px; 
+      margin: 15px 0; 
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(255, 51, 51, 0.2);
+    }
+    
+    .rules-warn b {
+      color: var(--danger);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .reward-box {
+      background: linear-gradient(135deg, rgba(191, 0, 255, 0.1), rgba(255, 215, 0, 0.1));
+      border: 2px solid var(--purple);
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(191, 0, 255, 0.3);
+    }
+    
+    .reward-box p {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    
+    .reward-box b {
+      color: var(--gold);
+    }
+
     /* RESPONSIVE DESIGN */
     @media (max-width: 480px) {
       .spotify-banner {
@@ -479,6 +668,17 @@
       }
       .posts-list {
         max-height: 200px;
+      }
+      .sys-broadcast {
+        width: 95%;
+        max-width: 360px;
+        padding: 15px;
+      }
+      .sb-text h4 {
+        font-size: 14px;
+      }
+      .sb-text p {
+        font-size: 12px;
       }
     }
 
@@ -543,13 +743,6 @@
     .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
     
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
-
-    /* About Modal Styling */
-    .about-box { font-size: 13px; line-height: 1.6; color: #ccc; }
-    .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-    .about-box p { margin-bottom: 10px; }
-    .about-box b { color: #fff; }
-    .rules-warn { background: rgba(255, 51, 51, 0.1); border-left: 3px solid var(--danger); padding: 10px; margin: 10px 0; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -559,7 +752,7 @@
       <div class="sb-content">
           <i class="fas fa-bullhorn sb-icon"></i>
           <div class="sb-text">
-              <h4>Announcement</h4>
+              <h4>Pengumuman Sistem</h4>
               <p id="sbMessage">Loading message...</p>
           </div>
       </div>
@@ -639,6 +832,7 @@
     </div>
   </div>
 
+  <!-- MODALS -->
   <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 id="authTitle" style="text-align:center; margin-bottom:20px; color:var(--accent)">Login ke ExeMusic</h3>
@@ -667,16 +861,15 @@
                   <h2 id="pUsername">User</h2>
                   <span id="pBadge"></span>
               </div>
-              <div id="pTagDisplay"></div> </div>
+              <div id="pTagDisplay"></div>
+          </div>
       </div>
       
-      <!-- PROFILE TABS -->
       <div class="profile-tabs-wrapper">
         <button id="tabProfile" class="profile-tab-btn active" onclick="switchProfileTab('profile')">📊 Profil Saya</button>
         <button id="tabAccount" class="profile-tab-btn" onclick="switchProfileTab('account')">⚙️ Akun</button>
       </div>
 
-      <!-- PROFILE TAB -->
       <div id="profileTab" class="profile-tab-content active">
         <div class="profile-stats-grid">
           <div class="profile-stat-item">
@@ -692,7 +885,6 @@
         <div id="myPostList" class="posts-list"></div>
       </div>
 
-      <!-- ACCOUNT TAB -->
       <div id="accountTab" class="profile-tab-content">
         <div class="account-setting-box">
           <label class="account-setting-label">📧 Email Address</label>
@@ -736,7 +928,8 @@
                   <h2 id="vName">@creator</h2>
                   <span id="vBadge"></span>
               </div>
-              <div id="vTagDisplay"></div> </div>
+              <div id="vTagDisplay"></div>
+          </div>
       </div>
       <div class="profile-stats-grid">
         <div class="profile-stat-item">
@@ -757,18 +950,21 @@
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Upload Lagu</h3>
       <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
-          <b>Warning:</b> Dilarang mengupload konten sara, pornografi audio, atau lagu yang merusak telinga (earrape). Pelanggaran = <b>BANNED PERMANENT</b>.
+          <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b style="color: var(--danger);">BANNED PERMANENT</b> tanpa peringatan!
       </div>
       <div id="uploadFormUser" style="display:none">
           <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
           <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top Only)">
-          <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
+          <button onclick="confirmAndSave()" class="btn-act">📤 POST SEKARANG</button>
       </div>
       <div id="uploadFormGuest">
+          <p style="font-size:12px; color:#888; text-align:center; margin-bottom:15px;">
+              Belum login? Kirim request melalui WhatsApp untuk ditinjau admin
+          </p>
           <input id="guestName" class="inp-dark" placeholder="Nama Anda">
           <input id="guestLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
           <input id="guestUrl" class="inp-dark" placeholder="Link MP3 Top4Top">
-          <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white">WHATSAPP REQUEST</button>
+          <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white">💬 KIRIM KE WHATSAPP</button>
       </div>
     </div>
   </div>
@@ -780,23 +976,60 @@
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>ExeMusic v3.1 Elite</h3>
-        <p>Selamat datang di platform sharing musik <b>ExecuriveRP</b>. Di sini kamu bebas mengekspresikan karyamu melalui audio.</p>
+        <h3>🎵 ExeMusic v3.1 Elite Edition</h3>
+        <p>Selamat datang di platform musik streaming eksklusif <b>ExecuriveRP</b>. Platform ini dirancang khusus untuk para creator yang ingin berbagi dan menikmati musik berkualitas tinggi dengan komunitas yang solid.</p>
         
-        <p><b>Fitur Utama:</b><br>
-        • High Quality Audio Streaming.<br>
-        • Social Following & System Badge.<br>
-        • Deep Linking (Share lagu ke teman dengan ID).<br>
-        • Anti-Spam System (Cooldown upload).</p>
+        <h4><i class="fas fa-star"></i> Fitur Unggulan Platform</h4>
+        <div class="feature-list">
+          <ul>
+            <li><b>High-Fidelity Audio Streaming</b> - Nikmati streaming musik dengan kualitas audio lossless tanpa kompresi berlebihan</li>
+            <li><b>Smart Social System</b> - Follow creator favorit Anda dan bangun komunitas musik dengan sistem following yang terintegrasi</li>
+            <li><b>Dynamic Badge System</b> - Dapatkan badge verifikasi otomatis saat mencapai 50 followers sebagai tanda kreator original</li>
+            <li><b>Deep Linking Technology</b> - Bagikan lagu spesifik dengan ID unik langsung ke teman via link khusus</li>
+            <li><b>Anti-Spam Protection</b> - Sistem cooldown 30 menit mencegah spam dan menjaga kualitas konten platform</li>
+            <li><b>Real-time Sync System</b> - Semua data followers, likes, dan playlist tersinkronisasi secara real-time</li>
+            <li><b>Cloud-Based Infrastructure</b> - Data tersimpan aman di Firebase dengan backup otomatis</li>
+            <li><b>Multi-Device Support</b> - Akses dari desktop, mobile, atau tablet dengan pengalaman yang konsisten</li>
+          </ul>
+        </div>
 
-        <p><b>Penghasilan & Reward:</b> Dapatkan <b>17ribu/1dolar</b> dari Hexky jika followers/favoritmu mencapai target tertentu.</p>
+        <h4><i class="fas fa-upload"></i> Cara Upload Musik</h4>
+        <p><b>Untuk User yang Sudah Login:</b><br>
+        Anda dapat langsung mengupload musik dengan menekan tombol <b>+ (Add/Request)</b>, kemudian masukkan judul lagu dan link MP3 dari <b>Top4Top</b>. Setelah submit, lagu Anda akan langsung tersedia di platform dan dapat didengarkan oleh semua user.</p>
         
-        <p><b>Badge Original User:</b> Kumpulkan <b>50 followers</b> untuk mendapatkan Centang Biru otomatis di profilmu.</p>
+        <p><b>Untuk Guest (Belum Login):</b><br>
+        Jika Anda belum memiliki akun, Anda masih bisa request upload dengan mengirim detail lagu via WhatsApp ke admin. Setelah admin meninjau dan menyetujui, lagu Anda akan diupload ke platform dengan kredit nama Anda.</p>
+
+        <div class="reward-box">
+          <h4><i class="fas fa-gift"></i> Program Reward & Incentive</h4>
+          <p>Kami menghargai kontribusi para creator aktif dengan sistem reward yang menarik:</p>
+          <p>🏆 <b>VIP Membership</b> - Creator dengan performa terbaik berkesempatan mendapatkan akses VIP eksklusif dari admin</p>
+          <p>💰 <b>Cash Reward</b> - Raih reward hingga <b style="color: var(--gold);">$0.99 atau Rp 16.000</b> untuk creator yang mencapai target followers dan engagement tertentu</p>
+          <p>📈 <b>Kriteria Penilaian:</b> Total followers, jumlah lagu terupload, engagement rate, dan konsistensi konten</p>
+          <p style="font-size: 11px; color: #888; margin-top: 10px;">* Syarat dan ketentuan berlaku. Keputusan admin bersifat final.</p>
+        </div>
+
+        <h4><i class="fas fa-shield-alt"></i> Badge Original User</h4>
+        <p>Sistem badge verifikasi <i class="fas fa-check-circle" style="color: #1da1f2;"></i> akan otomatis muncul di profil Anda ketika berhasil mengumpulkan <b>50 followers organik</b>. Badge ini menandakan bahwa Anda adalah creator original dan terpercaya di platform kami.</p>
         
         <div class="rules-warn">
-            <b>PERATURAN:</b> Akun yang mengupload konten ilegal akan dihapus permanen tanpa peringatan.
+            <b><i class="fas fa-exclamation-triangle"></i> PERATURAN KETAT PLATFORM:</b><br><br>
+            Akun yang terbukti mengupload konten ilegal seperti:<br>
+            • Konten SARA (Suku, Agama, Ras, dan Antar golongan)<br>
+            • Audio pornografi atau konten seksual eksplisit<br>
+            • Earrape atau audio yang merusak pendengaran<br>
+            • Konten yang melanggar hak cipta secara jelas<br>
+            • Konten yang mengandung ujaran kebencian<br><br>
+            <b style="color: var(--danger); font-size: 15px;">⚠️ AKAN DIHAPUS PERMANEN TANPA PERINGATAN</b><br><br>
+            Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan platform. Mohon hormati aturan ini demi kenyamanan bersama.
         </div>
-        <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
+        
+        <p style="text-align: center; margin-top: 20px; color: #888; font-size: 12px;">
+          Dibuat dengan ❤️ oleh Tim ExecuriveRP<br>
+          <b style="color: var(--accent);">© 2024 ExeMusic Platform</b>
+        </p>
+        
+        <button onclick="closeModal()" class="btn-act">✅ SAYA MENGERTI & SETUJU</button>
       </div>
     </div>
   </div>
@@ -828,7 +1061,6 @@
     let iceModeActive = false;
     let snowflakeInterval = null;
 
-    // Tambahan tag keren dan lucu
     function getTagHTML(tag) {
       if(!tag || tag === "none") return '';
       const t = tag.toLowerCase();
@@ -855,13 +1087,13 @@
                 if(val.discoInitiator) {
                     const initiator = val.discoInitiator;
                     if(initiator !== lastDiscoUser) {
-                        triggerBroadcast(`🎉 ${initiator} has started disco mode!`);
+                        triggerBroadcast(`🎉 ${initiator} telah mengaktifkan disco mode!`);
                         lastDiscoUser = initiator;
                     }
                 }
             } else if(!discoModeActive) {
                 resetTheme();
-                triggerBroadcast("Disco mode ended! Back to normal.");
+                triggerBroadcast("Disco mode berakhir! Kembali ke normal.");
             }
         } else if(discoModeActive && val.discoColor && val.discoColor !== discoColor) {
             discoColor = val.discoColor;
@@ -891,7 +1123,7 @@
         snowflake.className = 'snowflake';
         snowflake.textContent = '❄';
         snowflake.style.left = Math.random() * window.innerWidth + 'px';
-        const duration = Math.random() * 3 + 4; // 4-7 detik jatuh - lebih ringan dan cepat!
+        const duration = Math.random() * 3 + 4;
         const delay = Math.random() * 0.3;
         snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards`;
         document.body.appendChild(snowflake);
@@ -902,7 +1134,6 @@
     function startSnowfall() {
         if(snowflakeInterval) clearInterval(snowflakeInterval);
         snowflakeInterval = setInterval(createSnowflake, 300);
-        // Create initial snowflakes
         for(let i = 0; i < 15; i++) {
             setTimeout(() => createSnowflake(), i * 100);
         }
@@ -919,17 +1150,15 @@
     function applyDiscoMode(color) {
         document.documentElement.style.setProperty('--accent', color);
         
-        // Check jika ice mode
         if(color.toLowerCase() === '#ice') {
             iceModeActive = true;
-            color = '#00d4ff'; // Blizzard blue
+            color = '#00d4ff';
             document.documentElement.style.setProperty('--accent', color);
         } else {
             iceModeActive = false;
             stopSnowfall();
         }
         
-        // Background tetap gelap, cuma ambil tint sedikit
         const rgb = parseInt(color.slice(1), 16);
         const r = (rgb >> 16) & 255;
         const g = (rgb >> 8) & 255;
@@ -937,7 +1166,6 @@
         
         const app = document.querySelector('.app');
         if(app) {
-            // Rainbow effect jika color is rainbow code, ice mode heartbeat, otherwise disco heartbeat
             if(color.toLowerCase() === '#00d4ff') {
                 app.style.animation = 'disco-heartbeat 1.2s infinite';
                 app.style.borderColor = color;
@@ -954,10 +1182,8 @@
             app.style.boxShadow = `0 0 40px ${color}60`;
         }
         
-        // Body background tetap dark
         document.body.style.background = '#050505';
         
-        // Update button colors dynamically dengan glow besar
         document.querySelectorAll('.btn-act').forEach(btn => {
             btn.style.background = color;
             btn.style.boxShadow = `0 0 25px ${color}, 0 0 50px ${color}40`;
@@ -970,41 +1196,35 @@
             btn.style.color = '#000';
         });
         
-        // Update eq color dengan glow lebih besar dan kontras
         document.querySelectorAll('.eq span').forEach(span => {
             span.style.background = color;
             span.style.boxShadow = `0 0 30px ${color}, 0 0 60px ${color}, 0 0 90px ${color}40`;
             span.style.filter = 'brightness(1.3)';
         });
         
-        // Update broadcast bar
         const sbBar = document.getElementById('sbBar');
         if(sbBar) {
             sbBar.style.background = color;
             sbBar.style.boxShadow = `0 0 15px ${color}`;
         }
         
-        // System container jadi lebih colorful dengan border
         document.querySelectorAll('.sys-container').forEach(el => {
             el.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
             el.style.border = `1px solid ${color}40`;
             el.style.boxShadow = `inset 0 0 15px rgba(${r}, ${g}, ${b}, 0.1)`;
         });
         
-        // Modal sheets dengan gradient
         document.querySelectorAll('.sheet').forEach(el => {
             el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.08) 0%, #181818 100%)`;
             el.style.borderTop = `2px solid ${color}80`;
         });
         
-        // Title jadi lebih colorful
         const title = document.getElementById('title');
         if(title) {
             title.style.color = color;
             title.style.textShadow = `0 0 20px ${color}80`;
         }
         
-        // "By" text juga
         const byEl = document.getElementById('by');
         if(byEl) {
             byEl.style.color = color;
@@ -1019,7 +1239,6 @@
         
         document.body.style.background = '#050505';
         
-        // Stop snowfall jika active
         if(iceModeActive) {
             stopSnowfall();
             iceModeActive = false;
@@ -1034,7 +1253,6 @@
             app.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5)';
         }
         
-        // Reset button colors
         document.querySelectorAll('.btn-act').forEach(btn => {
             btn.style.background = 'var(--accent)';
             btn.style.boxShadow = 'none';
@@ -1047,52 +1265,40 @@
             btn.style.color = '#000';
         });
         
-        // Reset eq color
         document.querySelectorAll('.eq span').forEach(span => {
             span.style.background = 'var(--accent)';
             span.style.boxShadow = '0 0 15px var(--accent)';
             span.style.filter = 'brightness(1)';
         });
         
-        // Reset broadcast
         const sbBar = document.getElementById('sbBar');
         if(sbBar) {
             sbBar.style.background = 'var(--accent)';
             sbBar.style.boxShadow = 'none';
         }
         
-        // System container
         document.querySelectorAll('.sys-container').forEach(el => {
             el.style.background = 'rgba(255,255,255,0.03)';
             el.style.border = '1px solid rgba(255,255,255,0.05)';
             el.style.boxShadow = 'none';
         });
         
-        // Modal sheets
         document.querySelectorAll('.sheet').forEach(el => {
             el.style.background = '#181818';
             el.style.borderTop = '1px solid #333';
         });
         
-        // Title reset
         const title = document.getElementById('title');
         if(title) {
             title.style.color = '';
             title.style.textShadow = '0 0 10px rgba(0,0,0,0.5)';
         }
         
-        // "By" reset
         const byEl = document.getElementById('by');
         if(byEl) {
             byEl.style.color = 'var(--accent)';
             byEl.style.textShadow = 'none';
         }
-    }
-
-    // FUNCTION: Generate fake follower dengan format User_randomnumber
-    function generateFakeFollower() {
-      const randomNum = Math.floor(Math.random() * 999999) + 10000;
-      return `User_${randomNum}`;
     }
 
     // AUTH & USER DATA
@@ -1114,7 +1320,6 @@
           const followerCount = Array.isArray(userData.followers) ? userData.followers.length : userData.followers || 0;
           document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
-          // Sensor email
           const email = u.email || "";
           const [name, domain] = email.split('@');
           const sensoredEmail = name.slice(0, Math.max(1, Math.floor(name.length / 3))) + '*'.repeat(Math.max(3, name.length - 2)) + '@' + domain;
@@ -1140,17 +1345,14 @@
       if(val) {
         songs = Object.keys(val).map(k => ({...val[k], key: k}));
         
-        // Cek ID di URL (execuriverp.github.io/exemusic?id=0)
         const urlParams = new URLSearchParams(window.location.search);
         const songId = urlParams.get('id');
         const profileUid = urlParams.get('profile_userid');
         
         if(profileUid && auth.currentUser) {
-          // Open profile dengan deep link
           if(profileUid === auth.currentUser.uid) {
             openProfile();
           } else {
-            // Buka profile orang lain
             db.ref('users/' + profileUid).get().then(snap => {
               if(snap.exists()) {
                 const userData = snap.val();
@@ -1183,7 +1385,6 @@
       if(!songs[idx]) return;
       i = idx;
       
-      // Update URL without refresh
       const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + i;
       window.history.pushState({path:newUrl},'',newUrl);
 
@@ -1205,10 +1406,9 @@
         
         if(!title || !url) return msg("Isi semua data!");
         
-        // Cooldown Check (30 Menit)
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
-        const diff = (now - lastUpload) / 1000 / 60; // dalam menit
+        const diff = (now - lastUpload) / 1000 / 60;
         
         if(diff < 30 && userData.role !== 'admin') {
             return Swal.fire({
@@ -1220,13 +1420,14 @@
         }
 
         Swal.fire({
-            title: 'Are you sure?',
-            text: "Jika lagu ini melanggar rules kami (Sara, Porn, Earrape), akun anda akan kami BANNED PERMANENT!",
+            title: 'Konfirmasi Upload',
+            text: "Jika lagu ini melanggar aturan (SARA, Pornografi, Earrape), akun Anda akan DI-BANNED PERMANENT tanpa peringatan!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#00ff88',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Saya Tanggung Jawab',
+            confirmButtonText: '✅ Ya, Saya Bertanggung Jawab',
+            cancelButtonText: '❌ Batal',
             background: '#181818',
             color: '#fff'
         }).then((result) => {
@@ -1247,7 +1448,7 @@
         
         db.ref('songs').push(newSong).then(() => {
             db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
-            msg("Berhasil diposting!");
+            msg("✅ Berhasil diposting!");
             closeModal();
             document.getElementById('rLagu').value = "";
             document.getElementById('rUrl').value = "";
@@ -1266,20 +1467,17 @@
       document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
       document.getElementById('cur').textContent = fmt(audio.currentTime);
       document.getElementById('dur').textContent = fmt(audio.duration);
-      // Hide spinner when duration is available
       if(audio.duration > 0) {
         document.getElementById('loadSpinner').classList.remove('show');
       }
     };
     
-    // Show loading spinner when song starts playing (duration not yet loaded)
     audio.onplay = () => {
       if(audio.duration === 0 || isNaN(audio.duration)) {
         document.getElementById('loadSpinner').classList.add('show');
       }
     };
     
-    // Hide spinner when metadata is loaded
     audio.onloadedmetadata = () => {
       document.getElementById('loadSpinner').classList.remove('show');
     };
@@ -1309,7 +1507,6 @@
         const isFollowing = targetFollowers.includes(auth.currentUser.uid);
         
         if(isFollowing) {
-          // Unfollow
           const newFollowers = targetFollowers.filter(uid => uid !== auth.currentUser.uid);
           const newFollowing = currentFollowing.filter(uid => uid !== targetUid);
           
@@ -1317,7 +1514,6 @@
           await currentRef.update({ following: newFollowing });
           msg("Unfollowed!");
         } else {
-          // Follow
           const newFollowers = [...targetFollowers, auth.currentUser.uid];
           const newFollowing = [...currentFollowing, targetUid];
           
@@ -1325,7 +1521,6 @@
           await currentRef.update({ following: newFollowing });
           msg("Followed! ✅");
         }
-        // Update button state immediately
         await updateFollowUI();
       } catch(err) {
         msg("Error: " + err.message);
@@ -1340,7 +1535,7 @@
       
       const btn = document.getElementById('btnFollow');
       if(targetFollowers.includes(auth.currentUser.uid)) {
-        btn.style.display = 'none'; // Hide button jika sudah follow
+        btn.style.display = 'none';
       } else {
         btn.style.display = 'flex';
         btn.innerHTML = '<i class="fas fa-plus"></i>';
@@ -1366,7 +1561,6 @@
         const s = songs[i]; 
         if(!s.uid) return;
         
-        // Jika creator adalah user sendiri, buka profile modal
         if(auth.currentUser && s.uid === auth.currentUser.uid) {
             openProfile();
             return;
@@ -1382,12 +1576,8 @@
         const creatorSongs = songs.filter(x => x.uid === s.uid);
         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
         
-        // Set data untuk follow button
         document.getElementById('modalCreator').dataset.creatorUid = s.uid;
-        
-        // Update follow button state
         updateCreatorFollowUI(s.uid);
-        
         document.getElementById('modalCreator').style.display = 'block';
     }
 
@@ -1430,7 +1620,6 @@
         const isFollowing = creatorFollowers.includes(auth.currentUser.uid);
         
         if(isFollowing) {
-          // Unfollow
           const newFollowers = creatorFollowers.filter(uid => uid !== auth.currentUser.uid);
           const newFollowing = currentFollowing.filter(uid => uid !== creatorUid);
           
@@ -1438,7 +1627,6 @@
           await currentRef.update({ following: newFollowing });
           msg("Unfollowed!");
         } else {
-          // Follow
           const newFollowers = [...creatorFollowers, auth.currentUser.uid];
           const newFollowing = [...currentFollowing, creatorUid];
           
@@ -1446,7 +1634,6 @@
           await currentRef.update({ following: newFollowing });
           msg("Followed! ✅");
         }
-        // Update button
         await updateCreatorFollowUI(creatorUid);
       } catch(err) {
         msg("Error: " + err.message);
@@ -1477,25 +1664,20 @@
     function shareLink() { 
         const link = window.location.origin + window.location.pathname + "?id=" + i;
         navigator.clipboard.writeText(link); 
-        msg("Link lagu dengan ID disalin"); 
+        msg("🔗 Link lagu dengan ID disalin"); 
     }
     
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
-    function toggleAuthMode() { /* Google Sign-In only - not used */ }
-    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
+    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value} - Link: ${document.getElementById('guestUrl').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
 
     let isFirstTimeUser = false;
 
-    function handleAuth() {
-      /* Old function - replaced by handleGoogleAuth */
-    }
-
+    // FIXED GOOGLE AUTH - NO AUTO FOLLOWERS
     function handleGoogleAuth() {
       if(isFirstTimeUser) {
-        // Complete registration
         const username = document.getElementById('authUser').value.trim();
         
         if(!username || username.length < 3) {
@@ -1512,20 +1694,13 @@
           return;
         }
         
-        // Generate 3-5 fake followers
-        const fakeFollowerCount = Math.floor(Math.random() * 3) + 3;
-        const fakeFollowers = [];
-        for(let i = 0; i < fakeFollowerCount; i++) {
-          fakeFollowers.push(generateFakeFollower());
-        }
-        
-        // Simpan data user ke database
+        // FIXED: Start with empty followers array - NO FAKE FOLLOWERS!
         db.ref('users/' + user.uid).set({
           username: username,
           email: user.email,
           avatar: user.photoURL || "https://via.placeholder.com/150",
           role: 'user',
-          followers: fakeFollowers,
+          followers: [], // EMPTY - User starts fresh with 0 followers!
           following: [],
           tag: 'user',
           createdAt: Date.now()
@@ -1534,12 +1709,11 @@
           document.getElementById('usernameSection').style.display = 'none';
           document.getElementById('googleBtnText').innerText = 'Masuk dengan Google';
           closeModal();
-          msg('✅ Akun berhasil dibuat! Selamat datang ' + username + '!');
+          msg('✅ Akun berhasil dibuat! Selamat datang, ' + username + '!');
         }).catch(err => {
           msg('❌ Gagal menyimpan data: ' + err.message);
         });
       } else {
-        // Google Sign-In
         const provider = new firebase.auth.GoogleAuthProvider();
         provider.setCustomParameters({
           prompt: 'select_account'
@@ -1550,15 +1724,12 @@
             const user = result.user;
             const isNewUser = result.additionalUserInfo.isNewUser;
             
-            // Cek apakah user baru
             if(isNewUser) {
               isFirstTimeUser = true;
-              // Tampilkan form username
               document.getElementById('googleBtnText').innerText = 'Buat Akun';
               document.getElementById('usernameSection').style.display = 'block';
               msg('👋 Selamat datang! Buat username Anda untuk melanjutkan.');
             } else {
-              // User lama, langsung masuk
               closeModal();
               msg('✅ Selamat datang kembali!');
             }
@@ -1580,7 +1751,7 @@
         if(!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("Profil Updated!"));
+            db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("✅ Profil Updated!"));
         };
         reader.readAsDataURL(file);
     }
