@@ -54,7 +54,7 @@
         box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         display: flex;
         flex-direction: column;
-        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, transform 0.4s ease;
         backdrop-filter: blur(10px);
     }
     .sys-broadcast.active { top: 20px; }
@@ -549,7 +549,27 @@
     .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
     .about-box p { margin-bottom: 10px; }
     .about-box b { color: #fff; }
+    .about-features { margin: 8px 0 12px 18px; padding: 0; }
+    .about-features li { margin-bottom: 8px; }
+    .about-footer { font-size: 12px; color: #888; margin-top: 8px; }
+    .about-credit { font-size: 12px; color: #666; margin-top: 8px; }
+    .about-dev-link { color: #00d4ff; font-weight: 700; text-decoration: none; text-shadow: 0 0 10px #00d4ff; transition: color 0.2s, text-shadow 0.2s; }
+    .about-dev-link:hover { color: #7df9ff; text-shadow: 0 0 15px #7df9ff; }
     .rules-warn { background: rgba(255, 51, 51, 0.1); border-left: 3px solid var(--danger); padding: 10px; margin: 10px 0; border-radius: 4px; }
+
+    /* Broadcast: exit animation & developer name */
+    .sys-broadcast.sb-closing {
+      top: -180px !important;
+      opacity: 0;
+      transform: translateX(-50%) translateY(-15px);
+      transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.4s ease;
+    }
+    .sb-text p .sb-dev-name {
+      color: #00d4ff;
+      font-weight: 700;
+      text-shadow: 0 0 8px #00d4ff;
+      display: inline;
+    }
   </style>
 </head>
 <body>
@@ -757,7 +777,7 @@
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Upload Lagu</h3>
       <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
-          <b>Warning:</b> Dilarang mengupload konten sara, pornografi audio, atau lagu yang merusak telinga (earrape). Pelanggaran = <b>BANNED PERMANENT</b>.
+          <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b>BANNED PERMANENT</b> tanpa peringatan!
       </div>
       <div id="uploadFormUser" style="display:none">
           <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
@@ -780,22 +800,56 @@
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>ExeMusic v3.1 Elite</h3>
-        <p>Selamat datang di platform sharing musik <b>ExecuriveRP</b>. Di sini kamu bebas mengekspresikan karyamu melalui audio.</p>
+        <h3>🎵 Executive Music 3.1 Version</h3>
+        <p>Selamat datang di exemusic. Website ini dirancang khusus untuk para creator url yang ingin berbagi dan menikmati musik berkualitas tinggi dengan komunitas yang solid.</p>
         
-        <p><b>Fitur Utama:</b><br>
-        • High Quality Audio Streaming.<br>
-        • Social Following & System Badge.<br>
-        • Deep Linking (Share lagu ke teman dengan ID).<br>
-        • Anti-Spam System (Cooldown upload).</p>
+        <p><b>Fitur Unggulan Platform</b></p>
+        <ul class="about-features">
+          <li><b>High-Fidelity Audio Streaming</b> – Nikmati streaming musik dengan kualitas audio lossless tanpa kompresi berlebihan</li>
+          <li><b>Smart Social System</b> – Follow creator favorit Anda dan bangun komunitas musik dengan sistem following yang terintegrasi</li>
+          <li><b>Dynamic Badge System</b> – Dapatkan badge verifikasi otomatis saat mencapai 50+ followers sebagai tanda kreator original (bisa request ke admin)</li>
+          <li><b>Deep Linking Technology</b> – Bagikan lagu spesifik dengan ID unik langsung ke teman via link khusus</li>
+          <li><b>Anti-Spam Protection</b> – Sistem cooldown 30 menit mencegah spam dan menjaga kualitas konten exemusic.</li>
+          <li><b>Real-time Sync System</b> – Semua data followers, likes, dan playlist tersinkronisasi secara real-time</li>
+          <li><b>Cloud-Based Infrastructure</b> – Data tersimpan aman di database dengan backup otomatis</li>
+          <li><b>Multi-Device Support</b> – Akses dari desktop, mobile, atau tablet dengan pengalaman yang konsisten</li>
+        </ul>
 
-        <p><b>Penghasilan & Reward:</b> Dapatkan <b>17ribu/1dolar</b> dari Hexky jika followers/favoritmu mencapai target tertentu.</p>
-        
-        <p><b>Badge Original User:</b> Kumpulkan <b>50 followers</b> untuk mendapatkan Centang Biru otomatis di profilmu.</p>
+        <p><b>Cara Upload Musik</b></p>
+        <p><b>Untuk User yang Sudah Login:</b><br>
+        Anda dapat langsung mengupload musik dengan menekan tombol + (Add/Request), kemudian masukkan judul lagu dan link MP3 dari Top4Top. Setelah submit, lagu Anda akan langsung tersedia di platform dan dapat didengarkan oleh semua user.</p>
+        <p><b>Untuk Guest (Belum Login):</b><br>
+        Jika Anda belum memiliki akun, Anda masih bisa request upload dengan mengirim detail lagu via WhatsApp ke admin. Setelah admin meninjau dan menyetujui, lagu Anda akan diupload ke platform dengan kredit nama Anda.</p>
+
+        <p><b>Program Reward & Incentive</b></p>
+        <p>Kami menghargai kontribusi para creator aktif dengan sistem reward yang menarik:</p>
+        <ul class="about-features">
+          <li>🏆 <b>VIP Membership</b> – Creator dengan performa terbaik berkesempatan mendapatkan akses VIP eksklusif dari admin</li>
+          <li>💰 <b>Cash Reward</b> – Raih reward hingga $0.99 atau Rp 16.000 untuk creator yang mencapai target followers dan engagement tertentu</li>
+          <li>📈 <b>Kriteria Penilaian:</b> Total followers, jumlah lagu terupload, engagement rate, dan konsistensi konten</li>
+        </ul>
+        <p><em>* Syarat dan ketentuan berlaku. Keputusan admin bersifat final.</em></p>
+
+        <p><b>Badge Original User</b></p>
+        <p>Sistem badge verifikasi akan otomatis muncul di profil Anda ketika berhasil mengumpulkan 50 followers organik. Badge ini menandakan bahwa Anda adalah creator original dan terpercaya di exemusic.</p>
         
         <div class="rules-warn">
-            <b>PERATURAN:</b> Akun yang mengupload konten ilegal akan dihapus permanen tanpa peringatan.
+          <b>PERATURAN KETAT EXEMUSIC:</b><br><br>
+          Akun yang terbukti mengupload konten ilegal seperti:<br>
+          • Konten SARA (Suku, Agama, Ras, dan Antar golongan)<br>
+          • Audio pornografi atau konten seksual eksplisit<br>
+          • Earrape atau audio yang merusak pendengaran<br>
+          • Konten yang melanggar hak cipta secara jelas<br>
+          • Konten yang mengandung ujaran kebencian<br><br>
+          <strong>⚠️ AKAN DIHAPUS PERMANEN TANPA PERINGATAN</strong>
         </div>
+
+        <p style="margin-top:12px;">
+          <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; margin-right:8px; margin-bottom:8px;">📱 Contact WhatsApp – click here!</a>
+          <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; background:#333; color:var(--accent); border:1px solid var(--accent);">📋 Changelogs – click here!</a>
+        </p>
+        <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
+        <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
         <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
       </div>
     </div>
@@ -872,10 +926,16 @@
     function triggerBroadcast(msg) {
         const el = document.getElementById('sysBroadcast');
         const bar = document.getElementById('sbBar');
-        el.classList.remove('active');
+        const msgEl = document.getElementById('sbMessage');
+        el.classList.remove('active', 'sb-closing');
         bar.style.animation = 'none';
-        void bar.offsetWidth; 
-        document.getElementById('sbMessage').innerText = msg;
+        void bar.offsetWidth;
+        if (typeof msg === 'string' && msg.trim().toLowerCase().startsWith('hexky:')) {
+            const rest = msg.slice(6).trim();
+            msgEl.innerHTML = '<span class="sb-dev-name">Hexky</span>: ' + escapeHtml(rest);
+        } else {
+            msgEl.textContent = msg;
+        }
         setTimeout(() => {
             el.classList.add('active');
             bar.style.animation = 'countDown 15s linear forwards';
@@ -883,8 +943,19 @@
         clearTimeout(broadcastTimeout);
         broadcastTimeout = setTimeout(closeBroadcast, 15000);
     }
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 
-    function closeBroadcast() { document.getElementById('sysBroadcast').classList.remove('active'); }
+    function closeBroadcast() {
+        const el = document.getElementById('sysBroadcast');
+        el.classList.add('sb-closing');
+        setTimeout(() => {
+            el.classList.remove('active', 'sb-closing');
+        }, 400);
+    }
 
     function createSnowflake() {
         const snowflake = document.createElement('div');
