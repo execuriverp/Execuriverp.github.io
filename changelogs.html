@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Changelogs - ExeMusic</title>
+  <link rel="icon" type="image/png" href="exemusicicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --accent: #00ff88;
+      --text: #ffffff;
+      --text-dim: #b3b3b3;
+      --bg: #050505;
+      --card-bg: #121212;
+      --glass: rgba(255, 255, 255, 0.05);
+      --danger: #ff3333;
+      --warning: #ffcc00;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+
+    .header p {
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: 1px solid var(--accent);
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: var(--accent);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+    }
+
+    .changelog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .changelog-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      padding: 25px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .changelog-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .changelog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .version {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    .date {
+      color: var(--text-dim);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+
+    .changelog-content {
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .changelog-content ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 10px;
+    }
+
+    .changelog-content li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+      color: #ddd;
+    }
+
+    .changelog-content li:before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .changelog-content li.added:before {
+      content: "✓";
+      color: var(--accent);
+    }
+
+    .changelog-content li.fixed:before {
+      content: "🔧";
+    }
+
+    .changelog-content li.improved:before {
+      content: "⚡";
+      color: #ffcc00;
+    }
+
+    .changelog-content li.changed:before {
+      content: "🔄";
+      color: #00d4ff;
+    }
+
+    .changelog-content li.removed:before {
+      content: "✗";
+      color: var(--danger);
+    }
+
+    .changelog-content h3 {
+      color: var(--text);
+      font-size: 16px;
+      margin: 15px 0 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 5px;
+    }
+
+    .changelog-content h3:first-child {
+      margin-top: 0;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 30px 20px;
+      color: var(--text-dim);
+      font-size: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: #00dd7a;
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 10px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .changelog-item {
+        padding: 20px;
+      }
+
+      .version {
+        font-size: 20px;
+      }
+
+      .changelog-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .date {
+        font-size: 11px;
+      }
+
+      .changelog-content {
+        font-size: 13px;
+      }
+
+      .changelog-content li {
+        padding-left: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 20px 15px;
+      }
+
+      .header h1 {
+        font-size: 20px;
+      }
+
+      .changelog-item {
+        padding: 15px;
+      }
+
+      .version {
+        font-size: 18px;
+      }
+
+      .changelog-content li {
+        font-size: 12px;
+        padding-left: 18px;
+      }
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Loading animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .changelog-item {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .changelog-item:nth-child(1) { animation-delay: 0.1s; }
+    .changelog-item:nth-child(2) { animation-delay: 0.2s; }
+    .changelog-item:nth-child(3) { animation-delay: 0.3s; }
+    .changelog-item:nth-child(4) { animation-delay: 0.4s; }
+    .changelog-item:nth-child(5) { animation-delay: 0.5s; }
+    .changelog-item:nth-child(n+6) { animation-delay: 0.6s; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-code-branch"></i> Changelogs ExeMusic</h1>
+      <p>Riwayat pembaruan dan perubahan platform ExeMusic</p>
+      <a href="https://execuriverp.github.io/exemusic" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Kembali ke ExeMusic
+      </a>
+    </div>
+
+    <div class="changelog-list">
+      <!-- Version 3.1 -->
+      <div class="changelog-item">
+        <div class="changelog-header">
+          <span class="version">v3.1</span>
+          <span class="date">Februari 2025</span>
+        </div>
+        <div class="changelog-content">
+          <h3>🎉 Fitur Baru</h3>
+          <ul>
+            <li class="added">Sistem Badge Verifikasi otomatis untuk creator dengan 50+ followers</li>
+            <li class="added">Program Reward & Incentive dengan VIP Membership dan Cash Reward</li>
+            <li class="added">Deep Linking Technology untuk share lagu dengan ID unik</li>
+            <li class="added">Real-time Sync System untuk followers, likes, dan playlist</li>
+            <li class="added">Multi-Device Support dengan pengalaman konsisten</li>
+          </ul>
+          
+          <h3>⚡ Peningkatan</h3>
+          <ul>
+            <li class="improved">High-Fidelity Audio Streaming dengan kualitas lossless</li>
+            <li class="improved">Smart Social System dengan following terintegrasi</li>
+            <li class="improved">Anti-Spam Protection dengan cooldown 30 menit</li>
+            <li class="improved">Cloud-Based Infrastructure dengan backup otomatis</li>
+          </ul>
+
+          <h3>🔧 Perbaikan</h3>
+          <ul>
+            <li class="fixed">Perbaikan followers hilang saat log-out</li>
+            <li class="fixed">Perbaikan sistem upload untuk user dan guest</li>
+            <li class="fixed">Optimasi performa real-time sync</li>
+            <li class="fixed">Perbaikan responsive design di berbagai device</li>
+          </ul>
+        </div>
+      </div>
+
+    <div class="footer">
+      <p>
+        <i class="fas fa-music"></i> ExeMusic - Url shareing and player<br>
+        Dibuat dengan <i class="fas fa-heart" style="color: var(--danger);"></i> oleh <a href="exemusicv3.1.html?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2">Hexky</a><br>
+        © 2025 ExeMusic. All rights reserved.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
