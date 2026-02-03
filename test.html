@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 4.0 - Device Upload Edition</title>
+  <title>ExeMusic 3.1 - Updated</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -202,1157 +202,860 @@
       position: fixed;
       top: 70px;
       right: 20px;
-      width: 90%;
-      max-width: 350px;
+      width: calc(100vw - 40px);
+      max-width: 360px;
       max-height: 70vh;
-      background: rgba(18, 18, 18, 0.98);
+      background: rgba(24, 24, 24, 0.98);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 20px;
-      padding: 15px;
-      z-index: 10001;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-      backdrop-filter: blur(40px);
-      overflow-y: auto;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+      z-index: 2500;
       display: none;
       flex-direction: column;
-      gap: 12px;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      animation: notifPanelIn 0.25s ease;
     }
     .notif-panel.show { display: flex; }
-    .notif-panel h3 {
-      color: var(--accent);
-      font-size: 14px;
-      margin-bottom: 5px;
+    @keyframes notifPanelIn {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .notif-panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       display: flex;
-      align-items: center;
       justify-content: space-between;
-    }
-    .notif-panel h3 button {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 10px;
-      font-size: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .notif-panel h3 button:hover {
-      background: var(--accent);
-      color: black;
-    }
-    .notif-item {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 15px;
-      padding: 12px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      transition: 0.2s;
-      cursor: pointer;
-    }
-    .notif-item:hover {
-      background: rgba(255,255,255,0.08);
-    }
-    .notif-item.unread {
-      border-color: var(--accent);
-      background: rgba(0, 255, 136, 0.05);
-    }
-    .notif-icon {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      background: rgba(0, 255, 136, 0.2);
+      flex-shrink: 0;
+    }
+    .notif-panel-header h3 {
+      margin: 0;
+      font-size: 16px;
       color: var(--accent);
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .notif-content {
-      flex: 1;
-    }
-    .notif-content .title {
-      font-size: 12px;
-      font-weight: 600;
-      color: white;
-      margin-bottom: 3px;
-    }
-    .notif-content .message {
-      font-size: 11px;
-      color: var(--text-dim);
-      line-height: 1.3;
-    }
-    .notif-content .time {
-      font-size: 10px;
-      color: #666;
-      margin-top: 5px;
-    }
-
-    /* SEARCH BAR */
-    .search-bar {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 25px;
-      padding: 12px 15px;
-      margin-bottom: 15px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
+      gap: 8px;
     }
-    .search-bar i { color: var(--text-dim); }
-    .search-bar input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 14px;
-    }
-    .search-bar input::placeholder { color: var(--text-dim); }
-
-    /* MAIN CONTENT */
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 5px;
-    }
-    .content::-webkit-scrollbar { width: 5px; }
-    .content::-webkit-scrollbar-track { background: transparent; }
-    .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-
-    /* MUSIC CARD */
-    .music-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 15px;
-      margin-bottom: 15px;
-      cursor: pointer;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .music-card:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); transform: translateY(-2px); }
-    .music-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, rgba(0,255,136,0.1) 0%, transparent 50%);
-      opacity: 0;
-      transition: 0.3s;
-    }
-    .music-card:hover::before { opacity: 1; }
-
-    .mc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; position: relative; z-index: 1; }
-    .mc-info { flex: 1; }
-    .mc-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-    .mc-artist { font-size: 12px; color: var(--text-dim); }
-    .mc-meta { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-dim); margin-top: 8px; position: relative; z-index: 1; }
-    .mc-meta i { margin-right: 4px; }
-
-    .mc-actions { display: flex; gap: 8px; }
-    .mc-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 8px 12px;
-      color: white;
-      font-size: 11px;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .mc-btn:hover { background: var(--accent); color: black; border-color: var(--accent); }
-    .mc-btn.danger:hover { background: var(--danger); border-color: var(--danger); }
-
-    /* ADD CARD */
-    .add-card {
-      background: linear-gradient(135deg, rgba(0,255,136,0.1) 0%, rgba(0,255,136,0.05) 100%);
-      border: 2px dashed var(--accent);
-      border-radius: 20px;
-      padding: 30px 20px;
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.3s;
-      text-align: center;
-    }
-    .add-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,255,136,0.2); }
-    .add-card i { font-size: 40px; color: var(--accent); margin-bottom: 10px; }
-    .add-card h3 { font-size: 16px; color: var(--accent); margin-bottom: 5px; }
-    .add-card p { font-size: 11px; color: var(--text-dim); }
-
-    /* BOTTOM NAV */
-    .bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      padding: 15px 0 5px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      flex-shrink: 0;
-    }
-    .nav-btn {
+    .notif-panel-close {
       background: none;
       border: none;
-      color: var(--text-dim);
-      font-size: 22px;
-      cursor: pointer;
-      transition: 0.2s;
-      padding: 8px 15px;
-      border-radius: 15px;
-    }
-    .nav-btn.active { color: var(--accent); background: rgba(0,255,136,0.1); }
-    .nav-btn:hover { color: var(--accent); }
-
-    /* MODAL */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(10px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 11000;
-      padding: 20px;
-    }
-    .modal-content {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 25px;
-      padding: 25px;
-      max-width: 400px;
-      width: 100%;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    .modal-content::-webkit-scrollbar { width: 5px; }
-    .modal-content::-webkit-scrollbar-track { background: transparent; }
-    .modal-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-header h2 { font-size: 20px; color: var(--accent); }
-    .modal-close {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: 0.2s;
-    }
-    .modal-close:hover { background: var(--danger); }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-    }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 12px 15px;
-      color: var(--text);
-      font-size: 14px;
-      transition: 0.2s;
-    }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-      border-color: var(--accent);
-      background: rgba(0,255,136,0.05);
-    }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-
-    .btn {
-      background: var(--accent);
-      color: black;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-      width: 100%;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,255,136,0.3); }
-    .btn:active { transform: translateY(0); }
-    .btn.secondary {
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
-    .btn.secondary:hover { background: rgba(255,255,255,0.2); }
-
-    /* WARNING BOX */
-    .warning-box {
-      background: rgba(255, 204, 0, 0.1);
-      border: 1px solid var(--warning);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 15px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .warning-box i {
-      color: var(--warning);
-      font-size: 16px;
-      margin-top: 2px;
-    }
-    .warning-box p {
-      font-size: 11px;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    /* DEVICE UPLOAD SPECIFIC */
-    .upload-choice {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    .upload-option {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: 15px;
-      padding: 20px 15px;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .upload-option:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
-    .upload-option.selected {
-      background: rgba(0,255,136,0.1);
-      border-color: var(--accent);
-    }
-    .upload-option i {
-      font-size: 24px;
-      color: var(--accent);
-    }
-    .upload-option span {
-      font-size: 12px;
-      color: var(--text);
-      font-weight: 600;
-    }
-    .upload-option small {
-      font-size: 10px;
-      color: var(--text-dim);
-    }
-
-    .upload-info {
-      background: rgba(0, 136, 255, 0.1);
-      border: 1px solid #0088ff;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 15px;
-    }
-    .upload-info p {
-      font-size: 11px;
-      color: var(--text);
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .upload-info i {
-      color: #0088ff;
-    }
-
-    .file-preview {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .file-preview i {
-      font-size: 30px;
-      color: var(--accent);
-    }
-    .file-preview .file-info {
-      flex: 1;
-    }
-    .file-preview .file-name {
-      font-size: 13px;
-      color: var(--text);
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-    .file-preview .file-size {
-      font-size: 11px;
-      color: var(--text-dim);
-    }
-
-    .progress-container {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .progress-container.show {
-      display: block;
-    }
-    .progress-label {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), #00cc6a);
-      border-radius: 10px;
-      width: 0%;
-      transition: width 0.3s;
-    }
-
-    /* PROFILE MODAL */
-    .profile-header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .profile-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid var(--accent);
-      margin: 0 auto 10px;
-      position: relative;
-      cursor: pointer;
-    }
-    .profile-avatar img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .profile-avatar .avatar-edit {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: var(--accent);
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: black;
-      font-size: 12px;
-    }
-    .profile-username {
+      color: #888;
       font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
-    .profile-tag {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-
-    .profile-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .tab-btn {
-      flex: 1;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 10px;
-      color: var(--text-dim);
-      font-size: 12px;
       cursor: pointer;
-      transition: 0.2s;
-      text-align: center;
+      padding: 4px;
     }
-    .tab-btn.active {
-      background: rgba(0,255,136,0.1);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .profile-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .stat-box {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-    }
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 3px;
-    }
-
-    .profile-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .profile-action-btn {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 12px 15px;
-      color: white;
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .profile-action-btn:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: var(--accent);
-    }
-    .profile-action-btn i {
-      color: var(--accent);
-    }
-
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-
-    /* ABOUT MODAL - IMPROVED */
-    .about-header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    .about-logo {
-      width: 120px;
-      margin: 0 auto 15px;
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-    .about-title {
-      font-size: 24px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), #00cc6a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 5px;
-    }
-    .about-version {
-      font-size: 12px;
-      color: var(--text-dim);
-      font-weight: 600;
-    }
-
-    .about-section {
-      margin-bottom: 20px;
-    }
-    .about-section h3 {
-      font-size: 14px;
-      color: var(--accent);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .about-section p {
-      font-size: 12px;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .feature-item {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-      transition: 0.2s;
-    }
-    .feature-item:hover {
-      background: rgba(0,255,136,0.1);
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
-    .feature-item i {
-      font-size: 20px;
-      color: var(--accent);
-      margin-bottom: 5px;
-    }
-    .feature-item span {
-      display: block;
-      font-size: 11px;
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .social-btn {
+    .notif-panel-close:hover { color: white; }
+    .notif-list {
+      overflow-y: auto;
       flex: 1;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 12px;
-      color: var(--text);
-      text-decoration: none;
+      padding: 8px 0;
+      min-height: 120px;
+      max-height: 60vh;
+    }
+    .notif-list::-webkit-scrollbar { width: 6px; }
+    .notif-list::-webkit-scrollbar-track { background: #111; border-radius: 10px; }
+    .notif-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+    .notif-item {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: background 0.2s;
+      cursor: default;
+    }
+    .notif-item:hover { background: rgba(255,255,255,0.04); }
+    .notif-item-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-size: 12px;
-      transition: 0.2s;
-    }
-    .social-btn:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
-    .social-btn i {
       font-size: 16px;
+      flex-shrink: 0;
     }
-
-    .credits {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 15px;
+    .notif-item-icon.admin { background: rgba(255,51,51,0.2); color: #ff6b6b; }
+    .notif-item-icon.violation { background: rgba(255,204,0,0.2); color: var(--warning); }
+    .notif-item-icon.upload { background: rgba(0,255,136,0.15); color: var(--accent); }
+    .notif-item-icon.follow { background: rgba(255,0,80,0.15); color: var(--tiktok-red); }
+    .notif-item-icon.system { background: rgba(0,212,255,0.15); color: #00d4ff; }
+    .notif-item-body { flex: 1; min-width: 0; }
+    .notif-item-body .n-text { font-size: 13px; color: #ddd; line-height: 1.4; }
+    .notif-item-body .n-time { font-size: 11px; color: #666; margin-top: 4px; }
+    .notif-empty {
+      padding: 30px 20px;
       text-align: center;
+      color: #555;
+      font-size: 13px;
     }
-    .credits p {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-    }
-    .credits .dev-name {
-      font-size: 14px;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 3px;
-    }
-
-    /* NON TOP4TOP BADGE */
-    .source-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(0, 136, 255, 0.2);
-      border: 1px solid #0088ff;
-      border-radius: 8px;
-      padding: 3px 8px;
-      font-size: 10px;
-      color: #0088ff;
-      margin-top: 5px;
-    }
-    .source-badge i {
-      font-size: 10px;
+    @media (max-width: 480px) {
+      .notif-panel {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+      }
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 400px) {
-      .app { padding: 20px; }
-      .modal-content { padding: 20px; }
-      .upload-choice { grid-template-columns: 1fr; }
+    .cover-box {
+      flex: 1; width: 100%; border-radius: 25px;
+      background: #000; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden; position: relative; z-index: 10; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    /* Hide default file input */
-    input[type="file"] {
+    .eq { display: flex; align-items: flex-end; gap: 5px; height: 60px; position: relative; z-index: 15; }
+    .eq span { width: 6px; background: var(--accent); border-radius: 10px; height: 10px; transition: height 0.2s ease; box-shadow: 0 0 15px var(--accent); }
+    .playing span { animation: wave 0.8s infinite ease-in-out; }
+    .playing span:nth-child(1) { animation-delay: 0.1s; }
+    .playing span:nth-child(2) { animation-delay: 0.3s; }
+    .playing span:nth-child(3) { animation-delay: 0.2s; }
+    .playing span:nth-child(4) { animation-delay: 0.4s; }
+    @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 50px; } }
+
+    .track-info { margin-bottom: 20px; flex-shrink: 0; text-align: left; }
+    #title { font-size: 22px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    
+    .user-row { display: flex; align-items: center; gap: 10px; }
+    #by { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    
+    #btnFollow { 
+      font-size: 12px; 
+      background: var(--tiktok-red); 
+      color: white; 
+      border: none; 
+      width: 22px; height: 22px; 
+      border-radius: 50%; 
+      font-weight: bold; 
+      cursor: pointer; 
+      display: none; 
+      transition: 0.2s; 
+      align-items: center; 
+      justify-content: center;
+    }
+    #btnFollow:active { transform: scale(0.9); }
+
+    .sys-container { background: rgba(255,255,255,0.03); border-radius: 18px; padding: 12px; margin-bottom: 15px; flex-shrink: 0; z-index: 5;}
+    .sys-tools { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 0 10px; }
+    .sys-tools button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; opacity: 0.7; transition: 0.2s; }
+    .sys-tools button:hover { opacity: 1; transform: translateY(-2px); color: var(--accent); }
+    
+    .vol-row { display: flex; align-items: center; gap: 10px; padding: 0 5px; }
+    #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; border-radius: 2px; }
+
+    .prog-area { margin-bottom: 20px; flex-shrink: 0; z-index: 5; }
+    #seek { width: 100%; height: 5px; accent-color: var(--accent); cursor: pointer; display: block; border-radius: 2px; }
+    .time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 6px; font-weight: 500; position: relative; align-items: center; }
+    
+    /* LOADING SPINNER */
+    .loading-spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0, 255, 136, 0.3);
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
       display: none;
+      margin: 0 auto;
+    }
+    .loading-spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .dur-wrapper { display: flex; align-items: center; gap: 6px; }
+
+    .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 110; }
+    .btn-play { width: 65px; height: 65px; background: var(--accent); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 24px; cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 136, 0.4); transition: 0.2s; }
+    .btn-play:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
+    .btn-sec { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; opacity: 0.9; }
+    .btn-sec:active { transform: scale(0.9); }
+
+    .footer { margin-top: auto; display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 15px 30px; border-radius: 25px; flex-shrink: 0; z-index: 10; }
+    .footer button { background: none; border: none; color: white; font-size: 18px; opacity: 0.5; cursor: pointer; transition: 0.2s; }
+    .footer button:hover { opacity: 1; }
+    
+    .active { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
+
+    /* MODALS */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; backdrop-filter: blur(5px); }
+    .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); border-top: 1px solid #333; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+
+    .song-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; transition: 0.2s; }
+    .song-item:hover { background: rgba(255,255,255,0.05); }
+    
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px); background: #222; border: 1px solid var(--accent); color: var(--accent); padding: 12px 25px; border-radius: 50px; font-size: 13px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 3000; pointer-events: none; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; font-size: 14px; }
+    .inp-dark:focus { border-color: var(--accent); }
+    .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; color:black; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .prof-stat { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
+    .prof-stat div { text-align: center; }
+    .prof-stat b { display: block; font-size: 20px; color: white; }
+    .prof-stat span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+    .section-title { font-size: 12px; font-weight: bold; margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* PROFILE TAB STYLES */
+    .profile-tabs-wrapper { display: flex; gap: 0; margin: 20px -25px 0 -25px; border-bottom: 2px solid #222; }
+    .profile-tab-btn { 
+      flex: 1; 
+      background: transparent; 
+      border: none; 
+      color: #666; 
+      padding: 15px 20px; 
+      cursor: pointer; 
+      border-bottom: 3px solid transparent;
+      text-transform: uppercase; 
+      font-weight: 600; 
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .profile-tab-btn:hover { color: #999; }
+    .profile-tab-btn.active { 
+      color: var(--accent); 
+      border-bottom-color: var(--accent);
+    }
+
+    .profile-tab-content { 
+      display: none; 
+      padding: 25px 0;
+      animation: fadeIn 0.3s ease;
+    }
+    .profile-tab-content.active { display: block; }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* PROFILE GRID IMPROVEMENTS */
+    .profile-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 25px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 15px;
+      border: 1px solid #333;
+    }
+    .profile-stat-item {
+      text-align: center;
+      padding: 15px;
+      border-radius: 10px;
+      background: transparent;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .profile-stat-item:hover {
+      background: transparent;
+      transform: translateY(-2px);
+      border-color: transparent;
+    }
+    .profile-stat-item b { 
+      display: block; 
+      font-size: 24px; 
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    .profile-stat-item span { 
+      font-size: 11px; 
+      color: var(--text-dim); 
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ACCOUNT SETTINGS STYLES */
+    .account-setting-box {
+      padding: 18px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #333;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    .account-setting-box:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: #444;
+    }
+    .account-setting-label {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .account-setting-value {
+      color: #ddd;
+      font-size: 13px;
+      word-break: break-all;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #0a0a0a;
+      border-radius: 8px;
+      border: 1px solid #222;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* RESPONSIVE POST LIST */
+    .posts-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
+    .posts-list::-webkit-scrollbar { width: 6px; }
+    .posts-list::-webkit-scrollbar-track { background: #0a0a0a; border-radius: 10px; }
+    .posts-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+    .posts-list::-webkit-scrollbar-thumb:hover { background: #00dd7a; }
+
+    /* BUTTON IMPROVEMENTS */
+    .btn-account {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      color: black;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+    }
+    .btn-account:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--accent)40;
+    }
+    .btn-account:active {
+      transform: translateY(0);
+    }
+    .btn-account.danger {
+      background: #ff6b6b;
+    }
+    .btn-account.danger:hover {
+      box-shadow: 0 8px 20px #ff6b6b40;
+    }
+    .btn-account.logout {
+      background: #222;
+      color: #ff6b6b;
+      border: 1px solid #333;
+    }
+    .btn-account.logout:hover {
+      background: #1a1a1a;
+      border-color: #ff6b6b;
+      box-shadow: 0 8px 20px #ff6b6b20;
+    }
+
+    /* MODAL MESSAGE STYLES */
+    .modal-msg {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+    .modal-msg.show { display: block; }
+    .modal-msg.success {
+      color: var(--accent);
+      background: rgba(0,255,136,0.1);
+      border: 1px solid #00dd7a;
+    }
+    .modal-msg.error {
+      color: #ff6b6b;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid #ff6b6b;
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 480px) {
+      .spotify-banner {
+        height: 100px;
+        margin: -25px -25px 15px -25px;
+        padding: 15px;
+      }
+      .spotify-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 24px;
+      }
+      .spotify-info {
+        margin-left: 12px;
+      }
+      .spotify-info h2 {
+        font-size: 18px;
+      }
+      .profile-stats-grid {
+        grid-template-columns: 1fr;
+        margin: 20px 0;
+        padding: 15px;
+        gap: 15px;
+      }
+      .profile-stats-grid b {
+        font-size: 20px;
+      }
+      .profile-tabs-wrapper {
+        margin: 15px -25px 0 -25px;
+      }
+      .profile-tab-btn {
+        padding: 12px 15px;
+        font-size: 11px;
+      }
+      .profile-tab-content {
+        padding: 20px 0;
+      }
+      .account-setting-box {
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .btn-account {
+        padding: 12px;
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+      .posts-list {
+        max-height: 200px;
+      }
+    }
+
+    @media (min-width: 481px) and (max-width: 768px) {
+      .profile-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .spotify-banner {
+        height: 110px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .profile-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
+
+    .spotify-banner {
+      width: 100%; height: 120px;
+      background: linear-gradient(to bottom, var(--accent), #181818);
+      margin: -25px -25px 20px -25px;
+      border-radius: 30px 30px 0 0;
+      display: flex; align-items: flex-end; padding: 20px;
+      position: relative;
+    }
+    .spotify-avatar {
+      width: 80px; height: 80px; background: #222; 
+      border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center; font-size: 30px;
+      border: 3px solid #181818;
+      overflow: hidden;
+      position: relative;
+    }
+    .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-edit {
+        position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+        display: none; align-items: center; justify-content: center;
+        font-size: 14px; cursor: pointer; color: white;
+    }
+    .spotify-avatar:hover .avatar-edit { display: flex; }
+
+    .spotify-info { margin-left: 15px; }
+    .spotify-info h2 { font-size: 24px; margin: 0; }
+    
+    /* Updated Tag Styles */
+    .user-tag {
+      font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
+      text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
+    }
+    .tag-admin { background: #ff3333; color: #fff; }
+    .tag-owner { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-staff { background: #0088ff; color: #fff; }
+    .tag-executive { background: #aa00ff; color: #fff; }
+    .tag-user { background: #444; color: #eee; }
+    .tag-sepuh { background: #1a1a1a; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-rich { background: linear-gradient(45deg, gold, #fff); color: #000; }
+    .tag-galau { background: #555; color: #fff; font-style: italic; }
+    .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
+    .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
+    
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
+
+    /* About Modal Styling */
+    .about-box { font-size: 13px; line-height: 1.6; color: #ccc; }
+    .about-box h3 { color: var(--accent); margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .about-box p { margin-bottom: 10px; }
+    .about-box b { color: #fff; }
+    .about-features { margin: 8px 0 12px 18px; padding: 0; }
+    .about-features li { margin-bottom: 8px; }
+    .about-footer { font-size: 12px; color: #888; margin-top: 8px; }
+    .about-credit { font-size: 12px; color: #666; margin-top: 8px; }
+    .about-dev-link { color: #00d4ff; font-weight: 700; text-decoration: none; text-shadow: 0 0 10px #00d4ff; transition: color 0.2s, text-shadow 0.2s; }
+    .about-dev-link:hover { color: #7df9ff; text-shadow: 0 0 15px #7df9ff; }
+    .rules-warn { background: rgba(255, 51, 51, 0.1); border-left: 3px solid var(--danger); padding: 10px; margin: 10px 0; border-radius: 4px; }
+
+    /* Broadcast: exit animation & developer name */
+    .sys-broadcast.sb-closing {
+      top: -180px !important;
+      opacity: 0;
+      transform: translateX(-50%) translateY(-15px);
+      transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.4s ease;
+    }
+    .sb-text p .sb-dev-name {
+      color: #00d4ff;
+      font-weight: 700;
+      text-shadow: 0 0 8px #00d4ff;
+      display: inline;
     }
   </style>
 </head>
 <body>
 
-  <!-- System Broadcast -->
   <div id="sysBroadcast" class="sys-broadcast">
-    <button class="sb-close" onclick="closeBroadcast()"><i class="fas fa-times"></i></button>
-    <div class="sb-content">
-      <i class="fas fa-bullhorn sb-icon"></i>
-      <div class="sb-text">
-        <h4 id="bcTitle">System Broadcast</h4>
-        <p id="bcMessage">Loading...</p>
+      <button class="sb-close" onclick="closeBroadcast()"><i class="fas fa-times"></i></button>
+      <div class="sb-content">
+          <i class="fas fa-bullhorn sb-icon"></i>
+          <div class="sb-text">
+              <h4>Announcement</h4>
+              <p id="sbMessage">Loading message...</p>
+          </div>
       </div>
-    </div>
-    <div class="sb-progress">
-      <div class="sb-bar" id="bcBar"></div>
-    </div>
+      <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
   </div>
 
-  <!-- Loading Screen -->
-  <div id="loadingCard">
-    <div class="spinner"></div>
-    <p style="margin-top: 15px; color: var(--text-dim); font-size: 12px;">Memuat ExeMusic...</p>
+  <div id="mtScreen" class="full-overlay">
+    <i class="fas fa-tools" style="color: var(--accent)"></i>
+    <h1>Server Maintenance</h1>
+    <p>Kami sedang melakukan pembaruan sistem.<br>Mohon tunggu beberapa saat lagi.</p>
   </div>
 
-  <!-- Banned Screen -->
   <div id="bannedScreen" class="full-overlay">
-    <i class="fas fa-ban" style="color: var(--danger);"></i>
-    <h1>Akun Anda Dibanned</h1>
-    <p id="banReason">Alasan: Pelanggaran aturan komunitas</p>
+    <i class="fas fa-user-slash" style="color: var(--danger)"></i>
+    <h1>Access Denied</h1>
+    <p>Akun anda telah diblokir secara permanen oleh admin.</p>
   </div>
 
-  <!-- Maintenance Screen -->
-  <div id="maintenanceScreen" class="full-overlay">
-    <i class="fas fa-tools" style="color: var(--warning);"></i>
-    <h1>Dalam Perbaikan</h1>
-    <p>Sistem sedang dalam maintenance. Mohon coba lagi nanti.</p>
-  </div>
+  <div id="loadingCard"><div class="spinner"></div></div>
+  <div id="toast">Notification</div>
 
-  <!-- Main App -->
   <div class="app">
-    <!-- Header -->
     <div class="header">
-      <img src="https://i.postimg.cc/d0gbX1bq/exemusic.png" alt="ExeMusic" onclick="openAbout()">
-      <div class="header-right">
-        <button id="btnNotif" onclick="toggleNotif()">
-          <i class="fas fa-bell"></i>
-          <span class="notif-badge" id="notifBadge">0</span>
-        </button>
-        <button id="topLoginBtn" onclick="openLoginModal()">Login</button>
-      </div>
+        <img src="exemusic.png" alt="Logo" onclick="openAbout()">
+        <div class="header-right">
+          <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
+            <i class="fas fa-bell"></i>
+            <span id="notifBadge" class="notif-badge"></span>
+          </button>
+          <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
+        </div>
     </div>
 
-    <!-- Notification Panel -->
     <div id="notifPanel" class="notif-panel">
-      <h3>
-        <span><i class="fas fa-bell"></i> Notifikasi</span>
-        <button onclick="clearAllNotifs()">Hapus Semua</button>
-      </h3>
-      <div id="notifList">
-        <p style="text-align: center; color: var(--text-dim); font-size: 12px; padding: 20px;">
-          Belum ada notifikasi
+      <div class="notif-panel-header">
+        <h3><i class="fas fa-comment-dots"></i> Notifikasi</h3>
+        <button class="notif-panel-close" onclick="closeNotifPanel()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="notifList" class="notif-list">
+        <div class="notif-empty">Memuat...</div>
+      </div>
+    </div>
+
+    <div class="cover-box">
+      <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="track-info">
+      <div id="title">Loading Lagu...</div>
+      <div class="user-row">
+        <div id="by" onclick="viewCreator()">@system</div>
+        <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="sys-container">
+      <div class="sys-tools">
+        <button onclick="copyRawUrl()" title="Copy Url"><i class="fas fa-link"></i></button>
+        <button onclick="shareLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
+        <button onclick="downloadSong()" title="Download"><i class="fas fa-download"></i></button>
+        <button onclick="openReq()" title="Add/Request"><i class="fas fa-plus-circle"></i></button>
+      </div>
+      <div class="vol-row">
+        <i class="fas fa-volume-down" style="font-size:12px; color:#888"></i>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8">
+        <i class="fas fa-volume-up" style="font-size:12px; color:#fff"></i>
+      </div>
+    </div>
+
+    <div class="prog-area">
+      <input type="range" id="seek" value="0">
+      <div class="time">
+        <span id="cur">0:00</span>
+        <div class="dur-wrapper">
+          <div class="loading-spinner" id="loadSpinner"></div>
+          <span id="dur">0:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-ctrl">
+      <button class="btn-sec" onclick="prev()"><i class="fas fa-step-backward"></i></button>
+      <button class="btn-play" onclick="toggle()" id="playBtn"><i class="fas fa-play"></i></button>
+      <button class="btn-sec" onclick="next()"><i class="fas fa-step-forward"></i></button>
+    </div>
+
+    <div class="footer">
+      <button id="shuf" onclick="toggleShuffle()"><i class="fas fa-random"></i></button>
+      <button onclick="openList(false)"><i class="fas fa-list-ul"></i></button>
+      <button onclick="openList(true)"><i class="fas fa-heart"></i></button>
+      <button id="adminBtn" style="display:none; color:gold" onclick="openAdmin()"><i class="fas fa-shield-alt"></i></button>
+      <button id="rep" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 id="authTitle" style="text-align:center; margin-bottom:20px; color:var(--accent)">Login ke ExeMusic</h3>
+      <div id="usernameSection" style="display:none; margin-bottom:15px;">
+        <p style="font-size:12px; color:#888; text-align:center; margin-bottom:10px;">👋 Selamat datang! Buat username Anda:</p>
+        <input id="authUser" class="inp-dark" placeholder="Username (min 3 karakter)">
+      </div>
+      <button onclick="handleGoogleAuth()" id="googleAuthBtn" class="btn-act" style="background:#fff; color:#000; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600;">
+        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        <span id="googleBtnText">Masuk dengan Google</span>
+      </button>
+      <p style="font-size:11px; color:#888; text-align:center; margin-top:15px;">🔒 Login aman dengan akun Google Anda</p>
+    </div>
+  </div>
+
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="spotify-banner">
+          <div class="spotify-avatar">
+              <img id="pAvatarImg" src="https://via.placeholder.com/150">
+              <div class="avatar-edit" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
+          </div>
+          <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
+          <div class="spotify-info">
+              <div style="display:flex; align-items:center; gap:5px">
+                  <h2 id="pUsername">User</h2>
+                  <span id="pBadge"></span>
+              </div>
+              <div id="pTagDisplay"></div> </div>
+      </div>
+      
+      <!-- PROFILE TABS -->
+      <div class="profile-tabs-wrapper">
+        <button id="tabProfile" class="profile-tab-btn active" onclick="switchProfileTab('profile')">📊 Profil Saya</button>
+        <button id="tabAccount" class="profile-tab-btn" onclick="switchProfileTab('account')">⚙️ Akun</button>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div id="profileTab" class="profile-tab-content active">
+        <div class="profile-stats-grid">
+          <div class="profile-stat-item">
+            <b id="pFol">0</b>
+            <span>Followers</span>
+          </div>
+          <div class="profile-stat-item">
+            <b id="pFollowing">0</b>
+            <span>Following</span>
+          </div>
+        </div>
+        <div class="section-title">📝 Postingan Saya</div>
+        <div id="myPostList" class="posts-list"></div>
+      </div>
+
+      <!-- ACCOUNT TAB -->
+      <div id="accountTab" class="profile-tab-content">
+        <div class="account-setting-box">
+          <label class="account-setting-label">📧 Email Address</label>
+          <div class="account-setting-value" id="pEmail">Loading...</div>
+        </div>
+
+        <button onclick="openChangeNameModal()" class="btn-account">✏️ Ubah Nama Pengguna</button>
+        <button onclick="openChangePasswordModal()" class="btn-account danger">🔐 Ubah Password</button>
+        <button onclick="auth.signOut(); location.reload()" class="btn-account logout">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalChangeNames" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:20px; color:var(--accent); font-size:16px;">✏️ Ubah Nama Pengguna</h3>
+      <input id="cnPass" type="password" class="inp-dark" placeholder="Password Saat Ini">
+      <input id="cnNewName" class="inp-dark" placeholder="Nama Pengguna Baru">
+      <button onclick="handleChangeName()" class="btn-act">Ubah Nama</button>
+      <div id="cnMsg" class="modal-msg"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalChangePass" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:20px; color:var(--accent); font-size:16px;">🔐 Ubah Password</h3>
+      <input id="cpOldPass" type="password" class="inp-dark" placeholder="Password Lama">
+      <input id="cpNewPass" type="password" class="inp-dark" placeholder="Password Baru (Min. 6 karakter)">
+      <input id="cpConfirm" type="password" class="inp-dark" placeholder="Konfirmasi Password Baru">
+      <button onclick="handleChangePassword()" class="btn-act">Ubah Password</button>
+      <div id="cpMsg" class="modal-msg"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
+          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
+          <div class="spotify-info">
+              <div style="display:flex; align-items:center; gap:5px">
+                  <h2 id="vName">@creator</h2>
+                  <span id="vBadge"></span>
+              </div>
+              <div id="vTagDisplay"></div> </div>
+      </div>
+      <div class="profile-stats-grid">
+        <div class="profile-stat-item">
+          <b id="vFol">0</b>
+          <span>Followers</span>
+        </div>
+        <div class="profile-stat-item" style="padding: 0; background: transparent; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s;" onclick="followCreator()">
+          <b id="vCreatorFollowBtn" style="cursor:pointer; transition:0.2s; position: relative; z-index: 10;">Follow</b>
+          <span style="cursor:pointer; color:var(--accent); font-weight:600; font-size:11px; position: relative; z-index: 10;">KLIK</span>
+        </div>
+      </div>
+      <div class="section-title">📝 Lagu Terupload</div>
+      <div id="creatorPostList"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Upload Lagu</h3>
+      <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
+          <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b>BANNED PERMANENT</b> tanpa peringatan!
+      </div>
+      <div id="uploadFormUser" style="display:none">
+          <!-- Upload Method Selection -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+            <button onclick="selectUploadMethod('url')" id="btnMethodUrl" class="btn-act" style="padding:10px; font-size:12px; background:var(--accent); color:black;">
+              <i class="fas fa-link"></i> URL Top4Top
+            </button>
+            <button onclick="selectUploadMethod('device')" id="btnMethodDevice" class="btn-act" style="padding:10px; font-size:12px; background:rgba(255,255,255,0.1); color:white;">
+              <i class="fas fa-mobile-alt"></i> Upload Device
+            </button>
+          </div>
+          
+          <!-- URL Upload Form -->
+          <div id="urlUploadForm" style="display:block;">
+            <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
+            <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top Only)">
+            <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
+          </div>
+          
+          <!-- Device Upload Form -->
+          <div id="deviceUploadForm" style="display:none;">
+            <div style="background:rgba(0,136,255,0.1); border:1px solid #0088ff; border-radius:8px; padding:10px; margin-bottom:10px; font-size:11px; color:#ddd;">
+              <i class="fas fa-info-circle" style="color:#0088ff;"></i> Format: MP3, WAV, OGG | Max: 10MB
+            </div>
+            <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
+            <button onclick="document.getElementById('audioFileInput').click()" class="btn-act" style="background:rgba(255,255,255,0.1); color:white; margin-bottom:10px;">
+              <i class="fas fa-folder-open"></i> PILIH FILE AUDIO
+            </button>
+            <div id="filePreview" style="display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; margin-bottom:10px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-file-audio" style="font-size:24px; color:var(--accent);"></i>
+                <div style="flex:1;">
+                  <div id="fileName" style="font-size:12px; font-weight:600; color:white; margin-bottom:3px;"></div>
+                  <div id="fileSize" style="font-size:11px; color:var(--text-dim);"></div>
+                </div>
+              </div>
+            </div>
+            <input id="rLaguDevice" class="inp-dark" placeholder="Judul Lagu - Artist" style="display:none;">
+            <div id="uploadProgress" style="display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:8px;">
+                <span>Uploading...</span>
+                <span id="uploadPercent">0%</span>
+              </div>
+              <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
+                <div id="uploadProgressBar" style="height:100%; background:linear-gradient(90deg,var(--accent),#00cc6a); width:0%; transition:width 0.3s;"></div>
+              </div>
+            </div>
+            <button onclick="uploadFromDevice()" id="btnUploadDevice" class="btn-act" style="display:none;">
+              <i class="fas fa-upload"></i> UPLOAD SEKARANG
+            </button>
+          </div>
+      </div>
+      <div id="uploadFormGuest">
+          <input id="guestName" class="inp-dark" placeholder="Nama Anda">
+          <input id="guestLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
+          <input id="guestUrl" class="inp-dark" placeholder="Link MP3 Top4Top">
+          <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white">WHATSAPP REQUEST</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet"><div id="songContainer"></div></div>
+  </div>
+
+  <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="about-box">
+        <h3>🎵 Executive Music 3.1 Version</h3>
+        <p>Selamat datang di exemusic. Website ini dirancang khusus untuk para creator url yang ingin berbagi dan menikmati musik berkualitas tinggi dengan komunitas yang solid.</p>
+        
+        <p><b>Fitur Unggulan Platform</b></p>
+        <ul class="about-features">
+          <li><b>High-Fidelity Audio Streaming</b> – Nikmati streaming musik dengan kualitas audio lossless tanpa kompresi berlebihan</li>
+          <li><b>Smart Social System</b> – Follow creator favorit Anda dan bangun komunitas musik dengan sistem following yang terintegrasi</li>
+          <li><b>Dynamic Badge System</b> – Dapatkan badge verifikasi otomatis saat mencapai 50+ followers sebagai tanda kreator original (bisa request ke admin)</li>
+          <li><b>Deep Linking Technology</b> – Bagikan lagu spesifik dengan ID unik langsung ke teman via link khusus</li>
+          <li><b>Anti-Spam Protection</b> – Sistem cooldown 30 menit mencegah spam dan menjaga kualitas konten exemusic.</li>
+          <li><b>Real-time Sync System</b> – Semua data followers, likes, dan playlist tersinkronisasi secara real-time</li>
+          <li><b>Cloud-Based Infrastructure</b> – Data tersimpan aman di database dengan backup otomatis</li>
+          <li><b>Multi-Device Support</b> – Akses dari desktop, mobile, atau tablet dengan pengalaman yang konsisten</li>
+        </ul>
+
+        <p><b>Cara Upload Musik</b></p>
+        <p><b>Untuk User yang Sudah Login:</b><br>
+        Anda dapat langsung mengupload musik dengan menekan tombol + (Add/Request), kemudian masukkan judul lagu dan link MP3 dari Top4Top. Setelah submit, lagu Anda akan langsung tersedia di platform dan dapat didengarkan oleh semua user.</p>
+        <p><b>Untuk Guest (Belum Login):</b><br>
+        Jika Anda belum memiliki akun, Anda masih bisa request upload dengan mengirim detail lagu via WhatsApp ke admin. Setelah admin meninjau dan menyetujui, lagu Anda akan diupload ke platform dengan kredit nama Anda.</p>
+
+        <p><b>Program Reward & Incentive</b></p>
+        <p>Kami menghargai kontribusi para creator aktif dengan sistem reward yang menarik:</p>
+        <ul class="about-features">
+          <li>🏆 <b>VIP Membership</b> – Creator dengan performa terbaik berkesempatan mendapatkan akses VIP eksklusif dari admin</li>
+          <li>💰 <b>Cash Reward</b> – Raih reward hingga $0.99 atau Rp 16.000 untuk creator yang mencapai target followers dan engagement tertentu</li>
+          <li>📈 <b>Kriteria Penilaian:</b> Total followers, jumlah lagu terupload, engagement rate, dan konsistensi konten</li>
+        </ul>
+        <p><em>* Syarat dan ketentuan berlaku. Keputusan admin bersifat final.</em></p>
+
+        <p><b>Badge Original User</b></p>
+        <p>Sistem badge verifikasi akan otomatis muncul di profil Anda ketika berhasil mengumpulkan 50 followers organik. Badge ini menandakan bahwa Anda adalah creator original dan terpercaya di exemusic.</p>
+        
+        <div class="rules-warn">
+          <b>PERATURAN KETAT EXEMUSIC:</b><br><br>
+          Akun yang terbukti mengupload konten ilegal seperti:<br>
+          • Konten SARA (Suku, Agama, Ras, dan Antar golongan)<br>
+          • Audio pornografi atau konten seksual eksplisit<br>
+          • Earrape atau audio yang merusak pendengaran<br>
+          • Konten yang melanggar hak cipta secara jelas<br>
+          • Konten yang mengandung ujaran kebencian<br><br>
+          <strong>⚠️ AKAN DIHAPUS PERMANEN TANPA PERINGATAN</strong>
+        </div>
+
+        <p style="margin-top:12px;">
+          <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; margin-right:8px; margin-bottom:8px;">📱 Contact WhatsApp – click here!</a>
+          <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; background:#333; color:var(--accent); border:1px solid var(--accent);">📋 Changelogs – click here!</a>
         </p>
+        <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
+        <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
+        <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
       </div>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" id="searchInput" placeholder="Cari lagu atau artis..." oninput="searchMusic()">
-    </div>
-
-    <!-- Content -->
-    <div class="content" id="musicList">
-      <!-- Add Card with Device Upload -->
-      <div class="add-card" onclick="openUploadModal()">
-        <i class="fas fa-plus-circle"></i>
-        <h3>Upload Lagu</h3>
-        <p>⚠️ PERHATIAN: Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan BANNED PERMANENT tanpa peringatan!</p>
-        <button class="btn" style="margin-top: 15px; max-width: 200px;">POST SEKARANG</button>
-      </div>
-
-      <!-- Music cards will be loaded here -->
-    </div>
-
-    <!-- Bottom Nav -->
-    <div class="bottom-nav">
-      <button class="nav-btn active" onclick="switchView('home')"><i class="fas fa-home"></i></button>
-      <button class="nav-btn" onclick="switchView('trending')"><i class="fas fa-fire"></i></button>
-      <button class="nav-btn" onclick="switchView('library')"><i class="fas fa-music"></i></button>
-      <button class="nav-btn" onclick="openProfile()"><i class="fas fa-user"></i></button>
-    </div>
-  </div>
-
-  <!-- Upload Modal -->
-  <div id="uploadModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Lagu</h2>
-        <button class="modal-close" onclick="closeUploadModal()"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div class="warning-box">
-        <i class="fas fa-exclamation-triangle"></i>
-        <p><strong>PERHATIAN:</strong> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape. Pelanggaran = BANNED PERMANENT!</p>
-      </div>
-
-      <!-- Upload Method Selection -->
-      <div class="upload-choice">
-        <div class="upload-option" id="optionDevice" onclick="selectUploadMethod('device')">
-          <i class="fas fa-mobile-alt"></i>
-          <span>Upload dari Device</span>
-          <small>File dari HP/PC Anda</small>
-        </div>
-        <div class="upload-option" id="optionUrl" onclick="selectUploadMethod('url')">
-          <i class="fas fa-link"></i>
-          <span>Link Top4Top</span>
-          <small>URL dari Top4Top</small>
-        </div>
-      </div>
-
-      <!-- Device Upload Section -->
-      <div id="deviceUploadSection" style="display: none;">
-        <div class="upload-info">
-          <p><i class="fas fa-info-circle"></i> Format: MP3, WAV, OGG | Max: 10MB</p>
-        </div>
-
-        <input type="file" id="audioFileInput" accept="audio/*" onchange="handleFileSelect(event)">
-        <label for="audioFileInput">
-          <div class="btn secondary" style="cursor: pointer; text-align: center;">
-            <i class="fas fa-folder-open"></i> Pilih File Audio
-          </div>
-        </label>
-
-        <div id="filePreview" class="file-preview" style="display: none;">
-          <i class="fas fa-file-audio"></i>
-          <div class="file-info">
-            <div class="file-name" id="fileName"></div>
-            <div class="file-size" id="fileSize"></div>
-          </div>
-        </div>
-
-        <div id="songNameSection" style="display: none;">
-          <div class="form-group">
-            <label><i class="fas fa-music"></i> Nama Lagu *</label>
-            <input type="text" id="deviceSongName" placeholder="Masukkan nama lagu" maxlength="50">
-          </div>
-
-          <div class="form-group">
-            <label><i class="fas fa-user"></i> Nama Artis (Optional)</label>
-            <input type="text" id="deviceArtist" placeholder="Masukkan nama artis" maxlength="50">
-          </div>
-
-          <div class="progress-container" id="uploadProgress">
-            <div class="progress-label">
-              <span>Mengupload...</span>
-              <span id="uploadPercent">0%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="uploadProgressBar"></div>
-            </div>
-          </div>
-
-          <button class="btn" onclick="uploadDeviceAudio()" id="btnUploadDevice">
-            <i class="fas fa-upload"></i> Upload Sekarang
-          </button>
-        </div>
-      </div>
-
-      <!-- URL Upload Section (Original) -->
-      <div id="urlUploadSection" style="display: none;">
-        <div class="form-group">
-          <label><i class="fas fa-link"></i> URL Top4Top *</label>
-          <input type="text" id="musicUrl" placeholder="https://top4top.io/...">
-        </div>
-
-        <div class="form-group">
-          <label><i class="fas fa-music"></i> Nama Lagu *</label>
-          <input type="text" id="songName" placeholder="Masukkan nama lagu" maxlength="50">
-        </div>
-
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> Nama Artis (Optional)</label>
-          <input type="text" id="artistName" placeholder="Masukkan nama artis" maxlength="50">
-        </div>
-
-        <button class="btn" onclick="submitMusic()">
-          <i class="fas fa-paper-plane"></i> Post Lagu
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Login Modal -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-sign-in-alt"></i> Login / Register</h2>
-        <button class="modal-close" onclick="closeLoginModal()"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div id="usernameSection" style="display: none;">
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> Username</label>
-          <input type="text" id="regUsername" placeholder="Pilih username Anda" maxlength="20">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label><i class="fas fa-envelope"></i> Email</label>
-        <input type="email" id="loginEmail" placeholder="email@example.com">
-      </div>
-
-      <div class="form-group">
-        <label><i class="fas fa-lock"></i> Password</label>
-        <input type="password" id="loginPassword" placeholder="Minimal 6 karakter">
-      </div>
-
-      <button class="btn" onclick="handleAuth()" id="authBtn">
-        <i class="fas fa-sign-in-alt"></i> Login
-      </button>
-
-      <div style="text-align: center; margin: 15px 0; color: var(--text-dim); font-size: 12px;">
-        atau
-      </div>
-
-      <button class="btn secondary" onclick="handleGoogleAuth()">
-        <i class="fab fa-google"></i> <span id="googleBtnText">Masuk dengan Google</span>
-      </button>
-
-      <p style="text-align: center; margin-top: 15px; font-size: 11px; color: var(--text-dim);">
-        Belum punya akun? <a href="#" onclick="toggleAuthMode(); return false;" style="color: var(--accent);" id="toggleAuthText">Daftar di sini</a>
-      </p>
-    </div>
-  </div>
-
-  <!-- Profile Modal -->
-  <div id="profileModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-user-circle"></i> Profile</h2>
-        <button class="modal-close" onclick="closeProfile()"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div class="profile-header">
-        <div class="profile-avatar" onclick="document.getElementById('avatarInput').click()">
-          <img id="profileAvatar" src="https://ui-avatars.com/api/?name=User&background=00ff88&color=000" alt="Avatar">
-          <div class="avatar-edit"><i class="fas fa-camera"></i></div>
-        </div>
-        <input type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(this)" style="display: none;">
-        <div class="profile-username" id="profileUsername">Username</div>
-        <div class="profile-tag" id="profileTag">@user</div>
-      </div>
-
-      <div class="profile-tabs">
-        <button class="tab-btn active" id="tabProfile" onclick="switchProfileTab('profile')">
-          <i class="fas fa-user"></i> Profile
-        </button>
-        <button class="tab-btn" id="tabAccount" onclick="switchProfileTab('account')">
-          <i class="fas fa-cog"></i> Account
-        </button>
-      </div>
-
-      <div id="profileTab" class="tab-content active">
-        <div class="profile-stats">
-          <div class="stat-box">
-            <div class="stat-value" id="statFollowers">0</div>
-            <div class="stat-label">Followers</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value" id="statUploads">0</div>
-            <div class="stat-label">Uploads</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="accountTab" class="tab-content">
-        <div class="profile-actions">
-          <button class="profile-action-btn" onclick="openChangeNameModal()">
-            <span><i class="fas fa-edit"></i> Ubah Nama</span>
-            <i class="fas fa-chevron-right"></i>
-          </button>
-          <button class="profile-action-btn" onclick="openChangePasswordModal()">
-            <span><i class="fas fa-key"></i> Ubah Password</span>
-            <i class="fas fa-chevron-right"></i>
-          </button>
-          <button class="profile-action-btn" onclick="handleLogout()" style="border-color: var(--danger);">
-            <span style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</span>
-            <i class="fas fa-chevron-right" style="color: var(--danger);"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- About Modal - IMPROVED -->
-  <div id="aboutModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-info-circle"></i> About</h2>
-        <button class="modal-close" onclick="closeAbout()"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div class="about-header">
-        <img src="https://i.postimg.cc/d0gbX1bq/exemusic.png" alt="ExeMusic Logo" class="about-logo">
-        <div class="about-title">ExeMusic</div>
-        <div class="about-version">Version 4.0 - Device Upload Edition</div>
-      </div>
-
-      <div class="about-section">
-        <h3><i class="fas fa-music"></i> Tentang Platform</h3>
-        <p>ExeMusic adalah platform berbagi musik berbasis komunitas yang memungkinkan Anda mengupload, mendengarkan, dan berbagi musik favorit dengan mudah.</p>
-      </div>
-
-      <div class="about-section">
-        <h3><i class="fas fa-star"></i> Fitur Utama</h3>
-        <div class="feature-grid">
-          <div class="feature-item">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <span>Upload dari Device</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-link"></i>
-            <span>Support Top4Top</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-share-alt"></i>
-            <span>Share Music</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-search"></i>
-            <span>Smart Search</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="about-section">
-        <h3><i class="fas fa-shield-alt"></i> Aturan Komunitas</h3>
-        <p>• Dilarang upload konten SARA, pornografi audio, atau earrape<br>
-           • Hormati hak cipta dan privasi orang lain<br>
-           • Gunakan platform dengan bijak dan bertanggung jawab</p>
-      </div>
-
-      <div class="about-section">
-        <h3><i class="fas fa-link"></i> Hubungi Kami</h3>
-        <div class="social-links">
-          <a href="#" class="social-btn" target="_blank">
-            <i class="fab fa-instagram"></i> Instagram
-          </a>
-          <a href="#" class="social-btn" target="_blank">
-            <i class="fab fa-discord"></i> Discord
-          </a>
-        </div>
-      </div>
-
-      <div class="credits">
-        <p>Developed with ❤️ by</p>
-        <div class="dev-name">ExeMusic Team</div>
-        <p>© 2024 ExeMusic. All rights reserved.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Change Name Modal -->
-  <div id="modalChangeNames" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-edit"></i> Ubah Nama</h2>
-        <button class="modal-close" onclick="document.getElementById('modalChangeNames').style.display='none'"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div id="cnMsg" style="padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; display: none;"></div>
-
-      <div class="form-group">
-        <label><i class="fas fa-user"></i> Nama Baru</label>
-        <input type="text" id="cnNewName" placeholder="Username baru" maxlength="20">
-      </div>
-
-      <div class="form-group">
-        <label><i class="fas fa-lock"></i> Konfirmasi Password</label>
-        <input type="password" id="cnPass" placeholder="Masukkan password Anda">
-      </div>
-
-      <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 15px;">
-        <i class="fas fa-info-circle"></i> Nama hanya bisa diubah 1x dalam 7 hari
-      </p>
-
-      <button class="btn" onclick="handleChangeName()">
-        <i class="fas fa-save"></i> Simpan Perubahan
-      </button>
-    </div>
-  </div>
-
-  <!-- Change Password Modal -->
-  <div id="modalChangePass" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fas fa-key"></i> Ubah Password</h2>
-        <button class="modal-close" onclick="document.getElementById('modalChangePass').style.display='none'"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div id="cpMsg" style="padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; display: none;"></div>
-
-      <div class="form-group">
-        <label><i class="fas fa-lock"></i> Password Lama</label>
-        <input type="password" id="cpOldPass" placeholder="Password saat ini">
-      </div>
-
-      <div class="form-group">
-        <label><i class="fas fa-key"></i> Password Baru</label>
-        <input type="password" id="cpNewPass" placeholder="Minimal 6 karakter">
-      </div>
-
-      <div class="form-group">
-        <label><i class="fas fa-check"></i> Konfirmasi Password</label>
-        <input type="password" id="cpConfirm" placeholder="Ulangi password baru">
-      </div>
-
-      <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 15px;">
-        <i class="fas fa-info-circle"></i> Password hanya bisa diubah 1x dalam 7 hari
-      </p>
-
-      <button class="btn" onclick="handleChangePassword()">
-        <i class="fas fa-save"></i> Simpan Password
-      </button>
     </div>
   </div>
 
   <script>
-    // Firebase configuration (GANTI dengan config Anda)
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
       authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -1368,433 +1071,895 @@
     const auth = firebase.auth();
     const db = firebase.database();
     const storage = firebase.storage();
+    let selectedAudioFile = null;
 
-    let currentUser = null;
-    let userData = {};
-    let allMusic = [];
-    let isAuthMode = 'login';
-    let isFirstTimeUser = false;
-    let selectedFile = null;
-    let uploadMethod = null;
+    let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
+    let userData = null;
+    let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    const audio = new Audio();
+    let broadcastTimeout;
+    let discoModeActive = false;
+    let discoColor = "#00ff88";
+    let lastDiscoUser = null;
+    let iceModeActive = false;
+    let snowflakeInterval = null;
+    let notifList = [];
+    const lastReadNotifTimeKey = 'exeNotifRead';
 
-    // INIT
-    auth.onAuthStateChanged(user => {
-      if(user) {
-        currentUser = user;
-        checkUserStatus(user.uid);
-      } else {
-        hideLoading();
-      }
+    // Tambahan tag keren dan lucu
+    function getTagHTML(tag) {
+      if(!tag || tag === "none") return '';
+      const t = tag.toLowerCase();
+      return `<span class="user-tag tag-${t}">${tag}</span>`;
+    }
+
+    // REALTIME MONITORING
+    db.ref('settings').on('value', s => {
+        const val = s.val();
+        if(!val) return;
+        if(val.mt === true) {
+            db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
+                if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
+            });
+        } else { document.getElementById('mtScreen').style.display = 'none'; }
+        if(val.announcement) triggerBroadcast(val.announcement);
+        
+        // DISCO MODE MONITORING
+        if(val.discoMode !== discoModeActive) {
+            discoModeActive = val.discoMode || false;
+            if(discoModeActive && val.discoColor) {
+                discoColor = val.discoColor;
+                applyDiscoMode(discoColor);
+                if(val.discoInitiator) {
+                    const initiator = val.discoInitiator;
+                    if(initiator !== lastDiscoUser) {
+                        triggerBroadcast(`🎉 ${initiator} has started disco mode!`);
+                        lastDiscoUser = initiator;
+                    }
+                }
+            } else if(!discoModeActive) {
+                resetTheme();
+                triggerBroadcast("Disco mode ended! Back to normal.");
+            }
+        } else if(discoModeActive && val.discoColor && val.discoColor !== discoColor) {
+            discoColor = val.discoColor;
+            applyDiscoMode(discoColor);
+        }
     });
 
-    function checkUserStatus(uid) {
-      db.ref('users/' + uid).once('value').then(snap => {
-        if(!snap.exists()) {
-          hideLoading();
-          return;
-        }
-        
-        userData = snap.val();
-        
-        if(userData.banned) {
-          document.getElementById('banReason').innerText = 'Alasan: ' + (userData.banReason || 'Pelanggaran aturan');
-          document.getElementById('bannedScreen').style.display = 'flex';
-          hideLoading();
-          return;
-        }
-        
-        document.getElementById('topLoginBtn').innerText = userData.username || 'User';
-        document.getElementById('topLoginBtn').onclick = openProfile;
-        
-        loadMusic();
-        loadBroadcast();
-        hideLoading();
+    // NOTIFICATIONS: global + per-user
+    function loadNotifs() {
+      db.ref('notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
+        const val = snap.val();
+        const list = [];
+        if (val) Object.keys(val).forEach(k => list.push({ ...val[k], id: 'g_' + k }));
+        mergeAndRenderNotifs(list, 'global');
+      });
+      auth.onAuthStateChanged(u => {
+        if (!u) { mergeAndRenderNotifs([], 'user'); return; }
+        db.ref('users/' + u.uid + '/notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
+          const val = snap.val();
+          const list = [];
+          if (val) Object.keys(val).forEach(k => list.push({ ...val[k], id: 'u_' + k }));
+          mergeAndRenderNotifs(list, 'user');
+        });
       });
     }
+    let _globalNotifs = [];
+    let _userNotifs = [];
+    function mergeAndRenderNotifs(list, source) {
+      if (source === 'global') _globalNotifs = list;
+      else _userNotifs = list;
+      notifList = [..._globalNotifs, ..._userNotifs].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      renderNotifList();
+      updateNotifBadge();
+    }
+    function timeAgo(ts) {
+      if (!ts) return '';
+      const s = Math.floor((Date.now() - ts) / 1000);
+      if (s < 60) return 'Baru saja';
+      if (s < 3600) return Math.floor(s / 60) + ' menit lalu';
+      if (s < 86400) return Math.floor(s / 3600) + ' jam lalu';
+      if (s < 604800) return Math.floor(s / 86400) + ' hari lalu';
+      return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    }
+    function renderNotifList() {
+      const el = document.getElementById('notifList');
+      if (!el) return;
+      if (!notifList.length) {
+        el.innerHTML = '<div class="notif-empty">Belum ada notifikasi</div>';
+        return;
+      }
+      const typeIcon = { admin: 'fa-shield-alt', violation: 'fa-exclamation-triangle', upload: 'fa-music', follow: 'fa-user-plus', system: 'fa-info-circle' };
+      el.innerHTML = notifList.map(n => {
+        const type = (n.type || 'system');
+        const icon = typeIcon[type] || 'fa-bell';
+        return '<div class="notif-item"><div class="notif-item-icon ' + type + '"><i class="fas ' + icon + '"></i></div><div class="notif-item-body"><div class="n-text">' + escapeHtml(n.text || n.message || '') + '</div><div class="n-time">' + timeAgo(n.timestamp) + '</div></div></div>';
+      }).join('');
+    }
+    function updateNotifBadge() {
+      const lastRead = parseInt(localStorage.getItem(lastReadNotifTimeKey) || '0', 10);
+      const count = notifList.filter(n => (n.timestamp || 0) > lastRead).length;
+      const badge = document.getElementById('notifBadge');
+      if (badge) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.classList.toggle('show', count > 0);
+      }
+    }
+    function toggleNotifPanel() {
+      const panel = document.getElementById('notifPanel');
+      if (panel.classList.toggle('show')) {
+        localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
+        updateNotifBadge();
+      }
+    }
+    function closeNotifPanel() {
+      document.getElementById('notifPanel').classList.remove('show');
+      localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
+      updateNotifBadge();
+    }
+    document.addEventListener('click', function(e) {
+      const panel = document.getElementById('notifPanel');
+      const btn = document.getElementById('btnNotif');
+      if (panel && panel.classList.contains('show') && !panel.contains(e.target) && btn && !btn.contains(e.target))
+        closeNotifPanel();
+    });
+    loadNotifs();
 
-    function hideLoading() {
-      setTimeout(() => {
-        document.getElementById('loadingCard').style.opacity = '0';
+    function triggerBroadcast(msg) {
+        const el = document.getElementById('sysBroadcast');
+        const bar = document.getElementById('sbBar');
+        const msgEl = document.getElementById('sbMessage');
+        el.classList.remove('active', 'sb-closing');
+        bar.style.animation = 'none';
+        void bar.offsetWidth;
+        if (typeof msg === 'string' && msg.trim().toLowerCase().startsWith('hexky:')) {
+            const rest = msg.slice(6).trim();
+            msgEl.innerHTML = '<span class="sb-dev-name">Hexky</span>: ' + escapeHtml(rest);
+        } else {
+            msgEl.textContent = msg;
+        }
         setTimeout(() => {
-          document.getElementById('loadingCard').style.display = 'none';
-        }, 500);
-      }, 500);
+            el.classList.add('active');
+            bar.style.animation = 'countDown 15s linear forwards';
+        }, 100);
+        clearTimeout(broadcastTimeout);
+        broadcastTimeout = setTimeout(closeBroadcast, 15000);
     }
-
-    // BROADCAST
-    function loadBroadcast() {
-      db.ref('broadcast').once('value').then(snap => {
-        if(!snap.exists()) return;
-        const bc = snap.val();
-        if(bc.active) {
-          showBroadcast(bc.title, bc.message, bc.duration || 8000);
-        }
-      });
-    }
-
-    function showBroadcast(title, message, duration = 8000) {
-      const bcEl = document.getElementById('sysBroadcast');
-      const barEl = document.getElementById('bcBar');
-      
-      document.getElementById('bcTitle').innerText = title;
-      document.getElementById('bcMessage').innerText = message;
-      
-      bcEl.classList.add('active');
-      barEl.style.animation = `countDown ${duration}ms linear`;
-      
-      setTimeout(() => {
-        closeBroadcast();
-      }, duration);
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     function closeBroadcast() {
-      document.getElementById('sysBroadcast').classList.remove('active');
+        const el = document.getElementById('sysBroadcast');
+        el.classList.add('sb-closing');
+        setTimeout(() => {
+            el.classList.remove('active', 'sb-closing');
+        }, 400);
     }
 
-    // UPLOAD MODAL
-    function openUploadModal() {
-      if(!currentUser) {
-        msg('⚠️ Login dulu untuk upload!');
-        openLoginModal();
-        return;
-      }
-      
-      // Reset
-      uploadMethod = null;
-      selectedFile = null;
-      document.getElementById('optionDevice').classList.remove('selected');
-      document.getElementById('optionUrl').classList.remove('selected');
-      document.getElementById('deviceUploadSection').style.display = 'none';
-      document.getElementById('urlUploadSection').style.display = 'none';
-      document.getElementById('songNameSection').style.display = 'none';
-      document.getElementById('filePreview').style.display = 'none';
-      document.getElementById('uploadProgress').classList.remove('show');
-      
-      document.getElementById('uploadModal').style.display = 'flex';
+    function createSnowflake() {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.textContent = '❄';
+        snowflake.style.left = Math.random() * window.innerWidth + 'px';
+        const duration = Math.random() * 3 + 4; // 4-7 detik jatuh - lebih ringan dan cepat!
+        const delay = Math.random() * 0.3;
+        snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards`;
+        document.body.appendChild(snowflake);
+        
+        setTimeout(() => snowflake.remove(), (duration + delay) * 1000);
     }
 
-    function closeUploadModal() {
-      document.getElementById('uploadModal').style.display = 'none';
+    function startSnowfall() {
+        if(snowflakeInterval) clearInterval(snowflakeInterval);
+        snowflakeInterval = setInterval(createSnowflake, 300);
+        // Create initial snowflakes
+        for(let i = 0; i < 15; i++) {
+            setTimeout(() => createSnowflake(), i * 100);
+        }
     }
 
-    function selectUploadMethod(method) {
-      uploadMethod = method;
-      
-      document.getElementById('optionDevice').classList.remove('selected');
-      document.getElementById('optionUrl').classList.remove('selected');
-      document.getElementById('deviceUploadSection').style.display = 'none';
-      document.getElementById('urlUploadSection').style.display = 'none';
-      
-      if(method === 'device') {
-        document.getElementById('optionDevice').classList.add('selected');
-        document.getElementById('deviceUploadSection').style.display = 'block';
+    function stopSnowfall() {
+        if(snowflakeInterval) {
+            clearInterval(snowflakeInterval);
+            snowflakeInterval = null;
+        }
+        document.querySelectorAll('.snowflake').forEach(flake => flake.remove());
+    }
+
+    function applyDiscoMode(color) {
+        document.documentElement.style.setProperty('--accent', color);
+        
+        // Check jika ice mode
+        if(color.toLowerCase() === '#ice') {
+            iceModeActive = true;
+            color = '#00d4ff'; // Blizzard blue
+            document.documentElement.style.setProperty('--accent', color);
+        } else {
+            iceModeActive = false;
+            stopSnowfall();
+        }
+        
+        // Background tetap gelap, cuma ambil tint sedikit
+        const rgb = parseInt(color.slice(1), 16);
+        const r = (rgb >> 16) & 255;
+        const g = (rgb >> 8) & 255;
+        const b = rgb & 255;
+        
+        const app = document.querySelector('.app');
+        if(app) {
+            // Rainbow effect jika color is rainbow code, ice mode heartbeat, otherwise disco heartbeat
+            if(color.toLowerCase() === '#00d4ff') {
+                app.style.animation = 'disco-heartbeat 1.2s infinite';
+                app.style.borderColor = color;
+                app.style.borderWidth = '2px';
+                startSnowfall();
+            } else if(color.toLowerCase().includes('rainbow')) {
+                app.style.animation = 'rainbow-glow 3s infinite linear';
+            } else {
+                app.style.animation = 'disco-heartbeat 1.2s infinite';
+                app.style.borderColor = color;
+                app.style.borderWidth = '2px';
+            }
+            app.style.background = `rgba(${r}, ${g}, ${b}, 0.05)`;
+            app.style.boxShadow = `0 0 40px ${color}60`;
+        }
+        
+        // Body background tetap dark
+        document.body.style.background = '#050505';
+        
+        // Update button colors dynamically dengan glow besar
+        document.querySelectorAll('.btn-act').forEach(btn => {
+            btn.style.background = color;
+            btn.style.boxShadow = `0 0 25px ${color}, 0 0 50px ${color}40`;
+            btn.style.transform = 'scale(1.02)';
+        });
+        
+        document.querySelectorAll('.btn-play').forEach(btn => {
+            btn.style.background = color;
+            btn.style.boxShadow = `0 0 40px ${color}, 0 0 80px ${color}40`;
+            btn.style.color = '#000';
+        });
+        
+        // Update eq color dengan glow lebih besar dan kontras
+        document.querySelectorAll('.eq span').forEach(span => {
+            span.style.background = color;
+            span.style.boxShadow = `0 0 30px ${color}, 0 0 60px ${color}, 0 0 90px ${color}40`;
+            span.style.filter = 'brightness(1.3)';
+        });
+        
+        // Update broadcast bar
+        const sbBar = document.getElementById('sbBar');
+        if(sbBar) {
+            sbBar.style.background = color;
+            sbBar.style.boxShadow = `0 0 15px ${color}`;
+        }
+        
+        // System container jadi lebih colorful dengan border
+        document.querySelectorAll('.sys-container').forEach(el => {
+            el.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
+            el.style.border = `1px solid ${color}40`;
+            el.style.boxShadow = `inset 0 0 15px rgba(${r}, ${g}, ${b}, 0.1)`;
+        });
+        
+        // Modal sheets dengan gradient
+        document.querySelectorAll('.sheet').forEach(el => {
+            el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.08) 0%, #181818 100%)`;
+            el.style.borderTop = `2px solid ${color}80`;
+        });
+        
+        // Title jadi lebih colorful
+        const title = document.getElementById('title');
+        if(title) {
+            title.style.color = color;
+            title.style.textShadow = `0 0 20px ${color}80`;
+        }
+        
+        // "By" text juga
+        const byEl = document.getElementById('by');
+        if(byEl) {
+            byEl.style.color = color;
+            byEl.style.textShadow = `0 0 10px ${color}60`;
+        }
+    }
+
+    function resetTheme() {
+        document.documentElement.style.setProperty('--accent', '#00ff88');
+        document.documentElement.style.setProperty('--bg', '#050505');
+        document.documentElement.style.setProperty('--card-bg', '#121212');
+        
+        document.body.style.background = '#050505';
+        
+        // Stop snowfall jika active
+        if(iceModeActive) {
+            stopSnowfall();
+            iceModeActive = false;
+        }
+        
+        const app = document.querySelector('.app');
+        if(app) {
+            app.style.animation = 'none';
+            app.style.background = 'rgba(18, 18, 18, 0.6)';
+            app.style.borderColor = 'rgba(255,255,255,0.08)';
+            app.style.borderWidth = '1px';
+            app.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5)';
+        }
+        
+        // Reset button colors
+        document.querySelectorAll('.btn-act').forEach(btn => {
+            btn.style.background = 'var(--accent)';
+            btn.style.boxShadow = 'none';
+            btn.style.transform = 'scale(1)';
+        });
+        
+        document.querySelectorAll('.btn-play').forEach(btn => {
+            btn.style.background = 'var(--accent)';
+            btn.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)';
+            btn.style.color = '#000';
+        });
+        
+        // Reset eq color
+        document.querySelectorAll('.eq span').forEach(span => {
+            span.style.background = 'var(--accent)';
+            span.style.boxShadow = '0 0 15px var(--accent)';
+            span.style.filter = 'brightness(1)';
+        });
+        
+        // Reset broadcast
+        const sbBar = document.getElementById('sbBar');
+        if(sbBar) {
+            sbBar.style.background = 'var(--accent)';
+            sbBar.style.boxShadow = 'none';
+        }
+        
+        // System container
+        document.querySelectorAll('.sys-container').forEach(el => {
+            el.style.background = 'rgba(255,255,255,0.03)';
+            el.style.border = '1px solid rgba(255,255,255,0.05)';
+            el.style.boxShadow = 'none';
+        });
+        
+        // Modal sheets
+        document.querySelectorAll('.sheet').forEach(el => {
+            el.style.background = '#181818';
+            el.style.borderTop = '1px solid #333';
+        });
+        
+        // Title reset
+        const title = document.getElementById('title');
+        if(title) {
+            title.style.color = '';
+            title.style.textShadow = '0 0 10px rgba(0,0,0,0.5)';
+        }
+        
+        // "By" reset
+        const byEl = document.getElementById('by');
+        if(byEl) {
+            byEl.style.color = 'var(--accent)';
+            byEl.style.textShadow = 'none';
+        }
+    }
+
+    // FUNCTION: Generate fake follower dengan format User_randomnumber
+    function generateFakeFollower() {
+      const randomNum = Math.floor(Math.random() * 999999) + 10000;
+      return `User_${randomNum}`;
+    }
+
+    // AUTH & USER DATA
+    auth.onAuthStateChanged(u => {
+      if(u) {
+        db.ref('users/' + u.uid).on('value', snap => {
+          userData = snap.val();
+          if(!userData) return;
+          if(userData.banned === true) {
+              document.getElementById('bannedScreen').style.display = 'flex';
+              auth.signOut(); return;
+          }
+          document.getElementById('topLoginBtn').textContent = userData.username;
+          document.getElementById('pUsername').innerText = userData.username;
+          document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
+          document.getElementById('pFol').innerText = (Array.isArray(userData.followers) ? userData.followers.length : userData.followers) || 0;
+          document.getElementById('pFollowing').innerText = (Array.isArray(userData.following) ? userData.following.length : userData.following) || 0;
+          document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
+          const followerCount = Array.isArray(userData.followers) ? userData.followers.length : userData.followers || 0;
+          document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          
+          // Sensor email
+          const email = u.email || "";
+          const [name, domain] = email.split('@');
+          const sensoredEmail = name.slice(0, Math.max(1, Math.floor(name.length / 3))) + '*'.repeat(Math.max(3, name.length - 2)) + '@' + domain;
+          document.getElementById('pEmail').innerText = sensoredEmail;
+          
+          if(userData.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
+          document.getElementById('uploadFormUser').style.display = 'block';
+          document.getElementById('uploadFormGuest').style.display = 'none';
+          document.getElementById('btnFollow').style.display = 'flex';
+          updateFollowUI();
+        });
       } else {
-        document.getElementById('optionUrl').classList.add('selected');
-        document.getElementById('urlUploadSection').style.display = 'block';
+        document.getElementById('topLoginBtn').textContent = "Login";
+        document.getElementById('btnFollow').style.display = 'none';
+        document.getElementById('adminBtn').style.display = 'none';
       }
+      document.getElementById('loadingCard').style.display = 'none';
+    });
+
+    // SONGS DATA WITH DEEP LINKING
+    db.ref('songs').on('value', snap => {
+      const val = snap.val();
+      if(val) {
+        songs = Object.keys(val).map(k => ({...val[k], key: k}));
+        
+        // Cek ID di URL (execuriverp.github.io/exemusic?id=0)
+        const urlParams = new URLSearchParams(window.location.search);
+        const songId = urlParams.get('id');
+        const profileUid = urlParams.get('profile_userid');
+        
+        if(profileUid && auth.currentUser) {
+          // Open profile dengan deep link
+          if(profileUid === auth.currentUser.uid) {
+            openProfile();
+          } else {
+            // Buka profile orang lain
+            db.ref('users/' + profileUid).get().then(snap => {
+              if(snap.exists()) {
+                const userData = snap.val();
+                document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
+                const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+                document.getElementById('vFol').innerText = followerCountView;
+                document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
+                
+                const creatorSongs = songs.filter(x => x.uid === profileUid);
+                document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+                
+                document.getElementById('modalCreator').dataset.creatorUid = profileUid;
+                updateCreatorFollowUI(profileUid);
+                document.getElementById('modalCreator').style.display = 'block';
+              }
+            });
+          }
+        } else if(audio.src === "") {
+            if(songId && songs[songId]) {
+                setup(parseInt(songId), false);
+            } else {
+                setup(0, false);
+            }
+        }
+      }
+    });
+
+    async function setup(idx, play = true) {
+      if(!songs[idx]) return;
+      i = idx;
+      
+      // Update URL without refresh
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + i;
+      window.history.pushState({path:newUrl},'',newUrl);
+
+      audio.src = songs[i].url;
+      document.getElementById('title').textContent = songs[i].title;
+      const cRef = await db.ref('users/' + songs[i].uid).get();
+      const cData = cRef.val();
+      const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
+      const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
+      if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      updateFollowUI();
     }
 
-    // DEVICE UPLOAD
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if(!file) return;
-      
-      // Validate file
-      if(!file.type.startsWith('audio/')) {
-        msg('❌ Hanya file audio yang diperbolehkan!');
-        return;
-      }
-      
-      // Max 10MB
-      if(file.size > 10 * 1024 * 1024) {
-        msg('❌ Ukuran file maksimal 10MB!');
-        return;
-      }
-      
-      selectedFile = file;
-      
-      // Show preview
-      document.getElementById('fileName').innerText = file.name;
-      document.getElementById('fileSize').innerText = formatFileSize(file.size);
-      document.getElementById('filePreview').style.display = 'flex';
-      document.getElementById('songNameSection').style.display = 'block';
+    // UPLOAD LOGIC WITH CONFIRMATION & COOLDOWN
+    function confirmAndSave() {
+        const title = document.getElementById('rLagu').value;
+        const url = document.getElementById('rUrl').value;
+        
+        if(!title || !url) return msg("Isi semua data!");
+        
+        // Cooldown Check (30 Menit)
+        const lastUpload = userData.lastUpload || 0;
+        const now = Date.now();
+        const diff = (now - lastUpload) / 1000 / 60; // dalam menit
+        
+        if(diff < 30 && userData.role !== 'admin') {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Sabar...',
+                text: `Tunggu ${Math.ceil(30 - diff)} menit lagi untuk upload lagu berikutnya.`,
+                background: '#181818', color: '#fff'
+            });
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Jika lagu ini melanggar rules kami (Sara, Porn, Earrape), akun anda akan kami BANNED PERMANENT!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#00ff88',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Saya Tanggung Jawab',
+            background: '#181818',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveMusic(title, url);
+            }
+        });
     }
 
-    function formatFileSize(bytes) {
-      if(bytes < 1024) return bytes + ' B';
-      if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    function saveMusic(t, u) {
+        const newSong = {
+            title: t,
+            url: u,
+            uid: auth.currentUser.uid,
+            by: userData.username,
+            timestamp: Date.now()
+        };
+        
+        db.ref('songs').push(newSong).then(() => {
+            db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
+            db.ref('notifications').push({
+              type: 'upload',
+              text: userData.username + ' mengupload: ' + t,
+              fromName: userData.username,
+              timestamp: Date.now()
+            });
+            msg("Berhasil diposting!");
+            closeModal();
+            document.getElementById('rLagu').value = "";
+            document.getElementById('rUrl').value = "";
+        });
     }
 
-    async function uploadDeviceAudio() {
-      if(!selectedFile) {
-        msg('❌ Pilih file audio terlebih dahulu!');
-        return;
+    // CORE AUDIO CONTROLS
+    function toggle() {
+      if(audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
+    }
+    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
+    function prev() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i-1+songs.length)%songs.length); }
+    
+    audio.ontimeupdate = () => {
+      document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
+      document.getElementById('cur').textContent = fmt(audio.currentTime);
+      document.getElementById('dur').textContent = fmt(audio.duration);
+      // Hide spinner when duration is available
+      if(audio.duration > 0) {
+        document.getElementById('loadSpinner').classList.remove('show');
       }
-      
-      const songName = document.getElementById('deviceSongName').value.trim();
-      if(!songName) {
-        msg('❌ Nama lagu harus diisi!');
-        return;
+    };
+    
+    // Show loading spinner when song starts playing (duration not yet loaded)
+    audio.onplay = () => {
+      if(audio.duration === 0 || isNaN(audio.duration)) {
+        document.getElementById('loadSpinner').classList.add('show');
       }
-      
-      const artist = document.getElementById('deviceArtist').value.trim() || 'Unknown Artist';
-      
-      // Disable button
-      const btn = document.getElementById('btnUploadDevice');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-      
-      // Show progress
-      document.getElementById('uploadProgress').classList.add('show');
+    };
+    
+    // Hide spinner when metadata is loaded
+    audio.onloadedmetadata = () => {
+      document.getElementById('loadSpinner').classList.remove('show');
+    };
+    document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
+    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
+    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
+
+    // FOLLOWERS LOGIC
+    async function followUser() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      const targetUid = songs[i].uid;
+      if(!targetUid || targetUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
       
       try {
-        // Upload to Firebase Storage
-        const timestamp = Date.now();
-        const fileName = `music/${currentUser.uid}/${timestamp}_${selectedFile.name}`;
-        const storageRef = storage.ref(fileName);
-        const uploadTask = storageRef.put(selectedFile);
+        const targetRef = db.ref('users/' + targetUid);
+        const currentRef = db.ref('users/' + auth.currentUser.uid);
         
-        uploadTask.on('state_changed',
-          (snapshot) => {
-            // Progress
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            document.getElementById('uploadProgressBar').style.width = progress + '%';
-            document.getElementById('uploadPercent').innerText = Math.round(progress) + '%';
-          },
-          (error) => {
-            // Error
-            msg('❌ Upload gagal: ' + error.message);
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-upload"></i> Upload Sekarang';
-            document.getElementById('uploadProgress').classList.remove('show');
-          },
-          async () => {
-            // Complete
-            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-            
-            // Save to database
-            const musicData = {
-              title: songName,
-              artist: artist,
-              url: downloadURL,
-              uploadedBy: currentUser.uid,
-              uploader: userData.username || 'Unknown',
-              timestamp: timestamp,
-              plays: 0,
-              likes: 0,
-              source: 'device', // Mark as device upload
-              fileName: selectedFile.name,
-              fileSize: selectedFile.size
-            };
-            
-            await db.ref('music').push(musicData);
-            
-            msg('✅ Lagu berhasil diupload!');
-            closeUploadModal();
-            loadMusic();
-            
-            // Reset
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-upload"></i> Upload Sekarang';
-            document.getElementById('uploadProgress').classList.remove('show');
-            selectedFile = null;
-          }
-        );
-      } catch(err) {
-        msg('❌ Terjadi kesalahan: ' + err.message);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-upload"></i> Upload Sekarang';
-        document.getElementById('uploadProgress').classList.remove('show');
-      }
-    }
-
-    // ORIGINAL URL UPLOAD
-    function submitMusic() {
-      const url = document.getElementById('musicUrl').value.trim();
-      const title = document.getElementById('songName').value.trim();
-      const artist = document.getElementById('artistName').value.trim() || 'Unknown Artist';
-      
-      if(!url || !title) {
-        msg('❌ URL dan Nama lagu harus diisi!');
-        return;
-      }
-      
-      if(!url.includes('top4top')) {
-        msg('❌ Hanya link Top4Top yang diperbolehkan untuk metode URL!');
-        return;
-      }
-      
-      const musicData = {
-        title: title,
-        artist: artist,
-        url: url,
-        uploadedBy: currentUser.uid,
-        uploader: userData.username || 'Unknown',
-        timestamp: Date.now(),
-        plays: 0,
-        likes: 0,
-        source: 'top4top'
-      };
-      
-      db.ref('music').push(musicData).then(() => {
-        msg('✅ Lagu berhasil diupload!');
-        closeUploadModal();
-        loadMusic();
-      }).catch(err => {
-        msg('❌ Gagal upload: ' + err.message);
-      });
-    }
-
-    // LOAD MUSIC
-    function loadMusic() {
-      db.ref('music').orderByChild('timestamp').once('value').then(snap => {
-        allMusic = [];
-        snap.forEach(child => {
-          allMusic.push({
-            id: child.key,
-            ...child.val()
-          });
-        });
-        allMusic.reverse();
-        displayMusic(allMusic);
-      });
-    }
-
-    function displayMusic(musicList) {
-      const container = document.getElementById('musicList');
-      const addCard = container.querySelector('.add-card');
-      container.innerHTML = '';
-      container.appendChild(addCard);
-      
-      if(musicList.length === 0) {
-        container.innerHTML += '<p style="text-align: center; color: var(--text-dim); padding: 40px;">Belum ada lagu</p>';
-        return;
-      }
-      
-      musicList.forEach(music => {
-        const card = createMusicCard(music);
-        container.appendChild(card);
-      });
-    }
-
-    function createMusicCard(music) {
-      const div = document.createElement('div');
-      div.className = 'music-card';
-      
-      const sourceBadge = music.source === 'device' 
-        ? '<span class="source-badge"><i class="fas fa-mobile-alt"></i> Device Upload</span>'
-        : '';
-      
-      div.innerHTML = `
-        <div class="mc-header">
-          <div class="mc-info">
-            <div class="mc-title">${music.title}</div>
-            <div class="mc-artist">${music.artist}</div>
-            ${sourceBadge}
-          </div>
-          <div class="mc-actions">
-            <button class="mc-btn" onclick="playMusic('${music.id}')">
-              <i class="fas fa-play"></i>
-            </button>
-            <button class="mc-btn" onclick="copyUrl('${music.url}', '${music.source}')">
-              <i class="fas fa-copy"></i>
-            </button>
-            ${music.uploadedBy === currentUser?.uid ? `
-              <button class="mc-btn danger" onclick="deleteMusic('${music.id}')">
-                <i class="fas fa-trash"></i>
-              </button>
-            ` : ''}
-          </div>
-        </div>
-        <div class="mc-meta">
-          <span><i class="fas fa-play-circle"></i> ${music.plays || 0}</span>
-          <span><i class="fas fa-heart"></i> ${music.likes || 0}</span>
-          <span><i class="fas fa-user"></i> ${music.uploader}</span>
-        </div>
-      `;
-      
-      return div;
-    }
-
-    function copyUrl(url, source) {
-      navigator.clipboard.writeText(url).then(() => {
-        if(source === 'device') {
-          msg('📋 URL disalin! ⚠️ Audio ini bukan dari Top4Top');
+        const targetSnap = await targetRef.get();
+        const currentSnap = await currentRef.get();
+        
+        const targetData = targetSnap.val();
+        const currentData = currentSnap.val();
+        
+        const targetFollowers = Array.isArray(targetData?.followers) ? [...targetData.followers] : [];
+        const currentFollowing = Array.isArray(currentData?.following) ? [...currentData.following] : [];
+        
+        const isFollowing = targetFollowers.includes(auth.currentUser.uid);
+        
+        if(isFollowing) {
+          // Unfollow
+          const newFollowers = targetFollowers.filter(uid => uid !== auth.currentUser.uid);
+          const newFollowing = currentFollowing.filter(uid => uid !== targetUid);
+          
+          await targetRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Unfollowed!");
         } else {
-          msg('📋 URL berhasil disalin!');
+          // Follow
+          const newFollowers = [...targetFollowers, auth.currentUser.uid];
+          const newFollowing = [...currentFollowing, targetUid];
+          
+          await targetRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          db.ref('users/' + targetUid + '/notifications').push({
+            type: 'follow',
+            text: userData.username + ' mulai mengikuti kamu',
+            fromName: userData.username,
+            fromUid: auth.currentUser.uid,
+            timestamp: Date.now()
+          });
+          msg("Followed! ✅");
         }
-      });
-    }
-
-    function playMusic(id) {
-      const music = allMusic.find(m => m.id === id);
-      if(!music) return;
-      
-      // Increment plays
-      db.ref(`music/${id}/plays`).transaction(current => (current || 0) + 1);
-      
-      // Play audio (simple implementation)
-      const audio = new Audio(music.url);
-      audio.play();
-      
-      msg('🎵 Memutar: ' + music.title);
-    }
-
-    function deleteMusic(id) {
-      if(!confirm('Hapus lagu ini?')) return;
-      
-      db.ref(`music/${id}`).remove().then(() => {
-        msg('✅ Lagu dihapus!');
-        loadMusic();
-      });
-    }
-
-    function searchMusic() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      if(!query) {
-        displayMusic(allMusic);
-        return;
+        // Update button state immediately
+        await updateFollowUI();
+      } catch(err) {
+        msg("Error: " + err.message);
       }
+    }
+
+    async function updateFollowUI() {
+      if(!auth.currentUser || !songs[i].uid) return;
+      const targetSnap = await db.ref('users/' + songs[i].uid).get();
+      const targetData = targetSnap.val();
+      const targetFollowers = Array.isArray(targetData?.followers) ? targetData.followers : [];
       
-      const filtered = allMusic.filter(m => 
-        m.title.toLowerCase().includes(query) || 
-        m.artist.toLowerCase().includes(query)
-      );
-      displayMusic(filtered);
-    }
-
-    // NOTIFICATIONS
-    function toggleNotif() {
-      const panel = document.getElementById('notifPanel');
-      panel.classList.toggle('show');
-    }
-
-    function clearAllNotifs() {
-      document.getElementById('notifList').innerHTML = '<p style="text-align: center; color: var(--text-dim); font-size: 12px; padding: 20px;">Belum ada notifikasi</p>';
-      document.getElementById('notifBadge').classList.remove('show');
-    }
-
-    // PROFILE
-    function openProfile() {
-      if(!currentUser) {
-        openLoginModal();
-        return;
+      const btn = document.getElementById('btnFollow');
+      if(targetFollowers.includes(auth.currentUser.uid)) {
+        btn.style.display = 'none'; // Hide button jika sudah follow
+      } else {
+        btn.style.display = 'flex';
+        btn.innerHTML = '<i class="fas fa-plus"></i>';
+        btn.style.background = "var(--tiktok-red)";
       }
-      
-      document.getElementById('profileUsername').innerText = userData.username || 'User';
-      document.getElementById('profileTag').innerText = '@' + (userData.username || 'user');
-      document.getElementById('profileAvatar').src = userData.avatar || `https://ui-avatars.com/api/?name=${userData.username}&background=00ff88&color=000`;
-      document.getElementById('statFollowers').innerText = userData.followers || 0;
-      document.getElementById('statUploads').innerText = allMusic.filter(m => m.uploadedBy === currentUser.uid).length;
-      
-      document.getElementById('profileModal').style.display = 'flex';
     }
 
-    function closeProfile() {
-      document.getElementById('profileModal').style.display = 'none';
+    // UTILS
+    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
+    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+    
+    function openProfile() { 
+        if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
+        else {
+            const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
+            document.getElementById('myPostList').innerHTML = myPosts.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><span>${s.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+            document.getElementById('modalProfile').style.display = 'block';
+        }
+    }
+    
+    async function viewCreator() {
+        const s = songs[i]; 
+        if(!s.uid) return;
+        
+        // Jika creator adalah user sendiri, buka profile modal
+        if(auth.currentUser && s.uid === auth.currentUser.uid) {
+            openProfile();
+            return;
+        }
+        
+        const cRef = await db.ref('users/' + s.uid).get();
+        const cData = cRef.val();
+        const followerCountCreator = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
+        document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
+        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+        document.getElementById('vFol').innerText = followerCountCreator;
+        document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+        const creatorSongs = songs.filter(x => x.uid === s.uid);
+        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+        
+        // Set data untuk follow button
+        document.getElementById('modalCreator').dataset.creatorUid = s.uid;
+        
+        // Update follow button state
+        updateCreatorFollowUI(s.uid);
+        
+        document.getElementById('modalCreator').style.display = 'block';
     }
 
+    async function updateCreatorFollowUI(creatorUid) {
+      if(!auth.currentUser) return;
+      const creatorSnap = await db.ref('users/' + creatorUid).get();
+      const creatorData = creatorSnap.val();
+      const creatorFollowers = Array.isArray(creatorData?.followers) ? creatorData.followers : [];
+      
+      const btnText = document.getElementById('vCreatorFollowBtn');
+      
+      if(creatorFollowers.includes(auth.currentUser.uid)) {
+        btnText.innerText = 'Following ✓';
+        btnText.style.color = 'var(--accent)';
+      } else {
+        btnText.innerText = 'Follow';
+        btnText.style.color = '#ddd';
+      }
+    }
+
+    async function followCreator() {
+      if(!auth.currentUser) return msg("Login dulu!");
+      
+      const creatorUid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!creatorUid || creatorUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
+      
+      try {
+        const creatorRef = db.ref('users/' + creatorUid);
+        const currentRef = db.ref('users/' + auth.currentUser.uid);
+        
+        const creatorSnap = await creatorRef.get();
+        const currentSnap = await currentRef.get();
+        
+        const creatorData = creatorSnap.val();
+        const currentData = currentSnap.val();
+        
+        const creatorFollowers = Array.isArray(creatorData?.followers) ? [...creatorData.followers] : [];
+        const currentFollowing = Array.isArray(currentData?.following) ? [...currentData.following] : [];
+        
+        const isFollowing = creatorFollowers.includes(auth.currentUser.uid);
+        
+        if(isFollowing) {
+          // Unfollow
+          const newFollowers = creatorFollowers.filter(uid => uid !== auth.currentUser.uid);
+          const newFollowing = currentFollowing.filter(uid => uid !== creatorUid);
+          
+          await creatorRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Unfollowed!");
+        } else {
+          // Follow
+          const newFollowers = [...creatorFollowers, auth.currentUser.uid];
+          const newFollowing = [...currentFollowing, creatorUid];
+          
+          await creatorRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          db.ref('users/' + creatorUid + '/notifications').push({
+            type: 'follow',
+            text: userData.username + ' mulai mengikuti kamu',
+            fromName: userData.username,
+            fromUid: auth.currentUser.uid,
+            timestamp: Date.now()
+          });
+          msg("Followed! ✅");
+        }
+        // Update button
+        await updateCreatorFollowUI(creatorUid);
+      } catch(err) {
+        msg("Error: " + err.message);
+      }
+    }
+
+    async function openList(f) {
+      const c = document.getElementById('songContainer');
+      const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
+      c.innerHTML = '<p style="text-align:center; padding:20px; color:#555">Memuat...</p>';
+      let html = "";
+      for(let s of l) {
+          const uRef = await db.ref('users/' + s.uid).get();
+          const uData = uRef.val();
+          const followerCount = Array.isArray(uData?.followers) ? uData.followers.length : uData?.followers || 0;
+          const badge = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          html += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`;
+      }
+      c.innerHTML = html;
+      document.getElementById('modalList').style.display='block';
+    }
+
+    function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
+    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
+    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
+    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link audio disalin"); }
+    
+    function shareLink() { 
+        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        navigator.clipboard.writeText(link); 
+        msg("Link lagu dengan ID disalin"); 
+    }
+    
+    function downloadSong() { window.open(songs[i].url); }
+    function openReq() { document.getElementById('modalReq').style.display='block'; }
+    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function toggleAuthMode() { /* Google Sign-In only - not used */ }
+    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
+    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
+
+    let isFirstTimeUser = false;
+
+    function handleAuth() {
+      /* Old function - replaced by handleGoogleAuth */
+    }
+
+    function handleGoogleAuth() {
+      if(isFirstTimeUser) {
+        // Complete registration
+        const username = document.getElementById('authUser').value.trim();
+        
+        if(!username || username.length < 3) {
+          msg('❌ Username minimal 3 karakter!');
+          return;
+        }
+        
+        const user = auth.currentUser;
+        if(!user) {
+          msg('❌ Session expired, silakan coba lagi');
+          isFirstTimeUser = false;
+          document.getElementById('usernameSection').style.display = 'none';
+          document.getElementById('googleBtnText').innerText = 'Masuk dengan Google';
+          return;
+        }
+        
+        // Generate 3-5 fake followers
+        const fakeFollowerCount = Math.floor(Math.random() * 3) + 3;
+        const fakeFollowers = [];
+        for(let i = 0; i < fakeFollowerCount; i++) {
+          fakeFollowers.push(generateFakeFollower());
+        }
+        
+        // Simpan data user ke database
+        db.ref('users/' + user.uid).set({
+          username: username,
+          email: user.email,
+          avatar: user.photoURL || "https://via.placeholder.com/150",
+          role: 'user',
+          followers: fakeFollowers,
+          following: [],
+          tag: 'user',
+          createdAt: Date.now()
+        }).then(() => {
+          isFirstTimeUser = false;
+          document.getElementById('usernameSection').style.display = 'none';
+          document.getElementById('googleBtnText').innerText = 'Masuk dengan Google';
+          closeModal();
+          msg('✅ Akun berhasil dibuat! Selamat datang ' + username + '!');
+        }).catch(err => {
+          msg('❌ Gagal menyimpan data: ' + err.message);
+        });
+      } else {
+        // Google Sign-In
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
+        
+        auth.signInWithPopup(provider)
+          .then(result => {
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Cek apakah user baru
+            if(isNewUser) {
+              isFirstTimeUser = true;
+              // Tampilkan form username
+              document.getElementById('googleBtnText').innerText = 'Buat Akun';
+              document.getElementById('usernameSection').style.display = 'block';
+              msg('👋 Selamat datang! Buat username Anda untuk melanjutkan.');
+            } else {
+              // User lama, langsung masuk
+              closeModal();
+              msg('✅ Selamat datang kembali!');
+            }
+          })
+          .catch(err => {
+            if(err.code === 'auth/popup-closed-by-user') {
+              msg('⚠️ Login dibatalkan');
+            } else if(err.code === 'auth/cancelled-popup-request') {
+              // Ignore
+            } else {
+              msg('❌ Gagal login: ' + err.message);
+            }
+          });
+      }
+    }
+
+    function uploadAvatar(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("Profil Updated!"));
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // PROFILE MANAGEMENT FUNCTIONS
     function switchProfileTab(tab) {
       const profileTab = document.getElementById('profileTab');
       const accountTab = document.getElementById('accountTab');
@@ -1814,163 +1979,9 @@
       }
     }
 
-    // ABOUT - IMPROVED
-    function openAbout() {
-      document.getElementById('aboutModal').style.display = 'flex';
-    }
-
-    function closeAbout() {
-      document.getElementById('aboutModal').style.display = 'none';
-    }
-
-    // AUTH
-    function openLoginModal() {
-      document.getElementById('loginModal').style.display = 'flex';
-    }
-
-    function closeLoginModal() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
-
-    function toggleAuthMode() {
-      isAuthMode = isAuthMode === 'login' ? 'register' : 'login';
-      const btn = document.getElementById('authBtn');
-      const toggle = document.getElementById('toggleAuthText');
-      
-      if(isAuthMode === 'register') {
-        btn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
-        toggle.innerText = 'Login di sini';
-      } else {
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-        toggle.innerText = 'Daftar di sini';
-      }
-    }
-
-    function handleAuth() {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      
-      if(!email || !password) {
-        msg('❌ Email dan password harus diisi!');
-        return;
-      }
-      
-      if(isAuthMode === 'register') {
-        auth.createUserWithEmailAndPassword(email, password)
-          .then(result => {
-            const username = prompt('Pilih username:');
-            if(!username) return;
-            
-            return db.ref('users/' + result.user.uid).set({
-              username: username,
-              email: email,
-              avatar: `https://ui-avatars.com/api/?name=${username}&background=00ff88&color=000`,
-              role: 'user',
-              followers: 0,
-              following: [],
-              tag: 'user',
-              createdAt: Date.now()
-            });
-          })
-          .then(() => {
-            msg('✅ Akun berhasil dibuat!');
-            closeLoginModal();
-          })
-          .catch(err => msg('❌ ' + err.message));
-      } else {
-        auth.signInWithEmailAndPassword(email, password)
-          .then(() => {
-            msg('✅ Login berhasil!');
-            closeLoginModal();
-          })
-          .catch(err => msg('❌ ' + err.message));
-      }
-    }
-
-    function handleGoogleAuth() {
-      if(isFirstTimeUser) {
-        const username = document.getElementById('regUsername').value.trim();
-        if(!username || username.length < 3) {
-          msg('❌ Username minimal 3 karakter!');
-          return;
-        }
-        
-        const fakeFollowers = Math.floor(Math.random() * 50) + 10;
-        
-        db.ref('users/' + auth.currentUser.uid).set({
-          username: username,
-          email: auth.currentUser.email,
-          avatar: auth.currentUser.photoURL || `https://ui-avatars.com/api/?name=${username}&background=00ff88&color=000`,
-          role: 'user',
-          followers: fakeFollowers,
-          following: [],
-          tag: 'user',
-          createdAt: Date.now()
-        }).then(() => {
-          isFirstTimeUser = false;
-          document.getElementById('usernameSection').style.display = 'none';
-          document.getElementById('googleBtnText').innerText = 'Masuk dengan Google';
-          closeLoginModal();
-          msg('✅ Akun berhasil dibuat! Selamat datang ' + username + '!');
-        }).catch(err => {
-          msg('❌ Gagal menyimpan data: ' + err.message);
-        });
-      } else {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({
-          prompt: 'select_account'
-        });
-        
-        auth.signInWithPopup(provider)
-          .then(result => {
-            const user = result.user;
-            const isNewUser = result.additionalUserInfo.isNewUser;
-            
-            if(isNewUser) {
-              isFirstTimeUser = true;
-              document.getElementById('googleBtnText').innerText = 'Buat Akun';
-              document.getElementById('usernameSection').style.display = 'block';
-              msg('👋 Selamat datang! Buat username Anda untuk melanjutkan.');
-            } else {
-              closeLoginModal();
-              msg('✅ Selamat datang kembali!');
-            }
-          })
-          .catch(err => {
-            if(err.code === 'auth/popup-closed-by-user') {
-              msg('⚠️ Login dibatalkan');
-            } else if(err.code === 'auth/cancelled-popup-request') {
-              // Ignore
-            } else {
-              msg('❌ Gagal login: ' + err.message);
-            }
-          });
-      }
-    }
-
-    function handleLogout() {
-      if(!confirm('Yakin ingin logout?')) return;
-      auth.signOut().then(() => {
-        msg('👋 Berhasil logout!');
-        closeProfile();
-        location.reload();
-      });
-    }
-
-    function uploadAvatar(input) {
-      const file = input.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        db.ref('users/' + auth.currentUser.uid).update({ avatar: e.target.result }).then(() => msg("✅ Profil Updated!"));
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // CHANGE NAME/PASSWORD
     function openChangeNameModal() {
       document.getElementById('cnMsg').innerText = '';
-      document.getElementById('cnMsg').style.display = 'none';
+      document.getElementById('cnMsg').classList.remove('show', 'success', 'error');
       document.getElementById('cnPass').value = '';
       document.getElementById('cnNewName').value = '';
       document.getElementById('modalChangeNames').style.display = 'block';
@@ -1981,18 +1992,16 @@
       const newName = document.getElementById('cnNewName').value;
       const msgEl = document.getElementById('cnMsg');
       
+      msgEl.classList.remove('success', 'error');
+      
       if(!newName || !password) {
         msgEl.innerText = '⚠️ Isi semua field!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       if(newName.length < 3) {
         msgEl.innerText = '⚠️ Nama minimal 3 karakter!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       
@@ -2002,9 +2011,7 @@
       
       if(diffDays < 7) {
         msgEl.innerText = `⏳ Tunggu ${Math.ceil(7 - diffDays)} hari lagi!`;
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       
@@ -2017,24 +2024,20 @@
           lastNameChange: Date.now()
         });
         msgEl.innerText = '✅ Nama berhasil diubah!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(0,255,136,0.2)';
-        msgEl.style.border = '1px solid var(--accent)';
+        msgEl.classList.add('show', 'success');
         setTimeout(() => {
           document.getElementById('modalChangeNames').style.display = 'none';
           msg('Nama pengguna telah diperbarui!');
         }, 1500);
       } catch(err) {
         msgEl.innerText = '❌ Password salah!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
       }
     }
 
     function openChangePasswordModal() {
       document.getElementById('cpMsg').innerText = '';
-      document.getElementById('cpMsg').style.display = 'none';
+      document.getElementById('cpMsg').classList.remove('show', 'success', 'error');
       document.getElementById('cpOldPass').value = '';
       document.getElementById('cpNewPass').value = '';
       document.getElementById('cpConfirm').value = '';
@@ -2047,25 +2050,21 @@
       const confirm = document.getElementById('cpConfirm').value;
       const msgEl = document.getElementById('cpMsg');
       
+      msgEl.classList.remove('success', 'error');
+      
       if(!oldPass || !newPass || !confirm) {
         msgEl.innerText = '⚠️ Isi semua field!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       if(newPass.length < 6) {
         msgEl.innerText = '⚠️ Password minimal 6 karakter!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       if(newPass !== confirm) {
         msgEl.innerText = '⚠️ Password tidak cocok!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       
@@ -2075,9 +2074,7 @@
       
       if(diffDays < 7) {
         msgEl.innerText = `⏳ Tunggu ${Math.ceil(7 - diffDays)} hari lagi!`;
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
         return;
       }
       
@@ -2090,70 +2087,173 @@
           lastPasswordChange: Date.now()
         });
         msgEl.innerText = '✅ Password berhasil diubah!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(0,255,136,0.2)';
-        msgEl.style.border = '1px solid var(--accent)';
+        msgEl.classList.add('show', 'success');
         setTimeout(() => {
           document.getElementById('modalChangePass').style.display = 'none';
           msg('Password telah diperbarui!');
         }, 1500);
       } catch(err) {
         msgEl.innerText = '❌ Password lama salah!';
-        msgEl.style.display = 'block';
-        msgEl.style.background = 'rgba(255,51,51,0.2)';
-        msgEl.style.border = '1px solid var(--danger)';
+        msgEl.classList.add('show', 'error');
       }
     }
+  
 
-    // UTILITIES
-    function switchView(view) {
-      const btns = document.querySelectorAll('.nav-btn');
-      btns.forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
+    // === DEVICE UPLOAD FUNCTIONS ===
+    function selectUploadMethod(method) {
+      const btnUrl = document.getElementById('btnMethodUrl');
+      const btnDevice = document.getElementById('btnMethodDevice');
+      const urlForm = document.getElementById('urlUploadForm');
+      const deviceForm = document.getElementById('deviceUploadForm');
       
-      if(view === 'home') {
-        displayMusic(allMusic);
-      } else if(view === 'trending') {
-        const sorted = [...allMusic].sort((a, b) => (b.plays || 0) - (a.plays || 0));
-        displayMusic(sorted);
-      } else if(view === 'library') {
-        if(!currentUser) {
-          msg('⚠️ Login untuk melihat library!');
-          return;
-        }
-        const myMusic = allMusic.filter(m => m.uploadedBy === currentUser.uid);
-        displayMusic(myMusic);
+      if(method === 'url') {
+        btnUrl.style.background = 'var(--accent)';
+        btnUrl.style.color = 'black';
+        btnDevice.style.background = 'rgba(255,255,255,0.1)';
+        btnDevice.style.color = 'white';
+        urlForm.style.display = 'block';
+        deviceForm.style.display = 'none';
+        // Reset device form
+        selectedAudioFile = null;
+        document.getElementById('filePreview').style.display = 'none';
+        document.getElementById('rLaguDevice').style.display = 'none';
+        document.getElementById('btnUploadDevice').style.display = 'none';
+      } else {
+        btnUrl.style.background = 'rgba(255,255,255,0.1)';
+        btnUrl.style.color = 'white';
+        btnDevice.style.background = 'var(--accent)';
+        btnDevice.style.color = 'black';
+        urlForm.style.display = 'none';
+        deviceForm.style.display = 'block';
       }
     }
 
-    function msg(text) {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'info',
-        title: text,
-        showConfirmButton: false,
-        timer: 3000,
-        background: 'rgba(18, 18, 18, 0.95)',
-        color: 'white',
-        timerProgressBar: true
-      });
-    }
-
-    // Click outside modal to close
-    window.onclick = function(event) {
-      const modals = document.querySelectorAll('.modal');
-      modals.forEach(modal => {
-        if(event.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if(!file) return;
       
-      const notifPanel = document.getElementById('notifPanel');
-      if(!event.target.closest('#btnNotif') && !event.target.closest('.notif-panel')) {
-        notifPanel.classList.remove('show');
+      // Validasi file audio
+      if(!file.type.startsWith('audio/')) {
+        msg('❌ Hanya file audio yang diperbolehkan!');
+        return;
+      }
+      
+      // Max 10MB
+      if(file.size > 10 * 1024 * 1024) {
+        msg('❌ Ukuran file maksimal 10MB!');
+        return;
+      }
+      
+      selectedAudioFile = file;
+      
+      // Tampilkan preview
+      document.getElementById('fileName').innerText = file.name;
+      document.getElementById('fileSize').innerText = formatFileSize(file.size);
+      document.getElementById('filePreview').style.display = 'block';
+      document.getElementById('rLaguDevice').style.display = 'block';
+      document.getElementById('btnUploadDevice').style.display = 'block';
+    }
+
+    function formatFileSize(bytes) {
+      if(bytes < 1024) return bytes + ' B';
+      if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    async function uploadFromDevice() {
+      if(!selectedAudioFile) {
+        msg('❌ Pilih file audio terlebih dahulu!');
+        return;
+      }
+      
+      const songTitle = document.getElementById('rLaguDevice').value.trim();
+      if(!songTitle) {
+        msg('❌ Judul lagu harus diisi!');
+        return;
+      }
+      
+      const btn = document.getElementById('btnUploadDevice');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+      
+      // Tampilkan progress
+      document.getElementById('uploadProgress').style.display = 'block';
+      
+      try {
+        const timestamp = Date.now();
+        const fileName = `music/${auth.currentUser.uid}/${timestamp}_${selectedAudioFile.name}`;
+        const storageRef = storage.ref(fileName);
+        const uploadTask = storageRef.put(selectedAudioFile);
+        
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            // Progress
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            document.getElementById('uploadProgressBar').style.width = progress + '%';
+            document.getElementById('uploadPercent').innerText = Math.round(progress) + '%';
+          },
+          (error) => {
+            // Error
+            msg('❌ Upload gagal: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
+            document.getElementById('uploadProgress').style.display = 'none';
+          },
+          async () => {
+            // Complete
+            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+            
+            // Parse judul dan artis
+            let title, artist;
+            if(songTitle.includes(' - ')) {
+              [title, artist] = songTitle.split(' - ').map(s => s.trim());
+            } else {
+              title = songTitle;
+              artist = 'Unknown Artist';
+            }
+            
+            // Simpan ke database dengan marker source: 'device'
+            const musicData = {
+              title: title,
+              artist: artist,
+              url: downloadURL,
+              by: auth.currentUser.uid,
+              byName: userData.username || 'User',
+              timestamp: timestamp,
+              plays: 0,
+              likes: 0,
+              source: 'device',  // Marker untuk device upload
+              fileName: selectedAudioFile.name,
+              fileSize: selectedAudioFile.size
+            };
+            
+            await db.ref('posts').push(musicData);
+            
+            msg('✅ Lagu berhasil diupload!');
+            document.getElementById('modalReq').style.display = 'none';
+            
+            // Reset form
+            selectedAudioFile = null;
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('rLaguDevice').value = '';
+            document.getElementById('rLaguDevice').style.display = 'none';
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('btnUploadDevice').style.display = 'none';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
+            
+            loadSongs();
+          }
+        );
+      } catch(err) {
+        msg('❌ Terjadi kesalahan: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
+        document.getElementById('uploadProgress').style.display = 'none';
       }
     }
+    // === END DEVICE UPLOAD FUNCTIONS ===
+
   </script>
 </body>
 </html>
