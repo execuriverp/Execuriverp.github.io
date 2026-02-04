@@ -825,6 +825,7 @@
     <div id="notifPanel" class="notif-panel">
       <div class="notif-panel-header">
         <h3><i class="fas fa-comment-dots"></i> Notifikasi</h3>
+        <button class="notif-panel-close" onclick="openClearNotifConfirm()" style="margin-right:8px"><i class="fas fa-trash"></i></button>
         <button class="notif-panel-close" onclick="closeNotifPanel()"><i class="fas fa-times"></i></button>
       </div>
       <div id="notifList" class="notif-list">
@@ -848,7 +849,7 @@
     <div class="sys-container">
       <div class="sys-tools">
         <button onclick="copyRawUrl()" title="Copy Url"><i class="fas fa-link"></i></button>
-        <button onclick="shareLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
+        <button onclick="openCopyLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
         <button onclick="downloadSong()" title="Download"><i class="fas fa-download"></i></button>
         <button onclick="openReq()" title="Add/Request"><i class="fas fa-plus-circle"></i></button>
       </div>
@@ -1081,6 +1082,28 @@
         <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
         <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
         <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalClearNotif" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Konfirmasi</h3>
+      <p style="text-align:center; color:#ccc; margin-bottom:14px">Yakin ingin membersihkan notifikasi?</p>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="confirmClearNotif()">Confirm</button>
+        <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalClearNotif').style.display='none'">Discard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalCopyLink" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Salin Deep Link</h3>
+      <div id="copyLinkText" style="background:#0a0a0a; border:1px solid #333; border-radius:8px; padding:12px; color:#00d4ff; font-family:'Courier New', monospace; font-size:12px; word-break:break-all; margin-bottom:12px">URL belum dibuat</div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="copyBuiltLink()">Copy</button>
+        <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyLink').style.display='none'">Back</button>
       </div>
     </div>
   </div>
@@ -1981,6 +2004,31 @@
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
+
+    function openClearNotifConfirm() {
+        document.getElementById('modalClearNotif').style.display = 'block';
+    }
+    function confirmClearNotif() {
+        if(!auth.currentUser) return msg("Login dulu!");
+        db.ref('users/' + auth.currentUser.uid + '/notifications').remove().then(() => {
+            document.getElementById('modalClearNotif').style.display = 'none';
+            mergeAndRenderNotifs([], 'user');
+            updateNotifBadge();
+            showToast("Notifikasi dibersihkan");
+        });
+    }
+    function openCopyLink() {
+        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        const el = document.getElementById('copyLinkText');
+        if(el) el.textContent = link;
+        document.getElementById('modalCopyLink').style.display = 'block';
+    }
+    function copyBuiltLink() {
+        const t = document.getElementById('copyLinkText').textContent;
+        if(!t || t === 'URL belum dibuat') return;
+        navigator.clipboard.writeText(t).then(() => showToast("Link lagu dengan ID disalin"));
+        document.getElementById('modalCopyLink').style.display = 'none';
+    }
 
     let isFirstTimeUser = false;
 
