@@ -1078,6 +1078,7 @@
         <p style="margin-top:12px;">
           <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; margin-right:8px; margin-bottom:8px;">📱 Contact WhatsApp – click here!</a>
           <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; background:#333; color:var(--accent); border:1px solid var(--accent);">📋 Changelogs – click here!</a>
+          <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; background:#333; color:var(--accent); border:1px solid var(--accent); margin-left:8px;">Mentah Boombox – click here</a>
         </p>
         <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
         <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
@@ -1105,6 +1106,32 @@
         <button class="btn-act" onclick="copyBuiltLink()">Copy</button>
         <button class="btn-act" style="background:#25D366; color:#fff" onclick="shareToWhatsApp()">WhatsApp</button>
         <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyLink').style.display='none'">Back</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="modalCopyAudio" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Salin URL Audio MP3</h3>
+      <div id="copyAudioText" style="background:#0a0a0a; border:1px solid #333; border-radius:8px; padding:12px; color:#00d4ff; font-family:'Courier New', monospace; font-size:12px; word-break:break-all; margin-bottom:12px">URL belum dibuat</div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="copyBuiltAudio()">Copy</button>
+        <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyAudio').style.display='none'">Back</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="modalBoombox" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">How to use URL Top4Top</h3>
+      <div style="font-size:13px; color:#ddd; line-height:1.6; margin-bottom:12px">
+        <p>1. pastikan kamu sudah punya boombox.</p>
+        <p>2. pakai command /placebb untuk menaruh boombox.</p>
+        <p>3. pakai command /setbb untuk memulai music.</p>
+        <p>4. pilih url paling bawah dan masukan url top4top nya.</p>
+        <p>note : jika url tidak bunyi silahkan hapus s di bagian https menjadi http dan pastikan url adalah top4top.</p>
+        <p>end.</p>
+      </div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="document.getElementById('modalBoombox').style.display='none'">Close</button>
       </div>
     </div>
   </div>
@@ -1881,18 +1908,11 @@
       }
     }
 
-    async function openList(f) {
+    function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
       c.innerHTML = '<p style="text-align:center; padding:20px; color:#555">Memuat...</p>';
-      let html = "";
-      for(let s of l) {
-          const uRef = await db.ref('users/' + s.uid).get();
-          const uData = uRef.val();
-          const followerCount = Array.isArray(uData?.followers) ? uData.followers.length : uData?.followers || 0;
-          const badge = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-          html += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`;
-      }
+      const html = l.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`).join('');
       c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
     }
@@ -1992,7 +2012,7 @@
     }
 
     function buildDeepLink() { return window.location.origin + window.location.pathname + "?id=" + i; }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); showToast("Link audio disalin"); }
+    function copyRawUrl() { openCopyAudio(); }
     
     function shareLink() { 
         const link = buildDeepLink();
@@ -2006,10 +2026,23 @@
         const text = "Hello " + name + " telah berbagi link ExeMusic:\n🎵 " + title + "\n🔗 " + link;
         window.open("https://wa.me/?text=" + encodeURIComponent(text));
     }
+    function openCopyAudio() {
+        const url = (songs[i] && songs[i].url) ? songs[i].url : '';
+        const el = document.getElementById('copyAudioText');
+        if(el) el.textContent = url || 'URL belum dibuat';
+        document.getElementById('modalCopyAudio').style.display = 'block';
+    }
+    function copyBuiltAudio() {
+        const t = document.getElementById('copyAudioText').textContent;
+        if(!t || t === 'URL belum dibuat') return;
+        navigator.clipboard.writeText(t).then(() => showToast("Link audio disalin"));
+        document.getElementById('modalCopyAudio').style.display = 'none';
+    }
     
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display='block'; }
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
