@@ -1992,7 +1992,7 @@
     }
 
     function buildDeepLink() { return window.location.origin + window.location.pathname + "?id=" + i; }
-    function copyRawUrl() { navigator.clipboard.writeText(buildDeepLink()); showToast("Link player disalin"); }
+    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); showToast("Link audio disalin"); }
     
     function shareLink() { 
         const link = buildDeepLink();
