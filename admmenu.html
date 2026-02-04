@@ -349,6 +349,22 @@
         <div id="logTerminal" style="background:#050505; height: 500px; overflow-y:auto; padding:20px; border: 1px solid var(--border); font-family:'JetBrains Mono'; font-size:11px; color:var(--success);"></div>
         <button class="btn btn-danger" style="margin-top:10px" onclick="db.ref('logs').remove()">CLEAR ALL LOGS</button>
     </div>
+    <div id="view-disco" class="view-section">
+        <h1 style="font-family:'Rajdhani';">DISCO_MODE</h1>
+        <div class="card">
+            <select id="discoVariant" class="cyber-select">
+                <option value="minimal">Minimal</option>
+                <option value="heartbeat">Heartbeat</option>
+                <option value="rainbow">Rainbow</option>
+                <option value="ice">Ice</option>
+            </select>
+            <input id="discoColor" class="cyber-input" placeholder="#00ff88" value="#00ff88">
+            <div style="display:flex; gap:10px">
+                <button class="btn" onclick="startDisco()">START</button>
+                <button class="btn btn-danger" onclick="stopDisco()">STOP</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -478,7 +494,7 @@
             const val = s.val() || {}; mtState = val.mt || false;
             const mtEl = document.getElementById('mt-text');
             if(mtEl) { mtEl.innerText = mtState ? "MAINTENANCE ACTIVE" : "SYSTEM ONLINE"; mtEl.style.color = mtState ? "var(--danger)" : "var(--success)"; }
-            if(val.discoMode) applyDiscoMode(val.discoColor);
+            if(val.discoMode) applyDiscoMode(val.discoVariant, val.discoColor);
         });
     }
 
@@ -611,17 +627,21 @@
     
     function toggleMT() { db.ref('settings').update({mt: !mtState}); addLog(`Toggled Maintenance to ${!mtState}`); }
 
-    function setDiscoMode(color) {
-        if(color === 'rainbow') db.ref('settings').update({discoMode: true, discoColor: 'rainbow'});
-        else db.ref('settings').update({discoMode: true, discoColor: color});
+    function startDisco() {
+        const variant = document.getElementById('discoVariant').value;
+        const color = document.getElementById('discoColor').value || '#00ff88';
+        db.ref('settings').update({discoMode: true, discoVariant: variant, discoColor: color});
     }
     function stopDisco() { db.ref('settings').update({discoMode: false}); document.documentElement.style.setProperty('--accent', '#00ff88'); }
-    function applyDiscoMode(color) {
-        if(!color) return;
-        if(color === 'rainbow') {
-            document.documentElement.style.setProperty('--accent', `hsl(${Math.random()*360}, 100%, 50%)`);
-            setTimeout(() => { if(mtState || color === 'rainbow') applyDiscoMode('rainbow'); }, 500);
-        } else { document.documentElement.style.setProperty('--accent', color); }
+    function applyDiscoMode(variant, color) {
+        const c = color || '#00ff88';
+        document.documentElement.style.setProperty('--accent', c);
+        const app = document.querySelector('.main-view');
+        if(app) app.style.animation = 'none';
+        if(variant === 'rainbow') { if(app) app.style.animation = 'fadeIn 3s infinite'; }
+        if(variant === 'heartbeat') { if(app) app.style.animation = 'fadeIn 1.2s infinite'; }
+        if(variant === 'minimal') {}
+        if(variant === 'ice') { document.documentElement.style.setProperty('--accent', '#00d4ff'); }
     }
 
     function switchView(id) {
