@@ -174,6 +174,13 @@
         .np-info { flex: 1; font-family: 'JetBrains Mono'; font-size: 11px; color: #ddd; }
         .np-time { font-size: 9px; color: #666; margin-top: 4px; display: block; }
 
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; z-index: 10001; backdrop-filter: blur(4px); }
+        .confirm-card { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 90%; max-width: 420px; background: rgba(15,15,20,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        .confirm-title { font-family: 'Rajdhani'; font-size: 18px; color: var(--accent); margin-bottom: 8px; }
+        .confirm-text { font-size: 12px; color: #ccc; margin-bottom: 14px; }
+        .confirm-actions { display: flex; gap: 10px; }
+        .url-box { background: #0a0a0f; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; color: #00d4ff; font-family: 'JetBrains Mono'; font-size: 12px; word-break: break-all; margin-bottom: 12px; }
+
         @media (max-width: 600px) { 
             .sidebar { width: 0; display: none; } 
             .main-view { margin-left: 0; padding: 15px; } 
@@ -304,6 +311,14 @@
                 <button class="btn btn-danger" onclick="stopDisco()">STOP EFFECTS</button>
             </div>
         </div>
+
+        <div class="card">
+            <h3 style="color: var(--warning); margin-bottom:10px;"><i class="fas fa-bell"></i> NOTIF TOOLS</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-danger" onclick="openClearNotifConfirm()">CLEAR MY NOTIFS</button>
+                <button class="btn" onclick="openCopyUrlCard()">SALIN DEEP LINK</button>
+            </div>
+        </div>
     </div>
 
     <div id="view-users" class="view-section">
@@ -367,8 +382,32 @@
         </div>
     </div>
 </div>
+    <div id="modalClearNotif" class="modal" onclick="if(event.target==this)this.style.display='none'">
+        <div class="confirm-card">
+            <div class="confirm-title">Konfirmasi</div>
+            <div class="confirm-text">Yakin ingin membersihkan notifikasi?</div>
+            <div class="confirm-actions">
+                <button class="btn btn-danger" onclick="confirmClearNotif()">Confirm</button>
+                <button class="btn" onclick="document.getElementById('modalClearNotif').style.display='none'">Discard</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCopyUrl" class="modal" onclick="if(event.target==this)this.style.display='none'">
+        <div class="confirm-card">
+            <div class="confirm-title">Salin Deep Link</div>
+            <input id="copySongId" class="cyber-input" placeholder="Masukkan ID lagu (contoh: 0)">
+            <div id="copyUrlText" class="url-box">URL belum dibuat</div>
+            <div class="confirm-actions">
+                <button class="btn" onclick="copyBuiltUrl()">Copy</button>
+                <button class="btn btn-danger" onclick="document.getElementById('modalCopyUrl').style.display='none'">Back</button>
+            </div>
+        </div>
+    </div>
+
 
 <script>
+    // CONFIG DARI FILE YANG KAMU UPLOAD
     // CONFIG DARI FILE YANG KAMU UPLOAD
     const firebaseConfig = {
         apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
@@ -706,6 +745,43 @@
         
         document.addEventListener('contextmenu', event => event.preventDefault()); 
     };
+
+    function openClearNotifConfirm() {
+        document.getElementById('modalClearNotif').style.display = 'block';
+    }
+    function confirmClearNotif() {
+        const u = firebase.auth().currentUser;
+        if(!u) { Swal.fire('Error','Harus login','error'); return; }
+        db.ref('users/' + u.uid + '/notifications').remove()
+          .then(() => {
+            document.getElementById('modalClearNotif').style.display = 'none';
+            document.getElementById('npList').innerHTML = '<div style="text-align:center; padding:20px; color:#555; font-size:12px;">NO DATA</div>';
+            document.getElementById('notifBadge').innerText = '0';
+            document.getElementById('notifBadge').style.display = 'none';
+            Swal.fire('Selesai','Notifikasi dibersihkan','success');
+          })
+          .catch(() => Swal.fire('Error','Gagal membersihkan','error'));
+    }
+
+    function openCopyUrlCard() {
+        const m = document.getElementById('modalCopyUrl');
+        const idInput = document.getElementById('copySongId');
+        const urlBox = document.getElementById('copyUrlText');
+        idInput.value = '';
+        urlBox.textContent = 'URL belum dibuat';
+        m.style.display = 'block';
+        idInput.oninput = () => {
+            const id = idInput.value.trim();
+            const base = window.location.origin + '/exemusic';
+            const url = id ? `${base}?id=${encodeURIComponent(id)}` : base;
+            urlBox.textContent = url;
+        };
+    }
+    function copyBuiltUrl() {
+        const t = document.getElementById('copyUrlText').textContent;
+        if(!t || t === 'URL belum dibuat') { Swal.fire('Info','Isi ID dulu','info'); return; }
+        navigator.clipboard.writeText(t).then(() => Swal.fire('Copied','URL disalin','success'));
+    }
 </script>
 </body>
 </html>
