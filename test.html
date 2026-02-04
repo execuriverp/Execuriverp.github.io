@@ -1143,26 +1143,20 @@
         } else { document.getElementById('mtScreen').style.display = 'none'; }
         if(val.announcement) triggerBroadcast(val.announcement);
         
-        // DISCO MODE MONITORING
         if(val.discoMode !== discoModeActive) {
             discoModeActive = val.discoMode || false;
-            if(discoModeActive && val.discoColor) {
-                discoColor = val.discoColor;
-                applyDiscoMode(discoColor);
-                if(val.discoInitiator) {
-                    const initiator = val.discoInitiator;
-                    if(initiator !== lastDiscoUser) {
-                        triggerBroadcast(`🎉 ${initiator} has started disco mode!`);
-                        lastDiscoUser = initiator;
-                    }
-                }
-            } else if(!discoModeActive) {
+            if(discoModeActive) {
+                const v = val.discoVariant || 'heartbeat';
+                const c = val.discoColor || '#00ff88';
+                applyDiscoMode(v, c);
+            } else {
                 resetTheme();
-                triggerBroadcast("Disco mode ended! Back to normal.");
+                triggerBroadcast("Disco mode ended!");
             }
-        } else if(discoModeActive && val.discoColor && val.discoColor !== discoColor) {
-            discoColor = val.discoColor;
-            applyDiscoMode(discoColor);
+        } else if(discoModeActive) {
+            const v = val.discoVariant || 'heartbeat';
+            const c = val.discoColor || '#00ff88';
+            applyDiscoMode(v, c);
         }
     });
 
@@ -1294,10 +1288,11 @@
 
     function startSnowfall() {
         if(snowflakeInterval) clearInterval(snowflakeInterval);
-        snowflakeInterval = setInterval(createSnowflake, 300);
-        // Create initial snowflakes
-        for(let i = 0; i < 15; i++) {
-            setTimeout(() => createSnowflake(), i * 100);
+        snowflakeInterval = setInterval(() => {
+            if(document.querySelectorAll('.snowflake').length < 30) createSnowflake();
+        }, 1200);
+        for(let i = 0; i < 6; i++) {
+            setTimeout(() => createSnowflake(), i * 150);
         }
     }
 
@@ -1309,99 +1304,24 @@
         document.querySelectorAll('.snowflake').forEach(flake => flake.remove());
     }
 
-    function applyDiscoMode(color) {
-        document.documentElement.style.setProperty('--accent', color);
-        
-        // Check jika ice mode
-        if(color.toLowerCase() === '#ice') {
-            iceModeActive = true;
-            color = '#00d4ff'; // Blizzard blue
-            document.documentElement.style.setProperty('--accent', color);
-        } else {
-            iceModeActive = false;
-            stopSnowfall();
-        }
-        
-        // Background tetap gelap, cuma ambil tint sedikit
-        const rgb = parseInt(color.slice(1), 16);
-        const r = (rgb >> 16) & 255;
-        const g = (rgb >> 8) & 255;
-        const b = rgb & 255;
-        
+    function applyDiscoMode(variant, color) {
         const app = document.querySelector('.app');
-        if(app) {
-            // Rainbow effect jika color is rainbow code, ice mode heartbeat, otherwise disco heartbeat
-            if(color.toLowerCase() === '#00d4ff') {
-                app.style.animation = 'disco-heartbeat 1.2s infinite';
-                app.style.borderColor = color;
-                app.style.borderWidth = '2px';
-                startSnowfall();
-            } else if(color.toLowerCase().includes('rainbow')) {
-                app.style.animation = 'rainbow-glow 3s infinite linear';
-            } else {
-                app.style.animation = 'disco-heartbeat 1.2s infinite';
-                app.style.borderColor = color;
-                app.style.borderWidth = '2px';
-            }
-            app.style.background = `rgba(${r}, ${g}, ${b}, 0.05)`;
-            app.style.boxShadow = `0 0 40px ${color}60`;
+        document.documentElement.style.setProperty('--accent', color || '#00ff88');
+        if(app) app.style.animation = 'none';
+        stopSnowfall();
+        if(variant === 'ice') {
+            document.documentElement.style.setProperty('--accent', '#00d4ff');
+            if(app) app.style.animation = 'disco-heartbeat 1.2s infinite';
+            startSnowfall();
+            return;
         }
-        
-        // Body background tetap dark
-        document.body.style.background = '#050505';
-        
-        // Update button colors dynamically dengan glow besar
-        document.querySelectorAll('.btn-act').forEach(btn => {
-            btn.style.background = color;
-            btn.style.boxShadow = `0 0 25px ${color}, 0 0 50px ${color}40`;
-            btn.style.transform = 'scale(1.02)';
-        });
-        
-        document.querySelectorAll('.btn-play').forEach(btn => {
-            btn.style.background = color;
-            btn.style.boxShadow = `0 0 40px ${color}, 0 0 80px ${color}40`;
-            btn.style.color = '#000';
-        });
-        
-        // Update eq color dengan glow lebih besar dan kontras
-        document.querySelectorAll('.eq span').forEach(span => {
-            span.style.background = color;
-            span.style.boxShadow = `0 0 30px ${color}, 0 0 60px ${color}, 0 0 90px ${color}40`;
-            span.style.filter = 'brightness(1.3)';
-        });
-        
-        // Update broadcast bar
-        const sbBar = document.getElementById('sbBar');
-        if(sbBar) {
-            sbBar.style.background = color;
-            sbBar.style.boxShadow = `0 0 15px ${color}`;
+        if(variant === 'rainbow') {
+            if(app) app.style.animation = 'rainbow-glow 3s infinite linear';
+            return;
         }
-        
-        // System container jadi lebih colorful dengan border
-        document.querySelectorAll('.sys-container').forEach(el => {
-            el.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
-            el.style.border = `1px solid ${color}40`;
-            el.style.boxShadow = `inset 0 0 15px rgba(${r}, ${g}, ${b}, 0.1)`;
-        });
-        
-        // Modal sheets dengan gradient
-        document.querySelectorAll('.sheet').forEach(el => {
-            el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.08) 0%, #181818 100%)`;
-            el.style.borderTop = `2px solid ${color}80`;
-        });
-        
-        // Title jadi lebih colorful
-        const title = document.getElementById('title');
-        if(title) {
-            title.style.color = color;
-            title.style.textShadow = `0 0 20px ${color}80`;
-        }
-        
-        // "By" text juga
-        const byEl = document.getElementById('by');
-        if(byEl) {
-            byEl.style.color = color;
-            byEl.style.textShadow = `0 0 10px ${color}60`;
+        if(variant === 'heartbeat') {
+            if(app) app.style.animation = 'disco-heartbeat 1.2s infinite';
+            return;
         }
     }
 
@@ -1412,11 +1332,7 @@
         
         document.body.style.background = '#050505';
         
-        // Stop snowfall jika active
-        if(iceModeActive) {
-            stopSnowfall();
-            iceModeActive = false;
-        }
+        stopSnowfall();
         
         const app = document.querySelector('.app');
         if(app) {
