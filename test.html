@@ -1103,6 +1103,7 @@
       <div id="copyLinkText" style="background:#0a0a0a; border:1px solid #333; border-radius:8px; padding:12px; color:#00d4ff; font-family:'Courier New', monospace; font-size:12px; word-break:break-all; margin-bottom:12px">URL belum dibuat</div>
       <div style="display:flex; gap:10px">
         <button class="btn-act" onclick="copyBuiltLink()">Copy</button>
+        <button class="btn-act" style="background:#25D366; color:#fff" onclick="shareToWhatsApp()">WhatsApp</button>
         <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyLink').style.display='none'">Back</button>
       </div>
     </div>
@@ -1990,12 +1991,20 @@
         }, 2500);
     }
 
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); showToast("Link audio disalin"); }
+    function buildDeepLink() { return window.location.origin + window.location.pathname + "?id=" + i; }
+    function copyRawUrl() { navigator.clipboard.writeText(buildDeepLink()); showToast("Link player disalin"); }
     
     function shareLink() { 
-        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        const link = buildDeepLink();
         navigator.clipboard.writeText(link); 
         msg("Link lagu dengan ID disalin"); 
+    }
+    function shareToWhatsApp() {
+        const name = (userData && userData.username) ? userData.username : 'Guest';
+        const title = (songs[i] && songs[i].title) ? songs[i].title : 'Lagu ExeMusic';
+        const link = buildDeepLink();
+        const text = "Hello " + name + " telah berbagi link ExeMusic:\n🎵 " + title + "\n🔗 " + link;
+        window.open("https://wa.me/?text=" + encodeURIComponent(text));
     }
     
     function downloadSong() { window.open(songs[i].url); }
@@ -2015,6 +2024,8 @@
             mergeAndRenderNotifs([], 'user');
             updateNotifBadge();
             showToast("Notifikasi dibersihkan");
+        }).catch(() => {
+            showToast("Gagal menghapus notifikasi");
         });
     }
     function openCopyLink() {
