@@ -670,7 +670,7 @@
       text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
     }
     .tag-admin { background: #ff3333; color: #fff; }
-    .tag-owner { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-velly♥️ { background: gold; color: #000; animation: pulse 2s infinite; }
     .tag-staff { background: #0088ff; color: #fff; }
     .tag-executive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
@@ -679,6 +679,24 @@
     .tag-galau { background: #555; color: #fff; font-style: italic; }
     .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
     .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
+    
+    /* New Fun Tags */
+    .tag-owner { background: #00ff88; color: #000; border: 1px solid #fff; box-shadow: 0 0 10px #00ff88; font-weight: 900; }
+    .tag-developer { background: #000; color: #00ff00; border: 1px solid #00ff00; font-family: 'Courier New', monospace; letter-spacing: 1px; }
+    .tag-sultan { background: linear-gradient(135deg, #ffd700, #fbf5b7, #ffd700); color: #000; border: 1px solid #b8860b; font-weight: bold; }
+    .tag-wibu { background: #ff69b4; color: #fff; border: 1px solid #ff1493; }
+    .tag-sadboy { background: #000080; color: #add8e6; border: 1px solid #add8e6; font-style: italic; }
+    .tag-hacker { background: #000; color: #0f0; text-shadow: 0 0 5px #0f0; font-family: 'Courier New', monospace; }
+    .tag-verified { background: #1da1f2; color: #fff; border: 1px solid #fff; }
+    .tag-bot { background: #708090; color: #fff; border: 1px solid #a9a9a9; }
+    .tag-npc { background: #d3d3d3; color: #000; }
+    .tag-dj { background: #ff00ff; color: #fff; box-shadow: 0 0 8px #ff00ff; }
+    .tag-pro { background: #ff4500; color: #fff; font-weight: bold; border: 1px solid #fff; }
+    .tag-noob { background: #8b4513; color: #fff; border: 1px dashed #deb887; }
+    .tag-top-global { background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; font-weight: bold; box-shadow: 0 0 5px #00c6ff; }
+    .tag-premium { background: linear-gradient(45deg, #8a2387, #e94057, #f27121); color: #fff; font-weight: bold; }
+    .tag-influencer { background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d); color: #fff; }
+
     
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
@@ -934,54 +952,12 @@
           <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b>BANNED PERMANENT</b> tanpa peringatan!
       </div>
       <div id="uploadFormUser" style="display:none">
-          <!-- Upload Method Selection -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
-            <button onclick="selectUploadMethod('url')" id="btnMethodUrl" class="btn-act" style="padding:10px; font-size:12px; background:var(--accent); color:black;">
-              <i class="fas fa-link"></i> URL Top4Top
-            </button>
-            <button onclick="selectUploadMethod('device')" id="btnMethodDevice" class="btn-act" style="padding:10px; font-size:12px; background:rgba(255,255,255,0.1); color:white;">
-              <i class="fas fa-mobile-alt"></i> Upload Device
-            </button>
-          </div>
-          
-          <!-- URL Upload Form -->
+          <!-- URL Upload Form Only -->
           <div id="urlUploadForm" style="display:block;">
+            <p style="font-size:12px; color:#888; margin-bottom:10px;">Upload lagu menggunakan link direct dari Top4Top atau penyedia file hosting lainnya.</p>
             <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
             <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top Only)">
             <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
-          </div>
-          
-          <!-- Device Upload Form -->
-          <div id="deviceUploadForm" style="display:none;">
-            <div style="background:rgba(0,136,255,0.1); border:1px solid #0088ff; border-radius:8px; padding:10px; margin-bottom:10px; font-size:11px; color:#ddd;">
-              <i class="fas fa-info-circle" style="color:#0088ff;"></i> Format: MP3, WAV, OGG | Max: 10MB
-            </div>
-            <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
-            <button onclick="document.getElementById('audioFileInput').click()" class="btn-act" style="background:rgba(255,255,255,0.1); color:white; margin-bottom:10px;">
-              <i class="fas fa-folder-open"></i> PILIH FILE AUDIO
-            </button>
-            <div id="filePreview" style="display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; margin-bottom:10px;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-file-audio" style="font-size:24px; color:var(--accent);"></i>
-                <div style="flex:1;">
-                  <div id="fileName" style="font-size:12px; font-weight:600; color:white; margin-bottom:3px;"></div>
-                  <div id="fileSize" style="font-size:11px; color:var(--text-dim);"></div>
-                </div>
-              </div>
-            </div>
-            <input id="rLaguDevice" class="inp-dark" placeholder="Judul Lagu - Artist" style="display:none;">
-            <div id="uploadProgress" style="display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; margin-bottom:10px;">
-              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:8px;">
-                <span>Uploading...</span>
-                <span id="uploadPercent">0%</span>
-              </div>
-              <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
-                <div id="uploadProgressBar" style="height:100%; background:linear-gradient(90deg,var(--accent),#00cc6a); width:0%; transition:width 0.3s;"></div>
-              </div>
-            </div>
-            <button onclick="uploadFromDevice()" id="btnUploadDevice" class="btn-act" style="display:none;">
-              <i class="fas fa-upload"></i> UPLOAD SEKARANG
-            </button>
           </div>
       </div>
       <div id="uploadFormGuest">
@@ -2099,160 +2075,7 @@
     }
   
 
-    // === DEVICE UPLOAD FUNCTIONS ===
-    function selectUploadMethod(method) {
-      const btnUrl = document.getElementById('btnMethodUrl');
-      const btnDevice = document.getElementById('btnMethodDevice');
-      const urlForm = document.getElementById('urlUploadForm');
-      const deviceForm = document.getElementById('deviceUploadForm');
-      
-      if(method === 'url') {
-        btnUrl.style.background = 'var(--accent)';
-        btnUrl.style.color = 'black';
-        btnDevice.style.background = 'rgba(255,255,255,0.1)';
-        btnDevice.style.color = 'white';
-        urlForm.style.display = 'block';
-        deviceForm.style.display = 'none';
-        // Reset device form
-        selectedAudioFile = null;
-        document.getElementById('filePreview').style.display = 'none';
-        document.getElementById('rLaguDevice').style.display = 'none';
-        document.getElementById('btnUploadDevice').style.display = 'none';
-      } else {
-        btnUrl.style.background = 'rgba(255,255,255,0.1)';
-        btnUrl.style.color = 'white';
-        btnDevice.style.background = 'var(--accent)';
-        btnDevice.style.color = 'black';
-        urlForm.style.display = 'none';
-        deviceForm.style.display = 'block';
-      }
-    }
-
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if(!file) return;
-      
-      // Validasi file audio
-      if(!file.type.startsWith('audio/')) {
-        msg('❌ Hanya file audio yang diperbolehkan!');
-        return;
-      }
-      
-      // Max 10MB
-      if(file.size > 10 * 1024 * 1024) {
-        msg('❌ Ukuran file maksimal 10MB!');
-        return;
-      }
-      
-      selectedAudioFile = file;
-      
-      // Tampilkan preview
-      document.getElementById('fileName').innerText = file.name;
-      document.getElementById('fileSize').innerText = formatFileSize(file.size);
-      document.getElementById('filePreview').style.display = 'block';
-      document.getElementById('rLaguDevice').style.display = 'block';
-      document.getElementById('btnUploadDevice').style.display = 'block';
-    }
-
-    function formatFileSize(bytes) {
-      if(bytes < 1024) return bytes + ' B';
-      if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    }
-
-    async function uploadFromDevice() {
-      if(!selectedAudioFile) {
-        msg('❌ Pilih file audio terlebih dahulu!');
-        return;
-      }
-      
-      const songTitle = document.getElementById('rLaguDevice').value.trim();
-      if(!songTitle) {
-        msg('❌ Judul lagu harus diisi!');
-        return;
-      }
-      
-      const btn = document.getElementById('btnUploadDevice');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-      
-      // Tampilkan progress
-      document.getElementById('uploadProgress').style.display = 'block';
-      
-      try {
-        const timestamp = Date.now();
-        const fileName = `music/${auth.currentUser.uid}/${timestamp}_${selectedAudioFile.name}`;
-        const storageRef = storage.ref(fileName);
-        const uploadTask = storageRef.put(selectedAudioFile);
-        
-        uploadTask.on('state_changed',
-          (snapshot) => {
-            // Progress
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            document.getElementById('uploadProgressBar').style.width = progress + '%';
-            document.getElementById('uploadPercent').innerText = Math.round(progress) + '%';
-          },
-          (error) => {
-            // Error
-            msg('❌ Upload gagal: ' + error.message);
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
-            document.getElementById('uploadProgress').style.display = 'none';
-          },
-          async () => {
-            // Complete
-            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-            
-            // Parse judul dan artis
-            let title, artist;
-            if(songTitle.includes(' - ')) {
-              [title, artist] = songTitle.split(' - ').map(s => s.trim());
-            } else {
-              title = songTitle;
-              artist = 'Unknown Artist';
-            }
-            
-            // Simpan ke database dengan marker source: 'device'
-            const musicData = {
-              title: title,
-              artist: artist,
-              url: downloadURL,
-              by: auth.currentUser.uid,
-              byName: userData.username || 'User',
-              timestamp: timestamp,
-              plays: 0,
-              likes: 0,
-              source: 'device',  // Marker untuk device upload
-              fileName: selectedAudioFile.name,
-              fileSize: selectedAudioFile.size
-            };
-            
-            await db.ref('posts').push(musicData);
-            
-            msg('✅ Lagu berhasil diupload!');
-            document.getElementById('modalReq').style.display = 'none';
-            
-            // Reset form
-            selectedAudioFile = null;
-            document.getElementById('filePreview').style.display = 'none';
-            document.getElementById('rLaguDevice').value = '';
-            document.getElementById('rLaguDevice').style.display = 'none';
-            document.getElementById('uploadProgress').style.display = 'none';
-            document.getElementById('btnUploadDevice').style.display = 'none';
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
-            
-            loadSongs();
-          }
-        );
-      } catch(err) {
-        msg('❌ Terjadi kesalahan: ' + err.message);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
-        document.getElementById('uploadProgress').style.display = 'none';
-      }
-    }
-    // === END DEVICE UPLOAD FUNCTIONS ===
+    // === DEVICE UPLOAD FUNCTIONS REMOVED ===
 
   </script>
 </body>
