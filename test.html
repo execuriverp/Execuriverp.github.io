@@ -1078,7 +1078,7 @@
         <p style="margin-top:12px; color:#ddd">
           📱 Contact WhatsApp — <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
           📋 Changelogs — <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
-          Mentah Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a>
+          📻 Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a>
         </p>
         <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
         <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
@@ -2052,7 +2052,14 @@
     }
     function confirmClearNotif() {
         if(!auth.currentUser) return msg("Login dulu!");
-        db.ref('users/' + auth.currentUser.uid + '/notifications').remove().then(() => {
+        const ref = db.ref('users/' + auth.currentUser.uid + '/notifications');
+        ref.set(null).then(() => ref.get()).then(snap => {
+            if(snap.exists()) {
+                const val = snap.val() || {};
+                const keys = Object.keys(val);
+                return Promise.all(keys.map(k => ref.child(k).remove()));
+            }
+        }).then(() => {
             document.getElementById('modalClearNotif').style.display = 'none';
             mergeAndRenderNotifs([], 'user');
             updateNotifBadge();
