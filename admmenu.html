@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>admmenu - EXECURIVE</title>
+    <title>admmenu</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -612,7 +612,34 @@
         });
     };
 
-    window.onload = function() { setTimeout(generateCaptcha, 100); document.addEventListener('contextmenu', event => event.preventDefault()); };
+    window.onload = function() { 
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // Cek Role di Database
+                db.ref('users/' + user.uid).once('value').then(function(snapshot) {
+                    const userData = snapshot.val();
+                    const userTag = (userData && userData.tag) ? userData.tag.toLowerCase() : '';
+                    
+                    // Verifikasi apakah tag adalah admin atau owner
+                    if (userTag === 'admin' || userTag === 'owner') {
+                        // Jika Admin, jalankan Captcha
+                        setTimeout(generateCaptcha, 100);
+                    } else {
+                        // Jika bukan admin, tendang
+                        window.location.href = 'https://execuriverp.github.io/exemusic';
+                    }
+                }).catch(function(error) {
+                    // Error database, tendang aman
+                    window.location.href = 'https://execuriverp.github.io/exemusic';
+                });
+            } else {
+                // Tidak login, tendang
+                window.location.href = 'https://execuriverp.github.io/exemusic';
+            }
+        });
+        
+        document.addEventListener('contextmenu', event => event.preventDefault()); 
+    };
 </script>
 </body>
 </html>
