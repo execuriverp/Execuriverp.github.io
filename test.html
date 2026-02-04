@@ -81,10 +81,10 @@
         transform-origin: left;
     }
     @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-    @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
+    @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: var(--accent); box-shadow: 0 20px 50px var(--accent); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
     @keyframes disco-heartbeat { 
       0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-      20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent)80; } 
+      20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent); } 
       40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
       60% { transform: scale(1.03); box-shadow: 0 30px 70px var(--accent); } 
       100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
@@ -526,7 +526,7 @@
     }
     .btn-account:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px var(--accent)40;
+      box-shadow: 0 8px 20px var(--accent);
     }
     .btn-account:active {
       transform: translateY(0);
@@ -633,11 +633,7 @@
       from { opacity: 1; transform: translateY(0); }
       to { opacity: 0; transform: translateY(-20px); }
     }
-  </style>
-        width: 70px;
-        height: 70px;
-        font-size: 24px;
-      }
+    @media (max-width: 480px) {
       .spotify-info {
         margin-left: 12px;
       }
@@ -727,7 +723,7 @@
       text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
     }
     .tag-admin { background: #ff3333; color: #fff; }
-    .tag-velly♥️ { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-velly\2665\FE0F { background: gold; color: #000; animation: pulse 2s infinite; }
     .tag-staff { background: #0088ff; color: #fff; }
     .tag-executive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
