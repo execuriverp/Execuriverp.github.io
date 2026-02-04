@@ -579,6 +579,63 @@
       .spotify-avatar {
         width: 70px;
         height: 70px;
+      }
+    }
+
+    /* === NEW FEATURES CSS === */
+    #btnFav {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    #btnFav:hover { color: var(--accent); transform: scale(1.1); }
+    #btnFav.active { color: var(--tiktok-red); animation: heartBeat 0.3s ease-in-out; }
+    @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+    /* TOAST NOTIFICATION */
+    #toast-container {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 99999;
+      pointer-events: none;
+    }
+    .toast {
+      background: rgba(18, 18, 18, 0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-left: 3px solid var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      animation: toastIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      backdrop-filter: blur(5px);
+    }
+    .toast.hide {
+      animation: toastOut 0.3s forwards;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
+        width: 70px;
+        height: 70px;
         font-size: 24px;
       }
       .spotify-info {
@@ -787,6 +844,7 @@
       <div id="title">Loading Lagu...</div>
       <div class="user-row">
         <div id="by" onclick="viewCreator()">@system</div>
+        <button id="btnFav" onclick="toggleFavorite()"><i class="far fa-heart"></i></button>
         <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
       </div>
     </div>
@@ -1031,6 +1089,7 @@
     </div>
   </div>
 
+  <div id="toast-container"></div>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
@@ -1049,10 +1108,18 @@
     const storage = firebase.storage();
     let selectedAudioFile = null;
 
-    let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
-    let userData = null;
+    let songs = [], i = 0, isLoginMode = true;
+    
+    // NEW FEATURES STATE
+    let repeatMode = parseInt(localStorage.getItem('exeRepeat') || '0'); // 0: OFF, 1: ONE, 2: ALL
+    let isShuf = localStorage.getItem('exeShuffle') === 'true';
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    let savedVol = parseFloat(localStorage.getItem("exeVolume") || "0.8");
+    let lastSongData = JSON.parse(localStorage.getItem("exeLastSong") || "{}");
+
+    let userData = null;
     const audio = new Audio();
+    audio.volume = savedVol; // Apply saved volume immediately
     let broadcastTimeout;
     let discoModeActive = false;
     let discoColor = "#00ff88";
@@ -1500,10 +1567,27 @@
             });
           }
         } else if(audio.src === "") {
+            // Restore Volume
+            const savedVol = localStorage.getItem('exeVolume');
+            if(savedVol !== null) {
+                audio.volume = parseFloat(savedVol);
+                document.getElementById('vol').value = savedVol;
+            }
+
             if(songId && songs[songId]) {
                 setup(parseInt(songId), false);
             } else {
-                setup(0, false);
+                // Restore Last Song
+                const savedIdx = localStorage.getItem('exeLastSongIdx');
+                const savedTime = localStorage.getItem('exeLastTime');
+                
+                if(savedIdx !== null && songs[savedIdx]) {
+                    setup(parseInt(savedIdx), false).then(() => {
+                        if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    });
+                } else {
+                    setup(0, false);
+                }
             }
         }
       }
@@ -1524,8 +1608,15 @@
       const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
       const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
-      if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      if(play) { 
+        audio.play(); 
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
+        document.getElementById('eq').classList.add('playing'); 
+        showToast(`🎵 Now Playing: ${songs[i].title}`);
+      }
       updateFollowUI();
+      updateFavoriteUI();
+      saveLastSong();
     }
 
     // UPLOAD LOGIC WITH CONFIRMATION & COOLDOWN
@@ -1606,6 +1697,11 @@
       if(audio.duration > 0) {
         document.getElementById('loadSpinner').classList.remove('show');
       }
+      
+      // Auto Save Last Song Time (Throttled: every 2 seconds approx)
+      if(Math.floor(audio.currentTime) % 2 === 0) {
+          localStorage.setItem('exeLastTime', audio.currentTime);
+      }
     };
     
     // Show loading spinner when song starts playing (duration not yet loaded)
@@ -1613,6 +1709,12 @@
       if(audio.duration === 0 || isNaN(audio.duration)) {
         document.getElementById('loadSpinner').classList.add('show');
       }
+      localStorage.setItem('exeIsPlaying', 'true');
+    };
+    
+    audio.onpause = () => {
+        localStorage.setItem('exeIsPlaying', 'false');
+        localStorage.setItem('exeLastTime', audio.currentTime);
     };
     
     // Hide spinner when metadata is loaded
@@ -1620,8 +1722,27 @@
       document.getElementById('loadSpinner').classList.remove('show');
     };
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
-    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
-    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
+    
+    // Volume with Auto Save
+    document.getElementById('vol').oninput = (e) => {
+        audio.volume = e.target.value;
+        localStorage.setItem('exeVolume', e.target.value);
+    };
+    
+    audio.onended = () => {
+        if(repeatMode === 1) { // Repeat One
+            audio.currentTime = 0;
+            audio.play();
+        } else if (repeatMode === 2 || isShuf) { // Repeat All or Shuffle
+            next();
+        } else { // Repeat Off
+            if(i < songs.length - 1) next();
+        }
+    };
+
+    function saveLastSong() {
+        localStorage.setItem('exeLastSongIdx', i);
+    }
 
     // FOLLOWERS LOGIC
     async function followUser() {
@@ -1693,7 +1814,28 @@
 
     // UTILS
     function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
-    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    function msg(m) { showToast(m, 'info'); }
+
+    function showToast(text, type='info') {
+      const container = document.getElementById('toast-container');
+      if(!container) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      // Icon selection based on text content or type
+      let icon = 'fa-info-circle';
+      if(text.includes('Playing')) icon = 'fa-music';
+      else if(text.includes('Favorit')) icon = 'fa-heart';
+      else if(text.includes('Shuffle')) icon = 'fa-random';
+      else if(text.includes('Repeat')) icon = 'fa-redo';
+      else if(text.includes('Error')) icon = 'fa-exclamation-triangle';
+      
+      el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
+      container.appendChild(el);
+      
+      // Auto hide
+      setTimeout(() => el.classList.add('hide'), 2500);
+      setTimeout(() => el.remove(), 2900);
+    }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
     function openProfile() { 
@@ -1819,10 +1961,101 @@
       document.getElementById('modalList').style.display='block';
     }
 
-    function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
-    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
-    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link audio disalin"); }
+    function toggleFav(u, e) { 
+        e.stopPropagation(); 
+        if(fav.includes(u)) {
+            fav = fav.filter(x => x !== u);
+            showToast('Dihapus dari Favorit');
+        } else {
+            fav.push(u);
+            showToast('❤️ Ditambahkan ke Favorit');
+        }
+        localStorage.setItem("exeFav", JSON.stringify(fav)); 
+        openList(false);
+        if(songs[i] && songs[i].url === u) updateFavBtn();
+    }
+
+    function toggleFavorite() {
+        if(!songs[i]) return;
+        const url = songs[i].url;
+        const btn = document.getElementById('btnFav');
+        
+        if(fav.includes(url)) {
+            fav = fav.filter(u => u !== url);
+            showToast('Dihapus dari Favorit');
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="far fa-heart"></i>';
+        } else {
+            fav.push(url);
+            showToast('❤️ Ditambahkan ke Favorit');
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-heart"></i>';
+        }
+        localStorage.setItem("exeFav", JSON.stringify(fav));
+        if(document.getElementById('modalList').style.display === 'block') openList(false);
+    }
+
+    function updateFavBtn() {
+        if(!songs[i]) return;
+        const btn = document.getElementById('btnFav');
+        if(fav.includes(songs[i].url)) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-heart"></i>';
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="far fa-heart"></i>';
+        }
+    }
+
+    function toggleShuffle() { 
+        isShuf = !isShuf; 
+        localStorage.setItem('exeShuffle', isShuf);
+        document.getElementById('shuf').classList.toggle('active', isShuf); 
+        showToast(isShuf ? '🔀 Shuffle Aktif' : 'Shuffle Non-aktif');
+    }
+
+    function toggleRepeat() { 
+        repeatMode = (repeatMode + 1) % 3;
+        localStorage.setItem('exeRepeat', repeatMode);
+        
+        const btn = document.getElementById('rep');
+        if(repeatMode === 0) {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fas fa-redo"></i>';
+            showToast('Repeat OFF');
+        } else if(repeatMode === 1) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-redo"></i><span style="font-size:8px;position:absolute;top:8px;right:8px;font-weight:bold;background:var(--bg);border-radius:50%;padding:1px 3px;">1</span>';
+            showToast('🔁 Repeat: One');
+        } else {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-redo"></i>';
+            showToast('🔁 Repeat: All');
+        }
+    }
+
+    function showToast(text) {
+        const container = document.getElementById('toast-container');
+        if(!container) return;
+        const el = document.createElement('div');
+        el.className = 'toast';
+        
+        let icon = 'fa-info-circle';
+        if(text.includes('Playing')) icon = 'fa-music';
+        if(text.includes('Favorit')) icon = 'fa-heart';
+        if(text.includes('Shuffle')) icon = 'fa-random';
+        if(text.includes('Repeat')) icon = 'fa-redo';
+        
+        el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
+        container.appendChild(el);
+        
+        setTimeout(() => {
+            el.classList.add('hide');
+            setTimeout(() => el.remove(), 300);
+        }, 2500);
+    }
+
+    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); showToast("Link audio disalin"); }
     
     function shareLink() { 
         const link = window.location.origin + window.location.pathname + "?id=" + i;
