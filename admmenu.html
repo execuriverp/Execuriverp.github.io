@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>admmenu</title>
+    <title>admmenu - EXECURIVE</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -618,10 +618,10 @@
                 // Cek Role di Database
                 db.ref('users/' + user.uid).once('value').then(function(snapshot) {
                     const userData = snapshot.val();
-                    const userTag = (userData && userData.tag) ? userData.tag.toLowerCase() : '';
+                    const userRole = (userData && userData.role) ? userData.role.toLowerCase() : '';
                     
-                    // Verifikasi apakah tag adalah admin atau owner
-                    if (userTag === 'admin' || userTag === 'owner') {
+                    // Verifikasi ROLE (Strict)
+                    if (userRole === 'admin' || userRole === 'owner') {
                         // Jika Admin, jalankan Captcha
                         setTimeout(generateCaptcha, 100);
                     } else {
