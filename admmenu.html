@@ -100,6 +100,20 @@
         .tag-vvip { background: #bf00ff; color:#fff; }
         .tag-admin { background: #ff3333; color:#fff; }
         .tag-owner { background: #00ff88; color:#000; border: 1px solid #fff; }
+        .tag-developer { background: #000; color: #00ff00; border: 1px solid #00ff00; }
+        .tag-sultan { background: gold; color: #000; }
+        .tag-wibu { background: #ff69b4; color: #fff; }
+        .tag-sadboy { background: #000080; color: #add8e6; }
+        .tag-hacker { background: #000; color: #0f0; }
+        .tag-verified { background: #1da1f2; color: #fff; }
+        .tag-bot { background: #708090; color: #fff; }
+        .tag-npc { background: #d3d3d3; color: #000; }
+        .tag-dj { background: #ff00ff; color: #fff; }
+        .tag-pro { background: #ff4500; color: #fff; }
+        .tag-noob { background: #8b4513; color: #fff; }
+        .tag-top-global { background: #00c6ff; color: #fff; }
+        .tag-premium { background: #8a2387; color: #fff; }
+        .tag-influencer { background: #e1306c; color: #fff; }
 
         /* --- NEW FEATURE: NOTIFICATION PANEL (TikTok/ML Style) --- */
         .header-tools {
@@ -557,7 +571,33 @@
     function toggleBan(uid, status) { db.ref('users/'+uid).update({banned: !status}); addLog(`${status ? 'Unbanned' : 'Banned'} User: ${uid}`); }
 
     function changeTag(uid) {
-        Swal.fire({ title: 'Change User Tag', input: 'select', inputOptions: { 'user':'User', 'vvip':'VVIP', 'sepuh':'Sepuh', 'admin':'Admin', 'owner':'Owner' }, background: '#121212', color: '#fff' })
+        Swal.fire({ 
+            title: 'Change User Tag', 
+            input: 'select', 
+            inputOptions: { 
+                'user':'User', 
+                'vvip':'VVIP', 
+                'sepuh':'Sepuh', 
+                'admin':'Admin', 
+                'owner':'Owner',
+                'developer': 'Developer',
+                'sultan': 'Sultan',
+                'wibu': 'Wibu',
+                'sadboy': 'Sadboy',
+                'hacker': 'Hacker',
+                'verified': 'Verified',
+                'bot': 'Bot',
+                'npc': 'NPC',
+                'dj': 'DJ',
+                'pro': 'Pro',
+                'noob': 'Noob',
+                'top-global': 'Top Global',
+                'premium': 'Premium',
+                'influencer': 'Influencer'
+            }, 
+            background: '#121212', 
+            color: '#fff' 
+        })
         .then(r => { if(r.value) { db.ref('users/'+uid).update({tag: r.value}); addLog(`Changed tag for ${uid} to ${r.value}`); }});
     }
 
