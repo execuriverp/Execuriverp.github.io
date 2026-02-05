@@ -592,6 +592,44 @@
       border: 1px solid #222;
       font-family: 'Courier New', monospace;
     }
+    
+    .msg-card { 
+      background: rgba(255,255,255,0.03); 
+      border: 1px solid rgba(255,255,255,0.08); 
+      border-radius: 14px; 
+      padding: 12px; 
+      margin: 8px 12px; 
+    }
+    .msg-row { display: flex; align-items: flex-start; gap: 10px; }
+    .msg-bubble { 
+      background: rgba(255,255,255,0.06); 
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; 
+      padding: 10px 12px; 
+      color: #ddd; 
+      font-size: 13px; 
+      max-width: 80%;
+    }
+    .msg-meta { 
+      font-size: 11px; color: #666; margin-top: 6px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .msg-copy { 
+      background: none; border: none; color: #888; cursor: pointer; 
+    }
+    .dm-bubble { 
+      border-radius: 14px; padding: 10px 12px; max-width: 80%; 
+      font-size: 13px; 
+    }
+    .dm-row { display: flex; margin-bottom: 8px; }
+    .dm-row.me { justify-content: flex-end; }
+    .dm-row.other { justify-content: flex-start; }
+    .dm-bubble.me { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); color: #e7ffe7; }
+    .dm-bubble.other { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #ddd; }
+    .dm-meta { font-size: 10px; color: #777; margin-top: 4px; }
+    .dm-actions { display: flex; gap: 6px; margin-top: 6px; }
+    .dm-actions button { background: none; border: 1px solid #333; color: #ccc; padding: 4px 6px; border-radius: 8px; cursor: pointer; }
+    .dm-input-bar { display: flex; gap: 8px; position: sticky; bottom: 0; background: #181818; padding-top: 8px; }
 
     /* RESPONSIVE POST LIST */
     .posts-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
@@ -1108,10 +1146,10 @@
   <div class="modal" id="modalDM" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)"><i class="fas fa-envelope"></i> Direct Message</h3>
-      <div id="dmList" style="display:flex; flex-direction:column; gap:8px; max-height:45vh; overflow:auto"></div>
-      <div style="display:flex; gap:8px; margin-top:10px">
-        <input id="dmText" class="inp-dark" placeholder="Tulis pesan...">
-        <button class="btn-act" style="flex:0 0 auto" onclick="sendDM()">Kirim</button>
+      <div id="dmList" style="display:flex; flex-direction:column; max-height:45vh; overflow:auto; padding:6px 0"></div>
+      <div class="dm-input-bar">
+        <input id="dmText" class="inp-dark" placeholder="Tulis pesan..." style="flex:1">
+        <button class="btn-act" style="flex:0 0 auto; min-width:90px" onclick="sendDM()">Kirim</button>
       </div>
     </div>
   </div>
@@ -1430,12 +1468,11 @@
       el.innerHTML = list.map(m => {
         const time = timeAgo(m.timestamp);
         const react = m.reaction ? `<span style="margin-left:6px">${m.reaction}</span>` : '';
-        return `<div class="notif-item">
-          <div class="notif-item-icon follow"><i class="fas fa-user"></i></div>
-          <div class="notif-item-body">
-            <div class="n-text"><b>@${escapeHtml(m.fromName||'user')}</b>: ${escapeHtml(m.text||'')}</div>
-            <div class="n-time">${time} <button style="margin-left:8px" onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>${react}</div>
+        return `<div class="msg-card">
+          <div class="msg-row">
+            <div class="msg-bubble">${escapeHtml(m.text||'')}</div>
           </div>
+          <div class="msg-meta">${escapeHtml(m.fromName||'User')} • ${time} <button class="msg-copy" onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>${react}</div>
         </div>`;
       }).join('');
     }
@@ -2336,17 +2373,20 @@
             const val = snap.val(); const list = [];
             if(val) Object.keys(val).forEach(k => list.push({ ...val[k], id: k }));
             list.sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
-            document.getElementById('dmList').innerHTML = list.map(m => 
-                `<div style="background:${m.fromUid===myUid?'rgba(0,255,136,0.1)':'rgba(255,255,255,0.05)'}; padding:8px; border-radius:8px">
-                    <div style="font-size:12px; color:#888">${timeAgo(m.timestamp)}</div>
-                    <div style="color:#ddd">${escapeHtml(m.text||'')}</div>
-                    <div style="margin-top:6px; display:flex; gap:6px">
-                        <button class="notif-panel-close" onclick="reactDM('${m.id}','👍')">👍</button>
-                        <button class="notif-panel-close" onclick="reactDM('${m.id}','❤️')">❤️</button>
-                        <button class="notif-panel-close" onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>
+            document.getElementById('dmList').innerHTML = list.map(m => {
+                const me = m.fromUid===myUid;
+                return `<div class="dm-row ${me?'me':'other'}">
+                    <div>
+                      <div class="dm-bubble ${me?'me':'other'}">${escapeHtml(m.text||'')}</div>
+                      <div class="dm-meta">${timeAgo(m.timestamp)}</div>
+                      <div class="dm-actions">
+                        <button onclick="reactDM('${m.id}','👍')">👍</button>
+                        <button onclick="reactDM('${m.id}','❤️')">❤️</button>
+                        <button onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>
+                      </div>
                     </div>
-                </div>`
-            ).join('');
+                </div>`;
+            }).join('');
         });
     }
     function sendDM() {
