@@ -305,11 +305,35 @@
       padding: 30px 20px 20px;
       background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
     }
+    .modern-profile-header.vip {
+      background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,255,255,0.04));
+      position: relative;
+      overflow: hidden;
+    }
+    .modern-profile-header.vip::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), transparent 40%),
+                  linear-gradient(120deg, rgba(255,215,0,0.08), transparent 60%);
+      animation: vipShine 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes vipShine {
+      0% { transform: translate(0,0) rotate(0deg); }
+      50% { transform: translate(10%,10%) rotate(20deg); }
+      100% { transform: translate(0,0) rotate(0deg); }
+    }
     .mp-avatar-container { position: relative; margin-bottom: 15px; }
     .mp-avatar { 
       width: 90px; height: 90px; border-radius: 50%; 
       object-fit: cover; border: 2px solid var(--accent);
       box-shadow: 0 10px 30px rgba(0,255,136,0.2);
+    }
+    .modern-profile-header.vip .mp-avatar {
+      border-color: #ffd700;
+      box-shadow: 0 0 0 3px rgba(255,215,0,0.15), 0 10px 30px rgba(255,215,0,0.25);
     }
     .mp-edit-badge {
       position: absolute; bottom: 0; right: 0;
@@ -1523,13 +1547,16 @@
               auth.signOut(); return;
           }
           document.getElementById('topLoginBtn').textContent = userData.username;
-          document.getElementById('pUsername').innerText = userData.username;
+          document.getElementById('pUsername').innerHTML = userData.username + (userData.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
           document.getElementById('pFol').innerText = (Array.isArray(userData.followers) ? userData.followers.length : userData.followers) || 0;
           document.getElementById('pFollowing').innerText = (Array.isArray(userData.following) ? userData.following.length : userData.following) || 0;
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           const followerCount = Array.isArray(userData.followers) ? userData.followers.length : userData.followers || 0;
           document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          
+          const profHeader = document.querySelector('#modalProfile .modern-profile-header');
+          if(profHeader) profHeader.classList.toggle('vip', !!userData.vip);
           
           // Sensor email
           const email = u.email || "";
@@ -1573,9 +1600,12 @@
                 const userData = snap.val();
                 document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
                 const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
-                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '');
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (userData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
+                
+                const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
+                if(creatorHeader) creatorHeader.classList.toggle('vip', !!userData?.vip);
                 
                 const creatorSongs = songs.filter(x => x.uid === profileUid);
                 creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
@@ -1657,16 +1687,17 @@
         
         if(!title || !url) return msg("Isi semua data!");
         
-        // Cooldown Check (30 Menit)
+        // Cooldown Check (VIP 15 Menit, Non-VIP 30 Menit)
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
         const diff = (now - lastUpload) / 1000 / 60; // dalam menit
+        const cooldown = (userData.role === 'admin') ? 0 : (userData.vip ? 15 : 30);
         
-        if(diff < 30 && userData.role !== 'admin') {
+        if(diff < cooldown && userData.role !== 'admin') {
             return Swal.fire({
                 icon: 'error',
                 title: 'Sabar...',
-                text: `Tunggu ${Math.ceil(30 - diff)} menit lagi untuk upload lagu berikutnya.`,
+                text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi untuk upload lagu berikutnya.`,
                 background: '#181818', color: '#fff'
             });
         }
@@ -1922,9 +1953,12 @@
         const followerCountCreator = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
         
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
-        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '');
+        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (cData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
         document.getElementById('vFol').innerText = followerCountCreator;
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+        
+        const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
+        if(creatorHeader) creatorHeader.classList.toggle('vip', !!cData?.vip);
         
         const creatorSongs = songs.filter(x => x.uid === s.uid);
         creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
@@ -2024,13 +2058,15 @@
       
       const html = l.map(s => {
           let badge = '';
+          let crown = '';
           if(userCache[s.uid]) {
               if(userCache[s.uid].followers >= 50) badge = '<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>';
+              if(userCache[s.uid].vip) crown = ' <i class="fas fa-crown" style="color:#ffd700; font-size:10px; margin-left:4px"></i>';
           }
           return `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
             <div style="flex:1">
                 <b>${s.title}</b><br>
-                <small id="artist-${s.key}" style="color:#777">@${s.by}${badge}</small>
+                <small id="artist-${s.key}" style="color:#777">@${s.by}${badge}${crown}</small>
             </div>
             <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}">
                 <i class="fas fa-heart"></i>
@@ -2045,20 +2081,24 @@
       l.forEach(s => {
           if(!userCache[s.uid] && s.uid) {
              // Mark as fetching to avoid duplicate calls if user scrolls or reopens quickly
-             userCache[s.uid] = { followers: 0, fetching: true };
+             userCache[s.uid] = { followers: 0, vip: false, fetching: true };
              
-             db.ref('users/' + s.uid + '/followers').get().then(snap => {
-                 const val = snap.val();
+             db.ref('users/' + s.uid).get().then(snap => {
+                 const val = snap.val() || {};
                  let count = 0;
-                 if(Array.isArray(val)) count = val.length;
-                 else if(val && typeof val === 'object') count = Object.keys(val).length;
-                 else count = val || 0;
-                 userCache[s.uid] = { followers: count };
+                 const fol = val.followers;
+                 if(Array.isArray(fol)) count = fol.length;
+                 else if(fol && typeof fol === 'object') count = Object.keys(fol).length;
+                 else count = fol || 0;
+                 const isVip = !!val.vip;
+                 userCache[s.uid] = { followers: count, vip: isVip };
                  
-                 // Update UI if exists
                  const el = document.getElementById('artist-' + s.key);
-                 if(el && count >= 50) {
-                     el.innerHTML = `@${s.by}<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>`;
+                 if(el) {
+                     let add = '';
+                     if(count >= 50) add += '<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>';
+                     if(isVip) add += ' <i class="fas fa-crown" style="color:#ffd700; font-size:10px; margin-left:4px"></i>';
+                     if(add) el.innerHTML = `@${s.by}${add}`;
                  }
              });
           }
