@@ -81,10 +81,10 @@
         transform-origin: left;
     }
     @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-    @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: rgba(var(--accent), 0.3); box-shadow: 0 20px 50px rgba(var(--accent), 0.2); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
+    @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: var(--accent); box-shadow: 0 20px 50px var(--accent); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
     @keyframes disco-heartbeat { 
       0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-      20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent)80; } 
+      20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent); } 
       40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
       60% { transform: scale(1.03); box-shadow: 0 30px 70px var(--accent); } 
       100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
@@ -292,12 +292,104 @@
     }
     @media (max-width: 480px) {
       .notif-panel {
-        right: 10px;
-        left: 10px;
-        width: auto;
-        max-width: none;
-      }
+      right: 10px;
+      left: 10px;
+      width: auto;
+      max-width: none;
     }
+    }
+    
+    /* MODERN PROFILE UI */
+    .modern-profile-header {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 30px 20px 20px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
+    }
+    .modern-profile-header.vip {
+      background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,255,255,0.04));
+      position: relative;
+      overflow: hidden;
+    }
+    .modern-profile-header.vip::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), transparent 40%),
+                  linear-gradient(120deg, rgba(255,215,0,0.08), transparent 60%);
+      animation: vipShine 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes vipShine {
+      0% { transform: translate(0,0) rotate(0deg); }
+      50% { transform: translate(10%,10%) rotate(20deg); }
+      100% { transform: translate(0,0) rotate(0deg); }
+    }
+    .mp-avatar-container { position: relative; margin-bottom: 15px; }
+    .mp-avatar { 
+      width: 90px; height: 90px; border-radius: 50%; 
+      object-fit: cover; border: 2px solid var(--accent);
+      box-shadow: 0 10px 30px rgba(0,255,136,0.2);
+    }
+    .modern-profile-header.vip .mp-avatar {
+      border-color: #ffd700;
+      box-shadow: 0 0 0 3px rgba(255,215,0,0.15), 0 10px 30px rgba(255,215,0,0.25);
+    }
+    .mp-edit-badge {
+      position: absolute; bottom: 0; right: 0;
+      background: #222; color: #fff;
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 12px;
+    }
+    .mp-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; justify-content: center; }
+    .mp-name { font-size: 18px; font-weight: 700; color: #fff; }
+    .mp-handle { font-size: 12px; color: #888; margin-bottom: 12px; }
+    .mp-stats { display: flex; gap: 25px; margin-bottom: 20px; }
+    .mp-stat-item { text-align: center; cursor: pointer; }
+    .mp-stat-val { display: block; font-size: 16px; font-weight: 700; color: #fff; }
+    .mp-stat-label { font-size: 10px; color: #888; }
+    .mp-actions { 
+      display: flex; gap: 8px; width: 100%; margin-bottom: 15px; 
+      flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      padding: 6px; border-radius: 10px; 
+      background: rgba(255,255,255,0.04); 
+      border: 1px solid rgba(255,255,255,0.08);
+      justify-content: center;
+    }
+    .mp-btn { 
+      flex: 0 0 auto; padding: 8px 12px; border-radius: 6px; border: none; 
+      font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; 
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .mp-btn-primary { background: var(--accent); color: #000; }
+    .mp-btn-sec { background: rgba(255,255,255,0.1); color: #fff; }
+    .mp-tabs { 
+      display: flex; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.1); 
+      margin-bottom: 10px;
+    }
+    .mp-tab { 
+      flex: 1; padding: 12px; text-align: center; color: #666; 
+      cursor: pointer; font-size: 12px; font-weight: 600; position: relative; transition: 0.2s;
+    }
+    .mp-tab.active { color: var(--accent); }
+    .mp-tab.active::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent);
+    }
+    .mp-list { display: flex; flex-direction: column; gap: 8px; padding: 0 15px 20px; max-height: 300px; overflow-y: auto; }
+    .mp-song-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);
+      cursor: pointer;
+    }
+    .mp-song-item:hover { background: rgba(255,255,255,0.06); }
+    .mp-song-icon { 
+      width: 32px; height: 32px; border-radius: 4px; background: rgba(255,255,255,0.1); 
+      display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888;
+    }
+    .mp-song-info { flex: 1; min-width: 0; }
+    .mp-song-title { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mp-song-artist { font-size: 10px; color: #666; }
 
     .cover-box {
       flex: 1; width: 100%; border-radius: 25px;
@@ -526,7 +618,7 @@
     }
     .btn-account:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px var(--accent)40;
+      box-shadow: 0 8px 20px var(--accent);
     }
     .btn-account:active {
       transform: translateY(0);
@@ -579,8 +671,61 @@
       .spotify-avatar {
         width: 70px;
         height: 70px;
-        font-size: 24px;
       }
+    }
+
+    /* === NEW FEATURES CSS === */
+    #btnFav {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    #btnFav:hover { color: var(--accent); transform: scale(1.1); }
+    #btnFav.active { color: var(--tiktok-red); animation: heartBeat 0.3s ease-in-out; }
+    @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+    /* TOAST NOTIFICATION */
+    #toast-container {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 99999;
+      pointer-events: none;
+    }
+    .toast {
+      background: rgba(18, 18, 18, 0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-left: 3px solid var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      animation: toastIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      backdrop-filter: blur(5px);
+    }
+    .toast.hide {
+      animation: toastOut 0.3s forwards;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+    @media (max-width: 480px) {
       .spotify-info {
         margin-left: 12px;
       }
@@ -670,7 +815,7 @@
       text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
     }
     .tag-admin { background: #ff3333; color: #fff; }
-    .tag-velly♥️ { background: gold; color: #000; animation: pulse 2s infinite; }
+    .tag-velly\2665\FE0F { background: gold; color: #000; animation: pulse 2s infinite; }
     .tag-staff { background: #0088ff; color: #fff; }
     .tag-executive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
@@ -769,9 +914,12 @@
         </div>
     </div>
 
+    
+
     <div id="notifPanel" class="notif-panel">
       <div class="notif-panel-header">
         <h3><i class="fas fa-comment-dots"></i> Notifikasi</h3>
+        <button class="notif-panel-close" onclick="openClearNotifConfirm()" style="margin-right:8px"><i class="fas fa-trash"></i></button>
         <button class="notif-panel-close" onclick="closeNotifPanel()"><i class="fas fa-times"></i></button>
       </div>
       <div id="notifList" class="notif-list">
@@ -787,6 +935,7 @@
       <div id="title">Loading Lagu...</div>
       <div class="user-row">
         <div id="by" onclick="viewCreator()">@system</div>
+        <button id="btnFav" onclick="toggleFavorite()"><i class="far fa-heart"></i></button>
         <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
       </div>
     </div>
@@ -794,7 +943,7 @@
     <div class="sys-container">
       <div class="sys-tools">
         <button onclick="copyRawUrl()" title="Copy Url"><i class="fas fa-link"></i></button>
-        <button onclick="shareLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
+        <button onclick="openCopyLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
         <button onclick="downloadSong()" title="Download"><i class="fas fa-download"></i></button>
         <button onclick="openReq()" title="Add/Request"><i class="fas fa-plus-circle"></i></button>
       </div>
@@ -847,54 +996,46 @@
   </div>
 
   <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner">
-          <div class="spotify-avatar">
-              <img id="pAvatarImg" src="https://via.placeholder.com/150">
-              <div class="avatar-edit" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
-          </div>
-          <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
-          <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:5px">
-                  <h2 id="pUsername">User</h2>
-                  <span id="pBadge"></span>
-              </div>
-              <div id="pTagDisplay"></div> </div>
-      </div>
-      
-      <!-- PROFILE TABS -->
-      <div class="profile-tabs-wrapper">
-        <button id="tabProfile" class="profile-tab-btn active" onclick="switchProfileTab('profile')">📊 Profil Saya</button>
-        <button id="tabAccount" class="profile-tab-btn" onclick="switchProfileTab('account')">⚙️ Akun</button>
-      </div>
+    <div class="sheet" style="padding:0; overflow:hidden">
+      <div class="modern-profile-header">
+        <div class="mp-avatar-container">
+          <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
+          <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
+        </div>
+        <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
+        
+        <div class="mp-name-row">
+          <span id="pUsername" class="mp-name">User</span>
+          <span id="pBadge"></span>
+        </div>
+        <span id="pEmail" class="mp-handle">user@email.com</span>
+        <div id="pTagDisplay" style="margin-bottom:12px"></div>
 
-      <!-- PROFILE TAB -->
-      <div id="profileTab" class="profile-tab-content active">
-        <div class="profile-stats-grid">
-          <div class="profile-stat-item">
-            <b id="pFol">0</b>
-            <span>Followers</span>
+        <div class="mp-stats">
+          <div class="mp-stat-item">
+            <span id="pFol" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Followers</span>
           </div>
-          <div class="profile-stat-item">
-            <b id="pFollowing">0</b>
-            <span>Following</span>
+          <div class="mp-stat-item">
+            <span id="pFollowing" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Following</span>
           </div>
         </div>
-        <div class="section-title">📝 Postingan Saya</div>
-        <div id="myPostList" class="posts-list"></div>
-      </div>
 
-      <!-- ACCOUNT TAB -->
-      <div id="accountTab" class="profile-tab-content">
-        <div class="account-setting-box">
-          <label class="account-setting-label">📧 Email Address</label>
-          <div class="account-setting-value" id="pEmail">Loading...</div>
+        <div class="mp-actions">
+           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
+           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+           <button class="mp-btn mp-btn-primary" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
-
-        <button onclick="openChangeNameModal()" class="btn-account">✏️ Ubah Nama Pengguna</button>
-        <button onclick="openChangePasswordModal()" class="btn-account danger">🔐 Ubah Password</button>
-        <button onclick="auth.signOut(); location.reload()" class="btn-account logout">🚪 Logout</button>
       </div>
+
+      <div class="mp-tabs">
+        <div class="mp-tab active" onclick="switchProfileTab('posts')" id="tabPosts">MY UPLOADS</div>
+        <div class="mp-tab" onclick="switchProfileTab('likes')" id="tabLikes">FAVORITES</div>
+      </div>
+
+      <div id="myPostList" class="mp-list"></div>
+      <div id="myLikeList" class="mp-list" style="display:none"></div>
     </div>
   </div>
 
@@ -920,30 +1061,36 @@
   </div>
 
   <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
-          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
-          <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:5px">
-                  <h2 id="vName">@creator</h2>
-                  <span id="vBadge"></span>
-              </div>
-              <div id="vTagDisplay"></div> </div>
-      </div>
-      <div class="profile-stats-grid">
-        <div class="profile-stat-item">
-          <b id="vFol">0</b>
-          <span>Followers</span>
+    <div class="sheet" style="padding:0; overflow:hidden">
+      <div class="modern-profile-header">
+        <div class="mp-avatar-container">
+          <img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
         </div>
-        <div class="profile-stat-item" style="padding: 0; background: transparent; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s;" onclick="followCreator()">
-          <b id="vCreatorFollowBtn" style="cursor:pointer; transition:0.2s; position: relative; z-index: 10;">Follow</b>
-          <span style="cursor:pointer; color:var(--accent); font-weight:600; font-size:11px; position: relative; z-index: 10;">KLIK</span>
+        
+        <div class="mp-name-row">
+          <span id="vName" class="mp-name">@creator</span>
+        </div>
+        <div id="vTagDisplay" style="margin-bottom:12px; display:flex; gap:5px; justify-content:center"></div>
+
+        <div class="mp-stats">
+          <div class="mp-stat-item">
+            <span id="vFol" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Followers</span>
+          </div>
+        </div>
+
+        <div class="mp-actions" style="justify-content:center">
+           <button id="vCreatorFollowBtn" class="mp-btn mp-btn-primary" onclick="followCreator()" style="max-width:120px">Follow</button>
+           <button class="mp-btn mp-btn-sec" onclick="shareProfile(document.getElementById('modalCreator').dataset.creatorUid, document.getElementById('vName').textContent)"><i class="fas fa-share"></i> Share</button>
         </div>
       </div>
-      <div class="section-title">📝 Lagu Terupload</div>
-      <div id="creatorPostList"></div>
+
+      <div style="padding:15px 15px 5px; font-size:12px; color:#888; font-weight:600">UPLOADED SONGS</div>
+      <div id="creatorPostList" class="mp-list"></div>
     </div>
   </div>
+
+  
 
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
@@ -952,54 +1099,12 @@
           <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b>BANNED PERMANENT</b> tanpa peringatan!
       </div>
       <div id="uploadFormUser" style="display:none">
-          <!-- Upload Method Selection -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
-            <button onclick="selectUploadMethod('url')" id="btnMethodUrl" class="btn-act" style="padding:10px; font-size:12px; background:var(--accent); color:black;">
-              <i class="fas fa-link"></i> URL Top4Top
-            </button>
-            <button onclick="selectUploadMethod('device')" id="btnMethodDevice" class="btn-act" style="padding:10px; font-size:12px; background:rgba(255,255,255,0.1); color:white;">
-              <i class="fas fa-mobile-alt"></i> Upload Device
-            </button>
-          </div>
-          
-          <!-- URL Upload Form -->
+          <!-- URL Upload Form Only -->
           <div id="urlUploadForm" style="display:block;">
+            <p style="font-size:12px; color:#888; margin-bottom:10px;">Upload lagu menggunakan link direct dari Top4Top atau penyedia file hosting lainnya.</p>
             <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
             <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top Only)">
             <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
-          </div>
-          
-          <!-- Device Upload Form -->
-          <div id="deviceUploadForm" style="display:none;">
-            <div style="background:rgba(0,136,255,0.1); border:1px solid #0088ff; border-radius:8px; padding:10px; margin-bottom:10px; font-size:11px; color:#ddd;">
-              <i class="fas fa-info-circle" style="color:#0088ff;"></i> Format: MP3, WAV, OGG | Max: 10MB
-            </div>
-            <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" onchange="handleFileSelect(event)">
-            <button onclick="document.getElementById('audioFileInput').click()" class="btn-act" style="background:rgba(255,255,255,0.1); color:white; margin-bottom:10px;">
-              <i class="fas fa-folder-open"></i> PILIH FILE AUDIO
-            </button>
-            <div id="filePreview" style="display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; margin-bottom:10px;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-file-audio" style="font-size:24px; color:var(--accent);"></i>
-                <div style="flex:1;">
-                  <div id="fileName" style="font-size:12px; font-weight:600; color:white; margin-bottom:3px;"></div>
-                  <div id="fileSize" style="font-size:11px; color:var(--text-dim);"></div>
-                </div>
-              </div>
-            </div>
-            <input id="rLaguDevice" class="inp-dark" placeholder="Judul Lagu - Artist" style="display:none;">
-            <div id="uploadProgress" style="display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:12px; margin-bottom:10px;">
-              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:8px;">
-                <span>Uploading...</span>
-                <span id="uploadPercent">0%</span>
-              </div>
-              <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
-                <div id="uploadProgressBar" style="height:100%; background:linear-gradient(90deg,var(--accent),#00cc6a); width:0%; transition:width 0.3s;"></div>
-              </div>
-            </div>
-            <button onclick="uploadFromDevice()" id="btnUploadDevice" class="btn-act" style="display:none;">
-              <i class="fas fa-upload"></i> UPLOAD SEKARANG
-            </button>
           </div>
       </div>
       <div id="uploadFormGuest">
@@ -1027,7 +1132,7 @@
           <li><b>Smart Social System</b> – Follow creator favorit Anda dan bangun komunitas musik dengan sistem following yang terintegrasi</li>
           <li><b>Dynamic Badge System</b> – Dapatkan badge verifikasi otomatis saat mencapai 50+ followers sebagai tanda kreator original (bisa request ke admin)</li>
           <li><b>Deep Linking Technology</b> – Bagikan lagu spesifik dengan ID unik langsung ke teman via link khusus</li>
-          <li><b>Anti-Spam Protection</b> – Sistem cooldown 30 menit mencegah spam dan menjaga kualitas konten exemusic.</li>
+          <li><b>Anti-Spam Protection</b> – Sistem cooldown menjaga kualitas konten (VIP 15 menit, Non-VIP 30 menit)</li>
           <li><b>Real-time Sync System</b> – Semua data followers, likes, dan playlist tersinkronisasi secara real-time</li>
           <li><b>Cloud-Based Infrastructure</b> – Data tersimpan aman di database dengan backup otomatis</li>
           <li><b>Multi-Device Support</b> – Akses dari desktop, mobile, atau tablet dengan pengalaman yang konsisten</li>
@@ -1047,6 +1152,14 @@
           <li>📈 <b>Kriteria Penilaian:</b> Total followers, jumlah lagu terupload, engagement rate, dan konsistensi konten</li>
         </ul>
         <p><em>* Syarat dan ketentuan berlaku. Keputusan admin bersifat final.</em></p>
+        
+        <p><b>Fitur VIP</b></p>
+        <ul class="about-features">
+          <li>👑 Tema profil khusus VIP dengan animasi emas</li>
+          <li>⏱️ Cooldown upload dipercepat menjadi 15 menit</li>
+          <li>🎟️ Ikon mahkota di nama dan list lagu</li>
+          <li>🔗 Share profil cepat dengan deep link khusus</li>
+        </ul>
 
         <p><b>Badge Original User</b></p>
         <p>Sistem badge verifikasi akan otomatis muncul di profil Anda ketika berhasil mengumpulkan 50 followers organik. Badge ini menandakan bahwa Anda adalah creator original dan terpercaya di exemusic.</p>
@@ -1062,9 +1175,10 @@
           <strong>⚠️ AKAN DIHAPUS PERMANEN TANPA PERINGATAN</strong>
         </div>
 
-        <p style="margin-top:12px;">
-          <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; margin-right:8px; margin-bottom:8px;">📱 Contact WhatsApp – click here!</a>
-          <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="btn-act about-link-btn" style="display:inline-block; text-decoration:none; background:#333; color:var(--accent); border:1px solid var(--accent);">📋 Changelogs – click here!</a>
+        <p style="margin-top:12px; color:#ddd">
+          📱 Contact WhatsApp — <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
+          📋 Changelogs — <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
+          📻 Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a>
         </p>
         <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
         <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
@@ -1073,6 +1187,56 @@
     </div>
   </div>
 
+  <div class="modal" id="modalClearNotif" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Konfirmasi</h3>
+      <p style="text-align:center; color:#ccc; margin-bottom:14px">Yakin ingin membersihkan notifikasi?</p>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="confirmClearNotif()">Confirm</button>
+        <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalClearNotif').style.display='none'">Discard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalCopyLink" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Salin Deep Link</h3>
+      <div id="copyLinkText" style="background:#0a0a0a; border:1px solid #333; border-radius:8px; padding:12px; color:#00d4ff; font-family:'Courier New', monospace; font-size:12px; word-break:break-all; margin-bottom:12px">URL belum dibuat</div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="copyBuiltLink()">Copy</button>
+        <button class="btn-act" style="background:#25D366; color:#fff" onclick="shareToWhatsApp()">WhatsApp</button>
+        <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyLink').style.display='none'">Back</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="modalCopyAudio" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Salin URL Audio MP3</h3>
+      <div id="copyAudioText" style="background:#0a0a0a; border:1px solid #333; border-radius:8px; padding:12px; color:#00d4ff; font-family:'Courier New', monospace; font-size:12px; word-break:break-all; margin-bottom:12px">URL belum dibuat</div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="copyBuiltAudio()">Copy</button>
+        <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyAudio').style.display='none'">Back</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="modalBoombox" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">How to use URL Top4Top</h3>
+      <div style="font-size:13px; color:#ddd; line-height:1.6; margin-bottom:12px">
+        <p>1. pastikan kamu sudah punya boombox.</p>
+        <p>2. pakai command /placebb untuk menaruh boombox.</p>
+        <p>3. pakai command /setbb untuk memulai music.</p>
+        <p>4. pilih url paling bawah dan masukan url top4top nya.</p>
+        <p>note : jika url tidak bunyi silahkan hapus s di bagian https menjadi http dan pastikan url adalah top4top.</p>
+        <p>end.</p>
+      </div>
+      <div style="display:flex; gap:10px">
+        <button class="btn-act" onclick="document.getElementById('modalBoombox').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
@@ -1091,10 +1255,18 @@
     const storage = firebase.storage();
     let selectedAudioFile = null;
 
-    let songs = [], i = 0, isShuf = false, isRepeat = false, isLoginMode = true;
-    let userData = null;
+    let songs = [], i = 0, isLoginMode = true;
+    
+    // NEW FEATURES STATE
+    let repeatMode = parseInt(localStorage.getItem('exeRepeat') || '0'); // 0: OFF, 1: ONE, 2: ALL
+    let isShuf = localStorage.getItem('exeShuffle') === 'true';
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
+    let savedVol = parseFloat(localStorage.getItem("exeVolume") || "0.8");
+    let lastSongData = JSON.parse(localStorage.getItem("exeLastSong") || "{}");
+
+    let userData = null;
     const audio = new Audio();
+    audio.volume = savedVol; // Apply saved volume immediately
     let broadcastTimeout;
     let discoModeActive = false;
     let discoColor = "#00ff88";
@@ -1122,37 +1294,25 @@
         } else { document.getElementById('mtScreen').style.display = 'none'; }
         if(val.announcement) triggerBroadcast(val.announcement);
         
-        // DISCO MODE MONITORING
         if(val.discoMode !== discoModeActive) {
             discoModeActive = val.discoMode || false;
-            if(discoModeActive && val.discoColor) {
-                discoColor = val.discoColor;
-                applyDiscoMode(discoColor);
-                if(val.discoInitiator) {
-                    const initiator = val.discoInitiator;
-                    if(initiator !== lastDiscoUser) {
-                        triggerBroadcast(`🎉 ${initiator} has started disco mode!`);
-                        lastDiscoUser = initiator;
-                    }
-                }
-            } else if(!discoModeActive) {
+            if(discoModeActive) {
+                const v = val.discoVariant || 'heartbeat';
+                const c = val.discoColor || '#00ff88';
+                applyDiscoMode(v, c);
+            } else {
                 resetTheme();
-                triggerBroadcast("Disco mode ended! Back to normal.");
+                triggerBroadcast("Disco mode ended!");
             }
-        } else if(discoModeActive && val.discoColor && val.discoColor !== discoColor) {
-            discoColor = val.discoColor;
-            applyDiscoMode(discoColor);
+        } else if(discoModeActive) {
+            const v = val.discoVariant || 'heartbeat';
+            const c = val.discoColor || '#00ff88';
+            applyDiscoMode(v, c);
         }
     });
 
-    // NOTIFICATIONS: global + per-user
+    // NOTIFICATIONS: per-user only
     function loadNotifs() {
-      db.ref('notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
-        const val = snap.val();
-        const list = [];
-        if (val) Object.keys(val).forEach(k => list.push({ ...val[k], id: 'g_' + k }));
-        mergeAndRenderNotifs(list, 'global');
-      });
       auth.onAuthStateChanged(u => {
         if (!u) { mergeAndRenderNotifs([], 'user'); return; }
         db.ref('users/' + u.uid + '/notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
@@ -1224,6 +1384,7 @@
     });
     loadNotifs();
 
+
     function triggerBroadcast(msg) {
         const el = document.getElementById('sysBroadcast');
         const bar = document.getElementById('sbBar');
@@ -1249,6 +1410,15 @@
         div.textContent = text;
         return div.innerHTML;
     }
+    function attrEscape(text) {
+        if(text == null) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+    }
 
     function closeBroadcast() {
         const el = document.getElementById('sysBroadcast');
@@ -1273,10 +1443,11 @@
 
     function startSnowfall() {
         if(snowflakeInterval) clearInterval(snowflakeInterval);
-        snowflakeInterval = setInterval(createSnowflake, 300);
-        // Create initial snowflakes
-        for(let i = 0; i < 15; i++) {
-            setTimeout(() => createSnowflake(), i * 100);
+        snowflakeInterval = setInterval(() => {
+            if(document.querySelectorAll('.snowflake').length < 30) createSnowflake();
+        }, 1200);
+        for(let i = 0; i < 6; i++) {
+            setTimeout(() => createSnowflake(), i * 150);
         }
     }
 
@@ -1288,99 +1459,24 @@
         document.querySelectorAll('.snowflake').forEach(flake => flake.remove());
     }
 
-    function applyDiscoMode(color) {
-        document.documentElement.style.setProperty('--accent', color);
-        
-        // Check jika ice mode
-        if(color.toLowerCase() === '#ice') {
-            iceModeActive = true;
-            color = '#00d4ff'; // Blizzard blue
-            document.documentElement.style.setProperty('--accent', color);
-        } else {
-            iceModeActive = false;
-            stopSnowfall();
-        }
-        
-        // Background tetap gelap, cuma ambil tint sedikit
-        const rgb = parseInt(color.slice(1), 16);
-        const r = (rgb >> 16) & 255;
-        const g = (rgb >> 8) & 255;
-        const b = rgb & 255;
-        
+    function applyDiscoMode(variant, color) {
         const app = document.querySelector('.app');
-        if(app) {
-            // Rainbow effect jika color is rainbow code, ice mode heartbeat, otherwise disco heartbeat
-            if(color.toLowerCase() === '#00d4ff') {
-                app.style.animation = 'disco-heartbeat 1.2s infinite';
-                app.style.borderColor = color;
-                app.style.borderWidth = '2px';
-                startSnowfall();
-            } else if(color.toLowerCase().includes('rainbow')) {
-                app.style.animation = 'rainbow-glow 3s infinite linear';
-            } else {
-                app.style.animation = 'disco-heartbeat 1.2s infinite';
-                app.style.borderColor = color;
-                app.style.borderWidth = '2px';
-            }
-            app.style.background = `rgba(${r}, ${g}, ${b}, 0.05)`;
-            app.style.boxShadow = `0 0 40px ${color}60`;
+        document.documentElement.style.setProperty('--accent', color || '#00ff88');
+        if(app) app.style.animation = 'none';
+        stopSnowfall();
+        if(variant === 'ice') {
+            document.documentElement.style.setProperty('--accent', '#00d4ff');
+            if(app) app.style.animation = 'disco-heartbeat 1.2s infinite';
+            startSnowfall();
+            return;
         }
-        
-        // Body background tetap dark
-        document.body.style.background = '#050505';
-        
-        // Update button colors dynamically dengan glow besar
-        document.querySelectorAll('.btn-act').forEach(btn => {
-            btn.style.background = color;
-            btn.style.boxShadow = `0 0 25px ${color}, 0 0 50px ${color}40`;
-            btn.style.transform = 'scale(1.02)';
-        });
-        
-        document.querySelectorAll('.btn-play').forEach(btn => {
-            btn.style.background = color;
-            btn.style.boxShadow = `0 0 40px ${color}, 0 0 80px ${color}40`;
-            btn.style.color = '#000';
-        });
-        
-        // Update eq color dengan glow lebih besar dan kontras
-        document.querySelectorAll('.eq span').forEach(span => {
-            span.style.background = color;
-            span.style.boxShadow = `0 0 30px ${color}, 0 0 60px ${color}, 0 0 90px ${color}40`;
-            span.style.filter = 'brightness(1.3)';
-        });
-        
-        // Update broadcast bar
-        const sbBar = document.getElementById('sbBar');
-        if(sbBar) {
-            sbBar.style.background = color;
-            sbBar.style.boxShadow = `0 0 15px ${color}`;
+        if(variant === 'rainbow') {
+            if(app) app.style.animation = 'rainbow-glow 3s infinite linear';
+            return;
         }
-        
-        // System container jadi lebih colorful dengan border
-        document.querySelectorAll('.sys-container').forEach(el => {
-            el.style.background = `rgba(${r}, ${g}, ${b}, 0.08)`;
-            el.style.border = `1px solid ${color}40`;
-            el.style.boxShadow = `inset 0 0 15px rgba(${r}, ${g}, ${b}, 0.1)`;
-        });
-        
-        // Modal sheets dengan gradient
-        document.querySelectorAll('.sheet').forEach(el => {
-            el.style.background = `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.08) 0%, #181818 100%)`;
-            el.style.borderTop = `2px solid ${color}80`;
-        });
-        
-        // Title jadi lebih colorful
-        const title = document.getElementById('title');
-        if(title) {
-            title.style.color = color;
-            title.style.textShadow = `0 0 20px ${color}80`;
-        }
-        
-        // "By" text juga
-        const byEl = document.getElementById('by');
-        if(byEl) {
-            byEl.style.color = color;
-            byEl.style.textShadow = `0 0 10px ${color}60`;
+        if(variant === 'heartbeat') {
+            if(app) app.style.animation = 'disco-heartbeat 1.2s infinite';
+            return;
         }
     }
 
@@ -1391,11 +1487,7 @@
         
         document.body.style.background = '#050505';
         
-        // Stop snowfall jika active
-        if(iceModeActive) {
-            stopSnowfall();
-            iceModeActive = false;
-        }
+        stopSnowfall();
         
         const app = document.querySelector('.app');
         if(app) {
@@ -1478,13 +1570,16 @@
               auth.signOut(); return;
           }
           document.getElementById('topLoginBtn').textContent = userData.username;
-          document.getElementById('pUsername').innerText = userData.username;
+          document.getElementById('pUsername').innerHTML = userData.username + (userData.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
           document.getElementById('pFol').innerText = (Array.isArray(userData.followers) ? userData.followers.length : userData.followers) || 0;
           document.getElementById('pFollowing').innerText = (Array.isArray(userData.following) ? userData.following.length : userData.following) || 0;
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           const followerCount = Array.isArray(userData.followers) ? userData.followers.length : userData.followers || 0;
           document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          
+          const profHeader = document.querySelector('#modalProfile .modern-profile-header');
+          if(profHeader) profHeader.classList.toggle('vip', !!userData.vip);
           
           // Sensor email
           const email = u.email || "";
@@ -1528,12 +1623,25 @@
                 const userData = snap.val();
                 document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
                 const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
-                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (userData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
                 
+                const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
+                if(creatorHeader) creatorHeader.classList.toggle('vip', !!userData?.vip);
+                
                 const creatorSongs = songs.filter(x => x.uid === profileUid);
-                document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+                creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+                
+         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
+             `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
+                 <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                 <div class="mp-song-info">
+                     <div class="mp-song-title">${x.title}</div>
+                 </div>
+                 <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+              </div>`
+         ).join('');
                 
                 document.getElementById('modalCreator').dataset.creatorUid = profileUid;
                 updateCreatorFollowUI(profileUid);
@@ -1542,10 +1650,27 @@
             });
           }
         } else if(audio.src === "") {
+            // Restore Volume
+            const savedVol = localStorage.getItem('exeVolume');
+            if(savedVol !== null) {
+                audio.volume = parseFloat(savedVol);
+                document.getElementById('vol').value = savedVol;
+            }
+
             if(songId && songs[songId]) {
                 setup(parseInt(songId), false);
             } else {
-                setup(0, false);
+                // Restore Last Song
+                const savedIdx = localStorage.getItem('exeLastSongIdx');
+                const savedTime = localStorage.getItem('exeLastTime');
+                
+                if(savedIdx !== null && songs[savedIdx]) {
+                    setup(parseInt(savedIdx), false).then(() => {
+                        if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    });
+                } else {
+                    setup(0, false);
+                }
             }
         }
       }
@@ -1565,9 +1690,18 @@
       const cData = cRef.val();
       const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
       const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
-      if(play) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      const crown = cData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + crown;
+      const hasCreator = !!songs[i].uid;
+      if(play) { 
+        audio.play(); 
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
+        document.getElementById('eq').classList.add('playing'); 
+        showToast(`🎵 Now Playing: ${songs[i].title}`);
+      }
       updateFollowUI();
+      updateFavoriteUI();
+      saveLastSong();
     }
 
     // UPLOAD LOGIC WITH CONFIRMATION & COOLDOWN
@@ -1577,16 +1711,17 @@
         
         if(!title || !url) return msg("Isi semua data!");
         
-        // Cooldown Check (30 Menit)
+        // Cooldown Check (VIP 15 Menit, Non-VIP 30 Menit)
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
         const diff = (now - lastUpload) / 1000 / 60; // dalam menit
+        const cooldown = (userData.role === 'admin') ? 0 : (userData.vip ? 15 : 30);
         
-        if(diff < 30 && userData.role !== 'admin') {
+        if(diff < cooldown && userData.role !== 'admin') {
             return Swal.fire({
                 icon: 'error',
                 title: 'Sabar...',
-                text: `Tunggu ${Math.ceil(30 - diff)} menit lagi untuk upload lagu berikutnya.`,
+                text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi untuk upload lagu berikutnya.`,
                 background: '#181818', color: '#fff'
             });
         }
@@ -1619,7 +1754,7 @@
         
         db.ref('songs').push(newSong).then(() => {
             db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
-            db.ref('notifications').push({
+            db.ref('users/' + auth.currentUser.uid + '/notifications').push({
               type: 'upload',
               text: userData.username + ' mengupload: ' + t,
               fromName: userData.username,
@@ -1648,6 +1783,11 @@
       if(audio.duration > 0) {
         document.getElementById('loadSpinner').classList.remove('show');
       }
+      
+      // Auto Save Last Song Time (Throttled: every 2 seconds approx)
+      if(Math.floor(audio.currentTime) % 2 === 0) {
+          localStorage.setItem('exeLastTime', audio.currentTime);
+      }
     };
     
     // Show loading spinner when song starts playing (duration not yet loaded)
@@ -1655,6 +1795,12 @@
       if(audio.duration === 0 || isNaN(audio.duration)) {
         document.getElementById('loadSpinner').classList.add('show');
       }
+      localStorage.setItem('exeIsPlaying', 'true');
+    };
+    
+    audio.onpause = () => {
+        localStorage.setItem('exeIsPlaying', 'false');
+        localStorage.setItem('exeLastTime', audio.currentTime);
     };
     
     // Hide spinner when metadata is loaded
@@ -1662,8 +1808,27 @@
       document.getElementById('loadSpinner').classList.remove('show');
     };
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
-    document.getElementById('vol').oninput = (e) => audio.volume = e.target.value;
-    audio.onended = () => isRepeat ? (audio.currentTime=0, audio.play()) : next();
+    
+    // Volume with Auto Save
+    document.getElementById('vol').oninput = (e) => {
+        audio.volume = e.target.value;
+        localStorage.setItem('exeVolume', e.target.value);
+    };
+    
+    audio.onended = () => {
+        if(repeatMode === 1) { // Repeat One
+            audio.currentTime = 0;
+            audio.play();
+        } else if (repeatMode === 2 || isShuf) { // Repeat All or Shuffle
+            next();
+        } else { // Repeat Off
+            if(i < songs.length - 1) next();
+        }
+    };
+
+    function saveLastSong() {
+        localStorage.setItem('exeLastSongIdx', i);
+    }
 
     // FOLLOWERS LOGIC
     async function followUser() {
@@ -1735,23 +1900,72 @@
 
     // UTILS
     function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
-    function msg(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    function msg(m) { showToast(m, 'info'); }
+
+    function showToast(text, type='info') {
+      const container = document.getElementById('toast-container');
+      if(!container) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      // Icon selection based on text content or type
+      let icon = 'fa-info-circle';
+      if(text.includes('Playing')) icon = 'fa-music';
+      else if(text.includes('Favorit')) icon = 'fa-heart';
+      else if(text.includes('Shuffle')) icon = 'fa-random';
+      else if(text.includes('Repeat')) icon = 'fa-redo';
+      else if(text.includes('Error')) icon = 'fa-exclamation-triangle';
+      
+      el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
+      container.appendChild(el);
+      
+      // Auto hide
+      setTimeout(() => el.classList.add('hide'), 2500);
+      setTimeout(() => el.remove(), 2900);
+    }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
         else {
             const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
-            document.getElementById('myPostList').innerHTML = myPosts.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><span>${s.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+            myPosts.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+            
+             document.getElementById('myPostList').innerHTML = myPosts.map(s => 
+                 `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+                     <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                     <div class="mp-song-info">
+                         <div class="mp-song-title">${s.title}</div>
+                     </div>
+                     <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+                  </div>`
+             ).join('');
+            
+            const myLikes = songs.filter(s => fav.includes(s.url));
+            document.getElementById('myLikeList').innerHTML = myLikes.map(s => 
+                `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+                    <div class="mp-song-icon" style="color:var(--accent)"><i class="fas fa-heart"></i></div>
+                    <div class="mp-song-info">
+                        <div class="mp-song-title">${s.title}</div>
+                        <div class="mp-song-artist">@${s.by}</div>
+                    </div>
+                 </div>`
+            ).join('');
+            
+            switchProfileTab('posts');
             document.getElementById('modalProfile').style.display = 'block';
         }
+    }
+
+    function fmtTimestamp(ts) {
+        if(!ts) return 'Unknown date';
+        const d = new Date(ts);
+        return d.toLocaleDateString();
     }
     
     async function viewCreator() {
         const s = songs[i]; 
         if(!s.uid) return;
         
-        // Jika creator adalah user sendiri, buka profile modal
         if(auth.currentUser && s.uid === auth.currentUser.uid) {
             openProfile();
             return;
@@ -1760,19 +1974,30 @@
         const cRef = await db.ref('users/' + s.uid).get();
         const cData = cRef.val();
         const followerCountCreator = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
+        
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
-        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (cData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
         document.getElementById('vFol').innerText = followerCountCreator;
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+        
+        const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
+        if(creatorHeader) creatorHeader.classList.toggle('vip', !!cData?.vip);
+        
         const creatorSongs = songs.filter(x => x.uid === s.uid);
-        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+        creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
         
-        // Set data untuk follow button
+                 document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
+                     `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
+                         <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                         <div class="mp-song-info">
+                             <div class="mp-song-title">${x.title}</div>
+                         </div>
+                         <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+                      </div>`
+                 ).join('');
+        
         document.getElementById('modalCreator').dataset.creatorUid = s.uid;
-        
-        // Update follow button state
         updateCreatorFollowUI(s.uid);
-        
         document.getElementById('modalCreator').style.display = 'block';
     }
 
@@ -1786,10 +2011,10 @@
       
       if(creatorFollowers.includes(auth.currentUser.uid)) {
         btnText.innerText = 'Following ✓';
-        btnText.style.color = 'var(--accent)';
+        btnText.classList.add('following');
       } else {
         btnText.innerText = 'Follow';
-        btnText.style.color = '#ddd';
+        btnText.classList.remove('following');
       }
     }
 
@@ -1845,39 +2070,231 @@
       }
     }
 
-    async function openList(f) {
+    // CACHE FOR USER BADGES
+    let userCache = {};
+
+    function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
       c.innerHTML = '<p style="text-align:center; padding:20px; color:#555">Memuat...</p>';
-      let html = "";
-      for(let s of l) {
-          const uRef = await db.ref('users/' + s.uid).get();
-          const uData = uRef.val();
-          const followerCount = Array.isArray(uData?.followers) ? uData.followers.length : uData?.followers || 0;
-          const badge = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-          html += `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}${badge}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`;
-      }
+      
+      const html = l.map(s => {
+          let badge = '';
+          let crown = '';
+          if(userCache[s.uid]) {
+              if(userCache[s.uid].followers >= 50) badge = '<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>';
+              if(userCache[s.uid].vip) crown = ' <i class="fas fa-crown" style="color:#ffd700; font-size:10px; margin-left:4px"></i>';
+          }
+          return `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+            <div style="flex:1">
+                <b>${s.title}</b><br>
+                <small id="artist-${s.key}" class="artist" data-uid="${s.uid}" style="color:#777">@${s.by}${badge}${crown}</small>
+            </div>
+            <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}">
+                <i class="fas fa-heart"></i>
+            </span>
+          </div>`;
+      }).join('');
+      
       c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
+      
+      // Lazy fetch badges
+      l.forEach(s => {
+          if(!userCache[s.uid] && s.uid) {
+             // Mark as fetching to avoid duplicate calls if user scrolls or reopens quickly
+             userCache[s.uid] = { followers: 0, vip: false, fetching: true };
+             
+             db.ref('users/' + s.uid).get().then(snap => {
+                 const val = snap.val() || {};
+                 let count = 0;
+                 const fol = val.followers;
+                 if(Array.isArray(fol)) count = fol.length;
+                 else if(fol && typeof fol === 'object') count = Object.keys(fol).length;
+                 else count = fol || 0;
+                 const isVip = !!val.vip;
+                 userCache[s.uid] = { followers: count, vip: isVip };
+                 
+                 const els = document.querySelectorAll(`.artist[data-uid="${s.uid}"]`);
+                 if(els && els.length) {
+                     let add = '';
+                     if(count >= 50) add += '<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>';
+                     if(isVip) add += ' <i class="fas fa-crown" style="color:#ffd700; font-size:10px; margin-left:4px"></i>';
+                     els.forEach(e => { e.innerHTML = `@${s.by}${add}`; });
+                 }
+             });
+          }
+      });
     }
 
-    function toggleFav(u, e) { e.stopPropagation(); fav = fav.includes(u) ? fav.filter(x => x !== u) : [...fav, u]; localStorage.setItem("exeFav", JSON.stringify(fav)); openList(false); }
-    function toggleShuffle() { isShuf = !isShuf; document.getElementById('shuf').classList.toggle('active', isShuf); }
-    function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('rep').classList.toggle('active', isRepeat); }
-    function copyRawUrl() { navigator.clipboard.writeText(songs[i].url); msg("Link audio disalin"); }
+    function toggleFav(u, e) { 
+        e.stopPropagation(); 
+        if(fav.includes(u)) {
+            fav = fav.filter(x => x !== u);
+            showToast('Dihapus dari Favorit');
+        } else {
+            fav.push(u);
+            showToast('❤️ Ditambahkan ke Favorit');
+        }
+        localStorage.setItem("exeFav", JSON.stringify(fav)); 
+        openList(false);
+        if(songs[i] && songs[i].url === u) updateFavBtn();
+    }
+
+    function toggleFavorite() {
+        if(!songs[i]) return;
+        const url = songs[i].url;
+        const btn = document.getElementById('btnFav');
+        
+        if(fav.includes(url)) {
+            fav = fav.filter(u => u !== url);
+            showToast('Dihapus dari Favorit');
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="far fa-heart"></i>';
+        } else {
+            fav.push(url);
+            showToast('❤️ Ditambahkan ke Favorit');
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-heart"></i>';
+        }
+        localStorage.setItem("exeFav", JSON.stringify(fav));
+        if(document.getElementById('modalList').style.display === 'block') openList(false);
+    }
+
+    function updateFavBtn() {
+        if(!songs[i]) return;
+        const btn = document.getElementById('btnFav');
+        if(fav.includes(songs[i].url)) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-heart"></i>';
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="far fa-heart"></i>';
+        }
+    }
+
+    function toggleShuffle() { 
+        isShuf = !isShuf; 
+        localStorage.setItem('exeShuffle', isShuf);
+        document.getElementById('shuf').classList.toggle('active', isShuf); 
+        showToast(isShuf ? '🔀 Shuffle Aktif' : 'Shuffle Non-aktif');
+    }
+
+    function toggleRepeat() { 
+        repeatMode = (repeatMode + 1) % 3;
+        localStorage.setItem('exeRepeat', repeatMode);
+        
+        const btn = document.getElementById('rep');
+        if(repeatMode === 0) {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fas fa-redo"></i>';
+            showToast('Repeat OFF');
+        } else if(repeatMode === 1) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-redo"></i><span style="font-size:8px;position:absolute;top:8px;right:8px;font-weight:bold;background:var(--bg);border-radius:50%;padding:1px 3px;">1</span>';
+            showToast('🔁 Repeat: One');
+        } else {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-redo"></i>';
+            showToast('🔁 Repeat: All');
+        }
+    }
+
+    function showToast(text) {
+        const container = document.getElementById('toast-container');
+        if(!container) return;
+        const el = document.createElement('div');
+        el.className = 'toast';
+        
+        let icon = 'fa-info-circle';
+        if(text.includes('Playing')) icon = 'fa-music';
+        if(text.includes('Favorit')) icon = 'fa-heart';
+        if(text.includes('Shuffle')) icon = 'fa-random';
+        if(text.includes('Repeat')) icon = 'fa-redo';
+        
+        el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
+        container.appendChild(el);
+        
+        setTimeout(() => {
+            el.classList.add('hide');
+            setTimeout(() => el.remove(), 300);
+        }, 2500);
+    }
+
+    function buildDeepLink() { return window.location.origin + window.location.pathname + "?id=" + i; }
+    function copyRawUrl() { openCopyAudio(); }
     
     function shareLink() { 
-        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        const link = buildDeepLink();
         navigator.clipboard.writeText(link); 
         msg("Link lagu dengan ID disalin"); 
+    }
+    function shareProfile(uid, username) {
+        const link = window.location.origin + window.location.pathname + '?profile_userid=' + uid;
+        navigator.clipboard.writeText(link);
+        showToast('Link profil @' + (username||'user') + ' disalin');
+    }
+    function shareToWhatsApp() {
+        const name = (userData && userData.username) ? userData.username : 'Guest';
+        const title = (songs[i] && songs[i].title) ? songs[i].title : 'Lagu ExeMusic';
+        const link = buildDeepLink();
+        const text = "Hello " + name + " telah berbagi link ExeMusic:\n🎵 " + title + "\n🔗 " + link;
+        window.open("https://wa.me/?text=" + encodeURIComponent(text));
+    }
+    function openCopyAudio() {
+        const url = (songs[i] && songs[i].url) ? songs[i].url : '';
+        const el = document.getElementById('copyAudioText');
+        if(el) el.textContent = url || 'URL belum dibuat';
+        document.getElementById('modalCopyAudio').style.display = 'block';
+    }
+    function copyBuiltAudio() {
+        const t = document.getElementById('copyAudioText').textContent;
+        if(!t || t === 'URL belum dibuat') return;
+        navigator.clipboard.writeText(t).then(() => showToast("Link audio disalin"));
+        document.getElementById('modalCopyAudio').style.display = 'none';
     }
     
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display='block'; }
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
+
+    function openClearNotifConfirm() {
+        document.getElementById('modalClearNotif').style.display = 'block';
+    }
+    function confirmClearNotif() {
+        if(!auth.currentUser) return msg("Login dulu!");
+        const ref = db.ref('users/' + auth.currentUser.uid + '/notifications');
+        ref.set(null).then(() => ref.get()).then(snap => {
+            if(snap.exists()) {
+                const val = snap.val() || {};
+                const keys = Object.keys(val);
+                return Promise.all(keys.map(k => ref.child(k).remove()));
+            }
+        }).then(() => {
+            document.getElementById('modalClearNotif').style.display = 'none';
+            mergeAndRenderNotifs([], 'user');
+            updateNotifBadge();
+            showToast("Notifikasi dibersihkan");
+        }).catch(() => {
+            showToast("Gagal menghapus notifikasi");
+        });
+    }
+    function openCopyLink() {
+        const link = window.location.origin + window.location.pathname + "?id=" + i;
+        const el = document.getElementById('copyLinkText');
+        if(el) el.textContent = link;
+        document.getElementById('modalCopyLink').style.display = 'block';
+    }
+    function copyBuiltLink() {
+        const t = document.getElementById('copyLinkText').textContent;
+        if(!t || t === 'URL belum dibuat') return;
+        navigator.clipboard.writeText(t).then(() => showToast("Link lagu dengan ID disalin"));
+        document.getElementById('modalCopyLink').style.display = 'none';
+    }
 
     let isFirstTimeUser = false;
 
@@ -1979,22 +2396,19 @@
 
     // PROFILE MANAGEMENT FUNCTIONS
     function switchProfileTab(tab) {
-      const profileTab = document.getElementById('profileTab');
-      const accountTab = document.getElementById('accountTab');
-      const btnProfile = document.getElementById('tabProfile');
-      const btnAccount = document.getElementById('tabAccount');
-      
-      if(tab === 'profile') {
-        profileTab.classList.add('active');
-        accountTab.classList.remove('active');
-        btnProfile.classList.add('active');
-        btnAccount.classList.remove('active');
-      } else {
-        profileTab.classList.remove('active');
-        accountTab.classList.add('active');
-        btnProfile.classList.remove('active');
-        btnAccount.classList.add('active');
-      }
+        // Reset all tabs
+        document.querySelectorAll('.mp-tab').forEach(t => t.classList.remove('active'));
+        // Hide all lists
+        document.getElementById('myPostList').style.display = 'none';
+        document.getElementById('myLikeList').style.display = 'none';
+        
+        if(tab === 'posts') {
+            document.getElementById('tabPosts').classList.add('active');
+            document.getElementById('myPostList').style.display = 'flex';
+        } else if(tab === 'likes') {
+            document.getElementById('tabLikes').classList.add('active');
+            document.getElementById('myLikeList').style.display = 'flex';
+        }
     }
 
     function openChangeNameModal() {
@@ -2117,160 +2531,7 @@
     }
   
 
-    // === DEVICE UPLOAD FUNCTIONS ===
-    function selectUploadMethod(method) {
-      const btnUrl = document.getElementById('btnMethodUrl');
-      const btnDevice = document.getElementById('btnMethodDevice');
-      const urlForm = document.getElementById('urlUploadForm');
-      const deviceForm = document.getElementById('deviceUploadForm');
-      
-      if(method === 'url') {
-        btnUrl.style.background = 'var(--accent)';
-        btnUrl.style.color = 'black';
-        btnDevice.style.background = 'rgba(255,255,255,0.1)';
-        btnDevice.style.color = 'white';
-        urlForm.style.display = 'block';
-        deviceForm.style.display = 'none';
-        // Reset device form
-        selectedAudioFile = null;
-        document.getElementById('filePreview').style.display = 'none';
-        document.getElementById('rLaguDevice').style.display = 'none';
-        document.getElementById('btnUploadDevice').style.display = 'none';
-      } else {
-        btnUrl.style.background = 'rgba(255,255,255,0.1)';
-        btnUrl.style.color = 'white';
-        btnDevice.style.background = 'var(--accent)';
-        btnDevice.style.color = 'black';
-        urlForm.style.display = 'none';
-        deviceForm.style.display = 'block';
-      }
-    }
-
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if(!file) return;
-      
-      // Validasi file audio
-      if(!file.type.startsWith('audio/')) {
-        msg('❌ Hanya file audio yang diperbolehkan!');
-        return;
-      }
-      
-      // Max 10MB
-      if(file.size > 10 * 1024 * 1024) {
-        msg('❌ Ukuran file maksimal 10MB!');
-        return;
-      }
-      
-      selectedAudioFile = file;
-      
-      // Tampilkan preview
-      document.getElementById('fileName').innerText = file.name;
-      document.getElementById('fileSize').innerText = formatFileSize(file.size);
-      document.getElementById('filePreview').style.display = 'block';
-      document.getElementById('rLaguDevice').style.display = 'block';
-      document.getElementById('btnUploadDevice').style.display = 'block';
-    }
-
-    function formatFileSize(bytes) {
-      if(bytes < 1024) return bytes + ' B';
-      if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    }
-
-    async function uploadFromDevice() {
-      if(!selectedAudioFile) {
-        msg('❌ Pilih file audio terlebih dahulu!');
-        return;
-      }
-      
-      const songTitle = document.getElementById('rLaguDevice').value.trim();
-      if(!songTitle) {
-        msg('❌ Judul lagu harus diisi!');
-        return;
-      }
-      
-      const btn = document.getElementById('btnUploadDevice');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-      
-      // Tampilkan progress
-      document.getElementById('uploadProgress').style.display = 'block';
-      
-      try {
-        const timestamp = Date.now();
-        const fileName = `music/${auth.currentUser.uid}/${timestamp}_${selectedAudioFile.name}`;
-        const storageRef = storage.ref(fileName);
-        const uploadTask = storageRef.put(selectedAudioFile);
-        
-        uploadTask.on('state_changed',
-          (snapshot) => {
-            // Progress
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            document.getElementById('uploadProgressBar').style.width = progress + '%';
-            document.getElementById('uploadPercent').innerText = Math.round(progress) + '%';
-          },
-          (error) => {
-            // Error
-            msg('❌ Upload gagal: ' + error.message);
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
-            document.getElementById('uploadProgress').style.display = 'none';
-          },
-          async () => {
-            // Complete
-            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-            
-            // Parse judul dan artis
-            let title, artist;
-            if(songTitle.includes(' - ')) {
-              [title, artist] = songTitle.split(' - ').map(s => s.trim());
-            } else {
-              title = songTitle;
-              artist = 'Unknown Artist';
-            }
-            
-            // Simpan ke database dengan marker source: 'device'
-            const musicData = {
-              title: title,
-              artist: artist,
-              url: downloadURL,
-              by: auth.currentUser.uid,
-              byName: userData.username || 'User',
-              timestamp: timestamp,
-              plays: 0,
-              likes: 0,
-              source: 'device',  // Marker untuk device upload
-              fileName: selectedAudioFile.name,
-              fileSize: selectedAudioFile.size
-            };
-            
-            await db.ref('posts').push(musicData);
-            
-            msg('✅ Lagu berhasil diupload!');
-            document.getElementById('modalReq').style.display = 'none';
-            
-            // Reset form
-            selectedAudioFile = null;
-            document.getElementById('filePreview').style.display = 'none';
-            document.getElementById('rLaguDevice').value = '';
-            document.getElementById('rLaguDevice').style.display = 'none';
-            document.getElementById('uploadProgress').style.display = 'none';
-            document.getElementById('btnUploadDevice').style.display = 'none';
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
-            
-            loadSongs();
-          }
-        );
-      } catch(err) {
-        msg('❌ Terjadi kesalahan: ' + err.message);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD SEKARANG';
-        document.getElementById('uploadProgress').style.display = 'none';
-      }
-    }
-    // === END DEVICE UPLOAD FUNCTIONS ===
+    // === DEVICE UPLOAD FUNCTIONS REMOVED ===
 
   </script>
 </body>
