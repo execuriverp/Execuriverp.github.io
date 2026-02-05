@@ -949,6 +949,8 @@
         <div id="by" onclick="viewCreator()">@system</div>
         <button id="btnFav" onclick="toggleFavorite()"><i class="far fa-heart"></i></button>
         <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
+        <button id="btnMsgRow" onclick="messageCurrentCreator()" title="Message" style="display:none"><i class="fas fa-envelope"></i></button>
+        <button id="btnShareProf" onclick="shareCurrentCreatorProfile()" title="Share Profile" style="display:none"><i class="fas fa-share"></i></button>
       </div>
     </div>
 
@@ -1432,7 +1434,7 @@
           <div class="notif-item-icon follow"><i class="fas fa-user"></i></div>
           <div class="notif-item-body">
             <div class="n-text"><b>@${escapeHtml(m.fromName||'user')}</b>: ${escapeHtml(m.text||'')}</div>
-            <div class="n-time">${time} <button style="margin-left:8px" onclick="copyText('${escapeHtml(m.text||'').replace(/'/g, '\\'') }')"><i class="fas fa-copy"></i></button>${react}</div>
+            <div class="n-time">${time} <button style="margin-left:8px" onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>${react}</div>
           </div>
         </div>`;
       }).join('');
@@ -1489,6 +1491,15 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+    function attrEscape(text) {
+        if(text == null) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
     }
 
     function closeBroadcast() {
@@ -1761,7 +1772,11 @@
       const cData = cRef.val();
       const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
       const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge;
+      const crown = cData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
+      document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + crown;
+      const hasCreator = !!songs[i].uid;
+      document.getElementById('btnMsgRow').style.display = hasCreator ? 'inline-flex' : 'none';
+      document.getElementById('btnShareProf').style.display = hasCreator ? 'inline-flex' : 'none';
       if(play) { 
         audio.play(); 
         document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
@@ -2298,6 +2313,14 @@
         navigator.clipboard.writeText(link); 
         msg("Link lagu dengan ID disalin"); 
     }
+    function messageCurrentCreator() {
+        const s = songs[i]; if(!s || !s.uid) return msg('Tidak ada creator');
+        openDM(s.uid, s.by);
+    }
+    function shareCurrentCreatorProfile() {
+        const s = songs[i]; if(!s || !s.uid) return msg('Tidak ada creator');
+        shareProfile(s.uid, s.by);
+    }
     function shareProfile(uid, username) {
         const link = window.location.origin + window.location.pathname + '?profile_userid=' + uid;
         navigator.clipboard.writeText(link);
@@ -2320,7 +2343,7 @@
                     <div style="margin-top:6px; display:flex; gap:6px">
                         <button class="notif-panel-close" onclick="reactDM('${m.id}','👍')">👍</button>
                         <button class="notif-panel-close" onclick="reactDM('${m.id}','❤️')">❤️</button>
-                        <button class="notif-panel-close" onclick="copyText('${escapeHtml(m.text||'').replace(/'/g, '\\'') }')"><i class="fas fa-copy"></i></button>
+                        <button class="notif-panel-close" onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>
                     </div>
                 </div>`
             ).join('');
