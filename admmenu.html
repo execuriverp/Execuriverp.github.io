@@ -546,9 +546,12 @@
     }
 
     function listenNotifications() {
-        // Dengar Global Notif
-        db.ref('notifications').limitToLast(20).on('value', s => {
-            renderNotifList(s.val());
+        // Dengar notifikasi per-user (admin sendiri)
+        firebase.auth().onAuthStateChanged(function(u) {
+            if(!u) { renderNotifList(null); return; }
+            db.ref('users/' + u.uid + '/notifications').limitToLast(50).on('value', function(s) {
+                renderNotifList(s.val());
+            });
         });
     }
 
@@ -598,9 +601,20 @@
             db.ref(`users/${target}/notifications`).push(payload)
             .then(() => { Swal.fire('Sent', `Notif sent to ${target}`, 'success'); document.getElementById('nMsg').value=''; });
         } else {
-            // Global Broadcast
-            db.ref('notifications').push(payload)
-            .then(() => { Swal.fire('Sent', 'Global notif sent', 'success'); document.getElementById('nMsg').value=''; });
+            // Global Broadcast ke semua user (per-user notifications)
+            db.ref('users').once('value').then(function(snap) {
+                const users = snap.val() || {};
+                const uids = Object.keys(users);
+                const ops = uids.map(function(uid){ 
+                    return db.ref('users/' + uid + '/notifications').push(payload);
+                });
+                return Promise.all(ops);
+            }).then(function() {
+                Swal.fire('Sent', 'Global notif dikirim ke semua user', 'success');
+                document.getElementById('nMsg').value='';
+            }).catch(function(err){
+                Swal.fire('Error', err.message, 'error');
+            });
         }
     }
 
