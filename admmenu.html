@@ -715,7 +715,7 @@
     }
 
     function openManageFollowers(uid) {
-        Swal.fire({ title: 'Manage Followers', html: `<button class='btn' onclick="injectFake('${uid}', 10)">+10 Fake</button> <button class='btn' onclick="injectFake('${uid}', 100)">+100 Fake</button> <button class='btn btn-danger' onclick="clearFake('${uid}')">Clear Fakes</button>`, background: '#121212', color: '#fff', showConfirmButton: false });
+        Swal.fire({ title: 'Manage Followers', html: `<button class='btn' onclick="injectFake('${uid}', 1)">+1 Fake</button> <button class='btn' onclick="injectFake('${uid}', 100)">+100 Fake</button> <button class='btn btn-danger' onclick="clearFake('${uid}')">Clear Fakes</button>`, background: '#121212', color: '#fff', showConfirmButton: false });
     }
     window.injectFake = (uid, amt) => {
         db.ref('users/'+uid).once('value').then(s => {
