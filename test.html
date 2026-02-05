@@ -292,12 +292,73 @@
     }
     @media (max-width: 480px) {
       .notif-panel {
-        right: 10px;
-        left: 10px;
-        width: auto;
-        max-width: none;
-      }
+      right: 10px;
+      left: 10px;
+      width: auto;
+      max-width: none;
     }
+    }
+    
+    /* MODERN PROFILE UI */
+    .modern-profile-header {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 30px 20px 20px;
+      background: linear-gradient(to bottom, rgba(0,255,136,0.05), transparent);
+    }
+    .mp-avatar-container { position: relative; margin-bottom: 15px; }
+    .mp-avatar { 
+      width: 90px; height: 90px; border-radius: 50%; 
+      object-fit: cover; border: 2px solid var(--accent);
+      box-shadow: 0 10px 30px rgba(0,255,136,0.2);
+    }
+    .mp-edit-badge {
+      position: absolute; bottom: 0; right: 0;
+      background: #222; color: #fff;
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 12px;
+    }
+    .mp-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; justify-content: center; }
+    .mp-name { font-size: 18px; font-weight: 700; color: #fff; }
+    .mp-handle { font-size: 12px; color: #888; margin-bottom: 12px; }
+    .mp-stats { display: flex; gap: 25px; margin-bottom: 20px; }
+    .mp-stat-item { text-align: center; cursor: pointer; }
+    .mp-stat-val { display: block; font-size: 16px; font-weight: 700; color: #fff; }
+    .mp-stat-label { font-size: 10px; color: #888; }
+    .mp-actions { display: flex; gap: 8px; width: 100%; max-width: 280px; margin-bottom: 15px; }
+    .mp-btn { 
+      flex: 1; padding: 8px; border-radius: 6px; border: none; 
+      font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; 
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .mp-btn-primary { background: var(--accent); color: #000; }
+    .mp-btn-sec { background: rgba(255,255,255,0.1); color: #fff; }
+    .mp-tabs { 
+      display: flex; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.1); 
+      margin-bottom: 10px;
+    }
+    .mp-tab { 
+      flex: 1; padding: 12px; text-align: center; color: #666; 
+      cursor: pointer; font-size: 12px; font-weight: 600; position: relative; transition: 0.2s;
+    }
+    .mp-tab.active { color: var(--accent); }
+    .mp-tab.active::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent);
+    }
+    .mp-list { display: flex; flex-direction: column; gap: 8px; padding: 0 15px 20px; max-height: 300px; overflow-y: auto; }
+    .mp-song-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);
+      cursor: pointer;
+    }
+    .mp-song-item:hover { background: rgba(255,255,255,0.06); }
+    .mp-song-icon { 
+      width: 32px; height: 32px; border-radius: 4px; background: rgba(255,255,255,0.1); 
+      display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888;
+    }
+    .mp-song-info { flex: 1; min-width: 0; }
+    .mp-song-title { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mp-song-artist { font-size: 10px; color: #666; }
 
     .cover-box {
       flex: 1; width: 100%; border-radius: 25px;
@@ -902,54 +963,46 @@
   </div>
 
   <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner">
-          <div class="spotify-avatar">
-              <img id="pAvatarImg" src="https://via.placeholder.com/150">
-              <div class="avatar-edit" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
-          </div>
-          <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
-          <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:5px">
-                  <h2 id="pUsername">User</h2>
-                  <span id="pBadge"></span>
-              </div>
-              <div id="pTagDisplay"></div> </div>
-      </div>
-      
-      <!-- PROFILE TABS -->
-      <div class="profile-tabs-wrapper">
-        <button id="tabProfile" class="profile-tab-btn active" onclick="switchProfileTab('profile')">📊 Profil Saya</button>
-        <button id="tabAccount" class="profile-tab-btn" onclick="switchProfileTab('account')">⚙️ Akun</button>
-      </div>
+    <div class="sheet" style="padding:0; overflow:hidden">
+      <div class="modern-profile-header">
+        <div class="mp-avatar-container">
+          <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
+          <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
+        </div>
+        <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
+        
+        <div class="mp-name-row">
+          <span id="pUsername" class="mp-name">User</span>
+          <span id="pBadge"></span>
+        </div>
+        <span id="pEmail" class="mp-handle">user@email.com</span>
+        <div id="pTagDisplay" style="margin-bottom:12px"></div>
 
-      <!-- PROFILE TAB -->
-      <div id="profileTab" class="profile-tab-content active">
-        <div class="profile-stats-grid">
-          <div class="profile-stat-item">
-            <b id="pFol">0</b>
-            <span>Followers</span>
+        <div class="mp-stats">
+          <div class="mp-stat-item">
+            <span id="pFol" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Followers</span>
           </div>
-          <div class="profile-stat-item">
-            <b id="pFollowing">0</b>
-            <span>Following</span>
+          <div class="mp-stat-item">
+            <span id="pFollowing" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Following</span>
           </div>
         </div>
-        <div class="section-title">📝 Postingan Saya</div>
-        <div id="myPostList" class="posts-list"></div>
-      </div>
 
-      <!-- ACCOUNT TAB -->
-      <div id="accountTab" class="profile-tab-content">
-        <div class="account-setting-box">
-          <label class="account-setting-label">📧 Email Address</label>
-          <div class="account-setting-value" id="pEmail">Loading...</div>
+        <div class="mp-actions">
+           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
+           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+           <button class="mp-btn mp-btn-primary" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
-
-        <button onclick="openChangeNameModal()" class="btn-account">✏️ Ubah Nama Pengguna</button>
-        <button onclick="openChangePasswordModal()" class="btn-account danger">🔐 Ubah Password</button>
-        <button onclick="auth.signOut(); location.reload()" class="btn-account logout">🚪 Logout</button>
       </div>
+
+      <div class="mp-tabs">
+        <div class="mp-tab active" onclick="switchProfileTab('posts')" id="tabPosts">MY UPLOADS</div>
+        <div class="mp-tab" onclick="switchProfileTab('likes')" id="tabLikes">FAVORITES</div>
+      </div>
+
+      <div id="myPostList" class="mp-list"></div>
+      <div id="myLikeList" class="mp-list" style="display:none"></div>
     </div>
   </div>
 
@@ -975,28 +1028,31 @@
   </div>
 
   <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="spotify-banner" style="background: linear-gradient(to bottom, #333, #181818);">
-          <div class="spotify-avatar"><img id="vAvatarImg" src="https://via.placeholder.com/150"></div>
-          <div class="spotify-info">
-              <div style="display:flex; align-items:center; gap:5px">
-                  <h2 id="vName">@creator</h2>
-                  <span id="vBadge"></span>
-              </div>
-              <div id="vTagDisplay"></div> </div>
-      </div>
-      <div class="profile-stats-grid">
-        <div class="profile-stat-item">
-          <b id="vFol">0</b>
-          <span>Followers</span>
+    <div class="sheet" style="padding:0; overflow:hidden">
+      <div class="modern-profile-header">
+        <div class="mp-avatar-container">
+          <img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
         </div>
-        <div class="profile-stat-item" style="padding: 0; background: transparent; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s;" onclick="followCreator()">
-          <b id="vCreatorFollowBtn" style="cursor:pointer; transition:0.2s; position: relative; z-index: 10;">Follow</b>
-          <span style="cursor:pointer; color:var(--accent); font-weight:600; font-size:11px; position: relative; z-index: 10;">KLIK</span>
+        
+        <div class="mp-name-row">
+          <span id="vName" class="mp-name">@creator</span>
+        </div>
+        <div id="vTagDisplay" style="margin-bottom:12px; display:flex; gap:5px; justify-content:center"></div>
+
+        <div class="mp-stats">
+          <div class="mp-stat-item">
+            <span id="vFol" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Followers</span>
+          </div>
+        </div>
+
+        <div class="mp-actions" style="justify-content:center">
+           <button id="vCreatorFollowBtn" class="mp-btn mp-btn-primary" onclick="followCreator()" style="max-width:120px">Follow</button>
         </div>
       </div>
-      <div class="section-title">📝 Lagu Terupload</div>
-      <div id="creatorPostList"></div>
+
+      <div style="padding:15px 15px 5px; font-size:12px; color:#888; font-weight:600">UPLOADED SONGS</div>
+      <div id="creatorPostList" class="mp-list"></div>
     </div>
   </div>
 
@@ -1211,14 +1267,8 @@
         }
     });
 
-    // NOTIFICATIONS: global + per-user
+    // NOTIFICATIONS: per-user only
     function loadNotifs() {
-      db.ref('notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
-        const val = snap.val();
-        const list = [];
-        if (val) Object.keys(val).forEach(k => list.push({ ...val[k], id: 'g_' + k }));
-        mergeAndRenderNotifs(list, 'global');
-      });
       auth.onAuthStateChanged(u => {
         if (!u) { mergeAndRenderNotifs([], 'user'); return; }
         db.ref('users/' + u.uid + '/notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
@@ -1516,12 +1566,23 @@
                 const userData = snap.val();
                 document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
                 const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
-                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
                 
                 const creatorSongs = songs.filter(x => x.uid === profileUid);
-                document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+                creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+                
+                document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
+                    `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
+                        <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                        <div class="mp-song-info">
+                            <div class="mp-song-title">${x.title}</div>
+                            <div class="mp-song-artist">${fmtTimestamp(x.timestamp)} • ${x.views || 0} views</div>
+                        </div>
+                        <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+                     </div>`
+                ).join('');
                 
                 document.getElementById('modalCreator').dataset.creatorUid = profileUid;
                 updateCreatorFollowUI(profileUid);
@@ -1631,7 +1692,7 @@
         
         db.ref('songs').push(newSong).then(() => {
             db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
-            db.ref('notifications').push({
+            db.ref('users/' + auth.currentUser.uid + '/notifications').push({
               type: 'upload',
               text: userData.username + ' mengupload: ' + t,
               fromName: userData.username,
@@ -1805,16 +1866,45 @@
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
         else {
             const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
-            document.getElementById('myPostList').innerHTML = myPosts.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><span>${s.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+            myPosts.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+            
+            document.getElementById('myPostList').innerHTML = myPosts.map(s => 
+                `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+                    <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                    <div class="mp-song-info">
+                        <div class="mp-song-title">${s.title}</div>
+                        <div class="mp-song-artist">${fmtTimestamp(s.timestamp)} • ${s.views || 0} views</div>
+                    </div>
+                    <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+                 </div>`
+            ).join('');
+            
+            const myLikes = songs.filter(s => fav.includes(s.url));
+            document.getElementById('myLikeList').innerHTML = myLikes.map(s => 
+                `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+                    <div class="mp-song-icon" style="color:var(--accent)"><i class="fas fa-heart"></i></div>
+                    <div class="mp-song-info">
+                        <div class="mp-song-title">${s.title}</div>
+                        <div class="mp-song-artist">@${s.by}</div>
+                    </div>
+                 </div>`
+            ).join('');
+            
+            switchProfileTab('posts');
             document.getElementById('modalProfile').style.display = 'block';
         }
+    }
+
+    function fmtTimestamp(ts) {
+        if(!ts) return 'Unknown date';
+        const d = new Date(ts);
+        return d.toLocaleDateString();
     }
     
     async function viewCreator() {
         const s = songs[i]; 
         if(!s.uid) return;
         
-        // Jika creator adalah user sendiri, buka profile modal
         if(auth.currentUser && s.uid === auth.currentUser.uid) {
             openProfile();
             return;
@@ -1823,19 +1913,28 @@
         const cRef = await db.ref('users/' + s.uid).get();
         const cData = cRef.val();
         const followerCountCreator = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
+        
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
-        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '');
+        document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '');
         document.getElementById('vFol').innerText = followerCountCreator;
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+        
         const creatorSongs = songs.filter(x => x.uid === s.uid);
-        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => `<div class="song-item" onclick="setup(${songs.indexOf(x)}); closeModal()"><span>${x.title}</span><small><i class="fas fa-play"></i></small></div>`).join('');
+        creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
         
-        // Set data untuk follow button
+        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
+            `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
+                <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                <div class="mp-song-info">
+                    <div class="mp-song-title">${x.title}</div>
+                    <div class="mp-song-artist">${fmtTimestamp(x.timestamp)} • ${x.views || 0} views</div>
+                </div>
+                <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+             </div>`
+        ).join('');
+        
         document.getElementById('modalCreator').dataset.creatorUid = s.uid;
-        
-        // Update follow button state
         updateCreatorFollowUI(s.uid);
-        
         document.getElementById('modalCreator').style.display = 'block';
     }
 
@@ -1908,13 +2007,52 @@
       }
     }
 
+    // CACHE FOR USER BADGES
+    let userCache = {};
+
     function openList(f) {
       const c = document.getElementById('songContainer');
       const l = f ? songs.filter(s => fav.includes(s.url)) : songs;
       c.innerHTML = '<p style="text-align:center; padding:20px; color:#555">Memuat...</p>';
-      const html = l.map(s => `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div style="flex:1"><b>${s.title}</b><br><small style="color:#777">@${s.by}</small></div><span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}"><i class="fas fa-heart"></i></span></div>`).join('');
+      
+      const html = l.map(s => {
+          let badge = '';
+          if(userCache[s.uid]) {
+              if(userCache[s.uid].followers >= 50) badge = '<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>';
+          }
+          return `<div class="song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+            <div style="flex:1">
+                <b>${s.title}</b><br>
+                <small id="artist-${s.key}" style="color:#777">@${s.by}${badge}</small>
+            </div>
+            <span onclick="toggleFav('${s.url}', event)" style="color:${fav.includes(s.url)?'var(--accent)':'#444'}">
+                <i class="fas fa-heart"></i>
+            </span>
+          </div>`;
+      }).join('');
+      
       c.innerHTML = html;
       document.getElementById('modalList').style.display='block';
+      
+      // Lazy fetch badges
+      l.forEach(s => {
+          if(!userCache[s.uid] && s.uid) {
+             // Mark as fetching to avoid duplicate calls if user scrolls or reopens quickly
+             userCache[s.uid] = { followers: 0, fetching: true };
+             
+             db.ref('users/' + s.uid + '/followers').get().then(snap => {
+                 const val = snap.val();
+                 const count = Array.isArray(val) ? val.length : val || 0;
+                 userCache[s.uid] = { followers: count };
+                 
+                 // Update UI if exists
+                 const el = document.getElementById('artist-' + s.key);
+                 if(el && count >= 50) {
+                     el.innerHTML = `@${s.by}<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>`;
+                 }
+             });
+          }
+      });
     }
 
     function toggleFav(u, e) { 
@@ -2181,22 +2319,19 @@
 
     // PROFILE MANAGEMENT FUNCTIONS
     function switchProfileTab(tab) {
-      const profileTab = document.getElementById('profileTab');
-      const accountTab = document.getElementById('accountTab');
-      const btnProfile = document.getElementById('tabProfile');
-      const btnAccount = document.getElementById('tabAccount');
-      
-      if(tab === 'profile') {
-        profileTab.classList.add('active');
-        accountTab.classList.remove('active');
-        btnProfile.classList.add('active');
-        btnAccount.classList.remove('active');
-      } else {
-        profileTab.classList.remove('active');
-        accountTab.classList.add('active');
-        btnProfile.classList.remove('active');
-        btnAccount.classList.add('active');
-      }
+        // Reset all tabs
+        document.querySelectorAll('.mp-tab').forEach(t => t.classList.remove('active'));
+        // Hide all lists
+        document.getElementById('myPostList').style.display = 'none';
+        document.getElementById('myLikeList').style.display = 'none';
+        
+        if(tab === 'posts') {
+            document.getElementById('tabPosts').classList.add('active');
+            document.getElementById('myPostList').style.display = 'flex';
+        } else if(tab === 'likes') {
+            document.getElementById('tabLikes').classList.add('active');
+            document.getElementById('myLikeList').style.display = 'flex';
+        }
     }
 
     function openChangeNameModal() {
