@@ -592,44 +592,6 @@
       border: 1px solid #222;
       font-family: 'Courier New', monospace;
     }
-    
-    .msg-card { 
-      background: rgba(255,255,255,0.03); 
-      border: 1px solid rgba(255,255,255,0.08); 
-      border-radius: 14px; 
-      padding: 12px; 
-      margin: 8px 12px; 
-    }
-    .msg-row { display: flex; align-items: flex-start; gap: 10px; }
-    .msg-bubble { 
-      background: rgba(255,255,255,0.06); 
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px; 
-      padding: 10px 12px; 
-      color: #ddd; 
-      font-size: 13px; 
-      max-width: 80%;
-    }
-    .msg-meta { 
-      font-size: 11px; color: #666; margin-top: 6px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .msg-copy { 
-      background: none; border: none; color: #888; cursor: pointer; 
-    }
-    .dm-bubble { 
-      border-radius: 14px; padding: 10px 12px; max-width: 80%; 
-      font-size: 13px; 
-    }
-    .dm-row { display: flex; margin-bottom: 8px; }
-    .dm-row.me { justify-content: flex-end; }
-    .dm-row.other { justify-content: flex-start; }
-    .dm-bubble.me { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); color: #e7ffe7; }
-    .dm-bubble.other { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #ddd; }
-    .dm-meta { font-size: 10px; color: #777; margin-top: 4px; }
-    .dm-actions { display: flex; gap: 6px; margin-top: 6px; }
-    .dm-actions button { background: none; border: 1px solid #333; color: #ccc; padding: 4px 6px; border-radius: 8px; cursor: pointer; }
-    .dm-input-bar { display: flex; gap: 8px; position: sticky; bottom: 0; background: #181818; padding-top: 8px; }
 
     /* RESPONSIVE POST LIST */
     .posts-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
@@ -944,10 +906,6 @@
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
-          <button id="btnMsg" onclick="toggleMsgPanel()" title="Pesan">
-            <i class="fas fa-envelope"></i>
-            <span id="msgBadge" class="notif-badge"></span>
-          </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
             <i class="fas fa-bell"></i>
             <span id="notifBadge" class="notif-badge"></span>
@@ -956,15 +914,7 @@
         </div>
     </div>
 
-    <div id="msgPanel" class="notif-panel">
-      <div class="notif-panel-header">
-        <h3><i class="fas fa-envelope-open-text"></i> ExeMusic Messages</h3>
-        <button class="notif-panel-close" onclick="closeMsgPanel()"><i class="fas fa-times"></i></button>
-      </div>
-      <div id="msgList" class="notif-list">
-        <div class="notif-empty">Memuat pesan...</div>
-      </div>
-    </div>
+    
 
     <div id="notifPanel" class="notif-panel">
       <div class="notif-panel-header">
@@ -987,8 +937,6 @@
         <div id="by" onclick="viewCreator()">@system</div>
         <button id="btnFav" onclick="toggleFavorite()"><i class="far fa-heart"></i></button>
         <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
-        <button id="btnMsgRow" onclick="messageCurrentCreator()" title="Message" style="display:none"><i class="fas fa-envelope"></i></button>
-        <button id="btnShareProf" onclick="shareCurrentCreatorProfile()" title="Share Profile" style="display:none"><i class="fas fa-share"></i></button>
       </div>
     </div>
 
@@ -1133,7 +1081,6 @@
 
         <div class="mp-actions" style="justify-content:center">
            <button id="vCreatorFollowBtn" class="mp-btn mp-btn-primary" onclick="followCreator()" style="max-width:120px">Follow</button>
-           <button class="mp-btn mp-btn-sec" onclick="openDM(document.getElementById('modalCreator').dataset.creatorUid, document.getElementById('vName').textContent)"><i class="fas fa-envelope"></i> Message</button>
            <button class="mp-btn mp-btn-sec" onclick="shareProfile(document.getElementById('modalCreator').dataset.creatorUid, document.getElementById('vName').textContent)"><i class="fas fa-share"></i> Share</button>
         </div>
       </div>
@@ -1143,16 +1090,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalDM" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)"><i class="fas fa-envelope"></i> Direct Message</h3>
-      <div id="dmList" style="display:flex; flex-direction:column; max-height:45vh; overflow:auto; padding:6px 0"></div>
-      <div class="dm-input-bar">
-        <input id="dmText" class="inp-dark" placeholder="Tulis pesan..." style="flex:1">
-        <button class="btn-act" style="flex:0 0 auto; min-width:90px" onclick="sendDM()">Kirim</button>
-      </div>
-    </div>
-  </div>
+  
 
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
@@ -1446,63 +1384,6 @@
     });
     loadNotifs();
 
-    // MESSAGES (DM)
-    let msgList = [];
-    function loadMessages() {
-      auth.onAuthStateChanged(u => {
-        if(!u) { renderMsgList([]); return; }
-        db.ref('users/' + u.uid + '/messages').orderByChild('timestamp').limitToLast(100).on('value', snap => {
-          const val = snap.val();
-          const list = [];
-          if(val) Object.keys(val).forEach(k => list.push({ ...val[k], id: k }));
-          msgList = list.sort((a,b) => (b.timestamp||0)-(a.timestamp||0));
-          renderMsgList(msgList);
-          updateMsgBadge();
-        });
-      });
-    }
-    function renderMsgList(list) {
-      const el = document.getElementById('msgList');
-      if(!el) return;
-      if(!list.length) { el.innerHTML = '<div class="notif-empty">Belum ada pesan</div>'; return; }
-      el.innerHTML = list.map(m => {
-        const time = timeAgo(m.timestamp);
-        const react = m.reaction ? `<span style="margin-left:6px">${m.reaction}</span>` : '';
-        return `<div class="msg-card">
-          <div class="msg-row">
-            <div class="msg-bubble">${escapeHtml(m.text||'')}</div>
-          </div>
-          <div class="msg-meta">${escapeHtml(m.fromName||'User')} • ${time} <button class="msg-copy" onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>${react}</div>
-        </div>`;
-      }).join('');
-    }
-    function updateMsgBadge() {
-      const badge = document.getElementById('msgBadge');
-      if(badge) {
-        const count = msgList.filter(m => m.unread).length;
-        badge.textContent = count > 99 ? '99+' : (count||'');
-        badge.classList.toggle('show', count > 0);
-      }
-    }
-    function toggleMsgPanel() {
-      const panel = document.getElementById('msgPanel');
-      if(panel) panel.classList.toggle('show');
-    }
-    function closeMsgPanel() {
-      const panel = document.getElementById('msgPanel');
-      if(panel) panel.classList.remove('show');
-    }
-    document.addEventListener('click', function(e){
-      const panel = document.getElementById('msgPanel');
-      const btn = document.getElementById('btnMsg');
-      if (panel && panel.classList.contains('show') && !panel.contains(e.target) && btn && !btn.contains(e.target))
-        closeMsgPanel();
-    });
-    function copyText(t) {
-      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
-      showToast('Pesan disalin');
-    }
-    loadMessages();
 
     function triggerBroadcast(msg) {
         const el = document.getElementById('sysBroadcast');
@@ -1812,8 +1693,6 @@
       const crown = cData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + crown;
       const hasCreator = !!songs[i].uid;
-      document.getElementById('btnMsgRow').style.display = hasCreator ? 'inline-flex' : 'none';
-      document.getElementById('btnShareProf').style.display = hasCreator ? 'inline-flex' : 'none';
       if(play) { 
         audio.play(); 
         document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
@@ -2350,61 +2229,10 @@
         navigator.clipboard.writeText(link); 
         msg("Link lagu dengan ID disalin"); 
     }
-    function messageCurrentCreator() {
-        const s = songs[i]; if(!s || !s.uid) return msg('Tidak ada creator');
-        openDM(s.uid, s.by);
-    }
-    function shareCurrentCreatorProfile() {
-        const s = songs[i]; if(!s || !s.uid) return msg('Tidak ada creator');
-        shareProfile(s.uid, s.by);
-    }
     function shareProfile(uid, username) {
         const link = window.location.origin + window.location.pathname + '?profile_userid=' + uid;
         navigator.clipboard.writeText(link);
         showToast('Link profil @' + (username||'user') + ' disalin');
-    }
-    let _dmTargetUid = null;
-    function openDM(uid, name) {
-        if(!auth.currentUser) return msg("Login dulu!");
-        _dmTargetUid = uid;
-        document.getElementById('modalDM').style.display = 'block';
-        const myUid = auth.currentUser.uid;
-        db.ref('users/' + myUid + '/conversations/' + uid).on('value', snap => {
-            const val = snap.val(); const list = [];
-            if(val) Object.keys(val).forEach(k => list.push({ ...val[k], id: k }));
-            list.sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
-            document.getElementById('dmList').innerHTML = list.map(m => {
-                const me = m.fromUid===myUid;
-                return `<div class="dm-row ${me?'me':'other'}">
-                    <div>
-                      <div class="dm-bubble ${me?'me':'other'}">${escapeHtml(m.text||'')}</div>
-                      <div class="dm-meta">${timeAgo(m.timestamp)}</div>
-                      <div class="dm-actions">
-                        <button onclick="reactDM('${m.id}','👍')">👍</button>
-                        <button onclick="reactDM('${m.id}','❤️')">❤️</button>
-                        <button onclick="copyText(this.dataset.text)" data-text="${attrEscape(m.text||'')}"><i class="fas fa-copy"></i></button>
-                      </div>
-                    </div>
-                </div>`;
-            }).join('');
-        });
-    }
-    function sendDM() {
-        if(!_dmTargetUid || !auth.currentUser) return;
-        const inp = document.getElementById('dmText'); const t = inp.value.trim(); if(!t) return;
-        const myUid = auth.currentUser.uid;
-        const now = Date.now();
-        const payload = { text: t, timestamp: now, fromUid: myUid, fromName: userData.username };
-        const a = db.ref('users/' + myUid + '/conversations/' + _dmTargetUid).push(payload);
-        const b = db.ref('users/' + _dmTargetUid + '/conversations/' + myUid).push(payload);
-        db.ref('users/' + _dmTargetUid + '/messages').push({ fromUid: myUid, fromName: userData.username, text: t, timestamp: now, unread: true });
-        inp.value = '';
-    }
-    function reactDM(id, emoji) {
-        if(!_dmTargetUid || !auth.currentUser) return;
-        const myUid = auth.currentUser.uid;
-        db.ref('users/' + myUid + '/conversations/' + _dmTargetUid + '/' + id).update({ reaction: emoji });
-        db.ref('users/' + _dmTargetUid + '/conversations/' + myUid + '/' + id).update({ reaction: emoji });
     }
     function shareToWhatsApp() {
         const name = (userData && userData.username) ? userData.username : 'Guest';
