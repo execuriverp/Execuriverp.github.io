@@ -1111,8 +1111,10 @@
         <div class="mp-actions">
            <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
            <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser && auth.currentUser.uid, userData && userData.username)"><i class="fas fa-share"></i> Share Profile</button>
            <button class="mp-btn mp-btn-primary" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
+        <div style="font-size:11px; color:#888; margin-top:8px" id="pVipStatus">Status VIP: NONVIP</div>
       </div>
 
       <div class="mp-tabs">
@@ -1159,9 +1161,13 @@
         <div id="vTagDisplay" style="margin-bottom:12px; display:flex; gap:5px; justify-content:center"></div>
 
         <div class="mp-stats">
-          <div class="mp-stat-item">
+          <div class="mp-stat-item" onclick="openCreatorFollowers()">
             <span id="vFol" class="mp-stat-val">0</span>
             <span class="mp-stat-label">Followers</span>
+          </div>
+          <div class="mp-stat-item" onclick="openCreatorFollowing()">
+            <span id="vFollowing" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Following</span>
           </div>
         </div>
 
@@ -1310,7 +1316,7 @@
           <span id="eidClaimStatus">Belum claim</span>
         </div>
         <div style="display:flex; gap:10px; justify-content:center; margin:14px 0 10px">
-          <button class="claim-btn" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
+          <button id="claimBtn" class="claim-btn" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
         </div>
         <button class="shop-btn" onclick="openKetupatShop()">Buka Toko Ketupat</button>
         <div style="text-align:center; color:#888; font-size:12px; margin-top:12px">Event hourly: setiap jam :00 ada disco mode random dan peluang dapat ketupat 1–10 jika online.</div>
@@ -1327,6 +1333,12 @@
         <button class="btn-act" style="background:#25D366; color:#fff" onclick="shareToWhatsApp()">WhatsApp</button>
         <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyLink').style.display='none'">Back</button>
       </div>
+    </div>
+  </div>
+  <div class="modal" id="modalSocialList" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:12px; color:var(--accent)" id="socialTitle">Social</h3>
+      <div id="socialList" class="mp-list"></div>
     </div>
   </div>
   <div class="modal" id="modalCopyAudio" onclick="if(event.target==this)this.style.display='none'">
@@ -1709,6 +1721,9 @@
           }
           updateKetupatUI(userData.ketupat || 0);
           updateEidMiniStatus();
+          const vs = document.getElementById('pVipStatus'); 
+          if(vs) vs.textContent = 'Status VIP: ' + (vipActive ? 'AKTIF' : 'NONVIP');
+          updateClaimButtonVisibility();
           
           // Sensor email
           const email = u.email || "";
@@ -1754,6 +1769,7 @@
                 const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
                 document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (userData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
+                document.getElementById('vFollowing').innerText = (Array.isArray(userData?.following) ? userData.following.length : userData?.following || 0);
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
                 
                 const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
@@ -2055,7 +2071,14 @@
     }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
-    function openEvent() { document.getElementById('modalEvent').style.display='block'; startEventCountdown(); updateEidMiniStatus(); try { eventAudio.src = 'https://g.top4top.io/m_36891kox71.mp3'; eventAudio.play(); } catch(e) {} }
+    function openEvent() { 
+      document.getElementById('modalEvent').style.display='block'; 
+      startEventCountdown(); 
+      updateEidMiniStatus(); 
+      updateClaimButtonVisibility();
+      try { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; } catch(e) {}
+      try { eventAudio.src = 'https://g.top4top.io/m_36891kox71.mp3'; eventAudio.play(); } catch(e) {} 
+    }
     function startEventCountdown() {
       const fallback = new Date('2026-03-20T00:00:00Z').getTime();
       db.ref('settings/eidTs').get().then(s => {
@@ -2142,6 +2165,12 @@
       const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
       sEl.textContent = claimed ? 'Claimed' : 'Belum claim';
     }
+    function updateClaimButtonVisibility() {
+      const btn = document.getElementById('claimBtn');
+      if(!btn) return;
+      const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
+      btn.style.display = claimed ? 'none' : 'block';
+    }
     function playClaimAnimation() { showToast('🎁 VIP claimed'); }
     function closeEventModal() { const m = document.getElementById('modalEvent'); if(m) m.style.display='none'; try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} }
     function openKetupatShop() { try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} document.getElementById('modalEvent').style.display='none'; document.getElementById('modalKetupatShop').style.display='block'; }
@@ -2182,6 +2211,38 @@
           isActive = false;
         }
       }, 15000);
+    }
+    function openCreatorFollowers() {
+      const uid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!uid) return;
+      db.ref('users/'+uid+'/followers').get().then(s => {
+        const arr = s.val() || [];
+        const ids = Array.isArray(arr) ? arr : [];
+        if(!ids.length) { renderSocialList('Followers', []); return; }
+        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
+          renderSocialList('Followers', list);
+        });
+      });
+    }
+    function openCreatorFollowing() {
+      const uid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!uid) return;
+      db.ref('users/'+uid+'/following').get().then(s => {
+        const arr = s.val() || [];
+        const ids = Array.isArray(arr) ? arr : [];
+        if(!ids.length) { renderSocialList('Following', []); return; }
+        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
+          renderSocialList('Following', list);
+        });
+      });
+    }
+    function renderSocialList(title, items) {
+      const modal = document.getElementById('modalSocialList');
+      const sheet = modal.querySelector('.sheet');
+      sheet.querySelector('#socialTitle').textContent = title;
+      const box = sheet.querySelector('#socialList');
+      box.innerHTML = items.length ? items.map(x => `<div class="mp-song-item"><div class="mp-song-info"><div class="mp-song-title">@${x.name}</div></div></div>`).join('') : '<div class="notif-empty">Belum ada data</div>';
+      modal.style.display = 'block';
     }
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
