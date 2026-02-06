@@ -2226,7 +2226,7 @@
       if(!uid) return;
       db.ref('users/'+uid+'/followers').get().then(s => {
         const arr = s.val() || [];
-        const ids = Array.isArray(arr) ? arr : [];
+        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
         if(!ids.length) { renderSocialList('Followers', []); return; }
         Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
           renderSocialList('Followers', list);
@@ -2238,7 +2238,7 @@
       if(!uid) return;
       db.ref('users/'+uid+'/following').get().then(s => {
         const arr = s.val() || [];
-        const ids = Array.isArray(arr) ? arr : [];
+        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
         if(!ids.length) { renderSocialList('Following', []); return; }
         Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
           renderSocialList('Following', list);
