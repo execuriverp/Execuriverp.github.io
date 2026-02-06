@@ -871,6 +871,64 @@
       text-shadow: 0 0 8px #00d4ff;
       display: inline;
     }
+    .event-card {
+      background: rgba(24,24,24,0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .countdown-wrap {
+      display: flex; gap: 12px; justify-content: center; align-items: center; margin: 10px 0 14px;
+    }
+    .count-item {
+      min-width: 64px; padding: 10px; border-radius: 12px; 
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .count-val { font-size: 20px; font-weight: 800; color: #fff; }
+    .count-lbl { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .mini-row { display:flex; justify-content:center; gap:10px; align-items:center; font-size:12px; color:#aaa; margin-top:4px; }
+    .mini-badge { display:inline-flex; align-items:center; gap:6px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); padding:6px 10px; border-radius:999px; }
+    .claim-btn {
+      width:100%; padding:14px; background: linear-gradient(90deg, #ffd700, #fbf5b7); color:#000; border:none; border-radius:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; box-shadow: 0 10px 30px rgba(255,215,0,0.25);
+    }
+    .claim-btn:active { transform: scale(0.98); }
+    .shop-btn {
+      width:100%; padding:12px; background:#222; color:#fff; border:1px solid #333; border-radius:12px; font-weight:700; cursor:pointer;
+    }
+    .gift-anim {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); animation: fadeIn 0.2s ease;
+    }
+    .gift-box {
+      width: 120px; height: 120px; border-radius: 18px; background: linear-gradient(135deg, #ff4d4d, #ffcc00); box-shadow: 0 15px 40px rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; color:#000; font-size:42px; animation: giftPop 0.8s ease forwards;
+    }
+    @keyframes giftPop { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); } }
+    @keyframes flipDown { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(40deg); } 100% { transform: rotateX(0deg); } }
+    .shop-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px; }
+    .shop-item { padding:10px; border-radius:12px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center; }
+    .shop-action { width:100%; padding:10px; background: var(--accent); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; }
+    .shop-row { display:flex; gap:8px; align-items:center; }
+    .shop-select { flex:1; }
+    @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
+    #btnEvent {
+      position: relative;
+      width: 42px; height: 42px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: 0.2s;
+    }
+    #btnEvent:hover { background: var(--accent); color: black; border-color: var(--accent); }
+    #btnEvent:active { transform: scale(0.95); }
   </style>
 </head>
 <body>
@@ -887,6 +945,30 @@
       <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
   </div>
 
+  <div class="modal" id="modalKetupatShop" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="event-card">
+        <div style="text-align:center; margin-bottom:10px; color:#fff; font-weight:800"><i class="fas fa-store"></i> Toko Ketupat</div>
+        <div class="shop-grid">
+          <div class="shop-item"><div>Tag Ramadhan</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('ramadhan',10)">Tukar</button></div>
+          <div class="shop-item"><div>Tag Sepuh</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('sepuh',10)">Tukar</button></div>
+          <div class="shop-item"><div>Tag Pro</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('pro',10)">Tukar</button></div>
+          <div class="shop-item"><div>BG Merah</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('red',50)">Tukar</button></div>
+          <div class="shop-item"><div>BG Biru</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('blue',50)">Tukar</button></div>
+          <div class="shop-item"><div>BG Hijau</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('green',50)">Tukar</button></div>
+          <div class="shop-item"><div>BG Ungu</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('purple',50)">Tukar</button></div>
+        </div>
+        <div class="shop-row" style="margin-top:12px">
+          <select id="vipDaysSel" class="inp-dark shop-select">
+            <option value="1">VIP Trial 1 Hari (100💠)</option>
+            <option value="2">VIP Trial 2 Hari (100💠)</option>
+            <option value="3">VIP Trial 3 Hari (100💠)</option>
+          </select>
+          <button class="shop-action" onclick="exchangeVipTrial()">Tukar</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="mtScreen" class="full-overlay">
     <i class="fas fa-tools" style="color: var(--accent)"></i>
     <h1>Server Maintenance</h1>
@@ -906,6 +988,10 @@
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
+          <button id="btnEvent" onclick="openEvent()" title="Event">
+            <span style="font-size:18px">💎</span>
+            <span id="eventBadge" class="notif-badge"></span>
+          </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
             <i class="fas fa-bell"></i>
             <span id="notifBadge" class="notif-badge"></span>
@@ -1025,8 +1111,10 @@
         <div class="mp-actions">
            <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
            <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser && auth.currentUser.uid, userData && userData.username)"><i class="fas fa-share"></i> Share Profile</button>
            <button class="mp-btn mp-btn-primary" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
+        <div style="font-size:11px; color:#888; margin-top:8px" id="pVipStatus">Status VIP: NONVIP</div>
       </div>
 
       <div class="mp-tabs">
@@ -1073,9 +1161,13 @@
         <div id="vTagDisplay" style="margin-bottom:12px; display:flex; gap:5px; justify-content:center"></div>
 
         <div class="mp-stats">
-          <div class="mp-stat-item">
+          <div class="mp-stat-item" onclick="openCreatorFollowers()">
             <span id="vFol" class="mp-stat-val">0</span>
             <span class="mp-stat-label">Followers</span>
+          </div>
+          <div class="mp-stat-item" onclick="openCreatorFollowing()">
+            <span id="vFollowing" class="mp-stat-val">0</span>
+            <span class="mp-stat-label">Following</span>
           </div>
         </div>
 
@@ -1197,6 +1289,40 @@
       </div>
     </div>
   </div>
+  <div class="modal" id="modalEvent" onclick="if(event.target==this)closeEventModal()">
+    <div class="sheet">
+      <div class="event-card">
+        <div style="text-align:center; margin-bottom:8px; color:var(--accent); font-weight:800"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</div>
+        <div id="eidCountdown" class="countdown-wrap">
+          <div class="count-item">
+            <div class="count-val" id="cDays">0</div>
+            <div class="count-lbl">Hari</div>
+          </div>
+          <div class="count-item">
+            <div class="count-val" id="cHours">0</div>
+            <div class="count-lbl">Jam</div>
+          </div>
+          <div class="count-item">
+            <div class="count-val" id="cMins">0</div>
+            <div class="count-lbl">Menit</div>
+          </div>
+          <div class="count-item">
+            <div class="count-val" id="cSecs">0</div>
+            <div class="count-lbl">Detik</div>
+          </div>
+        </div>
+        <div class="mini-row">
+          <span class="mini-badge"><i class="fas fa-gem" style="color:#00d4ff"></i> <b id="eidKetVal">0</b></span>
+          <span id="eidClaimStatus">Belum claim</span>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:center; margin:14px 0 10px">
+          <button id="claimBtn" class="claim-btn" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
+        </div>
+        <button class="shop-btn" onclick="openKetupatShop()">Buka Toko Ketupat</button>
+        <div style="text-align:center; color:#888; font-size:12px; margin-top:12px">Event hourly: setiap jam :00 ada disco mode random dan peluang dapat ketupat 1–10 jika online.</div>
+      </div>
+    </div>
+  </div>
 
   <div class="modal" id="modalCopyLink" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
@@ -1207,6 +1333,12 @@
         <button class="btn-act" style="background:#25D366; color:#fff" onclick="shareToWhatsApp()">WhatsApp</button>
         <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalCopyLink').style.display='none'">Back</button>
       </div>
+    </div>
+  </div>
+  <div class="modal" id="modalSocialList" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:12px; color:var(--accent)" id="socialTitle">Social</h3>
+      <div id="socialList" class="mp-list"></div>
     </div>
   </div>
   <div class="modal" id="modalCopyAudio" onclick="if(event.target==this)this.style.display='none'">
@@ -1267,6 +1399,8 @@
     let userData = null;
     const audio = new Audio();
     audio.volume = savedVol; // Apply saved volume immediately
+    const eventAudio = new Audio();
+    eventAudio.volume = 1.0;
     let broadcastTimeout;
     let discoModeActive = false;
     let discoColor = "#00ff88";
@@ -1569,17 +1703,41 @@
               document.getElementById('bannedScreen').style.display = 'flex';
               auth.signOut(); return;
           }
+          const now = Date.now();
+          const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
           document.getElementById('topLoginBtn').textContent = userData.username;
-          document.getElementById('pUsername').innerHTML = userData.username + (userData.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
+          document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
-          document.getElementById('pFol').innerText = (Array.isArray(userData.followers) ? userData.followers.length : userData.followers) || 0;
-          document.getElementById('pFollowing').innerText = (Array.isArray(userData.following) ? userData.following.length : userData.following) || 0;
+          (function(){
+            const fol = userData.followers;
+            let folCount = 0;
+            if(Array.isArray(fol)) folCount = fol.length;
+            else if(fol && typeof fol === 'object') folCount = Object.keys(fol).length;
+            else folCount = fol || 0;
+            document.getElementById('pFol').innerText = folCount;
+          })();
+          (function(){
+            const flg = userData.following;
+            let flgCount = 0;
+            if(Array.isArray(flg)) flgCount = flg.length;
+            else if(flg && typeof flg === 'object') flgCount = Object.keys(flg).length;
+            else flgCount = flg || 0;
+            document.getElementById('pFollowing').innerText = flgCount;
+          })();
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           const followerCount = Array.isArray(userData.followers) ? userData.followers.length : userData.followers || 0;
           document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
           const profHeader = document.querySelector('#modalProfile .modern-profile-header');
-          if(profHeader) profHeader.classList.toggle('vip', !!userData.vip);
+          if(profHeader) {
+            profHeader.classList.toggle('vip', vipActive);
+            if(!vipActive && userData.profileBg) profHeader.style.background = userData.profileBg;
+          }
+          updateKetupatUI(userData.ketupat || 0);
+          updateEidMiniStatus();
+          const vs = document.getElementById('pVipStatus'); 
+          if(vs) vs.textContent = 'Status VIP: ' + (vipActive ? 'AKTIF' : 'NONVIP');
+          updateClaimButtonVisibility();
           
           // Sensor email
           const email = u.email || "";
@@ -1623,12 +1781,15 @@
                 const userData = snap.val();
                 document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
                 const followerCountView = Array.isArray(userData?.followers) ? userData.followers.length : userData?.followers || 0;
-                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (userData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
+                const nowC = Date.now();
+                const creatorVipActive = !!(userData?.vip || (userData?.trialvip && userData.trialvip.expireAt > nowC));
+                document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
+                document.getElementById('vFollowing').innerText = (Array.isArray(userData?.following) ? userData.following.length : userData?.following || 0);
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
                 
                 const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
-                if(creatorHeader) creatorHeader.classList.toggle('vip', !!userData?.vip);
+                if(creatorHeader) creatorHeader.classList.toggle('vip', creatorVipActive);
                 
                 const creatorSongs = songs.filter(x => x.uid === profileUid);
                 creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
@@ -1675,6 +1836,7 @@
         }
       }
     });
+    initHourlyEvent();
 
     async function setup(idx, play = true) {
       if(!songs[idx]) return;
@@ -1690,7 +1852,8 @@
       const cData = cRef.val();
       const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
       const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-      const crown = cData?.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
+      const creatorVipActive = !!(cData?.vip || (cData?.trialvip && cData.trialvip.expireAt > Date.now()));
+      const crown = creatorVipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + crown;
       const hasCreator = !!songs[i].uid;
       if(play) { 
@@ -1715,7 +1878,8 @@
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
         const diff = (now - lastUpload) / 1000 / 60; // dalam menit
-        const cooldown = (userData.role === 'admin') ? 0 : (userData.vip ? 15 : 30);
+        const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
+        const cooldown = (userData.role === 'admin') ? 0 : (vipActive ? 15 : 30);
         
         if(diff < cooldown && userData.role !== 'admin') {
             return Swal.fire({
@@ -1846,26 +2010,17 @@
         const targetData = targetSnap.val();
         const currentData = currentSnap.val();
         
-        const targetFollowers = Array.isArray(targetData?.followers) ? [...targetData.followers] : [];
-        const currentFollowing = Array.isArray(currentData?.following) ? [...currentData.following] : [];
-        
-        const isFollowing = targetFollowers.includes(auth.currentUser.uid);
+        const followersNode = targetData?.followers || {};
+        const followingNode = currentData?.following || {};
+        const isFollowing = Array.isArray(followersNode) ? followersNode.includes(auth.currentUser.uid) : !!followersNode[auth.currentUser.uid];
         
         if(isFollowing) {
-          // Unfollow
-          const newFollowers = targetFollowers.filter(uid => uid !== auth.currentUser.uid);
-          const newFollowing = currentFollowing.filter(uid => uid !== targetUid);
-          
-          await targetRef.update({ followers: newFollowers });
-          await currentRef.update({ following: newFollowing });
+          await targetRef.child('followers').child(auth.currentUser.uid).remove();
+          await currentRef.child('following').child(targetUid).remove();
           msg("Unfollowed!");
         } else {
-          // Follow
-          const newFollowers = [...targetFollowers, auth.currentUser.uid];
-          const newFollowing = [...currentFollowing, targetUid];
-          
-          await targetRef.update({ followers: newFollowers });
-          await currentRef.update({ following: newFollowing });
+          await targetRef.child('followers').child(auth.currentUser.uid).set(true);
+          await currentRef.child('following').child(targetUid).set(true);
           db.ref('users/' + targetUid + '/notifications').push({
             type: 'follow',
             text: userData.username + ' mulai mengikuti kamu',
@@ -1886,10 +2041,11 @@
       if(!auth.currentUser || !songs[i].uid) return;
       const targetSnap = await db.ref('users/' + songs[i].uid).get();
       const targetData = targetSnap.val();
-      const targetFollowers = Array.isArray(targetData?.followers) ? targetData.followers : [];
+      const targetFollowers = targetData?.followers || {};
+      const isFollowing = Array.isArray(targetFollowers) ? targetFollowers.includes(auth.currentUser.uid) : !!targetFollowers[auth.currentUser.uid];
       
       const btn = document.getElementById('btnFollow');
-      if(targetFollowers.includes(auth.currentUser.uid)) {
+      if(isFollowing) {
         btn.style.display = 'none'; // Hide button jika sudah follow
       } else {
         btn.style.display = 'flex';
@@ -1924,6 +2080,179 @@
     }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
+    function openEvent() { 
+      document.getElementById('modalEvent').style.display='block'; 
+      startEventCountdown(); 
+      updateEidMiniStatus(); 
+      updateClaimButtonVisibility();
+      try { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; } catch(e) {}
+      try { eventAudio.src = 'https://g.top4top.io/m_36891kox71.mp3'; eventAudio.play(); } catch(e) {} 
+    }
+    function startEventCountdown() {
+      const fallback = new Date('2026-03-20T00:00:00Z').getTime();
+      db.ref('settings/eidTs').get().then(s => {
+        const target = s.exists() ? s.val() : fallback;
+        if(window._eidInterval) clearInterval(window._eidInterval);
+        window._eidInterval = setInterval(() => {
+          const d = target - Date.now();
+          const dEl = document.getElementById('cDays');
+          const hEl = document.getElementById('cHours');
+          const mEl = document.getElementById('cMins');
+          const sEl = document.getElementById('cSecs');
+          if(!dEl || !hEl || !mEl || !sEl) return;
+          if(d <= 0) {
+            dEl.textContent = '0'; hEl.textContent = '0'; mEl.textContent = '0'; sEl.textContent = '0';
+            clearInterval(window._eidInterval);
+            return;
+          }
+          const days = Math.floor(d/86400000);
+          const hrs = Math.floor((d%86400000)/3600000);
+          const mins = Math.floor((d%3600000)/60000);
+          const secs = Math.floor((d%60000)/1000);
+          dEl.textContent = String(days);
+          hEl.textContent = String(hrs);
+          mEl.textContent = String(mins);
+          sEl.textContent = String(secs);
+          [dEl,hEl,mEl,sEl].forEach(x => { x.style.animation = 'none'; void x.offsetWidth; x.style.animation = 'flipDown 0.9s'; });
+        }, 1000);
+      });
+    }
+    function claimTrialVip1d() {
+      if(!auth.currentUser) return msg('Login dulu!');
+      const ref = db.ref('users/'+auth.currentUser.uid+'/trialvip');
+      ref.get().then(s => {
+        const cur = s.val() || {};
+        if(cur.freeClaimed === true) { msg('Kamu sudah claim VIP'); return; }
+        const expire = Date.now() + 24*3600000;
+        ref.set({ active: true, expireAt: expire, freeClaimed: true }).then(() => {
+          msg('Trial VIP 1 hari aktif');
+          playClaimAnimation();
+          updateEidMiniStatus();
+        });
+      });
+    }
+    function ensureKetupat(countNeeded) {
+      return db.ref('users/'+auth.currentUser.uid+'/ketupat').get().then(s => {
+        const cur = s.val() || 0;
+        if(cur < countNeeded) { msg('Ketupat kurang '+(countNeeded-cur)); return Promise.reject('insufficient'); }
+        return cur;
+      });
+    }
+    function exchangeTag(tag, cost) {
+      if(!auth.currentUser) return msg('Login dulu!');
+      ensureKetupat(cost).then(cur => {
+        const newVal = cur - cost;
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal, tag: tag });
+      }).then(() => msg('Tag diperbarui'));
+    }
+    function exchangeBg(color, cost) {
+      if(!auth.currentUser) return msg('Login dulu!');
+      ensureKetupat(cost).then(cur => {
+        const newVal = cur - cost;
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal, profileBg: color });
+      }).then(() => msg('Background profil diubah'));
+    }
+    function exchangeVipTrial() {
+      if(!auth.currentUser) return msg('Login dulu!');
+      const days = parseInt(document.getElementById('vipDaysSel').value, 10) || 1;
+      const cost = 100;
+      ensureKetupat(cost).then(cur => {
+        const newVal = cur - cost;
+        const expire = Date.now() + days*24*3600000;
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal }).then(() => db.ref('users/'+auth.currentUser.uid+'/trialvip').update({ active: true, expireAt: expire }));
+      }).then(() => msg('VIP trial aktif'));
+    }
+    function updateKetupatUI(val) {
+      const b = document.getElementById('eventBadge'); if(!b) return;
+      b.textContent = val ? String(val) : '';
+      b.classList.toggle('show', !!val);
+      const k = document.getElementById('eidKetVal'); if(k) k.textContent = val ? String(val) : '0';
+    }
+    function updateEidMiniStatus() {
+      const sEl = document.getElementById('eidClaimStatus');
+      if(!sEl) return;
+      const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
+      sEl.textContent = claimed ? 'Claimed' : 'Belum claim';
+    }
+    function updateClaimButtonVisibility() {
+      const btn = document.getElementById('claimBtn');
+      if(!btn) return;
+      const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
+      btn.style.display = claimed ? 'none' : 'block';
+    }
+    function playClaimAnimation() { showToast('🎁 VIP claimed'); }
+    function closeEventModal() { const m = document.getElementById('modalEvent'); if(m) m.style.display='none'; try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} }
+    function openKetupatShop() { try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} document.getElementById('modalEvent').style.display='none'; document.getElementById('modalKetupatShop').style.display='block'; }
+    function initHourlyEvent() {
+      let lastHour = null;
+      let isActive = false;
+      setInterval(() => {
+        const now = new Date();
+        const m = now.getMinutes();
+        const h = now.getHours();
+        if(m < 5) {
+          if(h !== lastHour || !isActive) {
+            lastHour = h;
+            isActive = true;
+            const variants = ['heartbeat','rainbow','minimal','ice'];
+            const colors = ['#00ff88','#00d4ff','#ff4d4d','#ffcc00'];
+            const v = variants[Math.floor(Math.random()*variants.length)];
+            const c = colors[Math.floor(Math.random()*colors.length)];
+            applyDiscoMode(v, c);
+            if(auth.currentUser) {
+              const slot = new Date().toDateString()+'-'+h;
+              const ref = db.ref('users/'+auth.currentUser.uid+'/lastEventHour');
+              ref.get().then(s => {
+                if(s.val() === slot) return;
+                const gain = Math.floor(Math.random()*10)+1;
+                db.ref('users/'+auth.currentUser.uid).transaction(u => {
+                  const cur = (u&&u.ketupat)||0;
+                  return Object.assign({}, u||{}, { ketupat: cur + gain, lastEventHour: slot });
+                }).then(() => {
+                  db.ref('users/'+auth.currentUser.uid+'/notifications').push({ type:'system', text:'+ '+gain+' 💠', timestamp: Date.now() });
+                  updateKetupatUI((userData&&userData.ketupat)||0 + gain);
+                });
+              });
+            }
+          }
+        } else if(isActive) {
+          resetTheme();
+          isActive = false;
+        }
+      }, 15000);
+    }
+    function openCreatorFollowers() {
+      const uid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!uid) return;
+      db.ref('users/'+uid+'/followers').get().then(s => {
+        const arr = s.val() || [];
+        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
+        if(!ids.length) { renderSocialList('Followers', []); return; }
+        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
+          renderSocialList('Followers', list);
+        });
+      });
+    }
+    function openCreatorFollowing() {
+      const uid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!uid) return;
+      db.ref('users/'+uid+'/following').get().then(s => {
+        const arr = s.val() || [];
+        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
+        if(!ids.length) { renderSocialList('Following', []); return; }
+        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
+          renderSocialList('Following', list);
+        });
+      });
+    }
+    function renderSocialList(title, items) {
+      const modal = document.getElementById('modalSocialList');
+      const sheet = modal.querySelector('.sheet');
+      sheet.querySelector('#socialTitle').textContent = title;
+      const box = sheet.querySelector('#socialList');
+      box.innerHTML = items.length ? items.map(x => `<div class="mp-song-item"><div class="mp-song-info"><div class="mp-song-title">@${x.name}</div></div></div>`).join('') : '<div class="notif-empty">Belum ada data</div>';
+      modal.style.display = 'block';
+    }
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
         else {
@@ -2005,11 +2334,12 @@
       if(!auth.currentUser) return;
       const creatorSnap = await db.ref('users/' + creatorUid).get();
       const creatorData = creatorSnap.val();
-      const creatorFollowers = Array.isArray(creatorData?.followers) ? creatorData.followers : [];
+      const creatorFollowers = creatorData?.followers || {};
+      const isFollowing = Array.isArray(creatorFollowers) ? creatorFollowers.includes(auth.currentUser.uid) : !!creatorFollowers[auth.currentUser.uid];
       
       const btnText = document.getElementById('vCreatorFollowBtn');
       
-      if(creatorFollowers.includes(auth.currentUser.uid)) {
+      if(isFollowing) {
         btnText.innerText = 'Following ✓';
         btnText.classList.add('following');
       } else {
@@ -2034,26 +2364,18 @@
         const creatorData = creatorSnap.val();
         const currentData = currentSnap.val();
         
-        const creatorFollowers = Array.isArray(creatorData?.followers) ? [...creatorData.followers] : [];
-        const currentFollowing = Array.isArray(currentData?.following) ? [...currentData.following] : [];
+        const creatorFollowers = creatorData?.followers || {};
+        const currentFollowing = currentData?.following || {};
         
-        const isFollowing = creatorFollowers.includes(auth.currentUser.uid);
+        const isFollowing = Array.isArray(creatorFollowers) ? creatorFollowers.includes(auth.currentUser.uid) : !!creatorFollowers[auth.currentUser.uid];
         
         if(isFollowing) {
-          // Unfollow
-          const newFollowers = creatorFollowers.filter(uid => uid !== auth.currentUser.uid);
-          const newFollowing = currentFollowing.filter(uid => uid !== creatorUid);
-          
-          await creatorRef.update({ followers: newFollowers });
-          await currentRef.update({ following: newFollowing });
+          await creatorRef.child('followers').child(auth.currentUser.uid).remove();
+          await currentRef.child('following').child(creatorUid).remove();
           msg("Unfollowed!");
         } else {
-          // Follow
-          const newFollowers = [...creatorFollowers, auth.currentUser.uid];
-          const newFollowing = [...currentFollowing, creatorUid];
-          
-          await creatorRef.update({ followers: newFollowers });
-          await currentRef.update({ following: newFollowing });
+          await creatorRef.child('followers').child(auth.currentUser.uid).set(true);
+          await currentRef.child('following').child(creatorUid).set(true);
           db.ref('users/' + creatorUid + '/notifications').push({
             type: 'follow',
             text: userData.username + ' mulai mengikuti kamu',
