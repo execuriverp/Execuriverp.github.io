@@ -871,28 +871,13 @@
       text-shadow: 0 0 8px #00d4ff;
       display: inline;
     }
-    
     .event-card {
       background: rgba(24,24,24,0.95);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px;
       padding: 16px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
-    .event-card::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 18px;
-      background: conic-gradient(from 0deg, #00ff88, #00d4ff, #ffcc00, #ff4d4d, #00ff88);
-      filter: blur(12px);
-      opacity: 0.15;
-      animation: ringGlow 6s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes ringGlow { to { transform: rotate(360deg); } }
     .countdown-wrap {
       display: flex; gap: 12px; justify-content: center; align-items: center; margin: 10px 0 14px;
     }
@@ -928,6 +913,22 @@
     .shop-row { display:flex; gap:8px; align-items:center; }
     .shop-select { flex:1; }
     @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
+    #btnEvent {
+      position: relative;
+      width: 42px; height: 42px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: 0.2s;
+    }
+    #btnEvent:hover { background: var(--accent); color: black; border-color: var(--accent); }
+    #btnEvent:active { transform: scale(0.95); }
   </style>
 </head>
 <body>
@@ -988,7 +989,7 @@
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
           <button id="btnEvent" onclick="openEvent()" title="Event">
-            <i class="fas fa-star"></i>
+            <span style="font-size:18px">💎</span>
             <span id="eventBadge" class="notif-badge"></span>
           </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
@@ -1282,7 +1283,7 @@
       </div>
     </div>
   </div>
-  <div class="modal" id="modalEvent" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalEvent" onclick="if(event.target==this)closeEventModal()">
     <div class="sheet">
       <div class="event-card">
         <div style="text-align:center; margin-bottom:8px; color:var(--accent); font-weight:800"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</div>
@@ -1386,6 +1387,8 @@
     let userData = null;
     const audio = new Audio();
     audio.volume = savedVol; // Apply saved volume immediately
+    const eventAudio = new Audio();
+    eventAudio.volume = 1.0;
     let broadcastTimeout;
     let discoModeActive = false;
     let discoColor = "#00ff88";
@@ -2052,7 +2055,7 @@
     }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
-    function openEvent() { document.getElementById('modalEvent').style.display='block'; startEventCountdown(); updateEidMiniStatus(); }
+    function openEvent() { document.getElementById('modalEvent').style.display='block'; startEventCountdown(); updateEidMiniStatus(); try { eventAudio.src = 'https://g.top4top.io/m_36891kox71.mp3'; eventAudio.play(); } catch(e) {} }
     function startEventCountdown() {
       const fallback = new Date('2026-03-20T00:00:00Z').getTime();
       db.ref('settings/eidTs').get().then(s => {
@@ -2139,25 +2142,20 @@
       const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
       sEl.textContent = claimed ? 'Claimed' : 'Belum claim';
     }
-    function playClaimAnimation() {
-      const modal = document.getElementById('modalEvent');
-      if(!modal) return;
-      const sheet = modal.querySelector('.sheet');
-      if(!sheet) return;
-      const overlay = document.createElement('div'); overlay.className = 'gift-anim';
-      const box = document.createElement('div'); box.className = 'gift-box'; box.innerHTML = '🎁';
-      overlay.appendChild(box); sheet.appendChild(overlay);
-      setTimeout(() => { overlay.remove(); }, 1200);
-    }
-    function openKetupatShop() { document.getElementById('modalEvent').style.display='none'; document.getElementById('modalKetupatShop').style.display='block'; }
+    function playClaimAnimation() { showToast('🎁 VIP claimed'); }
+    function closeEventModal() { const m = document.getElementById('modalEvent'); if(m) m.style.display='none'; try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} }
+    function openKetupatShop() { try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} document.getElementById('modalEvent').style.display='none'; document.getElementById('modalKetupatShop').style.display='block'; }
     function initHourlyEvent() {
       let lastHour = null;
+      let isActive = false;
       setInterval(() => {
         const now = new Date();
-        if(now.getMinutes() === 0) {
-          const h = now.getHours();
-          if(h !== lastHour) {
+        const m = now.getMinutes();
+        const h = now.getHours();
+        if(m < 5) {
+          if(h !== lastHour || !isActive) {
             lastHour = h;
+            isActive = true;
             const variants = ['heartbeat','rainbow','minimal','ice'];
             const colors = ['#00ff88','#00d4ff','#ff4d4d','#ffcc00'];
             const v = variants[Math.floor(Math.random()*variants.length)];
@@ -2179,8 +2177,11 @@
               });
             }
           }
+        } else if(isActive) {
+          resetTheme();
+          isActive = false;
         }
-      }, 30000);
+      }, 15000);
     }
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
