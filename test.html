@@ -871,6 +871,57 @@
       text-shadow: 0 0 8px #00d4ff;
       display: inline;
     }
+    
+    .event-card {
+      background: rgba(24,24,24,0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+    }
+    .event-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 18px;
+      background: conic-gradient(from 0deg, #00ff88, #00d4ff, #ffcc00, #ff4d4d, #00ff88);
+      filter: blur(12px);
+      opacity: 0.15;
+      animation: ringGlow 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes ringGlow { to { transform: rotate(360deg); } }
+    .countdown-wrap {
+      display: flex; gap: 12px; justify-content: center; align-items: center; margin: 10px 0 14px;
+    }
+    .count-item {
+      min-width: 64px; padding: 10px; border-radius: 12px; 
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .count-val { font-size: 20px; font-weight: 800; color: #fff; }
+    .count-lbl { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .mini-row { display:flex; justify-content:center; gap:10px; align-items:center; font-size:12px; color:#aaa; margin-top:4px; }
+    .mini-badge { display:inline-flex; align-items:center; gap:6px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); padding:6px 10px; border-radius:999px; }
+    .claim-btn {
+      width:100%; padding:14px; background: linear-gradient(90deg, #ffd700, #fbf5b7); color:#000; border:none; border-radius:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; box-shadow: 0 10px 30px rgba(255,215,0,0.25);
+    }
+    .claim-btn:active { transform: scale(0.98); }
+    .shop-btn {
+      width:100%; padding:12px; background:#222; color:#fff; border:1px solid #333; border-radius:12px; font-weight:700; cursor:pointer;
+    }
+    .gift-anim {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); animation: fadeIn 0.2s ease;
+    }
+    .gift-box {
+      width: 120px; height: 120px; border-radius: 18px; background: linear-gradient(135deg, #ff4d4d, #ffcc00); box-shadow: 0 15px 40px rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; color:#000; font-size:42px; animation: giftPop 0.8s ease forwards;
+    }
+    @keyframes giftPop { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); } }
+    @keyframes flipDown { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(40deg); } 100% { transform: rotateX(0deg); } }
   </style>
 </head>
 <body>
@@ -887,6 +938,26 @@
       <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
   </div>
 
+  <div class="modal" id="modalKetupatShop" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="event-card">
+        <div style="text-align:center; margin-bottom:10px; color:#fff; font-weight:800"><i class="fas fa-store"></i> Toko Ketupat</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+          <button class="btn-act" onclick="exchangeTag('ramadhan',10)">Tag Ramadhan (10💠)</button>
+          <button class="btn-act" onclick="exchangeBg('red',50)">Background Merah (50💠)</button>
+          <button class="btn-act" onclick="exchangeBg('blue',50)">Background Biru (50💠)</button>
+          <div style="display:flex; gap:8px; align-items:center">
+            <select id="vipDaysSel" class="inp-dark" style="flex:1">
+              <option value="1">VIP Trial 1 Hari (100💠)</option>
+              <option value="2">VIP Trial 2 Hari (100💠)</option>
+              <option value="3">VIP Trial 3 Hari (100💠)</option>
+            </select>
+            <button class="btn-act" onclick="exchangeVipTrial()">Tukar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="mtScreen" class="full-overlay">
     <i class="fas fa-tools" style="color: var(--accent)"></i>
     <h1>Server Maintenance</h1>
@@ -1203,28 +1274,36 @@
   </div>
   <div class="modal" id="modalEvent" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:12px; color:var(--accent)"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</h3>
-      <div id="eidCountdown" style="text-align:center; color:#ddd; font-size:14px; margin-bottom:12px">Loading...</div>
-      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:12px">
-        <button class="btn-act" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
-      </div>
-      <div style="border:1px solid #333; border-radius:10px; padding:12px; margin-bottom:12px">
-        <div style="text-align:center; color:#ddd; font-weight:600; margin-bottom:8px">Toko Ketupat</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-          <button class="btn-act" onclick="exchangeTag('ramadhan',10)">Tag Ramadhan (10💠)</button>
-          <button class="btn-act" onclick="exchangeBg('red',50)">Background Merah (50💠)</button>
-          <button class="btn-act" onclick="exchangeBg('blue',50)">Background Biru (50💠)</button>
-          <div style="display:flex; gap:8px; align-items:center">
-            <select id="vipDaysSel" class="inp-dark" style="flex:1">
-              <option value="1">VIP Trial 1 Hari (100💠)</option>
-              <option value="2">VIP Trial 2 Hari (100💠)</option>
-              <option value="3">VIP Trial 3 Hari (100💠)</option>
-            </select>
-            <button class="btn-act" onclick="exchangeVipTrial()">Tukar</button>
+      <div class="event-card">
+        <div style="text-align:center; margin-bottom:8px; color:var(--accent); font-weight:800"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</div>
+        <div id="eidCountdown" class="countdown-wrap">
+          <div class="count-item">
+            <div class="count-val" id="cDays">0</div>
+            <div class="count-lbl">Hari</div>
+          </div>
+          <div class="count-item">
+            <div class="count-val" id="cHours">0</div>
+            <div class="count-lbl">Jam</div>
+          </div>
+          <div class="count-item">
+            <div class="count-val" id="cMins">0</div>
+            <div class="count-lbl">Menit</div>
+          </div>
+          <div class="count-item">
+            <div class="count-val" id="cSecs">0</div>
+            <div class="count-lbl">Detik</div>
           </div>
         </div>
+        <div class="mini-row">
+          <span class="mini-badge"><i class="fas fa-gem" style="color:#00d4ff"></i> <b id="eidKetVal">0</b></span>
+          <span id="eidClaimStatus">Belum claim</span>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:center; margin:14px 0 10px">
+          <button class="claim-btn" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
+        </div>
+        <button class="shop-btn" onclick="openKetupatShop()">Buka Toko Ketupat</button>
+        <div style="text-align:center; color:#888; font-size:12px; margin-top:12px">Event hourly: setiap jam :00 ada disco mode random dan peluang dapat ketupat 1–10 jika online.</div>
       </div>
-      <div style="text-align:center; color:#888; font-size:12px">Event hourly: setiap jam :00 ada disco mode random dan peluang dapat ketupat 1–10 jika online.</div>
     </div>
   </div>
 
@@ -1616,6 +1695,7 @@
             if(!vipActive && userData.profileBg) profHeader.style.background = userData.profileBg;
           }
           updateKetupatUI(userData.ketupat || 0);
+          updateEidMiniStatus();
           
           // Sensor email
           const email = u.email || "";
@@ -1962,29 +2042,48 @@
     }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
-    function openEvent() { document.getElementById('modalEvent').style.display='block'; startEventCountdown(); }
+    function openEvent() { document.getElementById('modalEvent').style.display='block'; startEventCountdown(); updateEidMiniStatus(); }
     function startEventCountdown() {
-      const el = document.getElementById('eidCountdown'); if(!el) return;
       const fallback = new Date('2026-03-20T00:00:00Z').getTime();
       db.ref('settings/eidTs').get().then(s => {
         const target = s.exists() ? s.val() : fallback;
         if(window._eidInterval) clearInterval(window._eidInterval);
         window._eidInterval = setInterval(() => {
           const d = target - Date.now();
-          if(d <= 0) { el.textContent = 'Selamat Idul Fitri 1447H!'; clearInterval(window._eidInterval); return; }
+          const dEl = document.getElementById('cDays');
+          const hEl = document.getElementById('cHours');
+          const mEl = document.getElementById('cMins');
+          const sEl = document.getElementById('cSecs');
+          if(!dEl || !hEl || !mEl || !sEl) return;
+          if(d <= 0) {
+            dEl.textContent = '0'; hEl.textContent = '0'; mEl.textContent = '0'; sEl.textContent = '0';
+            clearInterval(window._eidInterval);
+            return;
+          }
           const days = Math.floor(d/86400000);
           const hrs = Math.floor((d%86400000)/3600000);
           const mins = Math.floor((d%3600000)/60000);
           const secs = Math.floor((d%60000)/1000);
-          el.textContent = days+' hari '+hrs+' jam '+mins+' menit '+secs+' detik';
+          dEl.textContent = String(days);
+          hEl.textContent = String(hrs);
+          mEl.textContent = String(mins);
+          sEl.textContent = String(secs);
+          [dEl,hEl,mEl,sEl].forEach(x => { x.style.animation = 'none'; void x.offsetWidth; x.style.animation = 'flipDown 0.9s'; });
         }, 1000);
       });
     }
     function claimTrialVip1d() {
       if(!auth.currentUser) return msg('Login dulu!');
-      const expire = Date.now() + 24*3600000;
-      db.ref('users/'+auth.currentUser.uid+'/trialvip').set({ active: true, expireAt: expire }).then(() => {
-        msg('Trial VIP 1 hari aktif');
+      const ref = db.ref('users/'+auth.currentUser.uid+'/trialvip');
+      ref.get().then(s => {
+        const cur = s.val() || {};
+        if(cur.freeClaimed === true) { msg('Kamu sudah claim VIP'); return; }
+        const expire = Date.now() + 24*3600000;
+        ref.set({ active: true, expireAt: expire, freeClaimed: true }).then(() => {
+          msg('Trial VIP 1 hari aktif');
+          playClaimAnimation();
+          updateEidMiniStatus();
+        });
       });
     }
     function ensureKetupat(countNeeded) {
@@ -2015,14 +2114,32 @@
       ensureKetupat(cost).then(cur => {
         const newVal = cur - cost;
         const expire = Date.now() + days*24*3600000;
-        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal }).then(() => db.ref('users/'+auth.currentUser.uid+'/trialvip').set({ active: true, expireAt: expire }));
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal }).then(() => db.ref('users/'+auth.currentUser.uid+'/trialvip').update({ active: true, expireAt: expire }));
       }).then(() => msg('VIP trial aktif'));
     }
     function updateKetupatUI(val) {
       const b = document.getElementById('eventBadge'); if(!b) return;
       b.textContent = val ? String(val) : '';
       b.classList.toggle('show', !!val);
+      const k = document.getElementById('eidKetVal'); if(k) k.textContent = val ? String(val) : '0';
     }
+    function updateEidMiniStatus() {
+      const sEl = document.getElementById('eidClaimStatus');
+      if(!sEl) return;
+      const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
+      sEl.textContent = claimed ? 'Claimed' : 'Belum claim';
+    }
+    function playClaimAnimation() {
+      const modal = document.getElementById('modalEvent');
+      if(!modal) return;
+      const sheet = modal.querySelector('.sheet');
+      if(!sheet) return;
+      const overlay = document.createElement('div'); overlay.className = 'gift-anim';
+      const box = document.createElement('div'); box.className = 'gift-box'; box.innerHTML = '🎁';
+      overlay.appendChild(box); sheet.appendChild(overlay);
+      setTimeout(() => { overlay.remove(); }, 1200);
+    }
+    function openKetupatShop() { document.getElementById('modalKetupatShop').style.display='block'; }
     function initHourlyEvent() {
       let lastHour = null;
       setInterval(() => {
