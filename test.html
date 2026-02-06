@@ -906,6 +906,10 @@
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
+          <button id="btnEvent" onclick="openEvent()" title="Event">
+            <i class="fas fa-star"></i>
+            <span id="eventBadge" class="notif-badge"></span>
+          </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
             <i class="fas fa-bell"></i>
             <span id="notifBadge" class="notif-badge"></span>
@@ -1195,6 +1199,32 @@
         <button class="btn-act" onclick="confirmClearNotif()">Confirm</button>
         <button class="btn-act" style="background:#222; color:#fff" onclick="document.getElementById('modalClearNotif').style.display='none'">Discard</button>
       </div>
+    </div>
+  </div>
+  <div class="modal" id="modalEvent" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <h3 style="text-align:center; margin-bottom:12px; color:var(--accent)"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</h3>
+      <div id="eidCountdown" style="text-align:center; color:#ddd; font-size:14px; margin-bottom:12px">Loading...</div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:12px">
+        <button class="btn-act" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
+      </div>
+      <div style="border:1px solid #333; border-radius:10px; padding:12px; margin-bottom:12px">
+        <div style="text-align:center; color:#ddd; font-weight:600; margin-bottom:8px">Toko Ketupat</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+          <button class="btn-act" onclick="exchangeTag('ramadhan',10)">Tag Ramadhan (10💠)</button>
+          <button class="btn-act" onclick="exchangeBg('red',50)">Background Merah (50💠)</button>
+          <button class="btn-act" onclick="exchangeBg('blue',50)">Background Biru (50💠)</button>
+          <div style="display:flex; gap:8px; align-items:center">
+            <select id="vipDaysSel" class="inp-dark" style="flex:1">
+              <option value="1">VIP Trial 1 Hari (100💠)</option>
+              <option value="2">VIP Trial 2 Hari (100💠)</option>
+              <option value="3">VIP Trial 3 Hari (100💠)</option>
+            </select>
+            <button class="btn-act" onclick="exchangeVipTrial()">Tukar</button>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; color:#888; font-size:12px">Event hourly: setiap jam :00 ada disco mode random dan peluang dapat ketupat 1–10 jika online.</div>
     </div>
   </div>
 
@@ -1569,8 +1599,10 @@
               document.getElementById('bannedScreen').style.display = 'flex';
               auth.signOut(); return;
           }
+          const now = Date.now();
+          const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
           document.getElementById('topLoginBtn').textContent = userData.username;
-          document.getElementById('pUsername').innerHTML = userData.username + (userData.vip ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
+          document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
           document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
           document.getElementById('pFol').innerText = (Array.isArray(userData.followers) ? userData.followers.length : userData.followers) || 0;
           document.getElementById('pFollowing').innerText = (Array.isArray(userData.following) ? userData.following.length : userData.following) || 0;
@@ -1579,7 +1611,11 @@
           document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
           const profHeader = document.querySelector('#modalProfile .modern-profile-header');
-          if(profHeader) profHeader.classList.toggle('vip', !!userData.vip);
+          if(profHeader) {
+            profHeader.classList.toggle('vip', vipActive);
+            if(!vipActive && userData.profileBg) profHeader.style.background = userData.profileBg;
+          }
+          updateKetupatUI(userData.ketupat || 0);
           
           // Sensor email
           const email = u.email || "";
@@ -1675,6 +1711,7 @@
         }
       }
     });
+    initHourlyEvent();
 
     async function setup(idx, play = true) {
       if(!songs[idx]) return;
@@ -1715,7 +1752,8 @@
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
         const diff = (now - lastUpload) / 1000 / 60; // dalam menit
-        const cooldown = (userData.role === 'admin') ? 0 : (userData.vip ? 15 : 30);
+        const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
+        const cooldown = (userData.role === 'admin') ? 0 : (vipActive ? 15 : 30);
         
         if(diff < cooldown && userData.role !== 'admin') {
             return Swal.fire({
@@ -1924,6 +1962,99 @@
     }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
     
+    function openEvent() { document.getElementById('modalEvent').style.display='block'; startEventCountdown(); }
+    function startEventCountdown() {
+      const el = document.getElementById('eidCountdown'); if(!el) return;
+      const fallback = new Date('2026-03-20T00:00:00Z').getTime();
+      db.ref('settings/eidTs').get().then(s => {
+        const target = s.exists() ? s.val() : fallback;
+        if(window._eidInterval) clearInterval(window._eidInterval);
+        window._eidInterval = setInterval(() => {
+          const d = target - Date.now();
+          if(d <= 0) { el.textContent = 'Selamat Idul Fitri 1447H!'; clearInterval(window._eidInterval); return; }
+          const days = Math.floor(d/86400000);
+          const hrs = Math.floor((d%86400000)/3600000);
+          const mins = Math.floor((d%3600000)/60000);
+          const secs = Math.floor((d%60000)/1000);
+          el.textContent = days+' hari '+hrs+' jam '+mins+' menit '+secs+' detik';
+        }, 1000);
+      });
+    }
+    function claimTrialVip1d() {
+      if(!auth.currentUser) return msg('Login dulu!');
+      const expire = Date.now() + 24*3600000;
+      db.ref('users/'+auth.currentUser.uid+'/trialvip').set({ active: true, expireAt: expire }).then(() => {
+        msg('Trial VIP 1 hari aktif');
+      });
+    }
+    function ensureKetupat(countNeeded) {
+      return db.ref('users/'+auth.currentUser.uid+'/ketupat').get().then(s => {
+        const cur = s.val() || 0;
+        if(cur < countNeeded) { msg('Ketupat kurang '+(countNeeded-cur)); return Promise.reject('insufficient'); }
+        return cur;
+      });
+    }
+    function exchangeTag(tag, cost) {
+      if(!auth.currentUser) return msg('Login dulu!');
+      ensureKetupat(cost).then(cur => {
+        const newVal = cur - cost;
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal, tag: tag });
+      }).then(() => msg('Tag diperbarui'));
+    }
+    function exchangeBg(color, cost) {
+      if(!auth.currentUser) return msg('Login dulu!');
+      ensureKetupat(cost).then(cur => {
+        const newVal = cur - cost;
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal, profileBg: color });
+      }).then(() => msg('Background profil diubah'));
+    }
+    function exchangeVipTrial() {
+      if(!auth.currentUser) return msg('Login dulu!');
+      const days = parseInt(document.getElementById('vipDaysSel').value, 10) || 1;
+      const cost = 100;
+      ensureKetupat(cost).then(cur => {
+        const newVal = cur - cost;
+        const expire = Date.now() + days*24*3600000;
+        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal }).then(() => db.ref('users/'+auth.currentUser.uid+'/trialvip').set({ active: true, expireAt: expire }));
+      }).then(() => msg('VIP trial aktif'));
+    }
+    function updateKetupatUI(val) {
+      const b = document.getElementById('eventBadge'); if(!b) return;
+      b.textContent = val ? String(val) : '';
+      b.classList.toggle('show', !!val);
+    }
+    function initHourlyEvent() {
+      let lastHour = null;
+      setInterval(() => {
+        const now = new Date();
+        if(now.getMinutes() === 0) {
+          const h = now.getHours();
+          if(h !== lastHour) {
+            lastHour = h;
+            const variants = ['heartbeat','rainbow','minimal','ice'];
+            const colors = ['#00ff88','#00d4ff','#ff4d4d','#ffcc00'];
+            const v = variants[Math.floor(Math.random()*variants.length)];
+            const c = colors[Math.floor(Math.random()*colors.length)];
+            applyDiscoMode(v, c);
+            if(auth.currentUser) {
+              const slot = new Date().toDateString()+'-'+h;
+              const ref = db.ref('users/'+auth.currentUser.uid+'/lastEventHour');
+              ref.get().then(s => {
+                if(s.val() === slot) return;
+                const gain = Math.floor(Math.random()*10)+1;
+                db.ref('users/'+auth.currentUser.uid).transaction(u => {
+                  const cur = (u&&u.ketupat)||0;
+                  return Object.assign({}, u||{}, { ketupat: cur + gain, lastEventHour: slot });
+                }).then(() => {
+                  db.ref('users/'+auth.currentUser.uid+'/notifications').push({ type:'system', text:'+ '+gain+' 💠', timestamp: Date.now() });
+                  updateKetupatUI((userData&&userData.ketupat)||0 + gain);
+                });
+              });
+            }
+          }
+        }
+      }, 30000);
+    }
     function openProfile() { 
         if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
         else {
