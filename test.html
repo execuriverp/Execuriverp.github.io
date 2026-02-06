@@ -922,6 +922,12 @@
     }
     @keyframes giftPop { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); } }
     @keyframes flipDown { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(40deg); } 100% { transform: rotateX(0deg); } }
+    .shop-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px; }
+    .shop-item { padding:10px; border-radius:12px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center; }
+    .shop-action { width:100%; padding:10px; background: var(--accent); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; }
+    .shop-row { display:flex; gap:8px; align-items:center; }
+    .shop-select { flex:1; }
+    @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
   </style>
 </head>
 <body>
@@ -942,18 +948,22 @@
     <div class="sheet">
       <div class="event-card">
         <div style="text-align:center; margin-bottom:10px; color:#fff; font-weight:800"><i class="fas fa-store"></i> Toko Ketupat</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-          <button class="btn-act" onclick="exchangeTag('ramadhan',10)">Tag Ramadhan (10💠)</button>
-          <button class="btn-act" onclick="exchangeBg('red',50)">Background Merah (50💠)</button>
-          <button class="btn-act" onclick="exchangeBg('blue',50)">Background Biru (50💠)</button>
-          <div style="display:flex; gap:8px; align-items:center">
-            <select id="vipDaysSel" class="inp-dark" style="flex:1">
-              <option value="1">VIP Trial 1 Hari (100💠)</option>
-              <option value="2">VIP Trial 2 Hari (100💠)</option>
-              <option value="3">VIP Trial 3 Hari (100💠)</option>
-            </select>
-            <button class="btn-act" onclick="exchangeVipTrial()">Tukar</button>
-          </div>
+        <div class="shop-grid">
+          <div class="shop-item"><div>Tag Ramadhan</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('ramadhan',10)">Tukar</button></div>
+          <div class="shop-item"><div>Tag Sepuh</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('sepuh',10)">Tukar</button></div>
+          <div class="shop-item"><div>Tag Pro</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('pro',10)">Tukar</button></div>
+          <div class="shop-item"><div>BG Merah</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('red',50)">Tukar</button></div>
+          <div class="shop-item"><div>BG Biru</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('blue',50)">Tukar</button></div>
+          <div class="shop-item"><div>BG Hijau</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('green',50)">Tukar</button></div>
+          <div class="shop-item"><div>BG Ungu</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('purple',50)">Tukar</button></div>
+        </div>
+        <div class="shop-row" style="margin-top:12px">
+          <select id="vipDaysSel" class="inp-dark shop-select">
+            <option value="1">VIP Trial 1 Hari (100💠)</option>
+            <option value="2">VIP Trial 2 Hari (100💠)</option>
+            <option value="3">VIP Trial 3 Hari (100💠)</option>
+          </select>
+          <button class="shop-action" onclick="exchangeVipTrial()">Tukar</button>
         </div>
       </div>
     </div>
@@ -2139,7 +2149,7 @@
       overlay.appendChild(box); sheet.appendChild(overlay);
       setTimeout(() => { overlay.remove(); }, 1200);
     }
-    function openKetupatShop() { document.getElementById('modalKetupatShop').style.display='block'; }
+    function openKetupatShop() { document.getElementById('modalEvent').style.display='none'; document.getElementById('modalKetupatShop').style.display='block'; }
     function initHourlyEvent() {
       let lastHour = null;
       setInterval(() => {
