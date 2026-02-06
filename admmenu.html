@@ -328,7 +328,7 @@
             <div style="overflow-x:auto;">
                 <table class="cyber-table" id="userTable">
                     <thead>
-                        <tr><th>USER INFO</th><th>ROLE TAG</th><th>FOLLOWERS</th><th>COOLDOWN</th><th>ACTION</th></tr>
+                        <tr><th>USER INFO</th><th>ROLE TAG</th><th>FOLLOWERS</th><th>COOLDOWN</th><th>KETUPAT</th><th>ACTION</th></tr>
                     </thead>
                     <tbody id="userList">
                         <tr><td colspan="5" style="text-align:center; color:#666;">LOADING DATABASE... OR NO DATA FOUND.</td></tr>
@@ -501,6 +501,7 @@
                     <td><button class="btn" onclick="changeTag('${uid}')"><span class="badge-tag ${tagClass}">${u.tag || 'USER'}</span></button></td>
                     <td><button class="btn" onclick="openManageFollowers('${uid}')">${folCount} Followers</button></td>
                     <td><button class="btn" onclick="resetCD('${uid}')">${cdText}</button></td>
+                    <td><button class="btn" onclick="setKetupat('${uid}')">${u.ketupat || 0} 💠</button></td>
                     <td><button class="btn btn-danger" onclick="toggleBan('${uid}', ${u.banned})">${u.banned ? 'UNBAN' : 'BAN'}</button></td>
                 </tr>`;
             });
@@ -669,6 +670,24 @@
             color: '#fff' 
         })
         .then(r => { if(r.value) { db.ref('users/'+uid).update({tag: r.value}); addLog(`Changed tag for ${uid} to ${r.value}`); }});
+    }
+    
+    function setKetupat(uid) {
+        Swal.fire({
+            title: 'Set Ketupat',
+            input: 'number',
+            inputLabel: 'Jumlah ketupat 💠',
+            inputAttributes: { min: 0 },
+            background: '#121212', color: '#fff'
+        }).then(r => {
+            const v = parseInt(r.value, 10);
+            if(!isNaN(v)) {
+                db.ref('users/'+uid).update({ ketupat: v }).then(() => {
+                    addLog(`Set ketupat for ${uid} to ${v}`);
+                    Swal.fire('Saved', 'Ketupat diperbarui', 'success');
+                });
+            }
+        });
     }
 
     function resetCD(uid) { db.ref('users/'+uid+'/lastUpload').remove(); addLog(`Reset Cooldown for ${uid}`); Swal.fire('Done', 'Cooldown reset!', 'success'); }
