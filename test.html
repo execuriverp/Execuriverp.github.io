@@ -872,11 +872,14 @@
       display: inline;
     }
     .event-card {
-      background: rgba(24,24,24,0.95);
+      background: linear-gradient(180deg, rgba(24,24,24,0.95) 0%, rgba(18,18,18,0.95) 100%);
       border: 1px solid rgba(255,255,255,0.08);
+      border-left: 4px solid var(--accent);
       border-radius: 16px;
       padding: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,255,136,0.08);
+      position: relative;
+      overflow: hidden;
     }
     .countdown-wrap {
       display: flex; gap: 12px; justify-content: center; align-items: center; margin: 10px 0 14px;
@@ -915,20 +918,31 @@
     @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
     #btnEvent {
       position: relative;
-      width: 42px; height: 42px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.1);
+      width: 46px; height: 46px;
+      background: radial-gradient(120% 120% at 50% 50%, rgba(0,255,136,0.15) 0%, rgba(0,0,0,0.2) 60%);
+      border: 2px solid var(--accent);
       border-radius: 50%;
-      color: white;
+      color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 20px;
       transition: 0.2s;
+      box-shadow: 0 0 18px rgba(0,255,136,0.35), inset 0 0 12px rgba(0,255,136,0.15);
+      overflow: hidden;
     }
-    #btnEvent:hover { background: var(--accent); color: black; border-color: var(--accent); }
-    #btnEvent:active { transform: scale(0.95); }
+    #btnEvent::after {
+      content: "";
+      position: absolute;
+      top: -40%; left: -40%;
+      width: 180%; height: 180%;
+      background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+      transform: rotate(25deg);
+      pointer-events: none;
+    }
+    #btnEvent:hover { transform: scale(1.05); box-shadow: 0 0 24px rgba(0,255,136,0.55), inset 0 0 16px rgba(0,255,136,0.25); }
+    #btnEvent:active { transform: scale(0.97); }
   </style>
 </head>
 <body>
@@ -961,8 +975,8 @@
         <div class="shop-row" style="margin-top:12px">
           <select id="vipDaysSel" class="inp-dark shop-select">
             <option value="1">VIP Trial 1 Hari (100💠)</option>
-            <option value="2">VIP Trial 2 Hari (100💠)</option>
-            <option value="3">VIP Trial 3 Hari (100💠)</option>
+            <option value="2">VIP Trial 2 Hari (200💠)</option>
+            <option value="3">VIP Trial 3 Hari (300💠)</option>
           </select>
           <button class="shop-action" onclick="exchangeVipTrial()">Tukar</button>
         </div>
@@ -989,7 +1003,7 @@
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
           <button id="btnEvent" onclick="openEvent()" title="Event">
-            <span style="font-size:18px">💎</span>
+            <span style="font-size:20px">💠</span>
             <span id="eventBadge" class="notif-badge"></span>
           </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
@@ -1312,7 +1326,7 @@
           </div>
         </div>
         <div class="mini-row">
-          <span class="mini-badge"><i class="fas fa-gem" style="color:#00d4ff"></i> <b id="eidKetVal">0</b></span>
+          <span class="mini-badge"><span style="color:#00ff88; font-size:14px">💠</span> <b id="eidKetVal">0</b></span>
           <span id="eidClaimStatus">Belum claim</span>
         </div>
         <div style="display:flex; gap:10px; justify-content:center; margin:14px 0 10px">
