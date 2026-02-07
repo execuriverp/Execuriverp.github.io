@@ -487,7 +487,10 @@
             snap.forEach(child => {
                 const u = child.val(); const uid = child.key; count++;
                 const tagClass = 'tag-' + (u.tag || 'user').toLowerCase();
-                const folCount = Array.isArray(u?.followers) ? u.followers.length : (u?.followers || 0);
+                let folCount = 0;
+                if(Array.isArray(u?.followers)) folCount = u.followers.length;
+                else if(u?.followers && typeof u.followers === 'object') folCount = Object.keys(u.followers).length;
+                else folCount = u?.followers || 0;
                 
                 const lastUpload = u?.lastUpload || 0;
                 let cdText = 'READY';
@@ -738,15 +741,22 @@
     }
     window.injectFake = (uid, amt) => {
         db.ref('users/'+uid).once('value').then(s => {
-            let u = s.val(); let followers = u.followers || [];
+            const u = s.val() || {};
+            let followers = [];
+            if(Array.isArray(u.followers)) followers = [...u.followers];
+            else if(u.followers && typeof u.followers === 'object') followers = Object.keys(u.followers);
             for(let i=0; i<amt; i++) followers.push("User_"+Math.floor(Math.random()*999999));
-            db.ref('users/'+uid).update({followers}); Swal.fire('Added', `${amt} followers`, 'success');
+            db.ref('users/'+uid).update({followers}).then(() => Swal.fire('Added', `${amt} fake followers`, 'success'));
         });
     };
     window.clearFake = (uid) => {
         db.ref('users/'+uid).once('value').then(s => {
-            let u = s.val(); let followers = (u.followers || []).filter(f => !f.toString().startsWith("User_"));
-            db.ref('users/'+uid).update({followers}); Swal.fire('Cleared', `Fake removed`, 'success');
+            const u = s.val() || {};
+            let followers = [];
+            if(Array.isArray(u.followers)) followers = [...u.followers];
+            else if(u.followers && typeof u.followers === 'object') followers = Object.keys(u.followers);
+            followers = followers.filter(f => !f.toString().startsWith("User_"));
+            db.ref('users/'+uid).update({followers}).then(() => Swal.fire('Cleared', `Fake followers removed`, 'success'));
         });
     };
 
