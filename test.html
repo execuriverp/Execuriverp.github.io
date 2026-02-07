@@ -2026,17 +2026,21 @@
         const targetData = targetSnap.val();
         const currentData = currentSnap.val();
         
-        const followersNode = targetData?.followers || {};
-        const followingNode = currentData?.following || {};
-        const isFollowing = Array.isArray(followersNode) ? followersNode.includes(auth.currentUser.uid) : !!followersNode[auth.currentUser.uid];
+        const followersArr = Array.isArray(targetData?.followers) ? [...targetData.followers] : (targetData?.followers && typeof targetData.followers === 'object' ? Object.keys(targetData.followers) : []);
+        const followingArr = Array.isArray(currentData?.following) ? [...currentData.following] : (currentData?.following && typeof currentData.following === 'object' ? Object.keys(currentData.following) : []);
+        const isFollowing = followersArr.includes(auth.currentUser.uid);
         
         if(isFollowing) {
-          await targetRef.child('followers').child(auth.currentUser.uid).remove();
-          await currentRef.child('following').child(targetUid).remove();
+          const newFollowers = followersArr.filter(uid => uid !== auth.currentUser.uid);
+          const newFollowing = followingArr.filter(uid => uid !== targetUid);
+          await targetRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
           msg("Unfollowed!");
         } else {
-          await targetRef.child('followers').child(auth.currentUser.uid).set(true);
-          await currentRef.child('following').child(targetUid).set(true);
+          const newFollowers = [...followersArr, auth.currentUser.uid];
+          const newFollowing = [...followingArr, targetUid];
+          await targetRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
           db.ref('users/' + targetUid + '/notifications').push({
             type: 'follow',
             text: userData.username + ' mulai mengikuti kamu',
@@ -2378,7 +2382,7 @@
       if(!creatorUid || creatorUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
       
       try {
-        const creatorRef = db.ref('users/' + creatorUid);
+      const creatorRef = db.ref('users/' + creatorUid);
         const currentRef = db.ref('users/' + auth.currentUser.uid);
         
         const creatorSnap = await creatorRef.get();
@@ -2387,18 +2391,22 @@
         const creatorData = creatorSnap.val();
         const currentData = currentSnap.val();
         
-        const creatorFollowers = creatorData?.followers || {};
-        const currentFollowing = currentData?.following || {};
-        
-        const isFollowing = Array.isArray(creatorFollowers) ? creatorFollowers.includes(auth.currentUser.uid) : !!creatorFollowers[auth.currentUser.uid];
-        
-        if(isFollowing) {
-          await creatorRef.child('followers').child(auth.currentUser.uid).remove();
-          await currentRef.child('following').child(creatorUid).remove();
-          msg("Unfollowed!");
-        } else {
-          await creatorRef.child('followers').child(auth.currentUser.uid).set(true);
-          await currentRef.child('following').child(creatorUid).set(true);
+      const followersArr = Array.isArray(creatorData?.followers) ? [...creatorData.followers] : (creatorData?.followers && typeof creatorData.followers === 'object' ? Object.keys(creatorData.followers) : []);
+      const followingArr = Array.isArray(currentData?.following) ? [...currentData.following] : (currentData?.following && typeof currentData.following === 'object' ? Object.keys(currentData.following) : []);
+      
+      const isFollowing = followersArr.includes(auth.currentUser.uid);
+      
+      if(isFollowing) {
+        const newFollowers = followersArr.filter(uid => uid !== auth.currentUser.uid);
+        const newFollowing = followingArr.filter(uid => uid !== creatorUid);
+        await creatorRef.update({ followers: newFollowers });
+        await currentRef.update({ following: newFollowing });
+        msg("Unfollowed!");
+      } else {
+        const newFollowers = [...followersArr, auth.currentUser.uid];
+        const newFollowing = [...followingArr, creatorUid];
+        await creatorRef.update({ followers: newFollowers });
+        await currentRef.update({ following: newFollowing });
           db.ref('users/' + creatorUid + '/notifications').push({
             type: 'follow',
             text: userData.username + ' mulai mengikuti kamu',
