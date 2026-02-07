@@ -928,6 +928,9 @@
       pointer-events:none;
     }
     .shop-item:hover { transform: translateY(-2px); box-shadow: 0 18px 45px rgba(0,0,0,0.7), inset 0 0 24px rgba(255,215,0,0.12); border-color: rgba(255,215,0,0.3); }
+    .shop-item-head { display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:10px; }
+    .shop-item-title { font-weight:800; color:#fff; letter-spacing:0.3px; }
+    .shop-price { font-size:12px; color:#000; background: linear-gradient(90deg, #ffd700, #fbf5b7); border: 1px solid rgba(255,215,0,0.45); border-radius:999px; padding:4px 10px; font-weight:800; box-shadow: 0 6px 18px rgba(255,215,0,0.25); }
     .shop-action { 
       width:100%; padding:12px; 
       background: linear-gradient(90deg, #ffd700, #fbf5b7); 
@@ -1000,21 +1003,45 @@
       <div class="event-card">
         <div style="text-align:center; margin-bottom:10px; color:#fff; font-weight:800"><i class="fas fa-store"></i> Toko Ketupat</div>
         <div class="shop-grid">
-          <div class="shop-item"><div>Tag Ramadhan</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('ramadhan',10)">Tukar</button></div>
-          <div class="shop-item"><div>Tag Sepuh</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('sepuh',10)">Tukar</button></div>
-          <div class="shop-item"><div>Tag Pro</div><div style="font-size:11px; color:#aaa">10💠</div><button class="shop-action" onclick="exchangeTag('pro',10)">Tukar</button></div>
-          <div class="shop-item"><div>BG Merah</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('red',50)">Tukar</button></div>
-          <div class="shop-item"><div>BG Biru</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('blue',50)">Tukar</button></div>
-          <div class="shop-item"><div>BG Hijau</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('green',50)">Tukar</button></div>
-          <div class="shop-item"><div>BG Ungu</div><div style="font-size:11px; color:#aaa">50💠</div><button class="shop-action" onclick="exchangeBg('purple',50)">Tukar</button></div>
-        </div>
-        <div class="shop-row" style="margin-top:12px">
-          <select id="vipDaysSel" class="inp-dark shop-select">
-            <option value="1">VIP Trial 1 Hari (100💠)</option>
-            <option value="2">VIP Trial 2 Hari (200💠)</option>
-            <option value="3">VIP Trial 3 Hari (300💠)</option>
-          </select>
-          <button class="shop-action" onclick="exchangeVipTrial()">Tukar</button>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Tag Ramadhan</div><div class="shop-price">10💠</div></div>
+            <button class="shop-action" onclick="exchangeTag('ramadhan',10)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Tag Sepuh</div><div class="shop-price">10💠</div></div>
+            <button class="shop-action" onclick="exchangeTag('sepuh',10)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Tag Pro</div><div class="shop-price">10💠</div></div>
+            <button class="shop-action" onclick="exchangeTag('pro',10)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Background Merah</div><div class="shop-price">50💠</div></div>
+            <button class="shop-action" onclick="exchangeBg('red',50)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Background Biru</div><div class="shop-price">50💠</div></div>
+            <button class="shop-action" onclick="exchangeBg('blue',50)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Background Hijau</div><div class="shop-price">50💠</div></div>
+            <button class="shop-action" onclick="exchangeBg('green',50)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Background Ungu</div><div class="shop-price">50💠</div></div>
+            <button class="shop-action" onclick="exchangeBg('purple',50)">Tukar</button>
+          </div>
+          <div class="shop-item" style="grid-column: 1 / -1">
+            <div class="shop-item-head"><div class="shop-item-title">VIP Trial</div><div class="shop-price">100💠/Hari</div></div>
+            <div class="shop-row">
+              <select id="vipDaysSel" class="inp-dark shop-select">
+                <option value="1">VIP Trial 1 Hari (100💠)</option>
+                <option value="2">VIP Trial 2 Hari (200💠)</option>
+                <option value="3">VIP Trial 3 Hari (300💠)</option>
+              </select>
+              <button class="shop-action" onclick="exchangeVipTrial()">Tukar</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
