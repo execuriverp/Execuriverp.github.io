@@ -910,7 +910,6 @@
     .claim-btn {
       width:100%; padding:14px; background: linear-gradient(90deg, #ffd700, #fbf5b7); color:#000; border:none; border-radius:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; box-shadow: 0 10px 30px rgba(255,215,0,0.25);
     }
-    .vip-bg-row { display:flex; gap:10px; align-items:center; justify-content:center; margin-top:10px; padding:0 15px; }
     .vip-trial-timer { margin-top: 8px; }
     .shop-item { 
       padding:12px; border-radius:16px; 
@@ -1196,10 +1195,6 @@
           <div class="count-item"><div id="vipDays" class="count-val">0</div><div class="count-lbl">Hari</div></div>
           <div class="count-item"><div id="vipHours" class="count-val">0</div><div class="count-lbl">Jam</div></div>
           <div class="count-item"><div id="vipMinutes" class="count-val">0</div><div class="count-lbl">Menit</div></div>
-        </div>
-        <div id="vipBgRow" class="vip-bg-row" style="display:none">
-          <input id="vipBgPicker" type="color" value="#ffd700" class="inp-dark">
-          <button class="mp-btn mp-btn-primary" onclick="saveVipBgColor()">Simpan BG VIP</button>
         </div>
       </div>
 
@@ -1810,13 +1805,8 @@
           const profHeader = document.querySelector('#modalProfile .modern-profile-header');
           if(profHeader) {
             profHeader.classList.toggle('vip', vipActive);
-            if(vipActive) {
-              if(userData.vipBgColor) profHeader.style.background = userData.vipBgColor;
-              else profHeader.style.background = '';
-            } else {
-              if(userData.profileBg) profHeader.style.background = userData.profileBg;
-              else profHeader.style.background = '';
-            }
+            if(!vipActive && userData.profileBg) profHeader.style.background = userData.profileBg;
+            else profHeader.style.background = '';
           }
           updateKetupatUI(userData.ketupat || 0);
           updateEidMiniStatus();
@@ -1824,8 +1814,6 @@
           if(vs) vs.textContent = 'Status VIP: ' + (vipActive ? 'AKTIF' : 'NONVIP');
           updateClaimButtonVisibility();
           const trialActive = !!(userData.trialvip && userData.trialvip.expireAt > now);
-          const vipBgRow = document.getElementById('vipBgRow');
-          if(vipBgRow) vipBgRow.style.display = vipActive ? 'flex' : 'none';
           if(trialActive) startVipTrialCountdown(userData.trialvip.expireAt);
           else {
             const cont = document.getElementById('vipTrialTimer');
@@ -2167,15 +2155,6 @@
       setTimeout(() => el.remove(), 2900);
     }
     
-    function saveVipBgColor() {
-      if(!auth.currentUser) return msg('Login dulu!');
-      const color = document.getElementById('vipBgPicker').value;
-      db.ref('users/' + auth.currentUser.uid).update({ vipBgColor: color }).then(() => {
-        const profHeader = document.querySelector('#modalProfile .modern-profile-header');
-        if(profHeader) profHeader.style.background = color;
-        msg('BG VIP diperbarui');
-      });
-    }
     function startVipTrialCountdown(expireAt) {
       const cont = document.getElementById('vipTrialTimer');
       if(!cont) return;
