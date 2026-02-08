@@ -2411,12 +2411,19 @@
           if(fol && typeof fol === 'object') return Object.keys(fol).length;
           return fol || 0;
         })();
+        const followingCountCreator = (() => {
+          const flg = cData?.following;
+          if(Array.isArray(flg)) return flg.length;
+          if(flg && typeof flg === 'object') return Object.keys(flg).length;
+          return flg || 0;
+        })();
         
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
         const nowVC = Date.now();
         const creatorVipActiveVC = !!(cData?.vip || (cData?.trialvip && cData.trialvip.expireAt > nowVC));
         document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActiveVC ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
         document.getElementById('vFol').innerText = followerCountCreator;
+        document.getElementById('vFollowing').innerText = followingCountCreator;
         document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
         
         const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
