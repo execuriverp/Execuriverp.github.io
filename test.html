@@ -1369,6 +1369,11 @@
       <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
           <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b>BANNED PERMANENT</b> tanpa peringatan!
       </div>
+      <p style="font-size:12px; color:#88c; margin:0 0 10px;">
+        Belum tau cara buat Top4Top?
+        <span class="tutorial-link" onclick="openTutorial()">klik disini</span>
+        untuk melihat tutorial nya.
+      </p>
       <div id="uploadFormUser" style="display:none">
           <!-- URL Upload Form Only -->
           <div id="urlUploadForm" style="display:block;">
@@ -2795,6 +2800,19 @@
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display='block'; }
+    function openTutorial() {
+        const overlay = document.getElementById('tutorialOverlay');
+        if(overlay) overlay.style.display = 'flex';
+    }
+    function closeTutorial() {
+        const overlay = document.getElementById('tutorialOverlay');
+        const video = document.getElementById('tutorialVideo');
+        if(overlay) overlay.style.display = 'none';
+        if(video) {
+            const src = video.src;
+            video.src = src;
+        }
+    }
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
