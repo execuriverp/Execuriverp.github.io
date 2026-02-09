@@ -2,6 +2,30 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+
+    // Video Tutorial Functions
+    function openTutorialVideo() {
+      document.getElementById('videoTutorialModal').classList.add('active');
+    }
+
+    function closeTutorialVideo() {
+      document.getElementById('videoTutorialModal').classList.remove('active');
+    }
+
+    // Close video modal when clicking outside
+    document.addEventListener('click', function(event) {
+      const videoModal = document.getElementById('videoTutorialModal');
+      if (event.target === videoModal) {
+        closeTutorialVideo();
+      }
+    });
+
+    // Close with ESC key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeTutorialVideo();
+      }
+    });
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ExeMusic 3.1 - Updated</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
@@ -981,6 +1005,7 @@
     }
     #btnEvent:hover { transform: scale(1.05); box-shadow: 0 0 24px rgba(0,255,136,0.55), inset 0 0 16px rgba(0,255,136,0.25); }
     #btnEvent:active { transform: scale(0.97); }
+  </style>
 
     /* --- TUTORIAL LINK STYLE --- */
     .tutorial-link {
@@ -1022,14 +1047,8 @@
     }
 
     @keyframes slideUp {
-      from {
-        transform: translateY(50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .video-card {
@@ -1041,9 +1060,7 @@
       overflow: hidden;
       position: relative;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 
-                  0 0 0 1px rgba(59, 130, 246, 0.2),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
@@ -1089,14 +1106,8 @@
     }
 
     @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.7;
-        transform: scale(1.1);
-      }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
     }
 
     .video-close-btn {
@@ -1134,8 +1145,7 @@
       background: #000;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5),
-                  inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
     }
 
     .video-container iframe {
@@ -1173,10 +1183,7 @@
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
-    .video-author-info {
-      flex: 1;
-    }
-
+    .video-author-info { flex: 1; }
     .video-author-name {
       font-size: 15px;
       font-weight: 600;
@@ -1198,58 +1205,23 @@
     }
 
     @media (max-width: 768px) {
-      .video-card {
-        border-radius: 20px;
-        max-height: 95vh;
-      }
-      .video-card-header {
-        padding: 20px;
-      }
-      .video-card-title {
-        font-size: 18px;
-      }
-      .video-card-title i {
-        font-size: 20px;
-      }
-      .video-card-body {
-        padding: 20px;
-      }
-      .video-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 14px 16px;
-      }
-      .video-author-avatar {
-        width: 42px;
-        height: 42px;
-        font-size: 16px;
-      }
+      .video-card { border-radius: 20px; max-height: 95vh; }
+      .video-card-header { padding: 20px; }
+      .video-card-title { font-size: 18px; }
+      .video-card-title i { font-size: 20px; }
+      .video-card-body { padding: 20px; }
+      .video-info { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px 16px; }
+      .video-author-avatar { width: 42px; height: 42px; font-size: 16px; }
     }
 
     @media (max-width: 480px) {
-      .video-modal {
-        padding: 12px;
-      }
-      .video-card {
-        border-radius: 16px;
-      }
-      .video-card-header {
-        padding: 16px;
-      }
-      .video-card-title {
-        font-size: 16px;
-      }
-      .video-card-body {
-        padding: 16px;
-      }
-      .video-close-btn {
-        width: 36px;
-        height: 36px;
-      }
+      .video-modal { padding: 12px; }
+      .video-card { border-radius: 16px; }
+      .video-card-header { padding: 16px; }
+      .video-card-title { font-size: 16px; }
+      .video-card-body { padding: 16px; }
+      .video-close-btn { width: 36px; height: 36px; }
     }
-
-  </style>
 </head>
 <body>
 
@@ -1438,7 +1410,7 @@
           <span id="pUsername" class="mp-name">User</span>
           <span id="pBadge"></span>
         </div>
-        <span id="pEmail" class="mp-handle"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfcaccdacdffdad2ded6d391dcd0d2">[email&#160;protected]</a></span>
+        <span id="pEmail" class="mp-handle"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="88fdfbedfac8ede5e9e1e4a6ebe7e5">[email&#160;protected]</a></span>
         <div id="pTagDisplay" style="margin-bottom:12px"></div>
 
         <div class="mp-stats">
@@ -2909,6 +2881,42 @@
 
     function showToast(text) {
         const container = document.getElementById('toast-container');
+  <!-- Video Tutorial Modal -->
+  <div id="videoTutorialModal" class="video-modal">
+    <div class="video-card">
+      <div class="video-card-header">
+        <div class="video-card-title">
+          <i class="fab fa-youtube"></i>
+          <span>Tutorial Upload Top4Top</span>
+        </div>
+        <button class="video-close-btn" onclick="closeTutorialVideo()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="video-card-body">
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/tRulXHwUmoM" 
+            title="Tutorial Upload Top4Top" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-info">
+          <div class="video-author-avatar">H</div>
+          <div class="video-author-info">
+            <div class="video-author-name">Hexky</div>
+            <div class="video-author-badge">
+              <i class="fas fa-check-circle"></i>
+              <span>Video Tutorial Creator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
         if(!container) return;
         const el = document.createElement('div');
         el.className = 'toast';
@@ -3052,7 +3060,13 @@
         });
         
         auth.signInWithPopup(provider)
-          .then.getElementById('googleBtnText').innerText = 'Buat Akun';
+          .then(result => {
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            if(isNewUser) {
+              isFirstTimeUser = true;
+              document.getElementById('googleBtnText').innerText = 'Buat Akun';
               document.getElementById('usernameSection').style.display = 'block';
               msg('👋 Selamat datang! Buat username Anda untuk melanjutkan.');
             } else {
@@ -3213,68 +3227,8 @@
         msgEl.classList.add('show', 'error');
       }
     }
-
-    // Video Tutorial Functions
-    function openTutorialVideo() {
-      document.getElementById('videoTutorialModal').classList.add('active');
-    }
-
-    function closeTutorialVideo() {
-      document.getElementById('videoTutorialModal').classList.remove('active');
-    }
-
-    // Close video modal when clicking outside
-    document.addEventListener('click', function(event) {
-      const videoModal = document.getElementById('videoTutorialModal');
-      if (event.target === videoModal) {
-        closeTutorialVideo();
-      }
-    });
-
-    // Close with ESC key
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
-        closeTutorialVideo();
-      }
-    });
+  
 
   </script>
-
-  <!-- Video Tutorial Modal -->
-  <div id="videoTutorialModal" class="video-modal">
-    <div class="video-card">
-      <div class="video-card-header">
-        <div class="video-card-title">
-          <i class="fab fa-youtube"></i>
-          <span>Tutorial Upload Top4Top</span>
-        </div>
-        <button class="video-close-btn" onclick="closeTutorialVideo()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="video-card-body">
-        <div class="video-container">
-          <iframe 
-            src="https://www.youtube.com/embed/tRulXHwUmoM" 
-            title="Tutorial Upload Top4Top" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-info">
-          <div class="video-author-avatar">H</div>
-          <div class="video-author-info">
-            <div class="video-author-name">Hexky</div>
-            <div class="video-author-badge">
-              <i class="fas fa-check-circle"></i>
-              <span>Video Tutorial Creator</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </body>
 </html>
