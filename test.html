@@ -1079,6 +1079,255 @@
     }
     #btnEvent:hover { transform: scale(1.05); box-shadow: 0 0 24px rgba(0,255,136,0.55), inset 0 0 16px rgba(0,255,136,0.25); }
     #btnEvent:active { transform: scale(0.97); }
+    
+    /* Gacha Styles */
+    .gacha-container {
+      background: linear-gradient(135deg, rgba(28,28,28,0.98), rgba(20,20,20,0.98));
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .gacha-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffd700' stroke-width='1' opacity='0.1'%3E%3Cpath d='M30 5 L40 15 L30 25 L20 15z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 60px 60px;
+      background-repeat: repeat;
+      pointer-events: none;
+    }
+    .gacha-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffd700;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+    .gacha-subtitle {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+    .gacha-wheel {
+      width: 200px;
+      height: 200px;
+      margin: 20px auto;
+      position: relative;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        #ff6b6b 0deg 45deg,
+        #4ecdc4 45deg 90deg,
+        #45b7d1 90deg 135deg,
+        #96ceb4 135deg 180deg,
+        #ffeaa7 180deg 225deg,
+        #dda0dd 225deg 270deg,
+        #98d8c8 270deg 315deg,
+        #f7dc6f 315deg 360deg
+      );
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      transition: transform 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .gacha-wheel::before {
+      content: '';
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,0,0,0.8), rgba(20,20,20,0.9));
+    }
+    .gacha-pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 30px solid #ffd700;
+      z-index: 10;
+      filter: drop-shadow(0 0 5px rgba(255,215,0,0.8));
+    }
+    .gacha-button {
+      background: linear-gradient(135deg, #ffd700, #ffed4e);
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      padding: 15px 40px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255,215,0,0.4);
+      transition: all 0.3s ease;
+      margin: 20px 0;
+    }
+    .gacha-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(255,215,0,0.6);
+    }
+    .gacha-button:active {
+      transform: translateY(0);
+    }
+    .gacha-button:disabled {
+      background: #666;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .gacha-result {
+      background: rgba(0,0,0,0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,215,0,0.5);
+      display: none;
+    }
+    .gacha-result.show {
+      display: block;
+      animation: fadeInScale 0.5s ease;
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .gacha-result-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+    .gacha-result-desc {
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+    .gacha-spinning {
+      animation: spin 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(1800deg); }
+    }
+    .gacha-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .gacha-particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ffd700;
+      border-radius: 50%;
+      animation: particle-float 2s ease-out forwards;
+    }
+    @keyframes particle-float {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-100px) scale(0); }
+    }
+    
+    /* Perbaikan UI Toko Ketupat */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .shop-item {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 15px;
+      padding: 15px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .shop-item:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255,215,0,0.2);
+    }
+    
+    .shop-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .shop-item:hover::before {
+      left: 100%;
+    }
+    
+    .shop-item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .shop-item-title {
+      font-weight: 700;
+      color: #fff;
+      font-size: 14px;
+    }
+    
+    .shop-price {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 14px;
+    }
+    
+    .shop-action {
+      background: linear-gradient(135deg, var(--accent), #ffed4e);
+      color: #000;
+      border: none;
+      border-radius: 25px;
+      padding: 8px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .shop-action:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(255,215,0,0.4);
+    }
+    
+    .shop-action:active {
+      transform: scale(0.95);
+    }
+    
+    .shop-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .shop-select {
+      flex: 1;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,215,0,0.3);
+      color: #fff;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    
+    .shop-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -1099,6 +1348,25 @@
     <div class="sheet">
       <div class="event-card">
         <div style="text-align:center; margin-bottom:10px; color:#fff; font-weight:800"><i class="fas fa-store"></i> Toko Ketupat</div>
+        
+        <!-- Gacha Section -->
+        <div class="gacha-container">
+          <div class="gacha-title">🎰 Gacha Ketupat</div>
+          <div class="gacha-subtitle">Coba keberuntunganmu! Dapatkan hadiah menarik</div>
+          <div class="gacha-wheel" id="gachaWheel">
+            <div class="gacha-pointer"></div>
+            <div class="gacha-particles" id="gachaParticles"></div>
+          </div>
+          <button class="gacha-button" id="gachaBtn" onclick="spinGacha()">
+            <span>🎲 Spin Gacha (100💠)</span>
+          </button>
+          <div class="gacha-result" id="gachaResult">
+            <div class="gacha-result-title" id="gachaResultTitle"></div>
+            <div class="gacha-result-desc" id="gachaResultDesc"></div>
+            <button class="shop-action" onclick="closeGachaResult()">Tutup</button>
+          </div>
+        </div>
+        
         <div class="shop-grid">
           <div class="shop-item">
             <div class="shop-item-head"><div class="shop-item-title">Tag Ramadhan</div><div class="shop-price">10💠</div></div>
@@ -1127,6 +1395,26 @@
           <div class="shop-item">
             <div class="shop-item-head"><div class="shop-item-title">Background Ungu</div><div class="shop-price">50💠</div></div>
             <button class="shop-action" onclick="exchangeBg('purple',50)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Background Gold</div><div class="shop-price">100💠</div></div>
+            <button class="shop-action" onclick="exchangeBg('gold',100)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Background Premium</div><div class="shop-price">150💠</div></div>
+            <button class="shop-action" onclick="exchangeBg('premium',150)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Tag Premium</div><div class="shop-price">25💠</div></div>
+            <button class="shop-action" onclick="exchangeTag('premium',25)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Tag Legend</div><div class="shop-price">50💠</div></div>
+            <button class="shop-action" onclick="exchangeTag('legend',50)">Tukar</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-item-head"><div class="shop-item-title">Tag Exclusive</div><div class="shop-price">75💠</div></div>
+            <button class="shop-action" onclick="exchangeTag('exclusive',75)">Tukar</button>
           </div>
           <div class="shop-item" style="grid-column: 1 / -1">
             <div class="shop-item-head"><div class="shop-item-title">VIP Trial</div><div class="shop-price">100💠/Hari</div></div>
@@ -2368,6 +2656,139 @@
         return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal }).then(() => db.ref('users/'+auth.currentUser.uid+'/trialvip').update({ active: true, expireAt: expire }));
       }).then(() => msg('VIP trial aktif'));
     }
+    
+    // Gacha Functions
+    function spinGacha() {
+      if(!auth.currentUser) return msg('Login dulu!');
+      
+      const gachaBtn = document.getElementById('gachaBtn');
+      const gachaWheel = document.getElementById('gachaWheel');
+      const gachaResult = document.getElementById('gachaResult');
+      
+      // Cek ketupat cukup
+      ensureKetupat(100).then(cur => {
+        // Disable button
+        gachaBtn.disabled = true;
+        gachaBtn.innerHTML = '<span>🎲 Spinning...</span>';
+        
+        // Sembunyikan hasil sebelumnya
+        gachaResult.classList.remove('show');
+        
+        // Animasi spin
+        gachaWheel.classList.add('gacha-spinning');
+        
+        // Buat partikel efek
+        createGachaParticles();
+        
+        // Setelah 3 detik (sesuai animasi)
+        setTimeout(() => {
+          // Berhentikan animasi
+          gachaWheel.classList.remove('gacha-spinning');
+          
+          // Kurangi ketupat
+          const newVal = cur - 100;
+          
+          // Tentukan hadiah (weighted random)
+          const prizes = [
+            { name: 'Cashback 100💠', chance: 30, type: 'cashback', value: 100, message: 'Selamat! Kamu mendapatkan cashback 100 ketupat!' },
+            { name: 'Background Gold', chance: 20, type: 'background', value: 'gold', message: 'Wow! Background emas eksklusif!' },
+            { name: 'Tag Premium', chance: 15, type: 'tag', value: 'premium', message: 'Tag premium untukmu!' },
+            { name: 'VIP 1 Hari', chance: 10, type: 'vip', value: 1, message: 'VIP 1 hari aktif!' },
+            { name: 'Cashback 200💠', chance: 8, type: 'cashback', value: 200, message: 'Luar biasa! Cashback 200 ketupat!' },
+            { name: 'Background Premium', chance: 5, type: 'background', value: 'premium', message: 'Background premium spesial!' },
+            { name: 'Tag Legend', chance: 3, type: 'tag', value: 'legend', message: 'Tag legenda! Keren!' },
+            { name: 'Jackpot 500💠', chance: 1, type: 'cashback', value: 500, message: '🎉 JACKPOT! 500 ketupat!' }
+          ];
+          
+          const prize = selectGachaPrize(prizes);
+          
+          // Proses hadiah
+          processGachaPrize(prize, newVal);
+          
+          // Tampilkan hasil
+          showGachaResult(prize);
+          
+          // Enable button kembali
+          gachaBtn.disabled = false;
+          gachaBtn.innerHTML = '<span>🎲 Spin Gacha (100💠)</span>';
+          
+        }, 3000);
+        
+      }).catch(err => {
+        gachaBtn.disabled = false;
+        gachaBtn.innerHTML = '<span>🎲 Spin Gacha (100💠)</span>';
+      });
+    }
+    
+    function selectGachaPrize(prizes) {
+      const totalChance = prizes.reduce((sum, prize) => sum + prize.chance, 0);
+      let random = Math.random() * totalChance;
+      
+      for(let prize of prizes) {
+        if(random < prize.chance) {
+          return prize;
+        }
+        random -= prize.chance;
+      }
+      
+      return prizes[0]; // fallback
+    }
+    
+    function processGachaPrize(prize, ketupatAfter) {
+      const updates = { ketupat: ketupatAfter };
+      
+      switch(prize.type) {
+        case 'cashback':
+          updates.ketupat = ketupatAfter + prize.value;
+          break;
+        case 'background':
+          updates.profileBg = prize.value;
+          break;
+        case 'tag':
+          updates.tag = prize.value;
+          break;
+        case 'vip':
+          const expire = Date.now() + prize.value * 24 * 3600000;
+          db.ref('users/'+auth.currentUser.uid+'/trialvip').update({ active: true, expireAt: expire });
+          break;
+      }
+      
+      db.ref('users/'+auth.currentUser.uid).update(updates);
+      updateKetupatUI(updates.ketupat);
+    }
+    
+    function showGachaResult(prize) {
+      const gachaResult = document.getElementById('gachaResult');
+      const gachaResultTitle = document.getElementById('gachaResultTitle');
+      const gachaResultDesc = document.getElementById('gachaResultDesc');
+      
+      gachaResultTitle.textContent = prize.name;
+      gachaResultDesc.textContent = prize.message;
+      gachaResult.classList.add('show');
+      
+      msg('🎰 ' + prize.message);
+    }
+    
+    function closeGachaResult() {
+      document.getElementById('gachaResult').classList.remove('show');
+    }
+    
+    function createGachaParticles() {
+      const container = document.getElementById('gachaParticles');
+      container.innerHTML = '';
+      
+      for(let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'gacha-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 2000);
+      }
+    }
+    
     function updateKetupatUI(val) {
       const b = document.getElementById('eventBadge'); if(!b) return;
       b.textContent = val ? String(val) : '';
@@ -3077,7 +3498,7 @@
       <button class="close-btn" onclick="closeTutorial()">&times;</button>
       <h3>Tutorial Upload via Top4Top</h3>
       <div class="video-container">
-        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/tRulXHwUmoM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <p>Video oleh: Hexky</p>
     </div>
