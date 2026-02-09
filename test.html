@@ -981,7 +981,7 @@
     }
     #btnEvent:hover { transform: scale(1.05); box-shadow: 0 0 24px rgba(0,255,136,0.55), inset 0 0 16px rgba(0,255,136,0.25); }
     #btnEvent:active { transform: scale(0.97); }
-    
+
     /* --- TUTORIAL LINK STYLE --- */
     .tutorial-link {
       display: inline-block;
@@ -994,6 +994,7 @@
     .tutorial-link:hover {
       color: #60a5fa;
       text-decoration: none;
+    }
 
     /* --- VIDEO CARD MODAL --- */
     .video-modal {
@@ -1016,12 +1017,8 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     @keyframes slideUp {
@@ -1063,12 +1060,8 @@
     }
 
     @keyframes gradientShift {
-      0%, 100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .video-card-header {
@@ -1255,7 +1248,7 @@
         height: 36px;
       }
     }
-    }
+
   </style>
 </head>
 <body>
@@ -1445,45 +1438,9 @@
           <span id="pUsername" class="mp-name">User</span>
           <span id="pBadge"></span>
         </div>
-        <span id="pEmail" class="mp-handle"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5421273126143139353d387a373b39">[email&#160;protected]</a></span>
+        <span id="pEmail" class="mp-handle"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfcaccdacdffdad2ded6d391dcd0d2">[email&#160;protected]</a></span>
         <div id="pTagDisplay" style="margin-bottom:12px"></div>
 
-
-  <!-- Video Tutorial Modal -->
-  <div id="videoTutorialModal" class="video-modal">
-    <div class="video-card">
-      <div class="video-card-header">
-        <div class="video-card-title">
-          <i class="fab fa-youtube"></i>
-          <span>Tutorial Upload Top4Top</span>
-        </div>
-        <button class="video-close-btn" onclick="closeTutorialVideo()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="video-card-body">
-        <div class="video-container">
-          <iframe 
-            src="https://www.youtube.com/embed/tRulXHwUmoM" 
-            title="Tutorial Upload Top4Top" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-info">
-          <div class="video-author-avatar">H</div>
-          <div class="video-author-info">
-            <div class="video-author-name">Hexky</div>
-            <div class="video-author-badge">
-              <i class="fas fa-check-circle"></i>
-              <span>Video Tutorial Creator</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
         <div class="mp-stats">
           <div class="mp-stat-item">
             <span id="pFol" class="mp-stat-val">0</span>
@@ -3008,23 +2965,6 @@
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display='block'; }
-
-    // Video Tutorial Functions
-    function openTutorialVideo() {
-      document.getElementById('videoTutorialModal').classList.add('active');
-    }
-
-    function closeTutorialVideo() {
-      document.getElementById('videoTutorialModal').classList.remove('active');
-    }
-
-    // Close video modal when clicking outside
-    document.addEventListener('click', function(event) {
-      const videoModal = document.getElementById('videoTutorialModal');
-      if (event.target === videoModal) {
-        closeTutorialVideo();
-      }
-    });
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
@@ -3112,13 +3052,7 @@
         });
         
         auth.signInWithPopup(provider)
-          .then(result => {
-            const user = result.user;
-            const isNewUser = result.additionalUserInfo.isNewUser;
-            
-            if(isNewUser) {
-              isFirstTimeUser = true;
-              document.getElementById('googleBtnText').innerText = 'Buat Akun';
+          .then.getElementById('googleBtnText').innerText = 'Buat Akun';
               document.getElementById('usernameSection').style.display = 'block';
               msg('👋 Selamat datang! Buat username Anda untuk melanjutkan.');
             } else {
@@ -3272,4 +3206,75 @@
         msgEl.classList.add('show', 'success');
         setTimeout(() => {
           document.getElementById('modalChangePass').style.display = 'none';
-          msg('Pass
+          msg('Password telah diperbarui!');
+        }, 1500);
+      } catch(err) {
+        msgEl.innerText = '❌ Password lama salah!';
+        msgEl.classList.add('show', 'error');
+      }
+    }
+
+    // Video Tutorial Functions
+    function openTutorialVideo() {
+      document.getElementById('videoTutorialModal').classList.add('active');
+    }
+
+    function closeTutorialVideo() {
+      document.getElementById('videoTutorialModal').classList.remove('active');
+    }
+
+    // Close video modal when clicking outside
+    document.addEventListener('click', function(event) {
+      const videoModal = document.getElementById('videoTutorialModal');
+      if (event.target === videoModal) {
+        closeTutorialVideo();
+      }
+    });
+
+    // Close with ESC key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeTutorialVideo();
+      }
+    });
+
+  </script>
+
+  <!-- Video Tutorial Modal -->
+  <div id="videoTutorialModal" class="video-modal">
+    <div class="video-card">
+      <div class="video-card-header">
+        <div class="video-card-title">
+          <i class="fab fa-youtube"></i>
+          <span>Tutorial Upload Top4Top</span>
+        </div>
+        <button class="video-close-btn" onclick="closeTutorialVideo()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="video-card-body">
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/tRulXHwUmoM" 
+            title="Tutorial Upload Top4Top" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-info">
+          <div class="video-author-avatar">H</div>
+          <div class="video-author-info">
+            <div class="video-author-name">Hexky</div>
+            <div class="video-author-badge">
+              <i class="fas fa-check-circle"></i>
+              <span>Video Tutorial Creator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
