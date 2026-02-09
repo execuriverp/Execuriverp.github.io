@@ -471,6 +471,104 @@
 
     /* MODALS */
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; backdrop-filter: blur(5px); }
+
+    /* Tutorial Card */
+    .tutorial-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tutorial-card {
+      background: #1a1a1a;
+      border-radius: 20px;
+      padding: 25px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .tutorial-card .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .tutorial-card .close-btn:hover {
+      background: var(--danger);
+    }
+
+    .tutorial-card h3 {
+      color: var(--accent);
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .tutorial-card p {
+      font-size: 14px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .tutorial-link {
+      color: #3498db;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .tutorial-link:hover {
+      color: #5dade2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(30px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
     .sheet { position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%); background: #181818; border-radius: 30px 30px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); border-top: 1px solid #333; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
 
@@ -1271,6 +1369,11 @@
       <div class="rules-warn" style="font-size: 11px; margin-bottom: 15px;">
           <b>⚠️ PERHATIAN:</b> Dilarang mengupload konten SARA, pornografi audio, atau lagu earrape yang merusak telinga. Pelanggaran akan mengakibatkan <b>BANNED PERMANENT</b> tanpa peringatan!
       </div>
+      <p style="font-size:12px; color:#88c; margin:0 0 10px;">
+        Belum tau cara buat Top4Top?
+        <span class="tutorial-link" onclick="openTutorial()">klik disini</span>
+        untuk melihat tutorial nya.
+      </p>
       <div id="uploadFormUser" style="display:none">
           <!-- URL Upload Form Only -->
           <div id="urlUploadForm" style="display:block;">
@@ -2697,6 +2800,19 @@
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
     function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display='block'; }
+    function openTutorial() {
+        const overlay = document.getElementById('tutorialOverlay');
+        if(overlay) overlay.style.display = 'flex';
+    }
+    function closeTutorial() {
+        const overlay = document.getElementById('tutorialOverlay');
+        const video = document.getElementById('tutorialVideo');
+        if(overlay) overlay.style.display = 'none';
+        if(video) {
+            const src = video.src;
+            video.src = src;
+        }
+    }
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
@@ -2955,5 +3071,17 @@
 
 
   </script>
+
+  <div class="tutorial-overlay" id="tutorialOverlay">
+    <div class="tutorial-card">
+      <button class="close-btn" onclick="closeTutorial()">&times;</button>
+      <h3>Tutorial Upload via Top4Top</h3>
+      <div class="video-container">
+        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <p>Video oleh: Hexky</p>
+    </div>
+  </div>
+
 </body>
 </html>
