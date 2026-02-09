@@ -1052,70 +1052,82 @@
     .shop-row { display:flex; gap:8px; align-items:center; }
     .shop-select { flex:1; }
     @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
+    /* Ketupat Display - Terpisah dari button */
+    .ketupat-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent);
+      transition: all 0.2s ease;
+    }
+    .ketupat-display:hover {
+      background: rgba(0,0,0,0.5);
+      transform: scale(1.05);
+    }
+    .ketupat-icon {
+      font-size: 16px;
+    }
+    .ketupat-count {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .ketupat-count.show {
+      opacity: 1;
+    }
+    /* Button Event - Sederhana */
     #btnEvent {
       position: relative;
       width: 46px; height: 46px;
-      background: radial-gradient(120% 120% at 50% 50%, rgba(0,255,136,0.15) 0%, rgba(0,0,0,0.2) 60%);
-      border: 2px solid var(--accent);
+      background: var(--accent);
+      border: none;
       border-radius: 50%;
-      color: #fff;
+      color: #000;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
-      transition: 0.2s;
-      box-shadow: 0 0 18px rgba(0,255,136,0.35), inset 0 0 12px rgba(0,255,136,0.15);
-      overflow: hidden;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    #btnEvent::after {
-      content: "";
-      position: absolute;
-      top: -40%; left: -40%;
-      width: 180%; height: 180%;
-      background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
-      transform: rotate(25deg);
-      pointer-events: none;
-    }
-    #btnEvent:hover { transform: scale(1.05); box-shadow: 0 0 24px rgba(0,255,136,0.55), inset 0 0 16px rgba(0,255,136,0.25); }
-    #btnEvent:active { transform: scale(0.97); }
+    #btnEvent:hover { transform: scale(1.1); }
+    #btnEvent:active { transform: scale(0.95); }
     
-    /* Gacha Styles */
+    /* Gacha Styles - Optimized */
     .gacha-container {
-      background: linear-gradient(135deg, rgba(28,28,28,0.98), rgba(20,20,20,0.98));
-      border: 2px solid rgba(255,215,0,0.3);
-      border-radius: 20px;
+      background: #1a1a1a;
+      border: 1px solid var(--accent);
+      border-radius: 15px;
       padding: 20px;
       margin: 20px 0;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .gacha-container::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffd700' stroke-width='1' opacity='0.1'%3E%3Cpath d='M30 5 L40 15 L30 25 L20 15z'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 60px 60px;
-      background-repeat: repeat;
-      pointer-events: none;
     }
     .gacha-title {
-      font-size: 24px;
-      font-weight: 800;
-      color: #ffd700;
-      margin-bottom: 10px;
-      text-shadow: 0 0 10px rgba(255,215,0,0.5);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
     }
     .gacha-subtitle {
-      font-size: 14px;
-      color: #aaa;
+      font-size: 13px;
+      color: #999;
       margin-bottom: 20px;
     }
+    .gacha-wheel-container {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 15px auto;
+    }
     .gacha-wheel {
-      width: 200px;
-      height: 200px;
-      margin: 20px auto;
+      width: 100%;
+      height: 100%;
       position: relative;
       border-radius: 50%;
       background: conic-gradient(
@@ -1129,104 +1141,77 @@
         #98d8c8 270deg 315deg,
         #f7dc6f 315deg 360deg
       );
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-      transition: transform 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      box-shadow: 0 3px 12px rgba(0,0,0,0.35);
     }
     .gacha-wheel::before {
       content: '';
       position: absolute;
-      inset: 10px;
+      inset: 8px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,0,0,0.8), rgba(20,20,20,0.9));
+      background: #111;
     }
     .gacha-pointer {
       position: absolute;
-      top: -15px;
+      top: -12px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-top: 30px solid #ffd700;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 24px solid var(--accent);
       z-index: 10;
-      filter: drop-shadow(0 0 5px rgba(255,215,0,0.8));
+      pointer-events: none;
     }
     .gacha-button {
-      background: linear-gradient(135deg, #ffd700, #ffed4e);
+      background: var(--accent);
       color: #000;
       border: none;
-      border-radius: 50px;
-      padding: 15px 40px;
-      font-size: 18px;
-      font-weight: 800;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(255,215,0,0.4);
-      transition: all 0.3s ease;
-      margin: 20px 0;
+      transition: all 0.2s ease;
+      margin: 15px 0;
     }
     .gacha-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(255,215,0,0.6);
-    }
-    .gacha-button:active {
-      transform: translateY(0);
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255,215,0,0.3);
     }
     .gacha-button:disabled {
-      background: #666;
+      background: #444;
       cursor: not-allowed;
-      box-shadow: none;
     }
     .gacha-result {
-      background: rgba(0,0,0,0.8);
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px 0;
-      border: 2px solid rgba(255,215,0,0.5);
+      background: #111;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      border: 1px solid var(--accent);
       display: none;
     }
     .gacha-result.show {
       display: block;
-      animation: fadeInScale 0.5s ease;
-    }
-    @keyframes fadeInScale {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
+      animation: fadeIn 0.3s ease;
     }
     .gacha-result-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: #ffd700;
-      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
     }
     .gacha-result-desc {
-      font-size: 16px;
-      color: #fff;
-      margin-bottom: 15px;
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 12px;
     }
     .gacha-spinning {
-      animation: spin 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      animation: spin 2s ease-out;
     }
     @keyframes spin {
       from { transform: rotate(0deg); }
-      to { transform: rotate(1800deg); }
-    }
-    .gacha-particles {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-    .gacha-particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #ffd700;
-      border-radius: 50%;
-      animation: particle-float 2s ease-out forwards;
-    }
-    @keyframes particle-float {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-100px) scale(0); }
+      to { transform: rotate(1440deg); }
     }
     
     /* Perbaikan UI Toko Ketupat */
@@ -1353,9 +1338,9 @@
         <div class="gacha-container">
           <div class="gacha-title">🎰 Gacha Ketupat</div>
           <div class="gacha-subtitle">Coba keberuntunganmu! Dapatkan hadiah menarik</div>
-          <div class="gacha-wheel" id="gachaWheel">
+          <div class="gacha-wheel-container">
+            <div class="gacha-wheel" id="gachaWheel"></div>
             <div class="gacha-pointer"></div>
-            <div class="gacha-particles" id="gachaParticles"></div>
           </div>
           <button class="gacha-button" id="gachaBtn" onclick="spinGacha()">
             <span>🎲 Spin Gacha (100💠)</span>
@@ -1450,8 +1435,12 @@
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
+          <div class="ketupat-display" id="ketupatDisplay">
+            <span class="ketupat-icon">💠</span>
+            <span id="ketupatCount" class="ketupat-count">0</span>
+          </div>
           <button id="btnEvent" onclick="openEvent()" title="Event">
-            <span style="font-size:20px">💠</span>
+            <span style="font-size:20px">🎁</span>
             <span id="eventBadge" class="notif-badge"></span>
           </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
@@ -2677,10 +2666,7 @@
         // Animasi spin
         gachaWheel.classList.add('gacha-spinning');
         
-        // Buat partikel efek
-        createGachaParticles();
-        
-        // Setelah 3 detik (sesuai animasi)
+        // Setelah 2 detik (sesuai animasi)
         setTimeout(() => {
           // Berhentikan animasi
           gachaWheel.classList.remove('gacha-spinning');
@@ -2712,7 +2698,7 @@
           gachaBtn.disabled = false;
           gachaBtn.innerHTML = '<span>🎲 Spin Gacha (100💠)</span>';
           
-        }, 3000);
+        }, 2000);
         
       }).catch(err => {
         gachaBtn.disabled = false;
@@ -2773,26 +2759,12 @@
       document.getElementById('gachaResult').classList.remove('show');
     }
     
-    function createGachaParticles() {
-      const container = document.getElementById('gachaParticles');
-      container.innerHTML = '';
-      
-      for(let i = 0; i < 20; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'gacha-particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 0.5 + 's';
-        container.appendChild(particle);
-        
-        setTimeout(() => particle.remove(), 2000);
-      }
-    }
-    
     function updateKetupatUI(val) {
-      const b = document.getElementById('eventBadge'); if(!b) return;
-      b.textContent = val ? String(val) : '';
-      b.classList.toggle('show', !!val);
+      const ketupatCount = document.getElementById('ketupatCount');
+      if(ketupatCount) {
+        ketupatCount.textContent = val ? String(val) : '0';
+        ketupatCount.classList.toggle('show', !!val);
+      }
       const k = document.getElementById('eidKetVal'); if(k) k.textContent = val ? String(val) : '0';
     }
     function updateEidMiniStatus() {
