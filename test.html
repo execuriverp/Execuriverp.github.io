@@ -915,7 +915,7 @@
     .tag-admin { background: #ff3333; color: #fff; }
     .tag-velly\2665\FE0F { background: gold; color: #000; animation: pulse 2s infinite; }
     .tag-staff { background: #0088ff; color: #fff; }
-    .tag-executive { background: #aa00ff; color: #fff; }
+    .tag-execurive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
     .tag-sepuh { background: #1a1a1a; color: var(--accent); border: 1px solid var(--accent); }
     .tag-rich { background: linear-gradient(45deg, gold, #fff); color: #000; }
@@ -1284,6 +1284,17 @@
     .shop-select:focus {
       outline: none;
       border-color: var(--accent);
+    }
+    
+    /* Styling untuk elemen code */
+    code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
@@ -1699,7 +1710,7 @@
         <p style="margin-top:12px; color:#ddd">
           📱 Contact WhatsApp — <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
           📋 Changelogs — <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
-          📻 Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a>
+          📻 Use Boombox — <a href="javascript:void(0)" onclick="openBBTutorial()" class="about-dev-link">click here</a>
         </p>
         <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
         <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
@@ -1787,14 +1798,13 @@
   </div>
   <div class="modal" id="modalBoombox" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">How to use URL Top4Top</h3>
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Tutorial BB Command</h3>
       <div style="font-size:13px; color:#ddd; line-height:1.6; margin-bottom:12px">
-        <p>1. pastikan kamu sudah punya boombox.</p>
-        <p>2. pakai command /placebb untuk menaruh boombox.</p>
-        <p>3. pakai command /setbb untuk memulai music.</p>
-        <p>4. pilih url paling bawah dan masukan url top4top nya.</p>
-        <p>note : jika url tidak bunyi silahkan hapus s di bagian https menjadi http dan pastikan url adalah top4top.</p>
-        <p>end.</p>
+        <p>1. Join server Executive Roleplay</p>
+        <p>2. Di chat, ketik: <code>/setbb [URL lagu dari ExeMusic]</code></p>
+        <p>3. Contoh: <code>/setbb https://exemusic.com/?id=123</code></p>
+        <p>4. Musik akan diputar di boombox kamu!</p>
+        <p>note: Pastikan URL valid dari ExeMusic.</p>
       </div>
       <div style="display:flex; gap:10px">
         <button class="btn-act" onclick="document.getElementById('modalBoombox').style.display='none'">Close</button>
@@ -3170,7 +3180,6 @@
     function downloadSong() { window.open(songs[i].url); }
     function openReq() { document.getElementById('modalReq').style.display='block'; }
     function openAbout() { document.getElementById('modalAbout').style.display='block'; }
-    function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display='block'; }
     function openTutorial() {
         const overlay = document.getElementById('tutorialOverlay');
         if(overlay) overlay.style.display = 'flex';
@@ -3185,8 +3194,8 @@
         }
     }
     function openBBTutorial() {
-        // Tutorial untuk BB command - bisa dibuat modal baru atau alert sementara
-        alert('Tutorial BB Command:\n\n1. Join server Executive Roleplay\n2. Di chat, ketik: /setbb [URL lagu dari ExeMusic]\n3. Contoh: /setbb https://exemusic.com/?id=123\n4. Musik akan diputar di boombox kamu!\n\nNote: Pastikan URL valid dari ExeMusic.');
+        // Tampilkan modal BB tutorial
+        document.getElementById('modalBoombox').style.display = 'flex';
     }
     function closeGuestTutorial() {
         const overlay = document.getElementById('guestTutorialOverlay');
@@ -3458,7 +3467,7 @@
       <button class="close-btn" onclick="closeTutorial()">&times;</button>
       <h3>Tutorial Upload via Top4Top</h3>
       <div class="video-container">
-        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/tRulXHwUmoM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <p>Video oleh: Hexky</p>
     </div>
@@ -3487,7 +3496,7 @@
         <div style="background:rgba(255,215,0,0.1); border:1px solid var(--accent); border-radius:8px; padding:12px;">
           <h4 style="color:var(--accent); margin:0 0 8px 0; font-size:14px;">🎧 Play URL BB di Server</h4>
           <p style="font-size:12px; color:#ccc; margin:0;">
-            Gunakan command <code>/setbb</code> di server Executive Roleplay untuk memutar musik.
+            Gunakan command <code>/setbb</code> di server Execurive Roleplay untuk memutar musik.
           </p>
           <button class="tutorial-link" onclick="openBBTutorial(); closeGuestTutorial();" style="background:transparent; border:none; color:#3498db; cursor:pointer; font-size:12px; margin-top:5px;">
             View Tutorial Play Url BB di server execurive roleplay : click here
