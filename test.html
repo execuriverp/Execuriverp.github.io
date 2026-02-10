@@ -133,7 +133,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: 0.5s;
     }
-    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 2s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* --- MAIN APP --- */
@@ -449,7 +449,7 @@
       border: 2px solid rgba(0, 255, 136, 0.3);
       border-top: 2px solid var(--accent);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 1.5s linear infinite;
       display: none;
       margin: 0 auto;
     }
@@ -1052,34 +1052,6 @@
     .shop-row { display:flex; gap:8px; align-items:center; }
     .shop-select { flex:1; }
     @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
-    /* Ketupat Display - Terpisah dari button */
-    .ketupat-display {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid var(--accent);
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--accent);
-      transition: all 0.2s ease;
-    }
-    .ketupat-display:hover {
-      background: rgba(0,0,0,0.5);
-      transform: scale(1.05);
-    }
-    .ketupat-icon {
-      font-size: 16px;
-    }
-    .ketupat-count {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .ketupat-count.show {
-      opacity: 1;
-    }
     /* Button Event - Sederhana */
     #btnEvent {
       position: relative;
@@ -1435,10 +1407,6 @@
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
-          <div class="ketupat-display" id="ketupatDisplay">
-            <span class="ketupat-icon">💠</span>
-            <span id="ketupatCount" class="ketupat-count">0</span>
-          </div>
           <button id="btnEvent" onclick="openEvent()" title="Event">
             <span style="font-size:20px">🎁</span>
             <span id="eventBadge" class="notif-badge"></span>
@@ -1754,6 +1722,11 @@
     <div class="sheet">
       <div class="event-card">
         <div style="text-align:center; margin-bottom:8px; color:var(--accent); font-weight:800"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</div>
+        <div style="text-align:center; margin-bottom:12px; background:rgba(0,0,0,0.3); border:1px solid var(--accent); border-radius:16px; padding:8px 12px; display:inline-flex; align-items:center; gap:6px; margin-left:auto; margin-right:auto;">
+          <span style="font-size:16px">💠</span>
+          <span id="eidKetVal" style="font-weight:700; font-size:15px; color:var(--accent);">0</span>
+          <span style="font-size:12px; color:#ccc;">Ketupat</span>
+        </div>
         <div id="eidCountdown" class="countdown-wrap">
           <div class="count-item">
             <div class="count-val" id="cDays">0</div>
@@ -2216,6 +2189,14 @@
         document.getElementById('topLoginBtn').textContent = "Login";
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('adminBtn').style.display = 'none';
+        
+        // Tampilkan tutorial untuk guest yang belum pernah login
+        if(!localStorage.getItem('exeTutorialSeen')) {
+          setTimeout(() => {
+            const overlay = document.getElementById('guestTutorialOverlay');
+            if(overlay) overlay.style.display = 'flex';
+          }, 1500); // Tampilkan setelah 1.5 detik
+        }
       }
       document.getElementById('loadingCard').style.display = 'none';
     });
@@ -2760,12 +2741,9 @@
     }
     
     function updateKetupatUI(val) {
-      const ketupatCount = document.getElementById('ketupatCount');
-      if(ketupatCount) {
-        ketupatCount.textContent = val ? String(val) : '0';
-        ketupatCount.classList.toggle('show', !!val);
-      }
-      const k = document.getElementById('eidKetVal'); if(k) k.textContent = val ? String(val) : '0';
+      // UI ketupat di header dihapus, hanya update di event card
+      const k = document.getElementById('eidKetVal'); 
+      if(k) k.textContent = val ? String(val) : '0';
     }
     function updateEidMiniStatus() {
       const sEl = document.getElementById('eidClaimStatus');
@@ -3206,6 +3184,16 @@
             video.src = src;
         }
     }
+    function openBBTutorial() {
+        // Tutorial untuk BB command - bisa dibuat modal baru atau alert sementara
+        alert('Tutorial BB Command:\n\n1. Join server Executive Roleplay\n2. Di chat, ketik: /setbb [URL lagu dari ExeMusic]\n3. Contoh: /setbb https://exemusic.com/?id=123\n4. Musik akan diputar di boombox kamu!\n\nNote: Pastikan URL valid dari ExeMusic.');
+    }
+    function closeGuestTutorial() {
+        const overlay = document.getElementById('guestTutorialOverlay');
+        if(overlay) overlay.style.display = 'none';
+        // Tandai bahwa user sudah melihat tutorial
+        localStorage.setItem('exeTutorialSeen', 'true');
+    }
     function toggleAuthMode() { /* Google Sign-In only - not used */ }
     function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
     function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
@@ -3473,6 +3461,48 @@
         <iframe id="tutorialVideo" src="https://www.youtube.com/embed/tRulXHwUmoM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <p>Video oleh: Hexky</p>
+    </div>
+  </div>
+
+  <!-- Tutorial Card untuk Guest -->
+  <div class="tutorial-overlay" id="guestTutorialOverlay">
+    <div class="tutorial-card">
+      <button class="close-btn" onclick="closeGuestTutorial()">&times;</button>
+      <h3>Selamat Datang di ExeMusic! 🎵</h3>
+      <p style="font-size:14px; color:#ccc; margin-bottom:15px;">
+        Kamu masih sebagai <b>Guest</b>. Yuk, pelajari cara menggunakan ExeMusic:
+      </p>
+      
+      <div style="margin:15px 0;">
+        <div style="background:rgba(255,215,0,0.1); border:1px solid var(--accent); border-radius:8px; padding:12px; margin-bottom:10px;">
+          <h4 style="color:var(--accent); margin:0 0 8px 0; font-size:14px;">📤 Upload Lagu</h4>
+          <p style="font-size:12px; color:#ccc; margin:0;">
+            Klik tombol Upload, pilih file audio, dan bagikan musik favoritmu!
+          </p>
+          <button class="tutorial-link" onclick="openTutorial(); closeGuestTutorial();" style="background:transparent; border:none; color:#3498db; cursor:pointer; font-size:12px; margin-top:5px;">
+            View Tutorial Upload : click here
+          </button>
+        </div>
+        
+        <div style="background:rgba(255,215,0,0.1); border:1px solid var(--accent); border-radius:8px; padding:12px;">
+          <h4 style="color:var(--accent); margin:0 0 8px 0; font-size:14px;">🎧 Play URL BB di Server</h4>
+          <p style="font-size:12px; color:#ccc; margin:0;">
+            Gunakan command <code>/setbb</code> di server Executive Roleplay untuk memutar musik.
+          </p>
+          <button class="tutorial-link" onclick="openBBTutorial(); closeGuestTutorial();" style="background:transparent; border:none; color:#3498db; cursor:pointer; font-size:12px; margin-top:5px;">
+            View Tutorial Play Url BB di server execurive roleplay : click here
+          </button>
+        </div>
+      </div>
+      
+      <div style="text-align:center; margin-top:20px;">
+        <button class="shop-action" onclick="closeGuestTutorial()" style="width:auto; padding:8px 20px;">
+          Lanjutkan sebagai Guest
+        </button>
+        <button class="shop-action" onclick="openProfile(); closeGuestTutorial();" style="width:auto; padding:8px 20px; margin-left:10px; background:#27ae60;">
+          Register Sekarang
+        </button>
+      </div>
     </div>
   </div>
 
