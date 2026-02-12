@@ -984,6 +984,26 @@
       </div>
     </div>
 
+    <div id="modalCopyAudio" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h2 style="margin-bottom: 16px;">Salin URL Audio</h2>
+        <p style="font-size: 12px; color: var(--spotify-text-dim); margin-bottom: 20px;">Gunakan link ini untuk Boombox (BB) atau keperluan lainnya.</p>
+        <div id="copyAudioText" style="background: #333; padding: 16px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 13px; margin-bottom: 24px; color: var(--spotify-green);">URL belum dibuat</div>
+        <button class="btn-upgrade" style="width: 100%;" onclick="copyBuiltAudio()">Salin Link</button>
+      </div>
+    </div>
+
+    <div id="modalCopyLink" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h2 style="margin-bottom: 16px;">Bagikan Lagu</h2>
+        <p style="font-size: 12px; color: var(--spotify-text-dim); margin-bottom: 20px;">Salin link untuk berbagi lagu ini dengan orang lain.</p>
+        <div id="copyLinkText" style="background: #333; padding: 16px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 13px; margin-bottom: 24px; color: var(--spotify-green);">Link belum dibuat</div>
+        <button class="btn-upgrade" style="width: 100%;" onclick="copyBuiltLink()">Salin Link Bagikan</button>
+      </div>
+    </div>
+
     <!-- Main View -->
     <main class="main-view" id="mainView">
       <header class="top-bar">
@@ -1080,6 +1100,8 @@
     </div>
 
     <div class="player-extra">
+      <button class="control-btn" onclick="shareLink()"><i class="fas fa-share-alt"></i></button>
+      <button class="control-btn" onclick="openCopyAudio()"><i class="fas fa-link"></i></button>
       <button class="control-btn" onclick="openTutorial()"><i class="fas fa-info-circle"></i></button>
       <i class="fas fa-volume-up" style="font-size: 14px; color: var(--spotify-text-dim);"></i>
       <div class="volume-bar" id="volBar" onclick="setVol(event)">
@@ -1189,9 +1211,9 @@
   </div>
 
   <!-- Event Modal -->
-  <div class="modal" id="modalEvent" onclick="if(event.target==this)closeEventModal()">
+  <div class="modal" id="modalEvent" onclick="if(event.target==this)closeModal()">
     <div class="modal-content" style="background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%); border: 1px solid var(--accent);">
-      <button class="modal-close" onclick="closeEventModal()">&times;</button>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
       <div style="text-align: center;">
         <h2 style="color: var(--accent); margin-bottom: 8px;">Ramadan Event 1447H</h2>
         <p style="color: var(--spotify-text-dim); margin-bottom: 24px;">Kumpulkan ketupat dan tukarkan dengan hadiah menarik!</p>
@@ -1302,11 +1324,22 @@
       initBroadcast();
       initMaintenance();
       initSnowfall();
+      checkDeepLink();
       setTimeout(() => {
         const loading = document.getElementById('loadingCard');
         if(loading) loading.style.display = 'none';
       }, 2000);
     };
+
+    function checkDeepLink() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const songId = urlParams.get('id');
+      if(songId !== null && !isNaN(songId)) {
+        setTimeout(() => {
+          if(songs.length > songId) setup(parseInt(songId));
+        }, 1500);
+      }
+    }
 
     function loadSongs() {
       db.ref('songs').on('value', snap => {
@@ -1892,6 +1925,7 @@
     }
 
     function openKetupatShop() {
+      closeModal();
       document.getElementById('modalKetupatShop').style.display = 'flex';
     }
 
@@ -1975,6 +2009,35 @@
 
     function openCS() {
       document.getElementById('modalCS').style.display = 'flex';
+    }
+
+    function shareLink() {
+      const link = window.location.origin + window.location.pathname + "?id=" + i;
+      const el = document.getElementById('copyLinkText');
+      if(el) el.textContent = link;
+      document.getElementById('modalCopyLink').style.display = 'flex';
+    }
+
+    function copyBuiltLink() {
+      const t = document.getElementById('copyLinkText').textContent;
+      if(!t || t === 'Link belum dibuat') return;
+      navigator.clipboard.writeText(t).then(() => showToast("Link lagu berhasil disalin", "success"));
+      closeModal();
+    }
+
+    function openCopyAudio() {
+      const s = songs[i];
+      if(!s) return;
+      const el = document.getElementById('copyAudioText');
+      if(el) el.textContent = s.url;
+      document.getElementById('modalCopyAudio').style.display = 'flex';
+    }
+
+    function copyBuiltAudio() {
+      const t = document.getElementById('copyAudioText').textContent;
+      if(!t || t === 'URL belum dibuat') return;
+      navigator.clipboard.writeText(t).then(() => showToast("URL Audio berhasil disalin untuk BB", "success"));
+      closeModal();
     }
 
     function selectCSCat(cat, el) {
