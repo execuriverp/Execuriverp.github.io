@@ -73,11 +73,12 @@
 </head>
 <body>
   <div class="sidebar">
-    <a href="exemusicv3.2.html" class="logo"><img src="exemusicicon.png" width="32"> Admin</a>
+    <a href="exemusicv3.2.html" class="logo"><img src="exemusic.png" width="32"> Admin</a>
     <div class="nav-item active" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Dashboard</div>
     <div class="nav-item" onclick="showSection('songs')"><i class="fas fa-music"></i> Kelola Lagu</div>
     <div class="nav-item" onclick="showSection('requests')"><i class="fas fa-cloud-upload-alt"></i> Request Lagu</div>
     <div class="nav-item" onclick="showSection('users')"><i class="fas fa-users"></i> Kelola User</div>
+    <div class="nav-item" onclick="showSection('cs')"><i class="fas fa-headset"></i> CS Tickets</div>
     <div class="nav-item" onclick="showSection('broadcast')"><i class="fas fa-bullhorn"></i> Broadcast</div>
     <div class="nav-item" onclick="showSection('settings')"><i class="fas fa-cog"></i> Pengaturan</div>
     <div class="nav-item" onclick="location.href='exemusicv3.2.html'" style="margin-top: auto;"><i class="fas fa-arrow-left"></i> Kembali</div>
@@ -124,6 +125,16 @@
         <table>
           <thead><tr><th>Avatar</th><th>Username</th><th>Role</th><th>Ketupat</th><th>Aksi</th></tr></thead>
           <tbody id="userList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="cs" class="admin-section" style="display: none;">
+      <div class="header"><h1>Customer Service Tickets</h1></div>
+      <div class="section">
+        <table>
+          <thead><tr><th>User</th><th>Kategori</th><th>Pesan</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody id="csList"></tbody>
         </table>
       </div>
     </div>
@@ -192,7 +203,8 @@
     auth.onAuthStateChanged(u => {
       if(!u) return location.href = 'exemusicv3.2.html';
       db.ref('users/' + u.uid + '/role').once('value', snap => {
-        if(snap.val() !== 'admin') {
+        const role = snap.val();
+        if(role !== 'admin' && role !== 'owner') {
           alert("Akses ditolak! Anda bukan admin.");
           location.href = 'exemusicv3.2.html';
         } else {
@@ -206,7 +218,39 @@
       loadSongs();
       loadRequests();
       loadUsers();
+      loadCSTickets();
       loadSettings();
+    }
+
+    function loadCSTickets() {
+      db.ref('cs_tickets').on('value', snap => {
+        const list = document.getElementById('csList');
+        list.innerHTML = '';
+        const data = snap.val() || {};
+        Object.keys(data).forEach(k => {
+          const t = data[k];
+          list.innerHTML += `
+            <tr class="tr-hover">
+              <td>@${t.username}</td>
+              <td><span class="btn btn-dim">${t.category}</span></td>
+              <td>${t.message}</td>
+              <td><span style="color: ${t.status === 'open' ? 'var(--spotify-green)' : 'var(--spotify-text-dim)'}">${t.status.toUpperCase()}</span></td>
+              <td>
+                <button class="btn btn-primary" onclick="resolveTicket('${k}')">Resolve</button>
+                <button class="btn btn-danger" onclick="deleteTicket('${k}')">Hapus</button>
+              </td>
+            </tr>
+          `;
+        });
+      });
+    }
+
+    function resolveTicket(key) {
+      db.ref('cs_tickets/' + key).update({ status: 'resolved' });
+    }
+
+    function deleteTicket(key) {
+      if(confirm('Hapus tiket ini?')) db.ref('cs_tickets/' + key).remove();
     }
 
     function showSection(id) {
@@ -293,6 +337,7 @@
               <td>💠 ${u.ketupat || 0}</td>
               <td>
                 <button class="btn btn-dim" onclick="editUser('${k}')">Manage</button>
+                <button class="btn btn-primary" style="font-size: 10px;" onclick="directDM('${k}', '${u.username}')">DM</button>
                 <button class="btn btn-danger" onclick="toggleBan('${k}', ${u.banned})">${u.banned ? 'Unban' : 'Ban'}</button>
               </td>
             </tr>
@@ -412,23 +457,96 @@
     }
 
     function editUser(uid) {
+      db.ref('users/' + uid).once('value', snap => {
+        const u = snap.val();
+        Swal.fire({
+          title: 'Manage User: ' + u.username,
+          html: `
+            <div style="text-align: left; font-size: 14px; color: #ccc;">
+              <label>Role</label>
+              <select id="swalRole" class="swal2-input">
+                <option value="user" ${u.role === 'user' ? 'selected' : ''}>User</option>
+                <option value="vip" ${u.role === 'vip' ? 'selected' : ''}>VIP</option>
+                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                <option value="owner" ${u.role === 'owner' ? 'selected' : ''}>Owner</option>
+              </select>
+              
+              <label>Ketupat 💠</label>
+              <input id="swalKetupat" type="number" class="swal2-input" value="${u.ketupat || 0}">
+              
+              <label>Coins 🪙</label>
+              <input id="swalCoins" type="number" class="swal2-input" value="${u.coins || 0}">
+
+              <label>Followers</label>
+              <input id="swalFollowers" type="number" class="swal2-input" value="${u.followers ? Object.keys(u.followers).length : 0}">
+
+              <label>VIP Sampai (Timestamp/Format: YYYY-MM-DD)</label>
+              <input id="swalVipUntil" class="swal2-input" value="${u.vipUntil ? new Date(u.vipUntil).toISOString().split('T')[0] : ''}" placeholder="YYYY-MM-DD">
+              <p style="font-size: 11px; color: var(--spotify-green);">${u.vipUntil ? 'Sisa: ' + formatTimeLeft(u.vipUntil) : 'Bukan VIP'}</p>
+            </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: 'Update User',
+          background: '#181818',
+          color: '#fff',
+          preConfirm: () => {
+            const role = document.getElementById('swalRole').value;
+            const ketupat = parseInt(document.getElementById('swalKetupat').value);
+            const coins = parseInt(document.getElementById('swalCoins').value);
+            const vipDate = document.getElementById('swalVipUntil').value;
+            const folCount = parseInt(document.getElementById('swalFollowers').value);
+            
+            const updates = { role, ketupat, coins };
+            
+            // Handle VIP
+            if(vipDate) {
+              updates.vipUntil = new Date(vipDate).getTime();
+              if(updates.vipUntil > Date.now()) updates.role = 'vip';
+            } else {
+              updates.vipUntil = null;
+              if(role === 'vip') updates.role = 'user';
+            }
+
+            // Handle Followers (Simple approach: if count changed, we can store it as folBonus)
+            updates.folBonus = folCount;
+            
+            return db.ref('users/' + uid).update(updates);
+          }
+        }).then(res => {
+          if(res.isConfirmed) Swal.fire('Berhasil', 'Data user diperbarui', 'success');
+        });
+      });
+    }
+
+    function formatTimeLeft(ts) {
+      const diff = ts - Date.now();
+      if(diff <= 0) return "Expired";
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      return `${d}h ${h}j ${m}m`;
+    }
+
+    function directDM(uid, name) {
       Swal.fire({
-        title: 'Manage User',
-        html: `
-          <input id="swalKetupat" type="number" class="swal2-input" placeholder="Jumlah Ketupat">
-          <select id="swalRole" class="swal2-input">
-            <option value="user">User</option>
-            <option value="vip">VIP</option>
-            <option value="admin">Admin</option>
-          </select>
-        `,
-        preConfirm: () => {
-          const k = document.getElementById('swalKetupat').value;
-          const r = document.getElementById('swalRole').value;
-          const updates = { role: r };
-          if(k) updates.ketupat = parseInt(k);
-          db.ref('users/' + uid).update(updates);
+        title: 'Kirim Pesan ke ' + name,
+        input: 'textarea',
+        inputPlaceholder: 'Tulis pesan...',
+        showCancelButton: true,
+        confirmButtonText: 'Kirim',
+        background: '#181818',
+        color: '#fff',
+        confirmButtonColor: '#1DB954',
+        preConfirm: (msg) => {
+          if(!msg) return Swal.showValidationMessage('Pesan tidak boleh kosong!');
+          return db.ref('notifications/' + uid).push({
+            message: `[ADMIN]: ${msg}`,
+            timestamp: Date.now(),
+            from: 'admin'
+          });
         }
+      }).then(res => {
+        if(res.isConfirmed) Swal.fire('Terkirim', 'Pesan telah dikirim ke user', 'success');
       });
     }
 
