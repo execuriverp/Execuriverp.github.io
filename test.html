@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>ExeMusic v3.2 - Music Streaming Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ExeMusic v3.2 - Spotify Edition</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <!-- Libraries -->
@@ -13,1489 +13,1175 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-    
     :root {
-      --primary: #1DB954;
-      --bg-dark: #000000;
-      --bg-card: #121212;
-      --bg-hover: #1a1a1a;
-      --text-primary: #ffffff;
-      --text-secondary: #b3b3b3;
-      --text-dim: #6a6a6a;
-      --accent-gradient: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
-      --card-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --spotify-green: #1DB954;
+      --spotify-black: #121212;
+      --spotify-dark-gray: #181818;
+      --spotify-light-gray: #282828;
+      --spotify-text: #FFFFFF;
+      --spotify-text-dim: #b3b3b3;
+      --accent: #1DB954;
+      --bg-gradient: linear-gradient(180deg, #222222 0%, #121212 100%);
+      --glass: rgba(255, 255, 255, 0.1);
+      --danger: #e91e63;
+      --gold: #ffd700;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-primary);
-      overflow: hidden;
+      font-family: 'Circular Std', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #000;
+      color: var(--spotify-text);
       height: 100vh;
-      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* App Layout */
+    /* Layout Containers */
     .app-container {
       display: flex;
-      height: 100vh;
+      flex: 1;
       overflow: hidden;
+      position: relative;
     }
 
     /* Sidebar */
     .sidebar {
-      width: 280px;
-      background: var(--bg-dark);
+      width: 240px;
+      background-color: #000;
       display: flex;
       flex-direction: column;
-      padding: 24px 16px;
-      border-right: 1px solid rgba(255,255,255,0.05);
-      transition: var(--transition);
-      z-index: 100;
+      padding: 24px 12px;
+      gap: 24px;
+      flex-shrink: 0;
+      border-right: 1px solid #282828;
     }
 
-    .logo {
-      padding: 0 12px 32px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .logo-container {
+      padding: 0 12px;
+      margin-bottom: 8px;
     }
 
-    .logo img {
-      height: 45px;
+    .logo-container img {
+      height: 40px;
       cursor: pointer;
-      transition: var(--transition);
     }
 
-    .logo img:hover {
-      transform: scale(1.05);
+    .logo-main {
+      height: 32px;
+      margin-right: 12px;
     }
 
-    .nav-menu {
-      flex: 1;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    /* CS Modal Styles */
+    .cs-category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .cs-category-item {
+      background: #282828;
+      padding: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.2s;
+      border: 1px solid transparent;
+    }
+    .cs-category-item:hover, .cs-category-item.active {
+      background: #333;
+      border-color: var(--spotify-green);
+    }
+    .cs-category-item i {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: var(--spotify-green);
     }
 
-    .nav-menu::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .nav-menu::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
+    .nav-list {
+      list-style: none;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 14px 16px;
-      margin-bottom: 4px;
-      border-radius: 8px;
-      color: var(--text-secondary);
+      padding: 12px;
+      border-radius: 4px;
+      color: var(--spotify-text-dim);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: color 0.2s, background-color 0.2s;
       cursor: pointer;
-      transition: var(--transition);
-      font-weight: 600;
-      font-size: 15px;
     }
 
-    .nav-item i {
-      font-size: 22px;
-      width: 24px;
-      text-align: center;
+    .nav-item i { font-size: 20px; }
+    .nav-item:hover, .nav-item.active {
+      color: var(--spotify-text);
+      background-color: var(--spotify-light-gray);
     }
 
-    .nav-item:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .nav-item.active {
-      background: var(--bg-hover);
-      color: var(--primary);
-    }
-
-    /* Main Content Area */
-    .main-content {
+    /* Main Content */
+    .main-view {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
+      background: var(--bg-gradient);
+      overflow-y: auto;
+      position: relative;
+      padding-bottom: 100px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
     }
 
-    /* Top Bar */
-    .topbar {
-      height: 70px;
-      background: rgba(0,0,0,0.8);
+    .main-view::-webkit-scrollbar { width: 8px; }
+    .main-view::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      height: 64px;
+      background: rgba(18, 18, 18, 0.8);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      padding: 0 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 99;
+      padding: 0 32px;
+      z-index: 100;
     }
 
-    .search-box {
+    .search-container {
       position: relative;
-      width: 400px;
-      max-width: 50%;
+      width: 300px;
     }
 
-    .search-box input {
+    .search-input {
       width: 100%;
-      padding: 12px 20px 12px 45px;
-      border-radius: 25px;
+      background: #fff;
       border: none;
-      background: rgba(255,255,255,0.1);
-      color: var(--text-primary);
+      padding: 8px 16px 8px 40px;
+      border-radius: 500px;
       font-size: 14px;
-      transition: var(--transition);
+      color: #000;
     }
 
-    .search-box input:focus {
-      background: rgba(255,255,255,0.15);
-      outline: 2px solid var(--primary);
-    }
-
-    .search-box i {
+    .search-container i {
       position: absolute;
-      left: 18px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-secondary);
+      color: #000;
     }
 
-    .user-section {
+    .user-actions {
       display: flex;
       align-items: center;
       gap: 16px;
     }
 
-    .coin-display {
+    .btn-upgrade {
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--spotify-text-dim);
+      padding: 6px 16px;
+      border-radius: 500px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .btn-upgrade:hover { transform: scale(1.04); border-color: #fff; }
+
+    .user-profile-btn {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255,215,0,0.1);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 600;
-      color: #ffd700;
-      border: 1px solid rgba(255,215,0,0.3);
-    }
-
-    .btn-upgrade {
-      background: var(--accent-gradient);
-      color: #000;
-      padding: 10px 24px;
-      border-radius: 25px;
+      background: rgba(0,0,0,0.7);
+      padding: 2px 2px 2px 8px;
+      border-radius: 500px;
+      cursor: pointer;
       border: none;
+      color: #fff;
       font-weight: 700;
       font-size: 14px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .btn-upgrade:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(29,185,84,0.4);
-    }
-
-    .user-avatar-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255,255,255,0.05);
-      padding: 6px 12px 6px 6px;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .user-avatar-btn:hover {
-      background: rgba(255,255,255,0.1);
     }
 
     .user-avatar {
-      width: 36px;
-      height: 36px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid var(--primary);
     }
 
-    /* Content View */
-    .content-view {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0 0 120px 0;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.1) transparent;
-    }
-
-    .content-view::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .content-view::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
-      border-radius: 4px;
-    }
-
-    /* Hero Banner */
-    .hero-banner {
-      padding: 40px 32px;
-      background: linear-gradient(180deg, rgba(29,185,84,0.3) 0%, transparent 100%);
-      margin-bottom: 32px;
+    /* Hero Section */
+    .hero {
+      padding: 32px;
+      background: linear-gradient(180deg, rgba(29, 185, 84, 0.4) 0%, rgba(18, 18, 18, 0) 100%);
+      margin-bottom: 24px;
     }
 
     .hero-content {
       display: flex;
       align-items: flex-end;
-      gap: 28px;
+      gap: 24px;
     }
 
-    .hero-image {
-      width: 240px;
-      height: 240px;
-      border-radius: 12px;
+    .hero-img {
+      width: 232px;
+      height: 232px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border-radius: 4px;
       object-fit: cover;
-      box-shadow: var(--card-shadow);
     }
 
-    .hero-info h1 {
-      font-size: 80px;
+    .hero-text h1 {
+      font-size: 72px;
       font-weight: 900;
-      margin: 12px 0;
-      line-height: 1;
-      letter-spacing: -3px;
+      margin: 8px 0;
+      letter-spacing: -2px;
     }
 
-    .hero-info p {
-      color: var(--text-secondary);
-      font-size: 16px;
-      font-weight: 600;
+    .hero-text p {
+      color: var(--spotify-text-dim);
+      font-size: 14px;
     }
 
-    /* Sections */
-    .section {
+    /* Sections & Grids */
+    .content-section {
       padding: 0 32px;
-      margin-bottom: 48px;
+      margin-bottom: 32px;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      align-items: flex-end;
+      margin-bottom: 16px;
     }
 
-    .section-header h2 {
-      font-size: 28px;
-      font-weight: 800;
+    .section-header h2 { font-size: 24px; font-weight: 700; }
+    .show-all {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--spotify-text-dim);
+      text-decoration: none;
     }
+    .show-all:hover { text-decoration: underline; }
 
-    .see-all {
-      color: var(--text-secondary);
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .see-all:hover {
-      color: var(--text-primary);
-    }
-
-    /* Song Grid */
     .song-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 24px;
     }
 
     .song-card {
-      background: var(--bg-card);
+      background: #181818;
       padding: 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .song-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.6) 100%);
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .song-card:hover {
-      background: var(--bg-hover);
-      transform: translateY(-4px);
-      box-shadow: var(--card-shadow);
-    }
-
-    .song-card:hover::before {
-      opacity: 1;
-    }
-
-    .card-image-wrapper {
-      position: relative;
-      margin-bottom: 16px;
-      overflow: hidden;
       border-radius: 8px;
+      transition: background-color 0.3s, transform 0.2s;
+      cursor: pointer;
+      position: relative;
+      border: 1px solid transparent;
     }
 
-    .card-image {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      display: block;
+    .song-card:hover { 
+      background-color: #282828; 
+      transform: translateY(-5px);
+      border-color: #333;
     }
 
-    .play-button-overlay {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      width: 48px;
-      height: 48px;
-      background: var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: var(--transition);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    /* Admin Floating UI */
+    .admin-float-ui {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      width: 300px;
+      background: rgba(18, 18, 18, 0.95);
+      border: 1px solid var(--spotify-green);
+      border-radius: 12px;
+      z-index: 10000;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(15px);
+      cursor: move;
     }
 
-    .song-card:hover .play-button-overlay {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .play-button-overlay i {
+    .admin-ui-header {
+      padding: 12px;
+      background: var(--spotify-green);
       color: #000;
-      font-size: 18px;
-      margin-left: 2px;
-    }
-
-    .card-title {
-      font-weight: 700;
-      font-size: 16px;
-      margin-bottom: 6px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .card-artist {
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .card-stats {
+      border-radius: 12px 12px 0 0;
       display: flex;
-      gap: 16px;
-      margin-top: 8px;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
       font-size: 12px;
-      color: var(--text-dim);
     }
 
-    .card-stats span {
+    .admin-ui-body {
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .admin-ui-item {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .admin-ui-item:hover { background: #282828; }
+
+    /* Tags */
+    .user-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .tag-item {
+      background: #333;
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 500px;
+      font-weight: 700;
+    }
+
+    .tag-vip {
+      background: var(--gold);
+      color: #000;
+    }
+
+    /* Profile Sharing */
+    .profile-header {
+      padding: 40px 32px;
+      background: linear-gradient(180deg, var(--profile-bg, #222) 0%, #121212 100%);
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+    }
+
+    .profile-avatar-large {
+      width: 192px;
+      height: 192px;
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      object-fit: cover;
+    }
+
+    .profile-info-text h1 {
+      font-size: 64px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--spotify-text-dim);
+    }
+
+    .stat-val { color: #fff; font-weight: 700; }
+
+    /* Tags UI */
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .tag-badge {
+      font-size: 10px;
+      padding: 2px 10px;
+      border-radius: 500px;
+      background: #333;
+      color: #fff;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 4px;
     }
+    .tag-badge.vip { background: var(--gold); color: #000; }
+    .tag-remove { cursor: pointer; opacity: 0.6; }
+    .tag-remove:hover { opacity: 1; }
 
-    /* Player Bar */
+    /* Profile Color Customization */
+    .color-picker-container {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .color-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .color-circle.active { border-color: #fff; }
+
+    /* VIP Badge */
+    .vip-badge {
+      background: var(--gold);
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 900;
+      margin-left: 8px;
+      text-transform: uppercase;
+    }
+
+    .card-img-container {
+      position: relative;
+      margin-bottom: 16px;
+      aspect-ratio: 1;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      object-fit: cover;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .play-overlay {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 48px;
+      height: 48px;
+      background: var(--spotify-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 20px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .song-card:hover .play-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-artist {
+      font-size: 14px;
+      color: var(--spotify-text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Bottom Player */
     .player-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
       height: 90px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255,255,255,0.1);
+      background: #181818;
+      border-top: 1px solid #282828;
       display: flex;
       align-items: center;
       padding: 0 16px;
-      z-index: 1000;
+      z-index: 200;
     }
 
-    .player-left {
-      flex: 0.3;
+    .now-playing {
+      width: 30%;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
-    .now-playing-cover {
-      width: 64px;
-      height: 64px;
-      border-radius: 8px;
+    .now-playing-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 4px;
       object-fit: cover;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .now-playing-cover:hover {
-      transform: scale(1.05);
     }
 
     .now-playing-info {
+      overflow: hidden;
+    }
+
+    .now-playing-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .now-playing-artist {
+      font-size: 11px;
+      color: var(--spotify-text-dim);
+    }
+
+    .player-controls {
       flex: 1;
-    }
-
-    .now-playing-info h4 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .now-playing-info h4:hover {
-      text-decoration: underline;
-    }
-
-    .now-playing-info p {
-      font-size: 12px;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-
-    .player-center {
-      flex: 0.4;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 8px;
     }
 
-    .player-controls {
+    .control-btns {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 24px;
     }
 
     .control-btn {
       background: none;
       border: none;
-      color: var(--text-secondary);
+      color: var(--spotify-text-dim);
       font-size: 16px;
       cursor: pointer;
-      transition: var(--transition);
-      padding: 8px;
+      transition: color 0.2s, transform 0.1s;
     }
 
-    .control-btn:hover {
-      color: var(--text-primary);
-      transform: scale(1.1);
-    }
-
-    .play-pause-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--text-primary);
+    .control-btn:hover { color: #fff; }
+    .control-btn:active { transform: scale(0.9); }
+    .btn-main-play {
+      width: 32px;
+      height: 32px;
+      background: #fff;
       color: #000;
-      font-size: 16px;
+      border-radius: 50%;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
-    .play-pause-btn:hover {
-      transform: scale(1.08);
-    }
+    .btn-main-play:hover { transform: scale(1.06); }
 
     .progress-container {
       width: 100%;
+      max-width: 600px;
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .time-display {
+      gap: 8px;
       font-size: 11px;
-      color: var(--text-secondary);
-      min-width: 40px;
+      color: var(--spotify-text-dim);
     }
 
     .progress-bar {
       flex: 1;
       height: 4px;
-      background: rgba(255,255,255,0.1);
+      background: #4d4d4d;
       border-radius: 2px;
+      position: relative;
       cursor: pointer;
-      position: relative;
     }
 
-    .progress-filled {
+    .progress-fill {
       height: 100%;
-      background: var(--text-primary);
+      background: #fff;
       border-radius: 2px;
+      width: 0%;
       position: relative;
     }
 
-    .progress-filled::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 12px;
-      height: 12px;
-      background: var(--text-primary);
-      border-radius: 50%;
-      opacity: 0;
-      transition: var(--transition);
-    }
+    .progress-bar:hover .progress-fill { background: var(--spotify-green); }
 
-    .progress-bar:hover .progress-filled::after {
-      opacity: 1;
-    }
-
-    .player-right {
-      flex: 0.3;
+    .player-extra {
+      width: 30%;
       display: flex;
-      align-items: center;
       justify-content: flex-end;
+      align-items: center;
       gap: 12px;
     }
 
-    .volume-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 120px;
-    }
-
-    .volume-slider {
-      flex: 1;
+    .volume-bar {
+      width: 100px;
       height: 4px;
-      -webkit-appearance: none;
-      background: rgba(255,255,255,0.1);
+      background: #4d4d4d;
       border-radius: 2px;
-      outline: none;
-    }
-
-    .volume-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 12px;
-      height: 12px;
-      background: var(--text-primary);
-      border-radius: 50%;
+      position: relative;
       cursor: pointer;
     }
 
-    /* Modals */
+    .volume-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: 2px;
+      width: 70%;
+    }
+
+    .volume-bar:hover .volume-fill { background: var(--spotify-green); }
+
+    /* Modals & Overlays */
     .modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
+      backdrop-filter: blur(10px);
       padding: 20px;
     }
 
     .modal-content {
-      background: var(--bg-card);
-      border-radius: 16px;
+      background: #282828;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 8px;
       padding: 32px;
-      max-width: 500px;
-      width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-      box-shadow: 0 24px 48px rgba(0,0,0,0.6);
       position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .modal-header h2 {
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .close-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: var(--text-primary);
-      font-size: 20px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .close-btn:hover {
-      background: rgba(255,255,255,0.2);
-      transform: rotate(90deg);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: var(--text-primary);
-      font-size: 14px;
-      transition: var(--transition);
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .btn {
-      padding: 14px 28px;
-      border-radius: 25px;
-      border: none;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: var(--accent-gradient);
-      color: #000;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(29,185,84,0.4);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,0.1);
-      color: var(--text-primary);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.15);
-    }
-
-    /* Announcement Banner */
-    .announcement-banner {
-      margin: 0 32px 32px;
-      padding: 20px 24px;
-      background: linear-gradient(135deg, rgba(29,185,84,0.2) 0%, rgba(29,185,84,0.05) 100%);
-      border-radius: 12px;
-      border-left: 4px solid var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .announcement-icon {
-      font-size: 28px;
-      color: var(--primary);
-    }
-
-    .announcement-content h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .announcement-content p {
-      color: var(--text-secondary);
-      font-size: 14px;
-    }
-
-    /* Toast Notifications */
-    .toast-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 3000;
-    }
-
-    .toast {
-      background: rgba(0,0,0,0.95);
-      color: var(--text-primary);
-      padding: 16px 24px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      border-left: 4px solid var(--primary);
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    /* Admin Panel Overlay */
-    .admin-overlay {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      width: 350px;
-      background: rgba(0,0,0,0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: var(--card-shadow);
-      display: none;
-      z-index: 1500;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .admin-overlay-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .admin-quick-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .stat-box {
-      background: rgba(255,255,255,0.05);
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .stat-box h4 {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .stat-box p {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    /* Profile Modal Tabs */
-    .profile-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .profile-tab {
-      padding: 12px 24px;
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
       background: none;
       border: none;
-      color: var(--text-secondary);
-      font-weight: 600;
+      color: var(--spotify-text-dim);
+      font-size: 24px;
       cursor: pointer;
-      transition: var(--transition);
-      border-bottom: 2px solid transparent;
     }
 
-    .profile-tab.active {
-      color: var(--text-primary);
-      border-bottom-color: var(--primary);
+    .modal-close:hover { color: #fff; }
+
+    /* Loading Screen */
+    #loadingCard {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #333;
+      border-top-color: var(--spotify-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    /* Snowfall */
+    .snowflake { 
+      position: fixed; top: -10px; color: #fff; font-size: 1.5em; z-index: 10001; pointer-events: none;
+      animation: snowfall linear forwards; opacity: 0.8;
+    }
+    @keyframes snowfall { 
+      0% { transform: translateY(-10px) translateX(0); opacity: 1; } 
+      100% { transform: translateY(100vh) translateX(20px); opacity: 0; } 
+    }
+
+    /* Modal Styles Refinement */
+    .modal-content {
+      background: #181818;
+      border: 1px solid #282828;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+    }
+    .inp-dark {
+      width: 100%; background: #282828; border: 1px solid #3e3e3e; color: #fff;
+      padding: 12px 16px; border-radius: 4px; margin-bottom: 16px;
+    }
+    .inp-dark:focus { border-color: var(--spotify-green); }
+
+    /* Mobile Nav */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 64px;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(20px);
+      z-index: 150;
+      justify-content: space-around;
+      align-items: center;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
+      .sidebar { display: none; }
+      .mobile-nav { display: flex; }
+      .top-bar { padding: 0 16px; }
+      .search-container { width: 150px; }
+      .hero-content { flex-direction: column; align-items: center; text-align: center; }
+      .hero-img { width: 180px; height: 180px; }
+      .hero-text h1 { font-size: 36px; }
+      .content-section { padding: 0 16px; }
+      .now-playing-img { display: none; }
+      .now-playing { width: 40%; }
+      .player-extra { display: none; }
+      .player-bar { bottom: 64px; height: 80px; padding-bottom: env(safe-area-inset-bottom); position: fixed; width: 100%; background: #000; border-top: 1px solid #181818; }
+      .main-view { padding-bottom: 160px; }
+    }
+
+    /* Broadcast System */
+    .sys-broadcast {
         position: fixed;
-        left: -280px;
-        height: 100vh;
-        z-index: 1000;
-      }
-
-      .sidebar.open {
-        left: 0;
-      }
-
-      .topbar {
-        padding: 0 16px;
-      }
-
-      .search-box {
-        width: 200px;
-      }
-
-      .coin-display {
-        display: none;
-      }
-
-      .hero-content {
+        top: -150px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 400px;
+        background: rgba(24, 24, 24, 0.95);
+        border-left: 4px solid var(--spotify-green);
+        border-radius: 8px;
+        padding: 16px;
+        z-index: 12000;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        display: flex;
         flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .hero-info h1 {
-        font-size: 48px;
-      }
-
-      .section {
-        padding: 0 16px;
-      }
-
-      .song-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
-
-      .player-bar {
-        height: 80px;
-        padding: 0 12px;
-      }
-
-      .player-left {
-        flex: 1;
-      }
-
-      .player-center {
-        flex: 0;
-        display: none;
-      }
-
-      .player-right {
-        flex: 0;
-      }
-
-      .volume-container {
-        display: none;
-      }
-
-      .admin-overlay {
-        right: 10px;
-        width: calc(100% - 20px);
-      }
+        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(10px);
     }
+    .sys-broadcast.active { top: 20px; }
+    .sb-content { display: flex; align-items: flex-start; gap: 12px; }
+    .sb-icon { font-size: 20px; color: var(--spotify-green); }
+    .sb-text h4 { margin: 0; font-size: 14px; color: var(--spotify-green); text-transform: uppercase; letter-spacing: 1px; }
+    .sb-text p { margin: 4px 0 0; font-size: 12px; color: #ddd; line-height: 1.4; }
+    .sb-close { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; }
+    .sb-progress { width: 100%; height: 3px; background: #333; margin-top: 12px; border-radius: 2px; overflow: hidden; }
+    .sb-bar { width: 100%; height: 100%; background: var(--spotify-green); transform-origin: left; }
 
-    /* Loading Spinner */
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: var(--primary);
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Tags Display */
-    .user-tags {
+    /* EQ Visualizer */
+    .eq-container {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
+      align-items: flex-end;
+      gap: 3px;
+      height: 30px;
     }
-
-    .tag-badge {
-      background: var(--accent-gradient);
-      color: #000;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
+    .eq-bar {
+      width: 4px;
+      background: var(--spotify-green);
+      height: 5px;
+      border-radius: 2px;
+      transition: height 0.2s;
     }
+    .playing .eq-bar { animation: eq-wave 0.6s infinite ease-in-out; }
+    .playing .eq-bar:nth-child(1) { animation-delay: 0.1s; }
+    .playing .eq-bar:nth-child(2) { animation-delay: 0.3s; }
+    .playing .eq-bar:nth-child(3) { animation-delay: 0.2s; }
+    .playing .eq-bar:nth-child(4) { animation-delay: 0.4s; }
+    @keyframes eq-wave { 0%, 100% { height: 5px; } 50% { height: 25px; } }
 
-    .tag-badge.custom {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-    }
-
-    /* VIP Badge */
-    .vip-badge {
-      display: inline-flex;
+    /* Full EQ Mode */
+    .modal-eq {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 300;
+      display: none;
+      flex-direction: column;
       align-items: center;
-      gap: 4px;
-      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      justify-content: center;
+      padding: 40px;
+    }
+    .eq-visualizer-large {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 200px;
+      margin-bottom: 48px;
+    }
+    .eq-bar-large {
+      width: 12px;
+      background: var(--spotify-green);
+      height: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 20px rgba(29, 185, 84, 0.5);
+    }
+    .playing .eq-bar-large { animation: eq-wave-large 0.8s infinite ease-in-out; }
+    @keyframes eq-wave-large { 0%, 100% { height: 20px; } 50% { height: 180px; } }
+    #toast-container {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+    }
+
+    .toast {
+      background: var(--spotify-green);
       color: #000;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    /* Customer Service Categories */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .category-card {
-      padding: 16px;
-      background: rgba(255,255,255,0.05);
+      padding: 12px 24px;
       border-radius: 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
-      border: 2px solid transparent;
-    }
-
-    .category-card:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: var(--primary);
-    }
-
-    .category-card.selected {
-      background: rgba(29,185,84,0.2);
-      border-color: var(--primary);
-    }
-
-    .category-card i {
-      font-size: 32px;
+      font-weight: 700;
       margin-bottom: 8px;
-      color: var(--primary);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      animation: slideUp 0.3s ease-out;
     }
 
-    .category-card p {
-      font-size: 13px;
-      font-weight: 600;
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* Gacha Styles */
+    .gacha-container {
+      background: #181818;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .gacha-wheel-container {
+      width: 200px;
+      height: 200px;
+      margin: 20px auto;
+      position: relative;
+    }
+    .gacha-wheel {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 8px solid #333;
+      background: conic-gradient(from 0deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000);
+    }
+    .gacha-spinning { animation: spin 2s cubic-bezier(0.1, 0, 0.1, 1) infinite; }
+    .gacha-pointer {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid var(--accent);
+      z-index: 5;
+    }
+    .gacha-button {
+      background: var(--spotify-green);
+      color: #000;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 500px;
+      font-weight: 700;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
 
-  <!-- App Container -->
-  <div class="app-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <img src="exemusic.png" alt="ExeMusic" onerror="this.src='exemusicicon.png'">
-      </div>
-
-      <div class="nav-menu">
-        <div class="nav-item active" onclick="switchPage('home')">
-          <i class="fas fa-home"></i>
-          <span>Beranda</span>
-        </div>
-        <div class="nav-item" onclick="switchPage('search')">
-          <i class="fas fa-search"></i>
-          <span>Cari</span>
-        </div>
-        <div class="nav-item" onclick="openUploadModal()">
-          <i class="fas fa-upload"></i>
-          <span>Upload Lagu</span>
-        </div>
-        <div class="nav-item" onclick="openProfileModal()">
-          <i class="fas fa-user"></i>
-          <span>Profil</span>
-        </div>
-        <div class="nav-item" onclick="openNotifModal()">
-          <i class="fas fa-bell"></i>
-          <span>Notifikasi</span>
-        </div>
-        <div class="nav-item" onclick="openEventModal()">
-          <i class="fas fa-gift"></i>
-          <span>Event</span>
-        </div>
-        <div class="nav-item" onclick="openCoinShopModal()">
-          <i class="fas fa-coins"></i>
-          <span>Coin Shop</span>
-        </div>
-        <div class="nav-item" onclick="openCustomerServiceModal()">
-          <i class="fas fa-headset"></i>
-          <span>Customer Service</span>
-        </div>
-        <div class="nav-item" onclick="openTutorial()">
-          <i class="fas fa-question-circle"></i>
-          <span>Tutorial</span>
-        </div>
-      </div>
+  <div id="adminFloatUI" class="admin-float-ui">
+    <div class="admin-ui-header" id="adminUIHandle">
+      <span><i class="fas fa-user-shield"></i> ADMIN PANEL</span>
+      <button onclick="toggleAdminUI()" style="background:none; border:none; cursor:pointer;"><i class="fas fa-times"></i></button>
     </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Top Bar -->
-      <div class="topbar">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" placeholder="Cari lagu, artis, atau album..." oninput="handleSearch()">
-        </div>
-
-        <div class="user-section">
-          <div class="coin-display" id="coinDisplay">
-            <i class="fas fa-coins"></i>
-            <span id="userCoins">0</span>
-          </div>
-          <button class="btn-upgrade" onclick="openVipModal()">Upgrade VIP</button>
-          <div class="user-avatar-btn" onclick="openProfileModal()" id="userAvatarBtn">
-            <img src="exemusicicon.png" alt="User" class="user-avatar" id="userAvatarImg">
-            <span id="usernameDisplay">Guest</span>
-          </div>
-        </div>
+    <div class="admin-ui-body">
+        <div class="admin-ui-item" onclick="openAdminRequests()">Manage Requests</div>
+        <div class="admin-ui-item" onclick="openAdminUsers()">Manage Users</div>
+        <div class="admin-ui-item" onclick="openAdminDM()">Direct Message User</div>
+        <div class="admin-ui-item" onclick="openAdminBroadcast()">Set Broadcast</div>
+        <div class="admin-ui-item" onclick="openAdminMaintenance()">Maintenance Mode</div>
       </div>
+  </div>
 
-      <!-- Content View -->
-      <div class="content-view" id="contentView">
-        <!-- Hero Banner -->
-        <div class="hero-banner" id="heroBanner">
-          <div class="hero-content">
-            <img src="exemusicicon.png" alt="Featured" class="hero-image" id="heroImage">
-            <div class="hero-info">
-              <p>PLAYLIST</p>
-              <h1 id="heroTitle">Trending Now</h1>
-              <p id="heroDesc">Lagu-lagu terpopuler minggu ini</p>
-            </div>
-          </div>
-        </div>
+  <div id="loadingCard">
+    <div class="spinner"></div>
+    <p style="margin-top: 20px; color: var(--spotify-text-dim);">Memuat ExeMusic v3.2...</p>
+  </div>
 
-        <!-- Announcement Banner -->
-        <div class="announcement-banner" id="announcementBanner" style="display: none;">
-          <i class="fas fa-bullhorn announcement-icon" id="announcementIcon"></i>
-          <div class="announcement-content">
-            <h3 id="announcementTitle">Pengumuman</h3>
-            <p id="announcementMessage">Selamat datang di ExeMusic!</p>
-          </div>
-        </div>
-
-        <!-- Trending Section -->
-        <div class="section">
-          <div class="section-header">
-            <h2>Trending Hari Ini</h2>
-            <span class="see-all" onclick="switchPage('search')">Lihat Semua</span>
-          </div>
-          <div class="song-grid" id="trendingGrid"></div>
-        </div>
-
-        <!-- Recommended Section -->
-        <div class="section">
-          <div class="section-header">
-            <h2>Rekomendasi Untuk Anda</h2>
-            <span class="see-all" onclick="switchPage('search')">Lihat Semua</span>
-          </div>
-          <div class="song-grid" id="recommendedGrid"></div>
-        </div>
-
-        <!-- Recent Uploads -->
-        <div class="section">
-          <div class="section-header">
-            <h2>Baru Ditambahkan</h2>
-            <span class="see-all" onclick="switchPage('search')">Lihat Semua</span>
-          </div>
-          <div class="song-grid" id="recentGrid"></div>
-        </div>
+  <div id="modalUpload" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h2 style="margin-bottom: 24px;">Upload Lagu</h2>
+      <div id="uploadGuestInfo" style="display:none; background:#333; padding:12px; border-radius:8px; margin-bottom:16px; font-size:12px;">
+        <i class="fas fa-info-circle"></i> Kamu sedang upload sebagai <b>Guest</b>. Admin akan meninjau permintaanmu.
       </div>
+      <input type="text" id="upTitle" class="inp-dark" placeholder="Judul Lagu">
+      <input type="text" id="upUrl" class="inp-dark" placeholder="URL Lagu (YouTube/Direct Link)">
+      <div style="font-size: 11px; color: var(--spotify-text-dim); margin: -10px 0 16px 4px;">Tutorial: Gunakan link YouTube atau link .mp3 langsung.</div>
+      <input type="text" id="upCover" class="inp-dark" placeholder="URL Cover (Opsional)">
+      <input type="text" id="upBy" class="inp-dark" placeholder="Nama Kamu (Jika Guest)" style="display:none;">
+      <button class="btn-upgrade" style="width: 100%; padding: 14px;" onclick="submitUpload()">Kirim ke Admin</button>
     </div>
   </div>
 
-  <!-- Player Bar -->
-  <div class="player-bar">
-    <div class="player-left">
-      <img src="exemusicicon.png" alt="Cover" class="now-playing-cover" id="nowPlayingCover" onclick="openEQModal()">
-      <div class="now-playing-info">
-        <h4 id="nowPlayingTitle">Pilih Lagu</h4>
-        <p id="nowPlayingArtist">-</p>
+  <div id="mtScreen" class="full-overlay" style="display: none; position: fixed; inset: 0; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+    <i class="fas fa-tools" style="font-size: 64px; color: var(--spotify-green); margin-bottom: 24px;"></i>
+    <h1>Server Maintenance</h1>
+    <p style="color: var(--spotify-text-dim);">Kami sedang melakukan pembaruan sistem.<br>Mohon tunggu beberapa saat lagi.</p>
+  </div>
+
+  <div id="bannedScreen" class="full-overlay" style="display: none; position: fixed; inset: 0; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+    <i class="fas fa-user-slash" style="font-size: 64px; color: var(--danger); margin-bottom: 24px;"></i>
+    <h1 style="color: var(--danger);">Access Denied</h1>
+    <p style="color: var(--spotify-text-dim);">Akun anda telah diblokir secara permanen oleh admin.</p>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="exemusic.png" alt="ExeMusic" onclick="location.reload()" style="height: 35px; width: auto;">
       </div>
-      <button class="control-btn" id="likeBtn" onclick="toggleLike()">
+      <nav class="nav-list">
+        <a class="nav-item active" onclick="switchView('home')">
+          <i class="fas fa-home"></i> <span>Home</span>
+        </a>
+        <a class="nav-item" onclick="switchView('search')">
+          <i class="fas fa-search"></i> <span>Search</span>
+        </a>
+        <a class="nav-item" onclick="openProfile()">
+          <i class="fas fa-layer-group"></i> <span>Library</span>
+        </a>
+        <a class="nav-item" onclick="openUpload()">
+          <i class="fas fa-plus-square"></i> <span>Upload Lagu</span>
+        </a>
+      </nav>
+      <nav class="nav-list" style="margin-top: auto;">
+        <a class="nav-item" onclick="openEvent()">
+          <i class="fas fa-calendar-star" style="color: var(--gold)"></i> <span>Event Baru</span>
+        </a>
+        <a class="nav-item" onclick="openKetupatShop()">
+          <i class="fas fa-store"></i> <span>Shop</span>
+        </a>
+        <a class="nav-item" onclick="openCS()">
+          <i class="fas fa-headset"></i> <span>Customer Service</span>
+        </a>
+      </nav>
+    </aside>
+
+    <div id="modalCS" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h2 style="margin-bottom: 24px;">Customer Service</h2>
+        <div class="cs-category-grid">
+          <div class="cs-category-item" onclick="selectCSCat('refund_data', this)">
+            <i class="fas fa-history"></i><br>Refund Data
+          </div>
+          <div class="cs-category-item" onclick="selectCSCat('refund_vip', this)">
+            <i class="fas fa-crown"></i><br>Refund VIP
+          </div>
+          <div class="cs-category-item" onclick="selectCSCat('pertanyaan', this)">
+            <i class="fas fa-question-circle"></i><br>Pertanyaan
+          </div>
+          <div class="cs-category-item" onclick="selectCSCat('req_update', this)">
+            <i class="fas fa-sync"></i><br>Req Update
+          </div>
+        </div>
+        <input type="hidden" id="csCategory" value="pertanyaan">
+        <textarea id="csMessage" class="inp-dark" placeholder="Tulis pesanmu di sini..." style="height: 120px;"></textarea>
+        <button class="btn-upgrade" style="width: 100%; padding: 14px;" onclick="submitCS()">Kirim Laporan</button>
+      </div>
+    </div>
+
+    <!-- Main View -->
+    <main class="main-view" id="mainView">
+      <header class="top-bar">
+        <div class="search-container">
+          <i class="fas fa-search"></i>
+          <input type="text" class="search-input" placeholder="Apa yang ingin kamu dengar?" id="searchInput" oninput="handleSearch()">
+        </div>
+        <div class="user-actions">
+          <button class="btn-upgrade" onclick="openEvent()">Event Baru!</button>
+          <button class="control-btn" onclick="openUpload()" title="Upload Lagu"><i class="fas fa-plus-circle" style="font-size: 20px;"></i></button>
+          <button class="control-btn" onclick="openNotif()" title="Notifikasi" style="position: relative;">
+            <i class="fas fa-bell" style="font-size: 20px;"></i>
+            <span id="notifBadge" style="position: absolute; top: -5px; right: -5px; background: var(--danger); color: #fff; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span>
+          </button>
+          <button class="control-btn" id="adminBtn" style="display: none;" onclick="location.href='adminv3.2.html'" title="Admin Panel"><i class="fas fa-shield-alt" style="color: var(--gold); font-size: 20px;"></i></button>
+          <button class="user-profile-btn" id="userProfileBtn" onclick="openProfile()">
+            <span id="topUsername">Login</span>
+            <img src="exemusicicon.png" alt="User" class="user-avatar" id="topAvatar">
+          </button>
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section class="hero" id="heroSection">
+        <div class="hero-content">
+          <img src="exemusicicon.png" alt="Featured" class="hero-img" id="heroImg">
+          <div class="hero-text">
+            <p>FEATURED PLAYLIST</p>
+            <h1 id="heroTitle">ExeMusic v3.2</h1>
+            <p id="heroDesc">Nikmati musik terbaik dari komunitas Executive Roleplay.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content Sections -->
+      <div id="dynamicContent">
+        <section class="content-section" id="popularSection" style="display: none;">
+          <div class="section-header">
+            <h2>Top 10 Populer</h2>
+          </div>
+          <div class="song-grid" id="popularGrid">
+            <!-- Popular songs will be rendered here -->
+          </div>
+        </section>
+
+        <section class="content-section">
+          <div class="section-header">
+            <h2>Semua Lagu</h2>
+            <a href="#" class="show-all">Tampilkan semua</a>
+          </div>
+          <div class="song-grid" id="songGrid">
+            <!-- Songs will be rendered here -->
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom Player -->
+  <footer class="player-bar">
+    <div class="now-playing">
+      <div style="position: relative;" onclick="toggleEQMode()">
+        <img src="exemusicicon.png" alt="Song" class="now-playing-img" id="playerImg" onerror="this.src='exemusicicon.png'">
+        <div id="miniEQ" class="eq-container" style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.5); padding: 2px; border-radius: 2px;">
+          <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+        </div>
+      </div>
+      <div class="now-playing-info">
+        <div class="now-playing-title" id="playerTitle">Pilih Lagu</div>
+        <div class="now-playing-artist" id="playerArtist">Artist</div>
+      </div>
+      <button class="control-btn" style="margin-left: 10px;" id="btnFav" onclick="toggleFav()">
         <i class="far fa-heart"></i>
       </button>
     </div>
 
-    <div class="player-center">
-      <div class="player-controls">
-        <button class="control-btn" onclick="previousSong()">
-          <i class="fas fa-step-backward"></i>
-        </button>
-        <button class="play-pause-btn control-btn" id="playPauseBtn" onclick="togglePlay()">
+    <div class="player-controls">
+      <div class="control-btns">
+        <button class="control-btn" onclick="toggleShuffle()"><i class="fas fa-random" id="shuffleIcon"></i></button>
+        <button class="control-btn" onclick="prev()"><i class="fas fa-step-backward"></i></button>
+        <button class="control-btn btn-main-play" id="playBtn" onclick="togglePlay()">
           <i class="fas fa-play"></i>
         </button>
-        <button class="control-btn" onclick="nextSong()">
-          <i class="fas fa-step-forward"></i>
-        </button>
-        <button class="control-btn" id="repeatBtn" onclick="toggleRepeat()">
-          <i class="fas fa-redo"></i>
-        </button>
-        <button class="control-btn" id="shuffleBtn" onclick="toggleShuffle()">
-          <i class="fas fa-random"></i>
-        </button>
+        <button class="control-btn" onclick="next()"><i class="fas fa-step-forward"></i></button>
+        <button class="control-btn" onclick="toggleRepeat()"><i class="fas fa-redo" id="repeatIcon"></i></button>
       </div>
-
       <div class="progress-container">
-        <span class="time-display" id="currentTime">0:00</span>
-        <div class="progress-bar" id="progressBar" onclick="seekSong(event)">
-          <div class="progress-filled" id="progressFilled"></div>
+        <span id="curTime">0:00</span>
+        <div class="progress-bar" id="progBar" onclick="seek(event)">
+          <div class="progress-fill" id="progFill"></div>
         </div>
-        <span class="time-display" id="totalTime">0:00</span>
+        <span id="durTime">0:00</span>
       </div>
     </div>
 
-    <div class="player-right">
-      <button class="control-btn" onclick="toggleQueue()">
-        <i class="fas fa-list"></i>
+    <div class="player-extra">
+      <button class="control-btn" onclick="openTutorial()"><i class="fas fa-info-circle"></i></button>
+      <i class="fas fa-volume-up" style="font-size: 14px; color: var(--spotify-text-dim);"></i>
+      <div class="volume-bar" id="volBar" onclick="setVol(event)">
+        <div class="volume-fill" id="volFill"></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Full EQ Mode Modal -->
+  <div id="modalEQ" class="modal-eq">
+    <button class="modal-close" onclick="toggleEQMode()" style="top: 40px; right: 40px;">&times;</button>
+    <div class="eq-visualizer-large" id="largeEQ">
+      <div class="eq-bar-large"></div><div class="eq-bar-large"></div><div class="eq-bar-large"></div><div class="eq-bar-large"></div><div class="eq-bar-large"></div>
+      <div class="eq-bar-large"></div><div class="eq-bar-large"></div><div class="eq-bar-large"></div><div class="eq-bar-large"></div><div class="eq-bar-large"></div>
+    </div>
+    <div style="text-align: center;">
+      <h1 id="eqTitle" style="font-size: 48px; margin-bottom: 8px;">Pilih Lagu</h1>
+      <p id="eqArtist" style="color: var(--spotify-text-dim); font-size: 24px; margin-bottom: 40px;">Artist</p>
+      <div class="control-btns" style="gap: 40px; justify-content: center;">
+        <button class="control-btn" style="font-size: 32px;" onclick="prev()"><i class="fas fa-step-backward"></i></button>
+        <button class="control-btn btn-main-play" style="width: 80px; height: 80px; font-size: 32px;" onclick="togglePlay()"><i class="fas fa-play" id="eqPlayIcon"></i></button>
+        <button class="control-btn" style="font-size: 32px;" onclick="next()"><i class="fas fa-step-forward"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Nav -->
+  <nav class="mobile-nav">
+    <a class="nav-item" onclick="switchView('home')"><i class="fas fa-home"></i></a>
+    <a class="nav-item" onclick="switchView('search')"><i class="fas fa-search"></i></a>
+    <a class="nav-item" onclick="openProfile()"><i class="fas fa-layer-group"></i></a>
+    <a class="nav-item" onclick="openEvent()"><i class="fas fa-star" style="color: var(--gold)"></i></a>
+  </nav>
+
+  <!-- Modals -->
+  <div class="modal" id="modalNotif" onclick="if(event.target==this)this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2>Notifikasi</h2>
+        <button onclick="clearAllNotif()" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; font-weight: 700;">Hapus Semua</button>
+      </div>
+      <div id="notifList" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Notifications here -->
+        <p style="text-align: center; color: var(--spotify-text-dim);">Tidak ada notifikasi.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAuth" onclick="if(event.target==this)this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h2 style="margin-bottom: 24px;">Login ke ExeMusic</h2>
+      <button class="gacha-button" style="width: 100%; margin-bottom: 16px;" onclick="loginGoogle()">
+        <i class="fab fa-google"></i> Masuk dengan Google
       </button>
-      <div class="volume-container">
-        <button class="control-btn" onclick="toggleMute()">
-          <i class="fas fa-volume-up" id="volumeIcon"></i>
-        </button>
-        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70" oninput="setVolume(this.value)">
-      </div>
-    </div>
-  </div>
-
-  <!-- Hidden Audio Element -->
-  <audio id="audioPlayer" preload="metadata"></audio>
-
-
-  <!-- Auth Modal -->
-  <div class="modal" id="modalAuth">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Masuk / Daftar</h2>
-        <button class="close-btn" onclick="closeModal('modalAuth')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" class="form-control" id="authEmail" placeholder="email@example.com">
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-control" id="authPassword" placeholder="••••••••">
-      </div>
-
-      <div class="form-group">
-        <label>Username (untuk daftar)</label>
-        <input type="text" class="form-control" id="authUsername" placeholder="Username Anda">
-      </div>
-
-      <div style="display: flex; gap: 12px;">
-        <button class="btn btn-primary" onclick="handleLogin()" style="flex: 1;">Masuk</button>
-        <button class="btn btn-secondary" onclick="handleRegister()" style="flex: 1;">Daftar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Upload Modal -->
-  <div class="modal" id="modalUpload">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Upload Lagu</h2>
-        <button class="close-btn" onclick="closeModal('modalUpload')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div id="guestUploadSection" style="display: none;">
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">
-          <i class="fas fa-info-circle"></i> Kamu belum login. Request lagu sebagai guest.
-        </p>
-        <div class="form-group">
-          <label>Nama Kamu</label>
-          <input type="text" class="form-control" id="guestName" placeholder="Nama Anda">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Judul Lagu *</label>
-        <input type="text" class="form-control" id="uploadTitle" placeholder="Judul lagu">
-      </div>
-
-      <div class="form-group">
-        <label>URL Lagu * <button class="btn btn-secondary" onclick="showURLTutorial()" style="padding: 4px 12px; margin-left: 8px; font-size: 12px;">Tutorial</button></label>
-        <input type="text" class="form-control" id="uploadURL" placeholder="https://www.youtube.com/watch?v=...">
-      </div>
-
-      <div class="form-group">
-        <label>Cover URL (opsional)</label>
-        <input type="text" class="form-control" id="uploadCover" placeholder="https://...">
-      </div>
-
-      <button class="btn btn-primary" onclick="submitUpload()" style="width: 100%;">
-        <i class="fas fa-upload"></i> Kirim Request
-      </button>
-    </div>
-  </div>
-
-  <!-- Profile Modal -->
-  <div class="modal" id="modalProfile">
-    <div class="modal-content" style="max-width: 600px;">
-      <div class="modal-header">
-        <h2>Profil</h2>
-        <button class="close-btn" onclick="closeModal('modalProfile')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div style="text-align: center; margin-bottom: 24px;">
-        <img src="exemusicicon.png" alt="Avatar" id="profileAvatarImg" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 16px;">
-        <h3 id="profileUsername" style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Username</h3>
-        <div class="user-tags" id="profileTags"></div>
-        <div style="display: flex; justify-content: center; gap: 32px; margin-top: 16px;">
-          <div>
-            <h4 id="profileFollowers" style="font-size: 20px; font-weight: 800;">0</h4>
-            <p style="color: var(--text-secondary); font-size: 13px;">Followers</p>
-          </div>
-          <div>
-            <h4 id="profileFollowing" style="font-size: 20px; font-weight: 800;">0</h4>
-            <p style="color: var(--text-secondary); font-size: 13px;">Following</p>
-          </div>
-        </div>
-        <button class="btn btn-primary" id="followBtn" onclick="toggleFollow()" style="margin-top: 16px; display: none;">Follow</button>
-        <button class="btn btn-secondary" id="editProfileBtn" onclick="openEditProfile()" style="margin-top: 16px; display: none;">Edit Profil</button>
-      </div>
-
-      <div class="profile-tabs">
-        <button class="profile-tab active" onclick="switchProfileTab('posts')">Upload Saya</button>
-        <button class="profile-tab" onclick="switchProfileTab('favorites')">Favorit</button>
-      </div>
-
-      <div class="song-grid" id="profileSongsGrid"></div>
-    </div>
-  </div>
-
-  <!-- Edit Profile Modal -->
-  <div class="modal" id="modalEditProfile">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Edit Profil</h2>
-        <button class="close-btn" onclick="closeModal('modalEditProfile')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div class="form-group">
-        <label>Avatar URL</label>
-        <input type="text" class="form-control" id="editAvatar" placeholder="https://...">
-      </div>
-
-      <div class="form-group" id="vipColorSection" style="display: none;">
-        <label>Warna Profil (VIP Only) 🌟</label>
-        <input type="color" class="form-control" id="editProfileColor" value="#1DB954">
-      </div>
-
-      <div class="form-group">
-        <label>Kelola Tags</label>
-        <div id="tagsManager"></div>
-        <button class="btn btn-secondary" onclick="openAddTagModal()" style="margin-top: 8px; width: 100%;">
-          <i class="fas fa-plus"></i> Tambah Tag
-        </button>
-      </div>
-
-      <button class="btn btn-primary" onclick="saveProfileChanges()" style="width: 100%;">
-        <i class="fas fa-save"></i> Simpan Perubahan
-      </button>
-    </div>
-  </div>
-
-  <!-- Add Tag Modal -->
-  <div class="modal" id="modalAddTag">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Tambah Tag</h2>
-        <button class="close-btn" onclick="closeModal('modalAddTag')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <p style="color: var(--text-secondary); margin-bottom: 16px;">
-        <i class="fas fa-info-circle"></i> Non-VIP: max 2 tags | VIP: max 5 tags
-      </p>
-
-      <div class="form-group">
-        <label>Nama Tag</label>
-        <input type="text" class="form-control" id="newTagName" placeholder="LEGEND" maxlength="20">
-      </div>
-
-      <button class="btn btn-primary" onclick="addNewTag()" style="width: 100%;">
-        <i class="fas fa-plus"></i> Tambah Tag
-      </button>
-    </div>
-  </div>
-
-  <!-- VIP Modal -->
-  <div class="modal" id="modalVIP">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>💎 Upgrade VIP</h2>
-        <button class="close-btn" onclick="closeModal('modalVIP')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div style="background: var(--accent-gradient); color: #000; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-        <h3 style="font-size: 28px; font-weight: 900; margin-bottom: 8px;">VIP MEMBERSHIP</h3>
-        <p style="font-size: 14px; font-weight: 600;">Dapatkan fitur eksklusif!</p>
-      </div>
-
-      <div style="margin-bottom: 24px;">
-        <h4 style="margin-bottom: 12px; font-weight: 700;">Fitur VIP:</h4>
-        <ul style="list-style: none; padding: 0;">
-          <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-check" style="color: var(--primary);"></i>
-            <span>Custom warna profil</span>
-          </li>
-          <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-check" style="color: var(--primary);"></i>
-            <span>Maksimal 5 custom tags</span>
-          </li>
-          <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-check" style="color: var(--primary);"></i>
-            <span>Badge VIP eksklusif</span>
-          </li>
-          <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-check" style="color: var(--primary);"></i>
-            <span>Upload tanpa cooldown</span>
-          </li>
-          <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-check" style="color: var(--primary);"></i>
-            <span>Event rewards x2</span>
-          </li>
-        </ul>
-      </div>
-
-      <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-        <h4 style="margin-bottom: 12px; font-weight: 700;">Beli dengan Coin:</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <button class="btn btn-secondary" onclick="buyVIPWithCoins(7)" style="flex-direction: column; padding: 16px;">
-            <span style="font-size: 20px; font-weight: 800;">7 Hari</span>
-            <span style="font-size: 14px; color: #ffd700;">500 Coins</span>
-          </button>
-          <button class="btn btn-secondary" onclick="buyVIPWithCoins(30)" style="flex-direction: column; padding: 16px;">
-            <span style="font-size: 20px; font-weight: 800;">30 Hari</span>
-            <span style="font-size: 14px; color: #ffd700;">1500 Coins</span>
-          </button>
-        </div>
-      </div>
-
-      <p style="text-align: center; color: var(--text-secondary); font-size: 12px;">
-        VIP bersifat sementara dan akan expire sesuai durasi yang dibeli
+      <p style="text-align: center; color: var(--spotify-text-dim); font-size: 12px;">
+        Dengan masuk, kamu menyetujui Ketentuan Layanan ExeMusic.
       </p>
     </div>
   </div>
 
-  <!-- Coin Shop Modal -->
-  <div class="modal" id="modalCoinShop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>💰 Coin Shop</h2>
-        <button class="close-btn" onclick="closeModal('modalCoinShop')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div style="background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3); padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">Coin Kamu</p>
-        <h3 style="font-size: 32px; font-weight: 900; color: #ffd700;" id="coinShopBalance">0</h3>
-      </div>
-
-      <div style="margin-bottom: 20px;">
-        <h4 style="margin-bottom: 12px; font-weight: 700;">Tukar Views ke Coins</h4>
-        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
-          5 Views = 1 Coin | Total Views: <span id="totalViewsDisplay">0</span>
-        </p>
-        <button class="btn btn-primary" onclick="convertViewsToCoins()" style="width: 100%;">
-          <i class="fas fa-exchange-alt"></i> Tukar Semua Views
-        </button>
-      </div>
-
-      <div>
-        <h4 style="margin-bottom: 12px; font-weight: 700;">Beli dengan Coins</h4>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <h5 style="font-weight: 700; margin-bottom: 4px;">Custom Tag</h5>
-              <p style="font-size: 12px; color: var(--text-secondary);">100 Coins</p>
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div id="profileContent">
+        <div id="profileHeader" style="display: flex; gap: 24px; align-items: flex-end; margin-bottom: 32px; padding: 32px; border-radius: 12px; background: var(--profile-bg, #181818);">
+          <img id="pAvatarImg" src="exemusicicon.png" style="width: 192px; height: 192px; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.5); object-fit: cover;">
+          <div style="flex: 1;">
+            <p style="font-size: 12px; font-weight: 700;">PROFIL</p>
+            <h1 id="pUsername" style="font-size: 48px; margin: 8px 0;">Username</h1>
+            
+            <div id="pTags" class="tag-container"></div>
+            
+            <div style="display: flex; gap: 16px; color: var(--spotify-text-dim); font-size: 14px; margin-top: 16px;">
+              <span><b id="pFol" style="color: #fff;">0</b> Pengikut</span>
+              <span><b id="pFollowing" style="color: #fff;">0</b> Mengikuti</span>
             </div>
-            <button class="btn btn-secondary" onclick="buyCustomTag()">Beli</button>
+
+            <div id="profileActions" style="display: flex; gap: 12px; margin-top: 24px;">
+              <button id="btnFollow" class="btn-upgrade" style="background: var(--spotify-green); color: #000; border: none; display: none;" onclick="toggleFollow()">Ikuti</button>
+              <div id="vipCustomization" style="display: none;">
+                <div class="color-picker-container">
+                  <span style="font-size: 12px; font-weight: 700;">WARNA PROFIL (VIP)</span>
+                  <input type="color" id="profileColorInp" onchange="updateProfileColor(this.value)" style="background:none; border:none; width:30px; height:30px; cursor:pointer;">
+                </div>
+                <div style="margin-top: 12px;">
+                  <button class="btn-upgrade" style="font-size: 10px; padding: 4px 12px;" onclick="addTagPrompt()">Tambah Tag</button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <h5 style="font-weight: 700; margin-bottom: 4px;">VIP 7 Hari</h5>
-              <p style="font-size: 12px; color: var(--text-secondary);">500 Coins</p>
-            </div>
-            <button class="btn btn-secondary" onclick="buyVIPWithCoins(7)">Beli</button>
+        </div>
+        
+        <div style="border-top: 1px solid #333; padding-top: 24px;">
+          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+            <button class="btn-upgrade" onclick="switchProfileTab('posts')">Lagu Kamu</button>
+            <button class="btn-upgrade" onclick="switchProfileTab('likes')">Disukai</button>
+            <button class="btn-upgrade" style="background: var(--danger); border: none;" onclick="auth.signOut(); location.reload();">Logout</button>
+          </div>
+          <div id="profileTabContent" class="song-grid">
+            <!-- Profile songs will be here -->
           </div>
         </div>
       </div>
@@ -1503,188 +1189,86 @@
   </div>
 
   <!-- Event Modal -->
-  <div class="modal" id="modalEvent">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>🎁 Event Terbaru</h2>
-        <button class="close-btn" onclick="closeModal('modalEvent')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div id="eventContent" style="text-align: center;">
-        <div style="background: var(--accent-gradient); padding: 32px; border-radius: 12px; margin-bottom: 24px;">
-          <h3 style="font-size: 32px; font-weight: 900; color: #000; margin-bottom: 8px;">🎵 Music Festival 2026</h3>
-          <p style="color: #000; font-weight: 600;">Event spesial dengan hadiah menarik!</p>
-        </div>
-
-        <div style="margin-bottom: 24px;">
-          <h4 style="margin-bottom: 16px; font-weight: 700;">Countdown:</h4>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px;">
-              <h3 id="eventDays" style="font-size: 36px; font-weight: 900; color: var(--primary);">0</h3>
-              <p style="font-size: 12px; color: var(--text-secondary);">Hari</p>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px;">
-              <h3 id="eventHours" style="font-size: 36px; font-weight: 900; color: var(--primary);">0</h3>
-              <p style="font-size: 12px; color: var(--text-secondary);">Jam</p>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px;">
-              <h3 id="eventMinutes" style="font-size: 36px; font-weight: 900; color: var(--primary);">0</h3>
-              <p style="font-size: 12px; color: var(--text-secondary);">Menit</p>
-            </div>
+  <div class="modal" id="modalEvent" onclick="if(event.target==this)closeEventModal()">
+    <div class="modal-content" style="background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%); border: 1px solid var(--accent);">
+      <button class="modal-close" onclick="closeEventModal()">&times;</button>
+      <div style="text-align: center;">
+        <h2 style="color: var(--accent); margin-bottom: 8px;">Ramadan Event 1447H</h2>
+        <p style="color: var(--spotify-text-dim); margin-bottom: 24px;">Kumpulkan ketupat dan tukarkan dengan hadiah menarik!</p>
+        
+        <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
+          <div style="background: #181818; padding: 16px; border-radius: 8px; min-width: 80px;">
+            <h3 id="cDays">0</h3><p style="font-size: 10px;">HARI</p>
+          </div>
+          <div style="background: #181818; padding: 16px; border-radius: 8px; min-width: 80px;">
+            <h3 id="cHours">0</h3><p style="font-size: 10px;">JAM</p>
+          </div>
+          <div style="background: #181818; padding: 16px; border-radius: 8px; min-width: 80px;">
+            <h3 id="cMins">0</h3><p style="font-size: 10px;">MENIT</p>
           </div>
         </div>
 
-        <div style="margin-bottom: 20px;">
-          <h4 style="margin-bottom: 12px; font-weight: 700;">Ketupat Kamu: <span id="ketupatCount" style="color: var(--primary);">0</span></h4>
-          <button class="btn btn-primary" onclick="claimDailyReward()" id="claimRewardBtn">
-            <i class="fas fa-gift"></i> Claim Reward Harian
-          </button>
+        <div style="background: rgba(29, 185, 84, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+          <p>Ketupat Kamu: <b id="eidKetVal" style="color: var(--accent); font-size: 24px;">0</b> 💠</p>
+          <button id="claimBtn" class="gacha-button" style="margin-top: 16px;" onclick="claimTrialVip1d()">Claim Free VIP 1 Day</button>
         </div>
 
-        <div>
-          <h4 style="margin-bottom: 12px; font-weight: 700;">Rewards:</h4>
-          <ul style="list-style: none; padding: 0;">
-            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <i class="fas fa-star" style="color: #ffd700;"></i> VIP 1 Hari - 100 Ketupat
-            </li>
-            <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <i class="fas fa-star" style="color: #ffd700;"></i> Custom Tag - 200 Ketupat
-            </li>
-            <li style="padding: 8px 0;">
-              <i class="fas fa-star" style="color: #ffd700;"></i> 500 Coins - 300 Ketupat
-            </li>
-          </ul>
-        </div>
+        <button class="btn-upgrade" onclick="openKetupatShop()">Buka Toko Ketupat</button>
       </div>
     </div>
   </div>
 
-  <!-- Customer Service Modal -->
-  <div class="modal" id="modalCustomerService">
+  <!-- Shop Modal -->
+  <div class="modal" id="modalKetupatShop" onclick="if(event.target==this)this.style.display='none'">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2>🎧 Customer Service</h2>
-        <button class="close-btn" onclick="closeModal('modalCustomerService')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <p style="color: var(--text-secondary); margin-bottom: 20px;">
-        Pilih kategori bantuan yang Anda butuhkan:
-      </p>
-
-      <div class="category-grid">
-        <div class="category-card" onclick="selectCSCategory('refund_data')">
-          <i class="fas fa-database"></i>
-          <p>Refund Data</p>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h2 style="text-align: center; margin-bottom: 24px;">Toko Ketupat</h2>
+      
+      <!-- Gacha Section -->
+      <div class="gacha-container" style="margin-bottom: 32px;">
+        <h3>🎰 Gacha Ketupat</h3>
+        <p style="font-size: 12px; color: var(--spotify-text-dim);">100 Ketupat per spin</p>
+        <div class="gacha-wheel-container">
+          <div class="gacha-wheel" id="gachaWheel"></div>
+          <div class="gacha-pointer"></div>
         </div>
-        <div class="category-card" onclick="selectCSCategory('refund_vip')">
-          <i class="fas fa-crown"></i>
-          <p>Refund VIP</p>
-        </div>
-        <div class="category-card" onclick="selectCSCategory('question')">
-          <i class="fas fa-question"></i>
-          <p>Bertanya</p>
-        </div>
-        <div class="category-card" onclick="selectCSCategory('update_request')">
-          <i class="fas fa-code"></i>
-          <p>Request Update</p>
-        </div>
-        <div class="category-card" onclick="selectCSCategory('bug_report')">
-          <i class="fas fa-bug"></i>
-          <p>Laporkan Bug</p>
-        </div>
-        <div class="category-card" onclick="selectCSCategory('other')">
-          <i class="fas fa-ellipsis-h"></i>
-          <p>Lainnya</p>
+        <button class="gacha-button" id="gachaBtn" onclick="spinGacha()">SPIN SEKARANG</button>
+        <div id="gachaResult" style="margin-top: 16px; display: none;">
+          <h4 id="gachaResultTitle" style="color: var(--accent);"></h4>
+          <p id="gachaResultDesc" style="font-size: 14px;"></p>
         </div>
       </div>
 
-      <div id="csFormSection" style="display: none; margin-top: 20px;">
-        <div class="form-group">
-          <label>Kategori: <span id="selectedCategory" style="color: var(--primary); font-weight: 700;"></span></label>
+      <div class="song-grid" style="grid-template-columns: 1fr 1fr;">
+        <div style="background: #181818; padding: 16px; border-radius: 8px;">
+          <h4>VIP Trial (Ketupat)</h4>
+          <p style="font-size: 12px; color: var(--spotify-text-dim);">100💠 / hari</p>
+          <select id="vipDaysSel" style="width: 100%; background: #333; color: #fff; border: none; padding: 8px; margin: 12px 0;">
+            <option value="1">1 Hari</option>
+            <option value="3">3 Hari</option>
+            <option value="7">7 Hari</option>
+          </select>
+          <button class="btn-upgrade" style="width: 100%;" onclick="exchangeVipTrial()">Tukar Ketupat</button>
         </div>
-
-        <div class="form-group">
-          <label>Pesan *</label>
-          <textarea class="form-control" id="csMessage" rows="5" placeholder="Jelaskan masalah Anda secara detail..." maxlength="1000"></textarea>
+        <div style="background: #181818; padding: 16px; border-radius: 8px;">
+          <h4>VIP Premium (Coin)</h4>
+          <p style="font-size: 12px; color: var(--spotify-text-dim);">Tukar koin dari views</p>
+          <p style="font-size: 10px; color: var(--accent);">Koin Kamu: <span id="coinVal">0</span> 🪙</p>
+          <select id="vipCoinSel" style="width: 100%; background: #333; color: #fff; border: none; padding: 8px; margin: 12px 0;">
+            <option value="1">1 Hari (5 🪙)</option>
+            <option value="7">7 Hari (15 🪙)</option>
+            <option value="30">30 Hari (50 🪙)</option>
+          </select>
+          <button class="btn-upgrade" style="width: 100%; background: var(--accent); color: #000;" onclick="buyVipWithCoins(parseInt(document.getElementById('vipCoinSel').value))">Beli dengan Koin</button>
         </div>
-
-        <button class="btn btn-primary" onclick="submitCSTicket()" style="width: 100%;">
-          <i class="fas fa-paper-plane"></i> Kirim Tiket
-        </button>
       </div>
     </div>
   </div>
 
-  <!-- Notification Modal -->
-  <div class="modal" id="modalNotif">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>🔔 Notifikasi</h2>
-        <button class="close-btn" onclick="closeModal('modalNotif')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
+  <div id="toast-container"></div>
 
-      <div style="text-align: right; margin-bottom: 16px;">
-        <button class="btn btn-secondary" onclick="clearAllNotifications()" style="padding: 8px 16px; font-size: 13px;">
-          <i class="fas fa-trash"></i> Hapus Semua
-        </button>
-      </div>
-
-      <div id="notifList" style="display: flex; flex-direction: column; gap: 12px;">
-        <p style="text-align: center; color: var(--text-secondary);">Tidak ada notifikasi</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Admin Overlay (for admins only) -->
-  <div class="admin-overlay" id="adminOverlay">
-    <div class="admin-overlay-header">
-      <h3 style="font-size: 18px; font-weight: 800;">Admin Quick Panel</h3>
-      <button class="close-btn" onclick="toggleAdminOverlay()" style="width: 28px; height: 28px; font-size: 16px;">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-
-    <div class="admin-quick-stats">
-      <div class="stat-box">
-        <h4 id="adminTotalUsers">0</h4>
-        <p>Total Users</p>
-      </div>
-      <div class="stat-box">
-        <h4 id="adminTotalSongs">0</h4>
-        <p>Total Songs</p>
-      </div>
-      <div class="stat-box">
-        <h4 id="adminPendingRequests">0</h4>
-        <p>Pending Requests</p>
-      </div>
-      <div class="stat-box">
-        <h4 id="adminOnlineUsers">0</h4>
-        <p>Online Now</p>
-      </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <button class="btn btn-secondary" onclick="window.open('adminv3_2.html', '_blank')" style="width: 100%; justify-content: center;">
-        <i class="fas fa-cog"></i> Open Full Admin Panel
-      </button>
-      <button class="btn btn-secondary" onclick="sendBroadcastNotif()" style="width: 100%; justify-content: center;">
-        <i class="fas fa-bullhorn"></i> Send Broadcast
-      </button>
-      <button class="btn btn-secondary" onclick="viewPendingRequests()" style="width: 100%; justify-content: center;">
-        <i class="fas fa-tasks"></i> View Requests
-      </button>
-    </div>
-  </div>
-
-  <!-- Firebase Configuration & Main Script -->
   <script>
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
       authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -1696,1384 +1280,945 @@
       measurementId: "G-2P56Y7QQ18"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-    const storage = firebase.storage();
 
     // Global Variables
-    let currentUser = null;
-    let allSongs = [];
-    let currentSongIndex = 0;
-    let isPlaying = false;
+    let songs = [];
+    let i = 0;
+    let audio = new Audio();
+    let userData = null;
+    let fav = JSON.parse(localStorage.getItem('exeFav') || '[]');
     let isShuffle = false;
     let isRepeat = false;
-    let favorites = [];
-    let currentViewingProfile = null;
-    let selectedCSCategory = null;
-
-    const audioPlayer = document.getElementById('audioPlayer');
+    let isEQActive = false;
+    let eqInterval = null;
 
     // Initialize App
-    window.addEventListener('load', () => {
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          currentUser = user;
-          loadUserData();
-          initializeApp();
-        } else {
-          currentUser = null;
-          initializeGuestMode();
-        }
-      });
-
-      // Load songs
+    window.onload = () => {
       loadSongs();
-      
-      // Load announcements
-      loadAnnouncements();
-
-      // Setup audio player events
-      setupAudioPlayer();
-    });
-
-    function loadUserData() {
-      db.ref('users/' + currentUser.uid).on('value', snapshot => {
-        const userData = snapshot.val();
-        if (userData) {
-          document.getElementById('usernameDisplay').textContent = userData.username || 'User';
-          document.getElementById('userAvatarImg').src = userData.avatar || 'exemusicicon.png';
-          document.getElementById('userCoins').textContent = userData.coins || 0;
-          
-          // Check VIP status
-          if (userData.vipExpiry && userData.vipExpiry > Date.now()) {
-            // User has active VIP
-            document.querySelector('.btn-upgrade').innerHTML = '<i class="fas fa-crown"></i> VIP Active';
-            document.querySelector('.btn-upgrade').style.background = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
-            document.querySelector('.btn-upgrade').style.color = '#000';
-          }
-
-          // Load favorites
-          if (userData.favorites) {
-            favorites = Object.keys(userData.favorites);
-          }
-
-          // Show admin overlay if admin
-          if (userData.role === 'admin' || userData.role === 'owner') {
-            showAdminFeatures();
-          }
-        }
-      });
-    }
-
-    function initializeGuestMode() {
-      document.getElementById('usernameDisplay').textContent = 'Guest';
-      document.getElementById('userAvatarImg').src = 'exemusicicon.png';
-      document.getElementById('coinDisplay').style.display = 'none';
-    }
-
-    function initializeApp() {
-      document.getElementById('coinDisplay').style.display = 'flex';
-    }
+      initAuth();
+      initBroadcast();
+      initMaintenance();
+      initSnowfall();
+      setTimeout(() => {
+        const loading = document.getElementById('loadingCard');
+        if(loading) loading.style.display = 'none';
+      }, 2000);
+    };
 
     function loadSongs() {
-      db.ref('songs').orderByChild('timestamp').limitToLast(100).on('value', snapshot => {
-        allSongs = [];
-        snapshot.forEach(child => {
-          const song = child.val();
-          song.id = child.key;
-          allSongs.push(song);
-        });
-        allSongs.reverse(); // Newest first
-        
-        renderSongs();
+      db.ref('songs').on('value', snap => {
+        const val = snap.val();
+        if(val) {
+          songs = Object.keys(val).map(k => ({...val[k], key: k}));
+          renderSongs(songs);
+          updateHero();
+          updatePopular();
+        }
       });
     }
 
-    function renderSongs() {
-      // Trending (sorted by plays)
-      const trending = [...allSongs].sort((a, b) => (b.plays || 0) - (a.plays || 0)).slice(0, 6);
-      renderSongGrid('trendingGrid', trending);
-
-      // Recommended (random selection)
-      const recommended = [...allSongs].sort(() => 0.5 - Math.random()).slice(0, 6);
-      renderSongGrid('recommendedGrid', recommended);
-
-      // Recent uploads
-      const recent = allSongs.slice(0, 6);
-      renderSongGrid('recentGrid', recent);
-    }
-
-    function renderSongGrid(gridId, songs) {
-      const grid = document.getElementById(gridId);
-      if (!songs || songs.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Belum ada lagu</p>';
-        return;
-      }
-
-      grid.innerHTML = songs.map((song, index) => `
-        <div class="song-card" onclick="playSong(${allSongs.indexOf(song)})">
-          <div class="card-image-wrapper">
-            <img src="${song.cover || 'exemusicicon.png'}" alt="${song.title}" class="card-image" onerror="this.src='exemusicicon.png'">
-            <div class="play-button-overlay">
-              <i class="fas fa-play"></i>
-            </div>
+    function renderSongs(list) {
+      const grid = document.getElementById('songGrid');
+      if(!grid) return;
+      grid.innerHTML = list.map((s, idx) => `
+        <div class="song-card" onclick="setup(${songs.indexOf(s)})">
+          <div class="card-img-container">
+            <img src="${s.cover || 'exemusicicon.png'}" class="card-img" onerror="this.src='exemusicicon.png'">
+            <div class="play-overlay"><i class="fas fa-play"></i></div>
           </div>
-          <div class="card-title">${song.title || 'Unknown Title'}</div>
-          <div class="card-artist">@${song.by || song.byName || 'Unknown'}</div>
-          <div class="card-stats">
-            <span><i class="fas fa-play"></i> ${song.plays || 0}</span>
-            <span><i class="fas fa-heart"></i> ${song.likes || 0}</span>
-          </div>
+          <div class="card-title">${s.title}</div>
+          <div class="card-artist" onclick="event.stopPropagation(); viewProfile('${s.uid}')">@${s.by || 'Unknown'}</div>
         </div>
       `).join('');
     }
 
-    function loadAnnouncements() {
-      db.ref('announcements').orderByChild('timestamp').limitToLast(1).once('value', snapshot => {
-        snapshot.forEach(child => {
-          const announcement = child.val();
-          const banner = document.getElementById('announcementBanner');
-          document.getElementById('announcementTitle').textContent = announcement.title || 'Pengumuman';
-          document.getElementById('announcementMessage').textContent = announcement.message || '';
-          document.getElementById('announcementIcon').className = `fas ${announcement.icon || 'fa-bullhorn'} announcement-icon`;
-          banner.style.display = 'flex';
-        });
-      });
+    function updateHero() {
+      if(songs.length > 0) {
+        const randomSong = songs[Math.floor(Math.random() * songs.length)];
+        const heroImg = document.getElementById('heroImg');
+        const heroTitle = document.getElementById('heroTitle');
+        const heroDesc = document.getElementById('heroDesc');
+        if(heroImg) heroImg.src = randomSong.cover || 'exemusicicon.png';
+        if(heroTitle) heroTitle.textContent = randomSong.title;
+        if(heroDesc) heroDesc.textContent = "Populer saat ini oleh @" + (randomSong.by || 'Unknown');
+      }
     }
 
+    function updatePopular() {
+      const list = document.getElementById('popularList');
+      if(!list) return;
+      // For now, just show top 10 from the main list (or filter by plays if available)
+      const top10 = songs.slice(0, 10);
+      list.innerHTML = top10.map((s, idx) => `
+        <div class="popular-item" onclick="setup(${songs.indexOf(s)})">
+          <span class="popular-rank">${idx + 1}</span>
+          <img src="${s.cover || 'exemusicicon.png'}" class="popular-img" onerror="this.src='exemusicicon.png'">
+          <div class="popular-info">
+            <div class="popular-title">${s.title}</div>
+            <div class="popular-artist">@${s.by || 'Unknown'}</div>
+          </div>
+          <div class="popular-plays"><i class="fas fa-play" style="font-size: 10px; margin-right: 4px;"></i> ${s.plays || 0}</div>
+        </div>
+      `).join('');
+    }
 
-    // Audio Player Functions
-    function setupAudioPlayer() {
-      audioPlayer.addEventListener('timeupdate', updateProgress);
-      audioPlayer.addEventListener('ended', () => {
-        if (isRepeat) {
-          audioPlayer.currentTime = 0;
-          audioPlayer.play();
+    function initAuth() {
+      auth.onAuthStateChanged(u => {
+        if(u) {
+          db.ref('users/' + u.uid).on('value', snap => {
+            userData = snap.val();
+            if(userData) {
+              if(userData.banned) {
+                document.getElementById('bannedScreen').style.display = 'flex';
+                auth.signOut();
+                return;
+              }
+              document.getElementById('topUsername').textContent = userData.username;
+              document.getElementById('topAvatar').src = userData.avatar || "exemusicicon.png";
+              updateKetupatUI(userData.ketupat || 0);
+              updateCoinUI(userData.coins || 0);
+              
+              // Admin Check & Floating UI
+              const adminBtn = document.getElementById('adminBtn');
+              const role = userData.role;
+              if(role === 'admin' || role === 'owner') {
+                if(adminBtn) adminBtn.style.display = 'flex';
+                initAdminUI();
+              } else {
+                if(adminBtn) adminBtn.style.display = 'none';
+                document.getElementById('adminFloatUI').style.display = 'none';
+              }
+              
+              // VIP Expiry Check
+              if(userData.role === 'vip' && userData.vipUntil && userData.vipUntil < Date.now()) {
+                db.ref('users/' + u.uid).update({ role: 'user' });
+                showToast("Masa VIP kamu telah habis!", "warning");
+              }
+              
+              // Notif Check
+              checkNotifs(u.uid);
+            }
+          });
         } else {
-          nextSong();
+          document.getElementById('topUsername').textContent = "Login";
+          document.getElementById('topAvatar').src = "exemusicicon.png";
+          const adminBtn = document.getElementById('adminBtn');
+          if(adminBtn) adminBtn.style.display = 'none';
+          document.getElementById('adminFloatUI').style.display = 'none';
         }
-      });
-      audioPlayer.addEventListener('loadedmetadata', () => {
-        document.getElementById('totalTime').textContent = formatTime(audioPlayer.duration);
       });
     }
 
-    function playSong(index) {
-      if (index < 0 || index >= allSongs.length) return;
+    function initAdminUI() {
+      const ui = document.getElementById('adminFloatUI');
+      const handle = document.getElementById('adminUIHandle');
+      if(!ui || !handle) return;
       
-      currentSongIndex = index;
-      const song = allSongs[index];
+      ui.style.display = 'flex';
+      
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      handle.onmousedown = dragMouseDown;
 
-      // Update UI
-      document.getElementById('nowPlayingTitle').textContent = song.title || 'Unknown';
-      document.getElementById('nowPlayingArtist').textContent = '@' + (song.by || song.byName || 'Unknown');
-      document.getElementById('nowPlayingCover').src = song.cover || 'exemusicicon.png';
-
-      // Update hero if on home page
-      document.getElementById('heroImage').src = song.cover || 'exemusicicon.png';
-      document.getElementById('heroTitle').textContent = song.title || 'Unknown';
-
-      // Set audio source and play
-      audioPlayer.src = song.url;
-      audioPlayer.play();
-      isPlaying = true;
-      document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
-
-      // Increment play count
-      if (song.id) {
-        const newPlays = (song.plays || 0) + 1;
-        db.ref('songs/' + song.id + '/plays').set(newPlays);
-        
-        // Increment user's total views
-        if (song.uid && song.uid !== 'ADMIN_CONSOLE') {
-          db.ref('users/' + song.uid + '/totalViews').transaction(val => (val || 0) + 1);
-        }
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
       }
 
-      // Update like button
-      updateLikeButton();
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        ui.style.top = (ui.offsetTop - pos2) + "px";
+        ui.style.left = (ui.offsetLeft - pos1) + "px";
+        ui.style.right = 'auto'; // Disable right anchoring
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+    // Admin Floating UI Actions
+    function toggleAdminUI() {
+      const ui = document.getElementById('adminFloatUI');
+      if(ui.style.display === 'flex') {
+        ui.style.display = 'none';
+      } else {
+        initAdminUI();
+      }
+    }
+
+    function checkNotifs(uid) {
+      db.ref('notifications/' + uid).on('value', snap => {
+        const val = snap.val();
+        const badge = document.getElementById('notifBadge');
+        if(val) {
+          const count = Object.keys(val).length;
+          badge.textContent = count;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      });
+    }
+
+    function loginGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).then(res => {
+        const u = res.user;
+        db.ref('users/' + u.uid).get().then(snap => {
+          if(!snap.exists()) {
+            db.ref('users/' + u.uid).set({
+              username: u.displayName,
+              avatar: u.photoURL,
+              ketupat: 0,
+              role: 'user',
+              timestamp: Date.now()
+            });
+          }
+        });
+        closeModal();
+      }).catch(err => showToast(err.message, 'error'));
+    }
+
+    // Music Logic
+    function setup(idx) {
+      i = idx;
+      const s = songs[i];
+      if(!s) return;
+      
+      // Update plays
+      db.ref('songs/' + s.key + '/plays').transaction(current => (current || 0) + 1);
+      
+      // Coin system (5 views = 1 coin)
+      if(auth.currentUser) {
+        db.ref('users/' + auth.currentUser.uid + '/views').transaction(current => {
+          const newViews = (current || 0) + 1;
+          if(newViews % 5 === 0) {
+            db.ref('users/' + auth.currentUser.uid + '/coins').transaction(c => (c || 0) + 1);
+            showToast("+1 Coin dari mendengarkan!", "success");
+          }
+          return newViews;
+        });
+      }
+
+      audio.src = s.url;
+      audio.play();
+      
+      document.getElementById('playerTitle').textContent = s.title;
+      document.getElementById('playerArtist').textContent = "@" + (s.by || 'Unknown');
+      document.getElementById('playerImg').src = s.cover || 'exemusicicon.png';
+      document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+      
+      // EQ Modal update
+      document.getElementById('eqTitle').textContent = s.title;
+      document.getElementById('eqArtist').textContent = "@" + (s.by || 'Unknown');
+      document.getElementById('eqPlayIcon').className = 'fas fa-pause';
+
+      updateFavIcon();
+      showToast("Memutar: " + s.title);
+      document.title = "▶ " + s.title + " - ExeMusic";
+
+      // Increment Plays
+      if(s.key) db.ref('songs/' + s.key + '/plays').transaction(c => (c || 0) + 1);
     }
 
     function togglePlay() {
-      if (isPlaying) {
-        audioPlayer.pause();
-        isPlaying = false;
-        document.querySelector('#playPauseBtn i').className = 'fas fa-play';
+      if(audio.paused) {
+        audio.play();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+        document.getElementById('eqPlayIcon').className = 'fas fa-pause';
       } else {
-        audioPlayer.play();
-        isPlaying = true;
-        document.querySelector('#playPauseBtn i').className = 'fas fa-pause';
+        audio.pause();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        document.getElementById('eqPlayIcon').className = 'fas fa-play';
       }
     }
 
-    function nextSong() {
-      if (isShuffle) {
-        currentSongIndex = Math.floor(Math.random() * allSongs.length);
-      } else {
-        currentSongIndex = (currentSongIndex + 1) % allSongs.length;
-      }
-      playSong(currentSongIndex);
+    function next() {
+      if(isShuffle) i = Math.floor(Math.random() * songs.length);
+      else i = (i + 1) % songs.length;
+      setup(i);
     }
 
-    function previousSong() {
-      currentSongIndex = (currentSongIndex - 1 + allSongs.length) % allSongs.length;
-      playSong(currentSongIndex);
+    function prev() {
+      i = (i - 1 + songs.length) % songs.length;
+      setup(i);
+    }
+
+    audio.ontimeupdate = () => {
+      const cur = audio.currentTime;
+      const dur = audio.duration;
+      if(dur) {
+        const per = (cur / dur) * 100;
+        document.getElementById('progFill').style.width = per + "%";
+        document.getElementById('curTime').textContent = fmtTime(cur);
+        document.getElementById('durTime').textContent = fmtTime(dur);
+      }
+    };
+
+    audio.onended = () => {
+      if(isRepeat) audio.play();
+      else next();
+    };
+
+    function fmtTime(s) {
+      let m = Math.floor(s / 60);
+      let sec = Math.floor(s % 60);
+      return m + ":" + (sec < 10 ? "0" + sec : sec);
+    }
+
+    function seek(e) {
+      const rect = document.getElementById('progBar').getBoundingClientRect();
+      const per = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = per * audio.duration;
+    }
+
+    function setVol(e) {
+      const rect = document.getElementById('volBar').getBoundingClientRect();
+      const per = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+      audio.volume = per;
+      document.getElementById('volFill').style.width = (per * 100) + "%";
     }
 
     function toggleShuffle() {
       isShuffle = !isShuffle;
-      const btn = document.getElementById('shuffleBtn');
-      if (isShuffle) {
-        btn.style.color = 'var(--primary)';
-      } else {
-        btn.style.color = 'var(--text-secondary)';
-      }
+      document.getElementById('shuffleIcon').style.color = isShuffle ? 'var(--spotify-green)' : 'inherit';
+      showToast(isShuffle ? "Shuffle Aktif" : "Shuffle Mati");
     }
 
     function toggleRepeat() {
       isRepeat = !isRepeat;
-      const btn = document.getElementById('repeatBtn');
-      if (isRepeat) {
-        btn.style.color = 'var(--primary)';
+      document.getElementById('repeatIcon').style.color = isRepeat ? 'var(--spotify-green)' : 'inherit';
+      showToast(isRepeat ? "Repeat Aktif" : "Repeat Mati");
+    }
+
+    function toggleFav() {
+      const s = songs[i];
+      if(!s) return;
+      const url = s.url;
+      if(fav.includes(url)) {
+        fav = fav.filter(u => u !== url);
+        showToast("Dihapus dari Favorit");
       } else {
-        btn.style.color = 'var(--text-secondary)';
+        fav.push(url);
+        showToast("Ditambah ke Favorit");
       }
+      localStorage.setItem('exeFav', JSON.stringify(fav));
+      updateFavIcon();
     }
 
-    function toggleLike() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-
-      const song = allSongs[currentSongIndex];
-      if (!song.id) return;
-
-      const userFavRef = db.ref('users/' + currentUser.uid + '/favorites/' + song.id);
-      const songLikesRef = db.ref('songs/' + song.id + '/likes');
-
-      userFavRef.once('value', snapshot => {
-        if (snapshot.exists()) {
-          // Remove from favorites
-          userFavRef.remove();
-          songLikesRef.transaction(val => Math.max(0, (val || 0) - 1));
-          showToast('Dihapus dari favorit', 'info');
-        } else {
-          // Add to favorites
-          userFavRef.set(true);
-          songLikesRef.transaction(val => (val || 0) + 1);
-          showToast('Ditambahkan ke favorit', 'success');
-        }
-        updateLikeButton();
-      });
-    }
-
-    function updateLikeButton() {
-      if (!currentUser) return;
-      
-      const song = allSongs[currentSongIndex];
-      if (!song.id) return;
-
-      db.ref('users/' + currentUser.uid + '/favorites/' + song.id).once('value', snapshot => {
-        const likeIcon = document.querySelector('#likeBtn i');
-        if (snapshot.exists()) {
-          likeIcon.className = 'fas fa-heart';
-          likeIcon.style.color = 'var(--primary)';
-        } else {
-          likeIcon.className = 'far fa-heart';
-          likeIcon.style.color = 'var(--text-secondary)';
-        }
-      });
-    }
-
-    function seekSong(event) {
-      const progressBar = document.getElementById('progressBar');
-      const clickX = event.offsetX;
-      const width = progressBar.offsetWidth;
-      const duration = audioPlayer.duration;
-      audioPlayer.currentTime = (clickX / width) * duration;
-    }
-
-    function updateProgress() {
-      const current = audioPlayer.currentTime;
-      const duration = audioPlayer.duration;
-      const percentage = (current / duration) * 100;
-      
-      document.getElementById('progressFilled').style.width = percentage + '%';
-      document.getElementById('currentTime').textContent = formatTime(current);
-    }
-
-    function setVolume(value) {
-      audioPlayer.volume = value / 100;
-      updateVolumeIcon(value);
-    }
-
-    function toggleMute() {
-      if (audioPlayer.volume > 0) {
-        audioPlayer.volume = 0;
-        document.getElementById('volumeSlider').value = 0;
-        updateVolumeIcon(0);
+    function updateFavIcon() {
+      const icon = document.getElementById('btnFav').querySelector('i');
+      if(fav.includes(songs[i]?.url)) {
+        icon.className = 'fas fa-heart';
+        icon.style.color = 'var(--spotify-green)';
       } else {
-        audioPlayer.volume = 0.7;
-        document.getElementById('volumeSlider').value = 70;
-        updateVolumeIcon(70);
+        icon.className = 'far fa-heart';
+        icon.style.color = 'inherit';
       }
     }
 
-    function updateVolumeIcon(value) {
-      const icon = document.getElementById('volumeIcon');
-      if (value == 0) {
-        icon.className = 'fas fa-volume-mute';
-      } else if (value < 50) {
-        icon.className = 'fas fa-volume-down';
-      } else {
-        icon.className = 'fas fa-volume-up';
-      }
-    }
-
-    function formatTime(seconds) {
-      if (isNaN(seconds)) return '0:00';
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    // Search Function
+    // Search
     function handleSearch() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      if (!query) {
-        renderSongs();
-        return;
-      }
-
-      const results = allSongs.filter(song => {
-        const title = (song.title || '').toLowerCase();
-        const artist = (song.by || song.byName || '').toLowerCase();
-        return title.includes(query) || artist.includes(query);
-      });
-
-      renderSongGrid('trendingGrid', results.slice(0, 6));
-      renderSongGrid('recommendedGrid', results.slice(6, 12));
-      renderSongGrid('recentGrid', results.slice(12, 18));
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = songs.filter(s => s.title.toLowerCase().includes(q) || (s.by && s.by.toLowerCase().includes(q)));
+      renderSongs(filtered);
     }
 
-    // Modal Functions
-    function openModal(modalId) {
-      document.getElementById(modalId).style.display = 'flex';
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).style.display = 'none';
-    }
-
-    function switchPage(page) {
-      // Simple page switching
-      if (page === 'search') {
-        document.getElementById('searchInput').focus();
-      }
-    }
-
-    // Auth Functions
-    function handleLogin() {
-      const email = document.getElementById('authEmail').value;
-      const password = document.getElementById('authPassword').value;
-
-      if (!email || !password) {
-        showToast('Email dan password harus diisi!', 'warning');
-        return;
-      }
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          showToast('Login berhasil!', 'success');
-          closeModal('modalAuth');
-        })
-        .catch(error => {
-          showToast('Login gagal: ' + error.message, 'error');
-        });
-    }
-
-    function handleRegister() {
-      const email = document.getElementById('authEmail').value;
-      const password = document.getElementById('authPassword').value;
-      const username = document.getElementById('authUsername').value;
-
-      if (!email || !password || !username) {
-        showToast('Semua field harus diisi!', 'warning');
-        return;
-      }
-
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-          return db.ref('users/' + user.uid).set({
-            username: username,
-            email: email,
-            coins: 0,
-            totalViews: 0,
-            createdAt: Date.now()
-          });
-        })
-        .then(() => {
-          showToast('Registrasi berhasil!', 'success');
-          closeModal('modalAuth');
-        })
-        .catch(error => {
-          showToast('Registrasi gagal: ' + error.message, 'error');
-        });
-    }
-
-    // Upload Functions
-    function openUploadModal() {
-      if (!currentUser) {
-        document.getElementById('guestUploadSection').style.display = 'block';
+    // EQ Mode
+    function toggleEQMode() {
+      const modal = document.getElementById('modalEQ');
+      isEQActive = !isEQActive;
+      modal.style.display = isEQActive ? 'flex' : 'none';
+      
+      if(isEQActive) {
+        startEQAnimation();
       } else {
-        document.getElementById('guestUploadSection').style.display = 'none';
+        stopEQAnimation();
       }
-      openModal('modalUpload');
     }
 
-    function submitUpload() {
-      const title = document.getElementById('uploadTitle').value;
-      const url = document.getElementById('uploadURL').value;
-      const cover = document.getElementById('uploadCover').value;
-
-      if (!title || !url) {
-        showToast('Judul dan URL wajib diisi!', 'warning');
-        return;
-      }
-
-      // Convert YouTube URL to embed format
-      let embedUrl = url;
-      if (url.includes('youtube.com/watch?v=')) {
-        const videoId = url.split('v=')[1]?.split('&')[0];
-        if (videoId) {
-          embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        }
-      } else if (url.includes('youtu.be/')) {
-        const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-        if (videoId) {
-          embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        }
-      }
-
-      const requestData = {
-        title: title,
-        url: embedUrl,
-        cover: cover || 'exemusicicon.png',
-        timestamp: Date.now(),
-        status: 'pending'
-      };
-
-      if (currentUser) {
-        requestData.uid = currentUser.uid;
-        db.ref('users/' + currentUser.uid).once('value', snapshot => {
-          requestData.by = snapshot.val()?.username || 'User';
-          submitRequest(requestData);
+    function startEQAnimation() {
+      const bars = document.querySelectorAll('.eq-bar, .eq-bar-large');
+      eqInterval = setInterval(() => {
+        bars.forEach(bar => {
+          const h = Math.random() * 100;
+          bar.style.height = h + "%";
         });
-      } else {
-        const guestName = document.getElementById('guestName').value;
-        if (!guestName) {
-          showToast('Nama harus diisi untuk guest!', 'warning');
-          return;
+      }, 100);
+    }
+
+    function stopEQAnimation() {
+      clearInterval(eqInterval);
+      const bars = document.querySelectorAll('.eq-bar, .eq-bar-large');
+      bars.forEach(bar => bar.style.height = "20%");
+    }
+
+    // Broadcast
+    function initBroadcast() {
+      db.ref('broadcast').on('value', snap => {
+        const b = snap.val();
+        if(b && b.active) {
+          const el = document.getElementById('sysBroadcast');
+          document.getElementById('bcTitle').textContent = b.title || "PENGUMUMAN";
+          document.getElementById('bcMsg').textContent = b.message || "";
+          el.style.top = '20px';
+          setTimeout(() => el.style.top = '-150px', 8000);
         }
-        requestData.guestName = guestName;
-        requestData.uid = 'guest';
-        requestData.by = guestName;
-        submitRequest(requestData);
-      }
-    }
-
-    function submitRequest(data) {
-      db.ref('requests').push(data)
-        .then(() => {
-          showToast('Request lagu berhasil dikirim!', 'success');
-          closeModal('modalUpload');
-          // Clear form
-          document.getElementById('uploadTitle').value = '';
-          document.getElementById('uploadURL').value = '';
-          document.getElementById('uploadCover').value = '';
-          document.getElementById('guestName').value = '';
-        })
-        .catch(error => {
-          showToast('Gagal mengirim request: ' + error.message, 'error');
-        });
-    }
-
-    function showURLTutorial() {
-      Swal.fire({
-        title: 'Cara Mendapatkan URL YouTube',
-        html: `
-          <div style="text-align: left; color: #fff;">
-            <p style="margin-bottom: 12px;"><strong>Langkah-langkah:</strong></p>
-            <ol style="padding-left: 20px;">
-              <li style="margin-bottom: 8px;">Buka video YouTube yang ingin kamu upload</li>
-              <li style="margin-bottom: 8px;">Klik tombol "Share" di bawah video</li>
-              <li style="margin-bottom: 8px;">Copy link yang muncul</li>
-              <li style="margin-bottom: 8px;">Paste link tersebut di field URL</li>
-            </ol>
-            <p style="margin-top: 16px; color: var(--text-secondary); font-size: 13px;">
-              Format yang diterima:<br>
-              • https://www.youtube.com/watch?v=...<br>
-              • https://youtu.be/...
-            </p>
-          </div>
-        `,
-        background: '#181818',
-        color: '#fff',
-        confirmButtonColor: '#1DB954',
-        confirmButtonText: 'Mengerti'
       });
     }
 
-    // Profile Functions
-    function openProfileModal() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-      viewProfile(currentUser.uid);
-    }
-
-    function viewProfile(uid) {
-      currentViewingProfile = uid;
-      openModal('modalProfile');
-
-      db.ref('users/' + uid).once('value', snapshot => {
-        const user = snapshot.val();
-        if (!user) return;
-
-        document.getElementById('profileUsername').textContent = user.username || 'User';
-        document.getElementById('profileAvatarImg').src = user.avatar || 'exemusicicon.png';
-        document.getElementById('profileFollowers').textContent = user.followers ? Object.keys(user.followers).length : 0;
-        document.getElementById('profileFollowing').textContent = user.following ? Object.keys(user.following).length : 0;
-
-        // Show tags
-        const tagsContainer = document.getElementById('profileTags');
-        tagsContainer.innerHTML = '';
-        
-        if (user.vipExpiry && user.vipExpiry > Date.now()) {
-          tagsContainer.innerHTML += '<span class="vip-badge"><i class="fas fa-crown"></i> VIP</span>';
-        }
-
-        if (user.tags) {
-          Object.values(user.tags).forEach(tag => {
-            tagsContainer.innerHTML += `<span class="tag-badge custom">${tag}</span>`;
-          });
-        } else if (user.tag) {
-          tagsContainer.innerHTML += `<span class="tag-badge">${user.tag}</span>`;
-        }
-
-        // Show follow button or edit button
-        if (currentUser && uid === currentUser.uid) {
-          document.getElementById('followBtn').style.display = 'none';
-          document.getElementById('editProfileBtn').style.display = 'inline-flex';
-        } else if (currentUser) {
-          document.getElementById('editProfileBtn').style.display = 'none';
-          document.getElementById('followBtn').style.display = 'inline-flex';
-          checkFollowStatus(uid);
-        }
-      });
-
-      switchProfileTab('posts');
-    }
-
-    function checkFollowStatus(uid) {
-      if (!currentUser) return;
-
-      db.ref('users/' + currentUser.uid + '/following/' + uid).once('value', snapshot => {
-        const btn = document.getElementById('followBtn');
-        if (snapshot.exists()) {
-          btn.textContent = 'Unfollow';
-          btn.classList.remove('btn-primary');
-          btn.classList.add('btn-secondary');
+    // Maintenance
+    function initMaintenance() {
+      db.ref('settings/maintenance').on('value', snap => {
+        if(snap.val() === true) {
+          document.getElementById('maintenanceScreen').style.display = 'flex';
         } else {
-          btn.textContent = 'Follow';
-          btn.classList.remove('btn-secondary');
-          btn.classList.add('btn-primary');
+          document.getElementById('maintenanceScreen').style.display = 'none';
         }
       });
+    }
+
+    // Snowfall
+    function initSnowfall() {
+      db.ref('settings/snowfall').on('value', snap => {
+        if(snap.val() === true) {
+          startSnow();
+        } else {
+          stopSnow();
+        }
+      });
+    }
+
+    let snowInterval = null;
+    function startSnow() {
+      if(snowInterval) return;
+      snowInterval = setInterval(() => {
+        const s = document.createElement('div');
+        s.className = 'snowflake';
+        s.innerHTML = '❄';
+        s.style.left = Math.random() * 100 + 'vw';
+        s.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 5000);
+      }, 300);
+    }
+    function stopSnow() {
+      clearInterval(snowInterval);
+      snowInterval = null;
+      document.querySelectorAll('.snowflake').forEach(s => s.remove());
+    }
+
+    // Modals & Views
+    function switchView(view) {
+      document.getElementById('heroSection').style.display = (view === 'home') ? 'block' : 'none';
+      if(view === 'search') document.getElementById('searchInput').focus();
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    }
+
+    function openProfile() {
+      if(!auth.currentUser) return document.getElementById('modalAuth').style.display = 'flex';
+      viewProfile(auth.currentUser.uid);
+    }
+
+    let viewingUid = null;
+    function viewProfile(uid) {
+      viewingUid = uid;
+      document.getElementById('modalProfile').style.display = 'flex';
+      switchProfileTab('posts');
+      
+      db.ref('users/' + uid).once('value', snap => {
+        const u = snap.val();
+        if(!u) return;
+        
+        document.getElementById('pUsername').textContent = u.username;
+        document.getElementById('pAvatarImg').src = u.avatar || "exemusicicon.png";
+        document.getElementById('pFol').textContent = u.followers ? Object.keys(u.followers).length : 0;
+        document.getElementById('pFollowing').textContent = u.following ? Object.keys(u.following).length : 0;
+        
+        // Tags
+        const tagContainer = document.getElementById('pTags');
+        tagContainer.innerHTML = '';
+        if(u.tags) {
+          Object.keys(u.tags).forEach(tid => {
+            const isMyProfile = auth.currentUser && uid === auth.currentUser.uid;
+            const tagEl = document.createElement('div');
+            tagEl.className = 'tag-badge' + (u.tags[tid] === 'VIP' ? ' vip' : '');
+            tagEl.innerHTML = `${u.tags[tid]} ${isMyProfile ? `<i class="fas fa-times tag-remove" onclick="removeTag('${tid}')"></i>` : ''}`;
+            tagContainer.appendChild(tagEl);
+          });
+        }
+
+        // Profile Color
+        const profileHeader = document.getElementById('profileHeader');
+        if(u.profileColor) {
+          profileHeader.style.background = `linear-gradient(135deg, ${u.profileColor} 0%, #121212 100%)`;
+          document.getElementById('profileColorInp').value = u.profileColor;
+        } else {
+          profileHeader.style.background = '#181818';
+        }
+
+        const btnFollow = document.getElementById('btnFollow');
+        const vipCust = document.getElementById('vipCustomization');
+        
+        if(auth.currentUser && uid === auth.currentUser.uid) {
+          btnFollow.style.display = 'none';
+          // Show customization if VIP
+          const isVip = u.role === 'vip' || u.role === 'admin' || u.role === 'owner';
+          vipCust.style.display = isVip ? 'block' : 'none';
+        } else if(auth.currentUser) {
+          btnFollow.style.display = 'block';
+          vipCust.style.display = 'none';
+          if(u.followers && u.followers[auth.currentUser.uid]) {
+            btnFollow.textContent = 'Mengikuti';
+            btnFollow.style.background = '#333';
+            btnFollow.style.color = '#fff';
+          } else {
+            btnFollow.textContent = 'Ikuti';
+            btnFollow.style.background = 'var(--spotify-green)';
+            btnFollow.style.color = '#000';
+          }
+        } else {
+          btnFollow.style.display = 'none';
+          vipCust.style.display = 'none';
+        }
+      });
+    }
+
+    function updateProfileColor(color) {
+      if(!auth.currentUser) return;
+      db.ref('users/' + auth.currentUser.uid).update({ profileColor: color })
+        .then(() => showToast("Warna profil diperbarui!"));
+    }
+
+    function addTagPrompt() {
+      const isVip = userData.role === 'vip' || userData.role === 'admin' || userData.role === 'owner';
+      const baseMax = isVip ? 5 : 2;
+      const maxTags = baseMax + (userData.maxTagsBonus || 0);
+      const currentTags = userData.tags ? Object.keys(userData.tags).length : 0;
+      
+      if(currentTags >= maxTags) {
+        return showToast(`Maksimal ${maxTags} tag! ${!isVip ? 'Upgrade VIP (5 slot) atau beli slot dengan Coin.' : 'Beli slot tambahan dengan Coin.'}`, "warning");
+      }
+
+      Swal.fire({
+        title: 'Tambah Tag',
+        input: 'text',
+        inputPlaceholder: 'Nama Tag (Maks 20 karakter)',
+        showCancelButton: true,
+        background: '#181818', color: '#fff', confirmButtonColor: '#1DB954'
+      }).then(res => {
+        if(res.isConfirmed && res.value) {
+          const tag = res.value.trim().substring(0, 20);
+          db.ref('users/' + auth.currentUser.uid + '/tags').push(tag)
+            .then(() => {
+              showToast("Tag ditambahkan!");
+              viewProfile(auth.currentUser.uid);
+            });
+        }
+      });
+    }
+
+    function removeTag(tid) {
+      if(!auth.currentUser) return;
+      db.ref('users/' + auth.currentUser.uid + '/tags/' + tid).remove()
+        .then(() => {
+          showToast("Tag dihapus");
+          viewProfile(auth.currentUser.uid);
+        });
     }
 
     function toggleFollow() {
-      if (!currentUser || !currentViewingProfile) return;
-
-      const followRef = db.ref('users/' + currentUser.uid + '/following/' + currentViewingProfile);
-      const followerRef = db.ref('users/' + currentViewingProfile + '/followers/' + currentUser.uid);
-
-      followRef.once('value', snapshot => {
-        if (snapshot.exists()) {
-          // Unfollow
-          followRef.remove();
-          followerRef.remove();
-          showToast('Unfollow berhasil', 'info');
+      if(!auth.currentUser) return showToast("Login dulu!");
+      const myUid = auth.currentUser.uid;
+      const targetUid = viewingUid;
+      if(myUid === targetUid) return;
+      
+      db.ref('users/' + targetUid + '/followers/' + myUid).get().then(snap => {
+        if(snap.exists()) {
+          db.ref('users/' + targetUid + '/followers/' + myUid).remove();
+          db.ref('users/' + myUid + '/following/' + targetUid).remove();
+          showToast("Berhenti mengikuti");
         } else {
-          // Follow
-          followRef.set(true);
-          followerRef.set(true);
-          showToast('Follow berhasil', 'success');
-          
-          // Send notification
-          db.ref('users/' + currentUser.uid + '/username').once('value', nameSnap => {
-            db.ref('users/' + currentViewingProfile + '/notifications').push({
-              message: `${nameSnap.val() || 'Someone'} mulai mengikuti kamu`,
-              timestamp: Date.now(),
-              type: 'follow'
-            });
-          });
+          db.ref('users/' + targetUid + '/followers/' + myUid).set(true);
+          db.ref('users/' + myUid + '/following/' + targetUid).set(true);
+          showToast("Mulai mengikuti");
         }
-        checkFollowStatus(currentViewingProfile);
-        viewProfile(currentViewingProfile);
+        viewProfile(targetUid);
       });
     }
 
     function switchProfileTab(tab) {
-      // Update tab buttons
-      document.querySelectorAll('.profile-tab').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event?.target?.classList?.add('active');
-
-      const grid = document.getElementById('profileSongsGrid');
+      const grid = document.getElementById('profileTabContent');
+      let list = [];
+      if(tab === 'posts') list = songs.filter(s => s.uid === viewingUid);
+      else list = songs.filter(s => fav.includes(s.url));
       
-      if (tab === 'posts') {
-        const userSongs = allSongs.filter(s => s.uid === currentViewingProfile);
-        renderSongGrid('profileSongsGrid', userSongs);
-      } else if (tab === 'favorites') {
-        if (!currentUser) {
-          grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Login untuk melihat favorit</p>';
-          return;
-        }
-        
-        db.ref('users/' + currentUser.uid + '/favorites').once('value', snapshot => {
-          const favIds = snapshot.val() ? Object.keys(snapshot.val()) : [];
-          const favSongs = allSongs.filter(s => favIds.includes(s.id));
-          renderSongGrid('profileSongsGrid', favSongs);
-        });
+      if(list.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--spotify-text-dim); padding: 40px;">Belum ada lagu.</p>`;
+        return;
       }
-    }
 
-    // Edit Profile Functions
-    function openEditProfile() {
-      closeModal('modalProfile');
-      openModal('modalEditProfile');
-
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        document.getElementById('editAvatar').value = user.avatar || '';
-        
-        // Show VIP color picker if VIP
-        if (user.vipExpiry && user.vipExpiry > Date.now()) {
-          document.getElementById('vipColorSection').style.display = 'block';
-          document.getElementById('editProfileColor').value = user.profileColor || '#1DB954';
-        } else {
-          document.getElementById('vipColorSection').style.display = 'none';
-        }
-
-        // Load tags
-        loadTagsManager(user);
-      });
-    }
-
-    function loadTagsManager(user) {
-      const container = document.getElementById('tagsManager');
-      const tags = user.tags ? Object.entries(user.tags) : [];
-      const isVIP = user.vipExpiry && user.vipExpiry > Date.now();
-      const maxTags = isVIP ? 5 : 2;
-
-      container.innerHTML = tags.map(([id, tag]) => `
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 8px;">
-          <span>${tag}</span>
-          <button class="btn btn-secondary" onclick="removeTag('${id}')" style="padding: 4px 12px; font-size: 12px;">
-            <i class="fas fa-trash"></i>
-          </button>
+      grid.innerHTML = list.map(s => `
+        <div class="song-card" onclick="setup(${songs.indexOf(s)}); closeModal()">
+          <div class="card-img-container">
+            <img src="${s.cover || 'exemusicicon.png'}" class="card-img" onerror="this.src='exemusicicon.png'">
+            <div class="play-overlay"><i class="fas fa-play"></i></div>
+          </div>
+          <div class="card-title">${s.title}</div>
+          <div class="card-artist">@${s.by || 'Unknown'}</div>
         </div>
-      `).join('') || '<p style="color: var(--text-secondary); font-size: 13px;">Belum ada tags</p>';
-
-      container.innerHTML += `<p style="color: var(--text-secondary); font-size: 12px; margin-top: 8px;">${tags.length}/${maxTags} tags</p>`;
+      `).join('');
     }
 
-    function openAddTagModal() {
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        const tags = user.tags ? Object.keys(user.tags) : [];
-        const isVIP = user.vipExpiry && user.vipExpiry > Date.now();
-        const maxTags = isVIP ? 5 : 2;
-
-        if (tags.length >= maxTags) {
-          showToast(`Maksimal ${maxTags} tags. Hapus tag lama terlebih dahulu.`, 'warning');
-          return;
-        }
-
-        openModal('modalAddTag');
-      });
-    }
-
-    function addNewTag() {
-      const tagName = document.getElementById('newTagName').value.toUpperCase().trim();
-      
-      if (!tagName) {
-        showToast('Nama tag tidak boleh kosong!', 'warning');
-        return;
-      }
-
-      db.ref('users/' + currentUser.uid + '/tags').push(tagName)
-        .then(() => {
-          showToast('Tag berhasil ditambahkan!', 'success');
-          closeModal('modalAddTag');
-          document.getElementById('newTagName').value = '';
-          openEditProfile();
-        })
-        .catch(error => {
-          showToast('Gagal menambahkan tag: ' + error.message, 'error');
-        });
-    }
-
-    function removeTag(tagId) {
-      if (confirm('Hapus tag ini?')) {
-        db.ref('users/' + currentUser.uid + '/tags/' + tagId).remove()
-          .then(() => {
-            showToast('Tag berhasil dihapus', 'info');
-            openEditProfile();
-          });
-      }
-    }
-
-    function saveProfileChanges() {
-      const avatar = document.getElementById('editAvatar').value;
-      const updates = {};
-
-      if (avatar) {
-        updates.avatar = avatar;
-      }
-
-      // Save VIP color if VIP
-      const colorSection = document.getElementById('vipColorSection');
-      if (colorSection.style.display !== 'none') {
-        updates.profileColor = document.getElementById('editProfileColor').value;
-      }
-
-      db.ref('users/' + currentUser.uid).update(updates)
-        .then(() => {
-          showToast('Profil berhasil diupdate!', 'success');
-          closeModal('modalEditProfile');
-        })
-        .catch(error => {
-          showToast('Gagal update profil: ' + error.message, 'error');
-        });
-    }
-
-
-    // VIP Functions
-    function openVipModal() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-      openModal('modalVIP');
-    }
-
-    function buyVIPWithCoins(days) {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-
-      const prices = {
-        7: 500,
-        30: 1500
-      };
-
-      const price = prices[days];
-      if (!price) return;
-
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        const currentCoins = user.coins || 0;
-
-        if (currentCoins < price) {
-          showToast('Coin tidak cukup!', 'warning');
-          return;
-        }
-
-        const vipDuration = days * 24 * 60 * 60 * 1000; // Convert days to milliseconds
-        const currentVipExpiry = (user.vipExpiry && user.vipExpiry > Date.now()) ? user.vipExpiry : Date.now();
-        const newVipExpiry = currentVipExpiry + vipDuration;
-
-        db.ref('users/' + currentUser.uid).update({
-          coins: currentCoins - price,
-          vipExpiry: newVipExpiry,
-          role: 'vip'
-        }).then(() => {
-          showToast(`VIP ${days} hari berhasil dibeli!`, 'success');
-          closeModal('modalVIP');
-          
-          // Log transaction
-          db.ref('logs').push({
-            action: 'buy_vip',
-            userId: currentUser.uid,
-            days: days,
-            coins: price,
-            timestamp: Date.now()
-          });
-        });
-      });
-    }
-
-    // Coin Shop Functions
-    function openCoinShopModal() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-      openModal('modalCoinShop');
-
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        document.getElementById('coinShopBalance').textContent = user.coins || 0;
-        document.getElementById('totalViewsDisplay').textContent = user.totalViews || 0;
-      });
-    }
-
-    function convertViewsToCoins() {
-      if (!currentUser) return;
-
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        const totalViews = user.totalViews || 0;
-        const coins = user.coins || 0;
-
-        // 5 views = 1 coin
-        const coinsToAdd = Math.floor(totalViews / 5);
-        const remainingViews = totalViews % 5;
-
-        if (coinsToAdd === 0) {
-          showToast('Butuh minimal 5 views untuk 1 coin!', 'warning');
-          return;
-        }
-
-        db.ref('users/' + currentUser.uid).update({
-          coins: coins + coinsToAdd,
-          totalViews: remainingViews
-        }).then(() => {
-          showToast(`${coinsToAdd} coin berhasil didapatkan!`, 'success');
-          openCoinShopModal(); // Refresh
-        });
-      });
-    }
-
-    function buyCustomTag() {
-      if (!currentUser) return;
-
-      const price = 100;
-
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        const currentCoins = user.coins || 0;
-
-        if (currentCoins < price) {
-          showToast('Coin tidak cukup!', 'warning');
-          return;
-        }
-
-        Swal.fire({
-          title: 'Beli Custom Tag',
-          text: 'Masukkan nama tag (max 20 karakter)',
-          input: 'text',
-          inputAttributes: {
-            maxlength: 20
-          },
-          background: '#181818',
-          color: '#fff',
-          confirmButtonColor: '#1DB954',
-          showCancelButton: true,
-          confirmButtonText: 'Beli',
-          cancelButtonText: 'Batal'
-        }).then((result) => {
-          if (result.isConfirmed && result.value) {
-            const tagName = result.value.toUpperCase().trim();
-            
-            db.ref('users/' + currentUser.uid + '/tags').push(tagName);
-            db.ref('users/' + currentUser.uid + '/coins').set(currentCoins - price);
-            
-            showToast('Custom tag berhasil dibeli!', 'success');
-            closeModal('modalCoinShop');
-          }
-        });
-      });
-    }
-
-    // Event Functions
-    function openEventModal() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-      openModal('modalEvent');
+    function openEvent() {
+      document.getElementById('modalEvent').style.display = 'flex';
       startEventCountdown();
-
-      db.ref('users/' + currentUser.uid + '/ketupat').on('value', snapshot => {
-        document.getElementById('ketupatCount').textContent = snapshot.val() || 0;
-      });
     }
 
-    function startEventCountdown() {
-      const eventDate = new Date('2026-05-01T00:00:00').getTime();
+    function openKetupatShop() {
+      document.getElementById('modalKetupatShop').style.display = 'flex';
+    }
+
+    function openUpload() {
+      const modal = document.getElementById('modalUpload');
+      const guestInfo = document.getElementById('uploadGuestInfo');
+      const upBy = document.getElementById('upBy');
       
-      const updateCountdown = () => {
-        const now = new Date().getTime();
-        const distance = eventDate - now;
-
-        if (distance < 0) {
-          document.getElementById('eventDays').textContent = '0';
-          document.getElementById('eventHours').textContent = '0';
-          document.getElementById('eventMinutes').textContent = '0';
-          return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-
-        document.getElementById('eventDays').textContent = days;
-        document.getElementById('eventHours').textContent = hours;
-        document.getElementById('eventMinutes').textContent = minutes;
-      };
-
-      updateCountdown();
-      setInterval(updateCountdown, 60000); // Update every minute
-    }
-
-    function claimDailyReward() {
-      if (!currentUser) return;
-
-      db.ref('users/' + currentUser.uid).once('value', snapshot => {
-        const user = snapshot.val();
-        const lastClaim = user.lastDailyClaim || 0;
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000;
-
-        if (now - lastClaim < oneDay) {
-          const timeLeft = oneDay - (now - lastClaim);
-          const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
-          showToast(`Tunggu ${hoursLeft} jam lagi untuk claim berikutnya!`, 'warning');
-          return;
-        }
-
-        const isVIP = user.vipExpiry && user.vipExpiry > Date.now();
-        const rewardAmount = isVIP ? 20 : 10; // VIP gets 2x rewards
-
-        db.ref('users/' + currentUser.uid).update({
-          ketupat: (user.ketupat || 0) + rewardAmount,
-          lastDailyClaim: now
-        }).then(() => {
-          showToast(`${rewardAmount} ketupat berhasil diklaim!`, 'success');
-        });
-      });
-    }
-
-    // Customer Service Functions
-    function openCustomerServiceModal() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
+      if(!auth.currentUser) {
+        guestInfo.style.display = 'block';
+        upBy.style.display = 'block';
+      } else {
+        guestInfo.style.display = 'none';
+        upBy.style.display = 'none';
       }
-      
-      // Reset form
-      selectedCSCategory = null;
-      document.getElementById('csFormSection').style.display = 'none';
-      document.querySelectorAll('.category-card').forEach(card => {
-        card.classList.remove('selected');
-      });
-      
-      openModal('modalCustomerService');
+      modal.style.display = 'flex';
     }
 
-    function selectCSCategory(category) {
-      selectedCSCategory = category;
-      
-      // Update UI
-      document.querySelectorAll('.category-card').forEach(card => {
-        card.classList.remove('selected');
-      });
-      event.target.closest('.category-card').classList.add('selected');
-      
-      // Show form
-      document.getElementById('csFormSection').style.display = 'block';
-      
-      // Update category label
-      const categoryNames = {
-        'refund_data': 'Refund Data',
-        'refund_vip': 'Refund VIP',
-        'question': 'Pertanyaan',
-        'update_request': 'Request Update',
-        'bug_report': 'Laporan Bug',
-        'other': 'Lainnya'
-      };
-      
-      document.getElementById('selectedCategory').textContent = categoryNames[category] || category;
+    function openNotif() {
+      if(!auth.currentUser) return document.getElementById('modalAuth').style.display = 'flex';
+      document.getElementById('modalNotif').style.display = 'flex';
+      loadNotifs();
     }
 
-    function submitCSTicket() {
-      if (!selectedCSCategory) {
-        showToast('Pilih kategori terlebih dahulu!', 'warning');
-        return;
-      }
-
-      const message = document.getElementById('csMessage').value.trim();
-      
-      if (!message) {
-        showToast('Pesan tidak boleh kosong!', 'warning');
-        return;
-      }
-
-      db.ref('users/' + currentUser.uid + '/username').once('value', snapshot => {
-        const username = snapshot.val() || 'User';
-        
-        db.ref('customerService').push({
-          category: selectedCSCategory,
-          message: message,
-          uid: currentUser.uid,
-          username: username,
-          timestamp: Date.now(),
-          status: 'pending'
-        }).then(() => {
-          showToast('Tiket berhasil dikirim! Admin akan merespons segera.', 'success');
-          closeModal('modalCustomerService');
-          document.getElementById('csMessage').value = '';
-        });
-      });
-    }
-
-    // Notification Functions
-    function openNotifModal() {
-      if (!currentUser) {
-        openModal('modalAuth');
-        return;
-      }
-      openModal('modalNotif');
-      loadNotifications();
-    }
-
-    function loadNotifications() {
-      if (!currentUser) return;
-
-      db.ref('users/' + currentUser.uid + '/notifications').limitToLast(20).once('value', snapshot => {
-        const notifList = document.getElementById('notifList');
-        const notifications = [];
-
-        snapshot.forEach(child => {
-          notifications.push({
-            id: child.key,
-            ...child.val()
-          });
-        });
-
-        notifications.reverse(); // Show newest first
-
-        if (notifications.length === 0) {
-          notifList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Tidak ada notifikasi</p>';
-          return;
-        }
-
-        notifList.innerHTML = notifications.map(notif => {
-          const date = new Date(notif.timestamp);
-          return `
-            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; border-left: 3px solid var(--primary);">
-              <p style="margin-bottom: 8px;">${notif.message}</p>
-              <span style="font-size: 11px; color: var(--text-secondary);">${date.toLocaleString('id-ID')}</span>
+    function loadNotifs() {
+      const list = document.getElementById('notifList');
+      db.ref('notifications/' + auth.currentUser.uid).once('value', snap => {
+        const val = snap.val();
+        if(val) {
+          list.innerHTML = Object.keys(val).map(k => `
+            <div style="background: #282828; padding: 12px; border-radius: 4px;">
+              <p style="font-size: 14px;">${val[k].message}</p>
+              <span style="font-size: 10px; color: var(--spotify-text-dim);">${new Date(val[k].timestamp).toLocaleString()}</span>
             </div>
-          `;
-        }).join('');
+          `).join('');
+        } else {
+          list.innerHTML = '<p style="text-align: center; color: var(--spotify-text-dim);">Tidak ada notifikasi.</p>';
+        }
       });
     }
 
-    function clearAllNotifications() {
-      if (!currentUser) return;
-
-      if (confirm('Hapus semua notifikasi?')) {
-        db.ref('users/' + currentUser.uid + '/notifications').remove()
-          .then(() => {
-            showToast('Semua notifikasi berhasil dihapus', 'info');
-            loadNotifications();
-          });
-      }
+    function clearAllNotif() {
+      if(!auth.currentUser) return;
+      db.ref('notifications/' + auth.currentUser.uid).remove();
+      loadNotifs();
     }
 
-    // Admin Functions
-    function showAdminFeatures() {
-      // Show admin nav item
-      const navMenu = document.querySelector('.nav-menu');
-      const adminNavItem = document.createElement('div');
-      adminNavItem.className = 'nav-item';
-      adminNavItem.innerHTML = '<i class="fas fa-shield-alt"></i><span>Admin Panel</span>';
-      adminNavItem.onclick = toggleAdminOverlay;
-      navMenu.appendChild(adminNavItem);
+    function openAdminRequests() { location.href = 'adminv3.2.html#requests'; }
+    function openAdminUsers() { location.href = 'adminv3.2.html#users'; }
+    function openAdminBroadcast() { location.href = 'adminv3.2.html#broadcast'; }
+    function openAdminMaintenance() { location.href = 'adminv3.2.html#settings'; }
+    function closeAdminUI() { document.getElementById('adminFloatUI').style.display = 'none'; }
 
-      // Load admin stats
-      loadAdminStats();
-    }
-
-    function toggleAdminOverlay() {
-      const overlay = document.getElementById('adminOverlay');
-      overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
-      
-      if (overlay.style.display === 'block') {
-        loadAdminStats();
-      }
-    }
-
-    function loadAdminStats() {
-      // Total users
-      db.ref('users').once('value', snapshot => {
-        document.getElementById('adminTotalUsers').textContent = snapshot.numChildren();
-      });
-
-      // Total songs
-      db.ref('songs').once('value', snapshot => {
-        document.getElementById('adminTotalSongs').textContent = snapshot.numChildren();
-      });
-
-      // Pending requests
-      db.ref('requests').orderByChild('status').equalTo('pending').once('value', snapshot => {
-        document.getElementById('adminPendingRequests').textContent = snapshot.numChildren();
-      });
-
-      // Online users (simplified - just show total users for now)
-      db.ref('users').limitToLast(10).once('value', snapshot => {
-        document.getElementById('adminOnlineUsers').textContent = snapshot.numChildren();
-      });
-    }
-
-    function sendBroadcastNotif() {
+    // Admin DM System
+    function openAdminDM() {
       Swal.fire({
-        title: 'Send Broadcast',
+        title: 'Kirim DM ke User',
         html: `
-          <input id="broadcastTitle" class="swal2-input" placeholder="Judul">
-          <textarea id="broadcastMessage" class="swal2-textarea" placeholder="Pesan"></textarea>
+          <input id="dmTarget" class="swal2-input" placeholder="UID User (Lihat di Admin Panel)">
+          <textarea id="dmMsg" class="swal2-textarea" placeholder="Pesan untuk user..."></textarea>
         `,
+        confirmButtonText: 'Kirim DM',
         background: '#181818',
         color: '#fff',
         confirmButtonColor: '#1DB954',
-        showCancelButton: true,
-        confirmButtonText: 'Kirim',
         preConfirm: () => {
-          const title = document.getElementById('broadcastTitle').value;
-          const message = document.getElementById('broadcastMessage').value;
+          const target = document.getElementById('dmTarget').value;
+          const msg = document.getElementById('dmMsg').value;
+          if(!target || !msg) return Swal.showValidationMessage('Isi semua field!');
           
-          if (!title || !message) {
-            Swal.showValidationMessage('Judul dan pesan harus diisi!');
-            return false;
-          }
-          
-          return { title, message };
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const { title, message } = result.value;
-          
-          // Send to all users
-          db.ref('users').once('value', snapshot => {
-            const updates = {};
-            snapshot.forEach(child => {
-              const notifId = db.ref('users/' + child.key + '/notifications').push().key;
-              updates['users/' + child.key + '/notifications/' + notifId] = {
-                message: `${title}: ${message}`,
-                timestamp: Date.now(),
-                type: 'broadcast'
-              };
-            });
-            
-            db.ref().update(updates).then(() => {
-              showToast('Broadcast berhasil dikirim!', 'success');
-            });
-          });
-
-          // Also add to announcements
-          db.ref('announcements').push({
-            title: title,
-            message: message,
+          return db.ref('notifications/' + target).push({
+            message: `[ADMIN DM]: ${msg}`,
             timestamp: Date.now(),
-            priority: 'high',
-            icon: 'fa-bullhorn'
+            from: 'admin'
           });
         }
+      }).then(res => {
+        if(res.isConfirmed) showToast("DM terkirim!", "success");
       });
     }
 
-    function viewPendingRequests() {
-      db.ref('requests').orderByChild('status').equalTo('pending').once('value', snapshot => {
-        const requests = [];
-        snapshot.forEach(child => {
-          requests.push({
-            id: child.key,
-            ...child.val()
-          });
-        });
+    function openCS() {
+      document.getElementById('modalCS').style.display = 'flex';
+    }
 
-        if (requests.length === 0) {
-          Swal.fire({
-            title: 'Pending Requests',
-            text: 'Tidak ada request pending',
-            background: '#181818',
-            color: '#fff',
-            confirmButtonColor: '#1DB954'
-          });
+    function selectCSCat(cat, el) {
+      document.getElementById('csCategory').value = cat;
+      document.querySelectorAll('.cs-category-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function submitCS() {
+      if(!auth.currentUser) return showToast("Login dulu untuk kirim laporan!", "warning");
+      const category = document.getElementById('csCategory').value;
+      const message = document.getElementById('csMessage').value;
+      
+      if(!message) return showToast("Pesan tidak boleh kosong!", "warning");
+      
+      db.ref('cs_tickets').push({
+        uid: auth.currentUser.uid,
+        username: userData.username,
+        category,
+        message,
+        status: 'open',
+        timestamp: Date.now()
+      }).then(() => {
+        showToast("Laporan terkirim! Admin akan segera meninjau.", "success");
+        closeModal();
+        document.getElementById('csMessage').value = '';
+      });
+    }
+
+    function submitUpload() {
+      const title = document.getElementById('upTitle').value;
+      const url = document.getElementById('upUrl').value;
+      const cover = document.getElementById('upCover').value;
+      const guestName = document.getElementById('upBy').value;
+      
+      if(!title || !url) return showToast("Judul dan URL wajib diisi!", "warning");
+      
+      const data = {
+        title, url, cover,
+        timestamp: Date.now(),
+        status: 'pending'
+      };
+
+      if(auth.currentUser) {
+        data.uid = auth.currentUser.uid;
+        data.by = userData.username;
+      } else {
+        if(!guestName) return showToast("Nama kamu wajib diisi jika Guest!", "warning");
+        data.uid = 'guest';
+        data.by = guestName + " (Guest)";
+      }
+      
+      db.ref('requests').push(data).then(() => {
+        showToast("Lagu berhasil dikirim ke admin!", "success");
+        closeModal();
+        document.getElementById('upTitle').value = '';
+        document.getElementById('upUrl').value = '';
+        document.getElementById('upCover').value = '';
+        document.getElementById('upBy').value = '';
+      });
+    }
+
+    // Event Logic
+    function startEventCountdown() {
+      const target = new Date('2026-03-20T00:00:00Z').getTime();
+      if(window._eidInterval) clearInterval(window._eidInterval);
+      window._eidInterval = setInterval(() => {
+        const d = target - Date.now();
+        if(d <= 0) {
+          clearInterval(window._eidInterval);
           return;
         }
-
-        const html = `
-          <div style="max-height: 400px; overflow-y: auto;">
-            ${requests.map(req => `
-              <div style="background: rgba(255,255,255,0.05); padding: 12px; margin-bottom: 8px; border-radius: 8px; text-align: left;">
-                <h4 style="margin-bottom: 4px;">${req.title}</h4>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
-                  By: ${req.by || req.guestName || 'Unknown'} | ${new Date(req.timestamp).toLocaleString('id-ID')}
-                </p>
-                <p style="font-size: 11px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis;">${req.url}</p>
-              </div>
-            `).join('')}
-          </div>
-        `;
-
-        Swal.fire({
-          title: `Pending Requests (${requests.length})`,
-          html: html,
-          background: '#181818',
-          color: '#fff',
-          confirmButtonColor: '#1DB954',
-          width: '600px'
-        });
-      });
+        document.getElementById('cDays').textContent = Math.floor(d/86400000);
+        document.getElementById('cHours').textContent = Math.floor((d%86400000)/3600000);
+        document.getElementById('cMins').textContent = Math.floor((d%3600000)/60000);
+      }, 1000);
     }
 
-    // Tutorial Function
-    function openTutorial() {
-      Swal.fire({
-        title: '📖 Tutorial ExeMusic',
-        html: `
-          <div style="text-align: left; color: #fff; padding: 0 16px;">
-            <h3 style="margin-top: 16px; margin-bottom: 12px; color: var(--primary);">🎵 Cara Memutar Musik</h3>
-            <ol style="padding-left: 20px; margin-bottom: 16px;">
-              <li style="margin-bottom: 8px;">Cari lagu menggunakan search bar di atas</li>
-              <li style="margin-bottom: 8px;">Klik kartu lagu yang ingin kamu putar</li>
-              <li style="margin-bottom: 8px;">Musik akan otomatis diputar di player bar bawah</li>
-            </ol>
-
-            <h3 style="margin-top: 16px; margin-bottom: 12px; color: var(--primary);">⬆️ Cara Upload Lagu</h3>
-            <ol style="padding-left: 20px; margin-bottom: 16px;">
-              <li style="margin-bottom: 8px;">Klik menu "Upload Lagu" di sidebar</li>
-              <li style="margin-bottom: 8px;">Isi judul dan URL YouTube (klik "Tutorial" untuk panduan)</li>
-              <li style="margin-bottom: 8px;">Klik "Kirim Request" - Admin akan mereview</li>
-              <li style="margin-bottom: 8px;">Guest bisa upload tanpa login!</li>
-            </ol>
-
-            <h3 style="margin-top: 16px; margin-bottom: 12px; color: var(--primary);">💰 Sistem Coin</h3>
-            <ul style="padding-left: 20px; margin-bottom: 16px;">
-              <li style="margin-bottom: 8px;">Dapatkan views dari lagu yang kamu upload</li>
-              <li style="margin-bottom: 8px;">Tukar 5 views = 1 coin di Coin Shop</li>
-              <li style="margin-bottom: 8px;">Gunakan coin untuk beli VIP atau custom tag</li>
-            </ul>
-
-            <h3 style="margin-top: 16px; margin-bottom: 12px; color: var(--primary);">👑 VIP Benefits</h3>
-            <ul style="padding-left: 20px; margin-bottom: 16px;">
-              <li style="margin-bottom: 8px;">Custom warna profil</li>
-              <li style="margin-bottom: 8px;">Maksimal 5 custom tags (non-VIP: 2)</li>
-              <li style="margin-bottom: 8px;">Event rewards x2</li>
-              <li style="margin-bottom: 8px;">Upload tanpa cooldown</li>
-            </ul>
-
-            <h3 style="margin-top: 16px; margin-bottom: 12px; color: var(--primary);">🎁 Event</h3>
-            <p style="padding-left: 20px; margin-bottom: 16px;">
-              Claim reward harian untuk mendapatkan ketupat. Tukar ketupat dengan VIP, coins, atau custom tag!
-            </p>
-
-            <h3 style="margin-top: 16px; margin-bottom: 12px; color: var(--primary);">🎧 Customer Service</h3>
-            <p style="padding-left: 20px; margin-bottom: 16px;">
-              Ada masalah? Hubungi CS melalui menu Customer Service. Pilih kategori dan kirim tiket!
-            </p>
-          </div>
-        `,
-        background: '#181818',
-        color: '#fff',
-        confirmButtonColor: '#1DB954',
-        confirmButtonText: 'Mengerti',
-        width: '700px'
-      });
+    function buyVipWithCoins(days) {
+      if(!auth.currentUser) return;
+      let cost = 0;
+      if(days === 1) cost = 5;
+      else if(days === 7) cost = 15;
+      else if(days === 30) cost = 50;
+      
+      if((userData.coins || 0) < cost) return showToast(`Coin tidak cukup (Butuh ${cost} 🪙)`, "warning");
+      
+      db.ref('users/' + auth.currentUser.uid).update({
+        coins: userData.coins - cost,
+        role: 'vip',
+        vipUntil: (userData.vipUntil && userData.vipUntil > Date.now() ? userData.vipUntil : Date.now()) + (days * 86400000)
+      }).then(() => showToast(`Berhasil membeli VIP ${days} Hari!`, "success"));
     }
 
-    // Toast Notification
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
+    function exchangeVipTrial() {
+      if(!auth.currentUser) return;
+      const days = parseInt(document.getElementById('vipDaysSel').value);
+      const cost = days * 100;
+      if((userData.ketupat || 0) < cost) return showToast("Ketupat tidak cukup!", "warning");
       
-      const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-times-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-      };
+      db.ref('users/' + auth.currentUser.uid).update({
+        ketupat: userData.ketupat - cost,
+        role: 'vip',
+        vipUntil: (userData.vipUntil && userData.vipUntil > Date.now() ? userData.vipUntil : Date.now()) + (days * 86400000)
+      }).then(() => showToast(`VIP ${days} hari berhasil ditukar!`, "success"));
+    }
 
-      const colors = {
-        success: '#1DB954',
-        error: '#e91e63',
-        warning: '#ff9800',
-        info: '#2196f3'
-      };
+    function updateKetupatUI(val) {
+      const eid = document.getElementById('eidKetVal');
+      if(eid) eid.textContent = val;
+      const shop = document.getElementById('shopKetVal');
+      if(shop) shop.textContent = val;
+      const coinEl = document.getElementById('coinVal');
+      if(coinEl) coinEl.textContent = userData.coins || 0;
+    }
 
-      toast.style.borderLeftColor = colors[type] || colors.info;
-      toast.innerHTML = `
-        <i class="fas ${icons[type] || icons.info}" style="margin-right: 8px;"></i>
-        ${message}
-      `;
+    function spinGacha() {
+      if(!auth.currentUser) return showToast("Login dulu!");
+      if((userData.ketupat || 0) < 100) return showToast("Ketupat tidak cukup!");
       
-      container.appendChild(toast);
+      const btn = document.getElementById('gachaBtn');
+      const wheel = document.getElementById('gachaWheel');
+      btn.disabled = true;
+      wheel.classList.add('gacha-spinning');
       
       setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
+        wheel.classList.remove('gacha-spinning');
+        btn.disabled = false;
+        
+        const prizes = [
+          { name: 'Cashback 50💠', type: 'cashback', val: 50 },
+          { name: 'VIP 1 Hari', type: 'vip', val: 1 },
+          { name: 'Tag Slot +1', type: 'tag_slot', val: 1 },
+          { name: 'Jackpot 200💠', type: 'cashback', val: 200 },
+          { name: '10 Coins 🪙', type: 'coins', val: 10 }
+        ];
+        const prize = prizes[Math.floor(Math.random() * prizes.length)];
+        
+        let updates = { ketupat: userData.ketupat - 100 };
+        if(prize.type === 'cashback') updates.ketupat += prize.val;
+        if(prize.type === 'coins') updates.coins = (userData.coins || 0) + prize.val;
+        if(prize.type === 'tag_slot') updates.maxTagsBonus = (userData.maxTagsBonus || 0) + prize.val;
+        if(prize.type === 'vip') {
+          updates.role = 'vip';
+          updates.vipUntil = (userData.vipUntil && userData.vipUntil > Date.now() ? userData.vipUntil : Date.now()) + (prize.val * 86400000);
+        }
+        
+        db.ref('users/' + auth.currentUser.uid).update(updates).then(() => {
+          const resDiv = document.getElementById('gachaResult');
+          resDiv.style.display = 'block';
+          document.getElementById('gachaResultTitle').textContent = "Selamat!";
+          document.getElementById('gachaResultDesc').textContent = `Kamu mendapatkan: ${prize.name}`;
+          showToast(`Gacha: ${prize.name}`, "success");
+        });
+      }, 2000);
     }
 
-    // Mobile Menu Toggle
-    function toggleMobileMenu() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('open');
+    function buyTagWithCoins() {
+      if(!auth.currentUser) return;
+      if((userData.coins || 0) < 20) return showToast("Coin tidak cukup (Butuh 20 🪙)", "warning");
+      
+      Swal.fire({
+        title: 'Beli Tag Slot',
+        text: 'Tukar 20 Coin dengan 1 Tag permanen?',
+        showCancelButton: true,
+        confirmButtonText: 'Tukar',
+        background: '#181818', color: '#fff'
+      }).then(res => {
+        if(res.isConfirmed) {
+          db.ref('users/' + auth.currentUser.uid).update({
+            coins: userData.coins - 20,
+            maxTagsBonus: (userData.maxTagsBonus || 0) + 1
+          }).then(() => showToast("Slot tag ditambahkan!", "success"));
+        }
+      });
     }
 
-    // Initialize volume
-    setVolume(70);
+    function exchangeKetupat(item) {
+      if(!auth.currentUser) return;
+      let cost = 0;
+      let updates = { ketupat: userData.ketupat };
+      
+      if(item === 'vip7') {
+        cost = 500;
+        if(userData.ketupat < cost) return showToast("Ketupat tidak cukup!", "warning");
+        updates.ketupat -= cost;
+        updates.role = 'vip';
+        updates.vipUntil = (userData.vipUntil && userData.vipUntil > Date.now() ? userData.vipUntil : Date.now()) + (7 * 86400000);
+      } else if(item === 'gacha') {
+        cost = 100;
+        if(userData.ketupat < cost) return showToast("Ketupat tidak cukup!", "warning");
+        return spinGacha();
+      }
+      
+      db.ref('users/' + auth.currentUser.uid).update(updates).then(() => {
+        showToast("Penukaran berhasil!", "success");
+      });
+    }
+
+    function claimTrialVip1d() {
+      if(!auth.currentUser) return showToast("Login dulu!");
+      db.ref('users/' + auth.currentUser.uid + '/claimedVipTrial').get().then(snap => {
+        if(snap.exists()) return showToast("Kamu sudah klaim!", "warning");
+        db.ref('users/' + auth.currentUser.uid).update({
+          role: 'vip',
+          vipUntil: Date.now() + 86400000,
+          claimedVipTrial: true
+        }).then(() => showToast("VIP 1 Hari diklaim!", "success"));
+      });
+    }
+
+    function exchangeTag(tag, cost) {
+      if(!auth.currentUser) return;
+      if(!tag) return showToast("Tag tidak boleh kosong!", "warning");
+      if((userData.ketupat || 0) < cost) return showToast("Ketupat tidak cukup!", "warning");
+      
+      db.ref('users/' + auth.currentUser.uid + '/tags').push(tag).then(() => {
+        db.ref('users/' + auth.currentUser.uid).update({ ketupat: userData.ketupat - cost });
+        showToast("Tag berhasil dibeli!", "success");
+        viewProfile(auth.currentUser.uid);
+      });
+    }
+
+    function showToast(m, type='info') {
+      const container = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = m;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function openTutorial() {
+      Swal.fire({
+        title: 'Tutorial ExeMusic',
+        html: `<div style="text-align: left; color: #fff;">
+          <p>1. <b>Cari</b> lagu di bar pencarian.</p>
+          <p>2. <b>Klik</b> kartu lagu untuk memutar.</p>
+          <p>3. <b>Event</b>: Kumpulkan ketupat setiap jam!</p>
+          <p>4. <b>EQ Mode</b>: Klik foto lagu di player bar.</p>
+        </div>`,
+        background: '#181818', color: '#fff', confirmButtonColor: '#1DB954'
+      });
+    }
   </script>
-
-  <style>
-    @keyframes slideOut {
-      to {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-    }
-
-    /* Mobile sidebar toggle */
-    @media (max-width: 768px) {
-      .sidebar::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.7);
-        display: none;
-        z-index: 99;
-      }
-
-      .sidebar.open::before {
-        display: block;
-      }
-    }
-  </style>
 </body>
 </html>
