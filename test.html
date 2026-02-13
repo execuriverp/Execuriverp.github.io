@@ -1142,7 +1142,7 @@
       <button class="modal-close" onclick="closeModal()">&times;</button>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <h2>Notifikasi</h2>
-        <button onclick="clearAllNotif()" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; font-weight: 700;">Hapus Semua</button>
+        <button onclick="openClearNotifConfirm()" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; font-weight: 700;">Hapus Semua</button>
       </div>
       <div id="notifList" style="display: flex; flex-direction: column; gap: 12px;">
         <!-- Notifications here -->
@@ -1192,6 +1192,8 @@
                   <button class="btn-upgrade" style="font-size: 10px; padding: 4px 12px;" onclick="addTagPrompt()">Tambah Tag</button>
                 </div>
               </div>
+              <button class="btn-upgrade" style="background:#333; border:none;" onclick="shareProfile(viewingUid, document.getElementById('pUsername').textContent)"><i class="fas fa-share"></i> Share Profile</button>
+              <button class="btn-upgrade" style="background:#333; border:none;" onclick="shareToWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
             </div>
           </div>
         </div>
@@ -1416,7 +1418,7 @@
               
               // Admin Check & Floating UI
               const adminBtn = document.getElementById('adminBtn');
-              const role = userData.role;
+              const role = (userData.role || '').toLowerCase();
               if(role === 'admin' || role === 'owner') {
                 if(adminBtn) adminBtn.style.display = 'flex';
                 initAdminUI();
@@ -1426,7 +1428,7 @@
               }
               
               // VIP Expiry Check
-              if(userData.role === 'vip' && userData.vipUntil && userData.vipUntil < Date.now()) {
+              if(role === 'vip' && userData.vipUntil && userData.vipUntil < Date.now()) {
                 db.ref('users/' + u.uid).update({ role: 'user' });
                 showToast("Masa VIP kamu telah habis!", "warning");
               }
@@ -1796,6 +1798,13 @@
             tagContainer.appendChild(tagEl);
           });
         }
+        // System Tags (visual only)
+        computeSystemTags(u).forEach(t => {
+          const el = document.createElement('div');
+          el.className = 'tag-badge' + (t === 'VIP' ? ' vip' : '');
+          el.textContent = t;
+          tagContainer.appendChild(el);
+        });
 
         // Profile Color
         const profileHeader = document.getElementById('profileHeader');
@@ -1833,6 +1842,17 @@
       });
     }
 
+    function computeSystemTags(u) {
+      const res = [];
+      const role = (u.role || '').toLowerCase();
+      if(role === 'owner') res.push('Owner');
+      if(role === 'admin') res.push('Admin Pro');
+      if(role === 'vip') res.push('VIP');
+      const name = (u.username || '').toLowerCase();
+      if(name.includes('velly')) res.push('Velly');
+      res.push('Ramadhan');
+      return res;
+    }
     function updateProfileColor(color) {
       if(!auth.currentUser) return;
       db.ref('users/' + auth.currentUser.uid).update({ profileColor: color })
@@ -1972,6 +1992,20 @@
       db.ref('notifications/' + auth.currentUser.uid).remove();
       loadNotifs();
     }
+ 
+    function openClearNotifConfirm() {
+      Swal.fire({
+        title: 'Konfirmasi',
+        text: 'Yakin ingin menghapus semua notifikasi?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, hapus',
+        cancelButtonText: 'Batal',
+        background: '#181818', color: '#fff', confirmButtonColor: '#1DB954'
+      }).then(res => {
+        if(res.isConfirmed) clearAllNotif();
+      });
+    }
 
     function openAdminRequests() { location.href = 'adminv3.2.html#requests'; }
     function openAdminUsers() { location.href = 'adminv3.2.html#users'; }
@@ -2016,6 +2050,21 @@
       const el = document.getElementById('copyLinkText');
       if(el) el.textContent = link;
       document.getElementById('modalCopyLink').style.display = 'flex';
+    }
+
+    function shareProfile(uid, username) {
+      const link = window.location.origin + window.location.pathname + '?profile_userid=' + (uid || (auth.currentUser && auth.currentUser.uid) || '');
+      navigator.clipboard.writeText(link).then(() => {
+        showToast('Link profil @' + (username || 'user') + ' disalin', 'success');
+      });
+    }
+
+    function shareToWhatsApp() {
+      const name = (userData && userData.username) ? userData.username : 'Guest';
+      const title = (songs[i] && songs[i].title) ? songs[i].title : 'Lagu ExeMusic';
+      const link = window.location.origin + window.location.pathname + "?id=" + i;
+      const text = "Hello " + name + " telah berbagi link ExeMusic:\n🎵 " + title + "\n🔗 " + link;
+      window.open("https://wa.me/?text=" + encodeURIComponent(text));
     }
 
     function copyBuiltLink() {
