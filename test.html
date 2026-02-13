@@ -1865,7 +1865,7 @@
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container">
-          <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
+          <img id="pAvatarImg" src="https://ui-avatars.com/api/?name=User&size=150&background=random" class="mp-avatar">
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
         </div>
         <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
@@ -1937,7 +1937,7 @@
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container">
-          <img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
+          <img id="vAvatarImg" src="https://ui-avatars.com/api/?name=User&size=150&background=random" class="mp-avatar">
         </div>
         
         <div class="mp-name-row">
@@ -2489,7 +2489,7 @@
           const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
           document.getElementById('topLoginBtn').textContent = userData.username;
           document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
-          document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
+          document.getElementById('pAvatarImg').src = userData.avatar || "https://ui-avatars.com/api/?name=User&size=150&background=random";
           (function(){
             const fol = userData.followers;
             let folCount = 0;
@@ -2577,7 +2577,7 @@
             db.ref('users/' + profileUid).get().then(snap => {
               if(snap.exists()) {
                 const userData = snap.val();
-                document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
+                document.getElementById('vAvatarImg').src = userData?.avatar || "https://ui-avatars.com/api/?name=User&size=150&background=random";
                 const followerCountView = (() => {
                   const fol = userData?.followers;
                   if(Array.isArray(fol)) return fol.length;
@@ -3252,7 +3252,7 @@
           return flg || 0;
         })();
         
-        document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
+        document.getElementById('vAvatarImg').src = cData?.avatar || "https://ui-avatars.com/api/?name=User&size=150&background=random";
         const nowVC = Date.now();
         const creatorVipActiveVC = !!(cData?.vip || (cData?.trialvip && cData.trialvip.expireAt > nowVC));
         document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActiveVC ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
@@ -3618,7 +3618,7 @@
         db.ref('users/' + user.uid).set({
           username: username,
           email: user.email,
-          avatar: user.photoURL || "https://via.placeholder.com/150",
+          avatar: user.photoURL || "https://ui-avatars.com/api/?name=User&size=150&background=random",
           role: 'user',
           followers: {},
           following: {},
@@ -4233,6 +4233,98 @@ function checkAdminAccess() {
 
 // Call this after user data is loaded
 setTimeout(checkAdminAccess, 2000);
+
+
+// Fix: Add missing updateFavoriteUI function
+function updateFavoriteUI(songId, isFavorite) {
+  if (!songId) return;
+  
+  // Update heart icon in player
+  const heartIcon = document.querySelector('#favBtn i');
+  if (heartIcon) {
+    if (isFavorite) {
+      heartIcon.classList.remove('fa-regular');
+      heartIcon.classList.add('fa-solid');
+      heartIcon.style.color = 'var(--tiktok-red)';
+    } else {
+      heartIcon.classList.remove('fa-solid');
+      heartIcon.classList.add('fa-regular');
+      heartIcon.style.color = '';
+    }
+  }
+  
+  // Update favorite buttons in song cards
+  const favBtns = document.querySelectorAll(`[data-song-id="${songId}"] .fav-btn, .song-card[data-id="${songId}"] .fav-btn`);
+  favBtns.forEach(btn => {
+    const icon = btn.querySelector('i');
+    if (icon) {
+      if (isFavorite) {
+        icon.classList.remove('fa-regular');
+        icon.classList.add('fa-solid');
+        icon.style.color = 'var(--tiktok-red)';
+      } else {
+        icon.classList.remove('fa-solid');
+        icon.classList.add('fa-regular');
+        icon.style.color = '';
+      }
+    }
+  });
+}
+
+// Fix: Add missing toggleFavorite function if not exists
+if (typeof toggleFavorite === 'undefined') {
+  window.toggleFavorite = function(songId) {
+    if (!currentUser) {
+      msg('Login untuk menambahkan favorit!');
+      return;
+    }
+    
+    const userFavRef = db.ref('users/' + currentUser.uid + '/favorites/' + songId);
+    
+    userFavRef.once('value').then(snapshot => {
+      if (snapshot.exists()) {
+        // Remove from favorites
+        userFavRef.remove().then(() => {
+          msg('Dihapus dari favorit');
+          updateFavoriteUI(songId, false);
+        });
+      } else {
+        // Add to favorites
+        userFavRef.set(true).then(() => {
+          msg('Ditambahkan ke favorit ❤️');
+          updateFavoriteUI(songId, true);
+        });
+      }
+    });
+  };
+}
+
+// Fix: Add safe initialization wrapper
+function safeInit() {
+  try {
+    if (typeof setup === 'function') {
+      // Wrap setup to handle errors
+      const originalSetup = setup;
+      window.setup = function() {
+        try {
+          originalSetup();
+        } catch(e) {
+          console.warn('Setup error (non-critical):', e.message);
+        }
+      };
+    }
+  } catch(e) {
+    console.warn('Init error (non-critical):', e.message);
+  }
+}
+
+// Call safe init after DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', safeInit);
+} else {
+  safeInit();
+}
+
 </script>
 
   <div class="tutorial-overlay" id="tutorialOverlay">
@@ -4455,5 +4547,20 @@ setTimeout(checkAdminAccess, 2000);
       </div>
     </div>
   </div>
+
+<script>
+// Handle image loading errors gracefully
+document.addEventListener('DOMContentLoaded', function() {
+  // Replace broken images with placeholder
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', function() {
+      if (!this.src.includes('ui-avatars.com')) {
+        this.src = 'https://ui-avatars.com/api/?name=ExeMusic&size=150&background=00ff88&color=000';
+      }
+    });
+  });
+});
+</script>
+
 </body>
 </html>
