@@ -203,7 +203,7 @@
     auth.onAuthStateChanged(u => {
       if(!u) return location.href = 'exemusicv3.2.html';
       db.ref('users/' + u.uid + '/role').once('value', snap => {
-        const role = snap.val();
+        const role = (snap.val() || '').toLowerCase();
         if(role !== 'admin' && role !== 'owner') {
           alert("Akses ditolak! Anda bukan admin.");
           location.href = 'exemusicv3.2.html';
