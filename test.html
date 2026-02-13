@@ -742,6 +742,7 @@
       .player-extra { display: none; }
       .player-bar { bottom: 64px; height: 80px; padding-bottom: env(safe-area-inset-bottom); position: fixed; width: 100%; background: #000; border-top: 1px solid #181818; }
       .main-view { padding-bottom: 160px; }
+      .admin-float-ui { width: 280px; right: 10px; top: 80px; }
     }
 
     /* Broadcast System */
@@ -891,6 +892,9 @@
         <div class="admin-ui-item" onclick="openAdminDM()">Direct Message User</div>
         <div class="admin-ui-item" onclick="openAdminBroadcast()">Set Broadcast</div>
         <div class="admin-ui-item" onclick="openAdminMaintenance()">Maintenance Mode</div>
+        <div class="admin-ui-item" onclick="location.href='adminv3.2.html'" style="color: var(--gold); border-top: 1px solid #333; margin-top: 8px; font-weight: bold;">
+          <i class="fas fa-external-link-alt"></i> Full Admin Panel
+        </div>
       </div>
   </div>
 
@@ -1018,7 +1022,7 @@
             <i class="fas fa-bell" style="font-size: 20px;"></i>
             <span id="notifBadge" style="position: absolute; top: -5px; right: -5px; background: var(--danger); color: #fff; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: none; align-items: center; justify-content: center;">0</span>
           </button>
-          <button class="control-btn" id="adminBtn" style="display: none;" onclick="location.href='adminv3.2.html'" title="Admin Panel"><i class="fas fa-shield-alt" style="color: var(--gold); font-size: 20px;"></i></button>
+          <button class="control-btn" id="adminBtn" style="display: none;" onclick="toggleAdminUI()" title="Admin Menu"><i class="fas fa-shield-alt" style="color: var(--gold); font-size: 20px;"></i></button>
           <button class="user-profile-btn" id="userProfileBtn" onclick="openProfile()">
             <span id="topUsername">Login</span>
             <img src="exemusicicon.png" alt="User" class="user-avatar" id="topAvatar">
@@ -1132,6 +1136,7 @@
   <nav class="mobile-nav">
     <a class="nav-item" onclick="switchView('home')"><i class="fas fa-home"></i></a>
     <a class="nav-item" onclick="switchView('search')"><i class="fas fa-search"></i></a>
+    <a class="nav-item" id="adminMobileBtn" style="display:none; onclick="toggleAdminUI()"><i class="fas fa-shield-alt" style="color: var(--gold)"></i></a>
     <a class="nav-item" onclick="openProfile()"><i class="fas fa-layer-group"></i></a>
     <a class="nav-item" onclick="openEvent()"><i class="fas fa-star" style="color: var(--gold)"></i></a>
   </nav>
@@ -1418,12 +1423,22 @@
               
               // Admin Check & Floating UI
               const adminBtn = document.getElementById('adminBtn');
-              const role = (userData.role || '').toLowerCase();
+              const adminMobileBtn = document.getElementById('adminMobileBtn');
+              const role = (userData.role || '').toLowerCase().trim();
               if(role === 'admin' || role === 'owner') {
                 if(adminBtn) adminBtn.style.display = 'flex';
-                initAdminUI();
+                if(adminMobileBtn) adminMobileBtn.style.display = 'flex';
+                // Auto-show only on first load/login
+                const ui = document.getElementById('adminFloatUI');
+                if(!ui.getAttribute('data-init')) {
+                  initAdminUI();
+                  ui.setAttribute('data-init', 'true');
+                } else {
+                  setupAdminDraggable();
+                }
               } else {
                 if(adminBtn) adminBtn.style.display = 'none';
+                if(adminMobileBtn) adminMobileBtn.style.display = 'none';
                 document.getElementById('adminFloatUI').style.display = 'none';
               }
               
@@ -1441,18 +1456,18 @@
           document.getElementById('topUsername').textContent = "Login";
           document.getElementById('topAvatar').src = "exemusicicon.png";
           const adminBtn = document.getElementById('adminBtn');
+          const adminMobileBtn = document.getElementById('adminMobileBtn');
           if(adminBtn) adminBtn.style.display = 'none';
+          if(adminMobileBtn) adminMobileBtn.style.display = 'none';
           document.getElementById('adminFloatUI').style.display = 'none';
         }
       });
     }
 
-    function initAdminUI() {
+    function setupAdminDraggable() {
       const ui = document.getElementById('adminFloatUI');
       const handle = document.getElementById('adminUIHandle');
-      if(!ui || !handle) return;
-      
-      ui.style.display = 'flex';
+      if(!ui || !handle || ui.getAttribute('data-draggable')) return;
       
       let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       handle.onmousedown = dragMouseDown;
@@ -1475,13 +1490,21 @@
         pos4 = e.clientY;
         ui.style.top = (ui.offsetTop - pos2) + "px";
         ui.style.left = (ui.offsetLeft - pos1) + "px";
-        ui.style.right = 'auto'; // Disable right anchoring
+        ui.style.right = 'auto';
       }
 
       function closeDragElement() {
         document.onmouseup = null;
         document.onmousemove = null;
       }
+      ui.setAttribute('data-draggable', 'true');
+    }
+
+    function initAdminUI() {
+      const ui = document.getElementById('adminFloatUI');
+      if(!ui) return;
+      ui.style.display = 'flex';
+      setupAdminDraggable();
     }
 
     // Admin Floating UI Actions
