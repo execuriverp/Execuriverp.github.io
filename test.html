@@ -859,7 +859,7 @@
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:20px; color:var(--accent); font-size:16px;">🔐 Ubah Password</h3>
       <input id="cpOldPass" type="password" class="inp-dark" placeholder="Password Lama">
-      <input id="cpNewPass" type="password" class="inp-dark" placeholder="Password Baru (Min. 6 karakter)">
+      <input id=="cpNewPass" type="password" class="inp-dark" placeholder="Password Baru (Min. 6 karakter)">
       <input id="cpConfirm" type="password" class="inp-dark" placeholder="Konfirmasi Password Baru">
       <button onclick="handleChangePassword()" class="btn-act">Ubah Password</button>
       <div id="cpMsg" class="modal-msg"></div>
@@ -1073,7 +1073,7 @@
     let songs = [], i = 0, isLoginMode = true;
     
     // DEFAULT REPEAT OFF (0) - Fixed with UI initialization
-    let repeatMode = parseInt(localStorage.getItem('exeRepeat') || '0'); // 0: OFF, 1: ONE, 2: ALL
+    let repeatMode = parseInt(localStorage.getItem('exeRepeat') || '0');
     let isShuf = localStorage.getItem('exeShuffle') === 'true';
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     let savedVol = parseFloat(localStorage.getItem("exeVolume") || "0.8");
@@ -1101,7 +1101,6 @@
         }
       }
       
-      // Initialize shuffle button UI
       const shufBtn = document.getElementById('shuf');
       if (shufBtn) {
         shufBtn.classList.toggle('active', isShuf);
@@ -1243,6 +1242,43 @@
         }, 400);
     }
 
+    // VIP Trial Timer Countdown Function
+    function startVIPTrialCountdown() {
+      if(!userData || !userData.vipTrialEnd) {
+        document.getElementById('vipTrialTimer').style.display = 'none';
+        return;
+      }
+      
+      const now = Date.now();
+      if(now >= userData.vipTrialEnd) {
+        document.getElementById('vipTrialTimer').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('vipTrialTimer').style.display = 'flex';
+      
+      function updateTimer() {
+        const now = Date.now();
+        const diff = userData.vipTrialEnd - now;
+        
+        if(diff <= 0) {
+          document.getElementById('vipTrialTimer').style.display = 'none';
+          return;
+        }
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        document.getElementById('vipDays').textContent = days;
+        document.getElementById('vipHours').textContent = hours;
+        document.getElementById('vipMinutes').textContent = minutes;
+      }
+      
+      updateTimer();
+      setInterval(updateTimer, 60000);
+    }
+
     auth.onAuthStateChanged(u => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
@@ -1255,7 +1291,7 @@
           }
           
           const now = Date.now();
-          const vipActive = !!(userData.vip);
+          const vipActive = !!(userData.vip || (userData.vipTrialEnd && now < userData.vipTrialEnd));
           
           document.getElementById('topLoginBtn').textContent = userData.username;
           document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
@@ -1297,8 +1333,17 @@
             else profHeader.style.background = '';
           }
           
+          let statusText = 'Status VIP: NONVIP';
+          if(userData.vip) {
+            statusText = 'Status VIP: AKTIF (Permanent)';
+          } else if(userData.vipTrialEnd && now < userData.vipTrialEnd) {
+            statusText = 'Status VIP: TRIAL AKTIF';
+          }
+          
           const vs = document.getElementById('pVipStatus'); 
-          if(vs) vs.textContent = 'Status VIP: ' + (vipActive ? 'AKTIF' : 'NONVIP');
+          if(vs) vs.textContent = statusText;
+          
+          startVIPTrialCountdown();
           
           const email = u.email || "";
           const [name, domain] = email.split('@');
@@ -1344,7 +1389,7 @@
                   return fol || 0;
                 })();
                 
-                const creatorVipActive = !!(userData?.vip);
+                const creatorVipActive = !!(userData?.vip || (userData?.vipTrialEnd && Date.now() < userData.vipTrialEnd));
                 document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
                 
@@ -1419,7 +1464,8 @@
       const cData = cRef.val();
       const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
       const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-      const creatorVipActive = !!(cData?.vip);
+      const now = Date.now();
+      const creatorVipActive = !!(cData?.vip || (cData?.vipTrialEnd && now < cData.vipTrialEnd));
       const crown = creatorVipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
       
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + crown;
@@ -1445,7 +1491,7 @@
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
         const diff = (now - lastUpload) / 1000 / 60;
-        const vipActive = !!(userData.vip);
+        const vipActive = !!(userData.vip || (userData.vipTrialEnd && now < userData.vipTrialEnd));
         const cooldown = (userData.role === 'admin') ? 0 : (vipActive ? 15 : 30);
         
         if(diff < cooldown && userData.role !== 'admin') {
@@ -1709,6 +1755,7 @@
         
         const cRef = await db.ref('users/' + s.uid).get();
         const cData = cRef.val();
+        const now = Date.now();
         const followerCountCreator = (() => {
           const fol = cData?.followers;
           if(Array.isArray(fol)) return fol.length;
@@ -1723,7 +1770,7 @@
         })();
         
         document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
-        const creatorVipActiveVC = !!(cData?.vip);
+        const creatorVipActiveVC = !!(cData?.vip || (cData?.vipTrialEnd && now < cData.vipTrialEnd));
         document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActiveVC ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
         document.getElementById('vFol').innerText = followerCountCreator;
         document.getElementById('vFollowing').innerText = followingCountCreator;
@@ -1854,7 +1901,8 @@
                  if(Array.isArray(fol)) count = fol.length;
                  else if(fol && typeof fol === 'object') count = Object.keys(fol).length;
                  else count = fol || 0;
-                 const vipActiveCache = !!(val.vip);
+                 const now = Date.now();
+                 const vipActiveCache = !!(val.vip || (val.vipTrialEnd && now < val.vipTrialEnd));
                  userCache[s.uid] = { followers: count, vip: vipActiveCache };
                  
                  const els = document.querySelectorAll(`.artist[data-uid="${s.uid}"]`);
