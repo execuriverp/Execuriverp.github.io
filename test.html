@@ -366,12 +366,15 @@
        NOTIF PANEL
     ============================================================ */
     .notif-panel {
-      position: fixed; top: 70px; right: 20px;
-      width: calc(100vw - 40px); max-width: 360px; max-height: 70vh;
-      background: rgba(13,13,21,0.98); border: 1px solid rgba(0,255,136,0.15);
-      border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.7), 0 0 30px rgba(0,255,136,0.08);
-      z-index: 2500; display: none; flex-direction: column; overflow: hidden;
-      backdrop-filter: blur(25px); animation: notifPanelIn 0.25s ease;
+      position: fixed;
+      top: 70px; right: 10px; /* fallback, overridden by JS */
+      width: min(calc(100vw - 20px), 360px);
+      max-height: min(72vh, 600px);
+      background: rgba(8,8,18,0.98); border: 1px solid rgba(0,255,136,0.18);
+      border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,255,136,0.08);
+      z-index: 9000; display: none; flex-direction: column; overflow: hidden;
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      animation: notifPanelIn 0.25s ease;
     }
     .notif-panel.show { display: flex; }
     @keyframes notifPanelIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
@@ -684,6 +687,7 @@
     .admin-panel {
       width: 100%; height: 100%;
       display: flex; flex-direction: column;
+      flex: 1;
       background: radial-gradient(ellipse at 50% -10%, rgba(255,193,7,0.08), transparent 60%),
                   linear-gradient(180deg, #05050c, #07070f);
       overflow: hidden;
@@ -801,7 +805,7 @@
        ADMIN LOCK / CAPTCHA GATE
     ============================================================ */
     .admin-lock-gate {
-      position: absolute; inset: 0;
+      position: fixed; inset: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       padding: 30px 20px;
@@ -809,8 +813,9 @@
         radial-gradient(ellipse at 30% 0%, rgba(0,212,255,0.12), transparent 50%),
         radial-gradient(ellipse at 70% 100%, rgba(255,193,7,0.1), transparent 50%),
         linear-gradient(180deg, #030308, #05050f);
-      z-index: 10;
+      z-index: 5010;
       transition: opacity 0.4s ease, transform 0.4s ease;
+      overflow-y: auto;
     }
     .admin-lock-gate.unlocked {
       opacity: 0; transform: scale(1.04) translateY(-15px);
@@ -1016,7 +1021,7 @@
     .about-dev-link:hover { color: #7df9ff; }
 
     @media (max-width: 480px) {
-      .notif-panel { right: 10px; left: 10px; width: auto; max-width: none; }
+      .app { width: 100%; height: 100vh; border-radius: 0; max-width: none; }
     }
   </style>
 </head>
@@ -1075,6 +1080,16 @@
 
   <div id="toastLegacy">Notification</div>
 
+    <!-- Notif Panel — OUTSIDE .app to avoid overflow:hidden clipping -->
+    <div id="notifPanel" class="notif-panel">
+      <div class="notif-panel-header">
+        <h3><i class="fas fa-comment-dots"></i> Notifikasi</h3>
+        <button class="notif-panel-close" onclick="openClearNotifConfirm()" style="margin-right:8px" title="Hapus notif"><i class="fas fa-trash"></i></button>
+        <button class="notif-panel-close" onclick="closeNotifPanel()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="notifList" class="notif-list"><div class="notif-empty">Memuat...</div></div>
+    </div>
+
   <!-- MAIN APP -->
   <div class="app">
     <div class="ml-corner-tl ml-corner"></div>
@@ -1094,16 +1109,6 @@
         </button>
         <button id="topLoginBtn" onclick="openProfile()">Login</button>
       </div>
-    </div>
-
-    <!-- Notif Panel -->
-    <div id="notifPanel" class="notif-panel">
-      <div class="notif-panel-header">
-        <h3><i class="fas fa-comment-dots"></i> Notifikasi</h3>
-        <button class="notif-panel-close" onclick="openClearNotifConfirm()" style="margin-right:8px" title="Hapus notif"><i class="fas fa-trash"></i></button>
-        <button class="notif-panel-close" onclick="closeNotifPanel()"><i class="fas fa-times"></i></button>
-      </div>
-      <div id="notifList" class="notif-list"><div class="notif-empty">Memuat...</div></div>
     </div>
 
     <!-- VIP Trial Banner -->
@@ -1204,7 +1209,7 @@
       </button>
     </div>
 
-    <div class="admin-panel" id="adminPanelInner" style="display:none">
+    <div class="admin-panel" id="adminPanelInner" style="display:none; flex:1; flex-direction:column; width:100%; height:100%">
       <div class="admin-header">
         <div class="admin-header-title">
           <i class="fas fa-shield-alt"></i> ADMIN CONTROL
@@ -1216,6 +1221,7 @@
         <button class="admin-nav-btn" onclick="switchAdminView('users', this)"><i class="fas fa-users"></i> USERS</button>
         <button class="admin-nav-btn" onclick="switchAdminView('songs', this)"><i class="fas fa-music"></i> SONGS</button>
         <button class="admin-nav-btn" onclick="switchAdminView('notif', this)"><i class="fas fa-paper-plane"></i> NOTIF</button>
+        <button class="admin-nav-btn" onclick="switchAdminView('visual', this)"><i class="fas fa-palette"></i> VISUAL</button>
         <button class="admin-nav-btn" onclick="switchAdminView('logs', this)"><i class="fas fa-terminal"></i> LOGS</button>
       </div>
       <div class="admin-content">
@@ -1275,6 +1281,38 @@
             <input class="admin-inp" id="adNTarget" placeholder="UID target (kosong = global)">
             <textarea class="admin-inp" id="adNMsg" rows="3" placeholder="Isi pesan..."></textarea>
             <button class="admin-btn admin-btn-gold admin-btn-full" onclick="adSendNotif()">SEND NOTIFICATION</button>
+          </div>
+        </div>
+
+        <!-- VISUAL / DISCO -->
+        <div id="adv-visual" class="admin-view">
+          <div class="admin-card">
+            <h3><i class="fas fa-palette"></i> ACCENT COLOR</h3>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px">
+              <button class="admin-btn admin-btn-green" onclick="adSetAccent('#00ff88')">DEFAULT GREEN</button>
+              <button class="admin-btn admin-btn-blue" onclick="adSetAccent('#00d4ff')">ICE BLUE</button>
+              <button class="admin-btn" style="background:linear-gradient(135deg,#ff1493,#ff69b4);color:#fff" onclick="adSetAccent('#ff1493')">PINK</button>
+              <button class="admin-btn" style="background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000" onclick="adSetAccent('#ffd700')">GOLD</button>
+              <button class="admin-btn" style="background:linear-gradient(135deg,#bf00ff,#6600cc);color:#fff" onclick="adSetAccent('#bf00ff')">PURPLE</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input class="admin-inp" id="adCustomColor" placeholder="#00ff88" style="margin:0;flex:1">
+              <button class="admin-btn admin-btn-gold" onclick="adSetAccent(document.getElementById('adCustomColor').value)">APPLY</button>
+            </div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="fas fa-bolt"></i> DISCO MODE</h3>
+            <select class="admin-sel" id="adDiscoVariant">
+              <option value="minimal">Minimal</option>
+              <option value="heartbeat">Heartbeat</option>
+              <option value="rainbow">Rainbow</option>
+              <option value="ice">Ice</option>
+            </select>
+            <input class="admin-inp" id="adDiscoColor" placeholder="#00ff88" value="#00ff88">
+            <div style="display:flex;gap:8px">
+              <button class="admin-btn admin-btn-gold" onclick="adStartDisco()">START DISCO</button>
+              <button class="admin-btn admin-btn-red" onclick="adStopDisco()">STOP</button>
+            </div>
           </div>
         </div>
 
@@ -1770,9 +1808,33 @@
       const badge = document.getElementById('notifBadge');
       if (badge) { badge.textContent = count > 99 ? '99+' : count; badge.classList.toggle('show', count > 0); }
     }
+    function positionNotifPanel() {
+      const btn = document.getElementById('btnNotif');
+      const panel = document.getElementById('notifPanel');
+      if (!btn || !panel) return;
+      const rect = btn.getBoundingClientRect();
+      const panelW = Math.min(360, window.innerWidth - 20);
+      let left = rect.right - panelW;
+      if (left < 10) left = 10;
+      if (left + panelW > window.innerWidth - 10) left = window.innerWidth - panelW - 10;
+      panel.style.top = (rect.bottom + 10) + 'px';
+      panel.style.left = left + 'px';
+      panel.style.right = 'auto';
+      panel.style.width = panelW + 'px';
+    }
     function toggleNotifPanel() {
       const panel = document.getElementById('notifPanel');
-      if (panel.classList.toggle('show')) { localStorage.setItem(lastReadNotifTimeKey, String(Date.now())); updateNotifBadge(); }
+      const willShow = !panel.classList.contains('show');
+      if (willShow) {
+        positionNotifPanel();
+        panel.classList.add('show');
+        localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
+        updateNotifBadge();
+      } else {
+        panel.classList.remove('show');
+        localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
+        updateNotifBadge();
+      }
     }
     function closeNotifPanel() { document.getElementById('notifPanel').classList.remove('show'); localStorage.setItem(lastReadNotifTimeKey, String(Date.now())); updateNotifBadge(); }
     document.addEventListener('click', function(e) {
@@ -2404,6 +2466,11 @@
       document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('adv-' + id).classList.add('active');
       btn.classList.add('active');
+      if (id === 'songs') renderAdminSongs();
+      if (id === 'dash') {
+        document.getElementById('adCountS').innerText = songs.length;
+        db.ref('users').once('value').then(s => { document.getElementById('adCountU').innerText = s.numChildren(); });
+      }
     }
 
     function adLoadData() {
@@ -2414,9 +2481,13 @@
         document.getElementById('adCountU').innerText = adAllUsers.length;
         adRenderUsers(adAllUsers);
       });
-      // Songs count
-      document.getElementById('adCountS').innerText = songs.length;
-      // Logs
+      // Songs count from DB
+      db.ref('songs').once('value').then(snap => {
+        document.getElementById('adCountS').innerText = snap.numChildren();
+        adAllSongs = [];
+        snap.forEach(c => adAllSongs.push({ key: c.key, ...c.val() }));
+      });
+      // Logs - realtime
       db.ref('logs').limitToLast(50).on('value', snap => {
         const box = document.getElementById('adLogBox');
         if (!box) return;
@@ -2424,8 +2495,12 @@
         snap.forEach(c => { const l = c.val(); h = `<div class="log-line"><span class="log-time">[${l.time}]</span> ${escapeHtml(l.msg)}</div>` + h; });
         box.innerHTML = h || '<div style="color:#333">No logs</div>';
       });
-      // Settings
-      db.ref('settings').once('value').then(s => { adMtState = s.val()?.mt || false; });
+      // Settings - load current announcement & maintenance state
+      db.ref('settings').once('value').then(s => {
+        const sv = s.val() || {};
+        adMtState = sv.mt || false;
+        if (sv.announcement) document.getElementById('adBcInput').value = sv.announcement;
+      });
     }
 
     function adRenderUsers(users) {
@@ -2444,8 +2519,7 @@
           </div>
           <div class="ur-actions">
             <button class="admin-btn admin-btn-gold" onclick="adChangeTag('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
-            <button class="admin-btn admin-btn-blue" onclick="adAddTrialVip('${u.uid}')" style="padding:6px 10px;font-size:11px">VIP</button>
-            <button class="admin-btn admin-btn-green" onclick="adResetCD('${u.uid}')" style="padding:6px 10px;font-size:11px">CD</button>
+            <button class="admin-btn admin-btn-blue" onclick="adOpenUserTools('${u.uid}','${escapeHtml(u.username||'')}')" style="padding:6px 10px;font-size:11px">TOOLS</button>
             <button class="admin-btn admin-btn-red" onclick="adToggleBan('${u.uid}', ${!!u.banned})" style="padding:6px 10px;font-size:11px">${u.banned ? 'UNBAN' : 'BAN'}</button>
           </div>
         </div>`;
@@ -2458,8 +2532,13 @@
     }
 
     function renderAdminSongs() {
-      adAllSongs = [...songs];
-      adRenderSongs(adAllSongs);
+      if (adAllSongs.length > 0) { adRenderSongs(adAllSongs); return; }
+      db.ref('songs').once('value').then(snap => {
+        adAllSongs = [];
+        snap.forEach(c => adAllSongs.push({ key: c.key, ...c.val() }));
+        document.getElementById('adCountS').innerText = adAllSongs.length;
+        adRenderSongs(adAllSongs);
+      });
     }
     function adRenderSongs(list) {
       const box = document.getElementById('adSongList');
@@ -2531,16 +2610,137 @@
         .then(r => { if (r.value) { db.ref('users/' + uid).update({ tag: r.value }); addLog('Tag: ' + uid + ' → ' + r.value); showToast('Tag diubah!'); adLoadData(); } });
     }
 
+    function adOpenUserTools(uid, name) {
+      const html = `
+        <div style="text-align:left; display:flex; flex-direction:column; gap:14px">
+          <p style="color:#888; font-size:12px; font-family:'JetBrains Mono',monospace">${uid}</p>
+          <div>
+            <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">VIP MANAGEMENT</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="swal2-confirm swal2-styled" style="background:#ffc107;color:#000;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adAddPermanentVip('${uid}')">+ VIP PERMANENT</button>
+              <button class="swal2-confirm swal2-styled" style="background:#1976d2;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adAddTrialVip('${uid}')">+ VIP TRIAL</button>
+              <button class="swal2-confirm swal2-styled" style="background:#c62828;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adRemoveVip('${uid}')">REMOVE VIP</button>
+              <button class="swal2-confirm swal2-styled" style="background:#555;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adRemoveTrialVip('${uid}')">REMOVE TRIAL</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">FOLLOWERS</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="swal2-confirm swal2-styled" style="background:#2e7d32;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',1)">+1</button>
+              <button class="swal2-confirm swal2-styled" style="background:#2e7d32;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',5)">+5</button>
+              <button class="swal2-confirm swal2-styled" style="background:#2e7d32;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',10)">+10</button>
+              <button class="swal2-confirm swal2-styled" style="background:#c62828;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',-1)">-1</button>
+              <button class="swal2-confirm swal2-styled" style="background:#c62828;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',-5)">-5</button>
+              <button class="swal2-confirm swal2-styled" style="background:#555;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adClearFake('${uid}')">CLEAR FAKE</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">LAINNYA</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="swal2-confirm swal2-styled" style="background:#1565c0;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adSetKetupat('${uid}')">SET KETUPAT 💠</button>
+              <button class="swal2-confirm swal2-styled" style="background:#388e3c;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adResetCD('${uid}')">RESET COOLDOWN</button>
+            </div>
+          </div>
+        </div>`;
+      Swal.fire({ title: '⚙️ Tools: ' + name, html, background: '#0d0d15', color: '#fff', showConfirmButton: false, showCloseButton: true, width: '90%', maxWidth: '420px' });
+    }
+
+    function adAddPermanentVip(uid) {
+      Swal.fire({ title: 'Tambah VIP Permanent?', icon: 'question', showCancelButton: true, confirmButtonColor: '#ffc107', background: '#0d0d15', color: '#fff' })
+        .then(r => { if (r.isConfirmed) { db.ref('users/' + uid).update({ vip: true }).then(() => { addLog('Perm VIP: ' + uid); showToast('✅ VIP Permanent ditambahkan!'); adLoadData(); }); } });
+    }
+
     function adAddTrialVip(uid) {
       Swal.fire({ title: 'VIP Trial (hari)', input: 'number', inputLabel: 'Berapa hari?', inputAttributes: { min: 1, max: 365 }, background: '#0d0d15', color: '#fff' })
         .then(r => {
           const d = parseInt(r.value, 10); if (!d || d <= 0) return;
           const expireAt = Date.now() + d * 24 * 60 * 60 * 1000;
-          db.ref('users/' + uid + '/trialvip').set({ expireAt }).then(() => { addLog('TrialVIP ' + d + 'd for ' + uid); showToast('✅ VIP Trial ' + d + ' hari ditambahkan!'); adLoadData(); });
+          db.ref('users/' + uid + '/trialvip').set({ expireAt }).then(() => { addLog('TrialVIP ' + d + 'd: ' + uid); showToast('✅ VIP Trial ' + d + ' hari!'); adLoadData(); });
         });
     }
+
+    function adRemoveVip(uid) {
+      db.ref('users/' + uid).update({ vip: null }).then(() => { addLog('Remove VIP: ' + uid); showToast('VIP dihapus'); adLoadData(); });
+    }
+
+    function adRemoveTrialVip(uid) {
+      db.ref('users/' + uid + '/trialvip').remove().then(() => { addLog('Remove TrialVIP: ' + uid); showToast('Trial VIP dihapus'); adLoadData(); });
+    }
+
+    function adFakeDelta(uid, delta) {
+      db.ref('users/' + uid).once('value').then(s => {
+        const u = s.val() || {};
+        let fol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
+        if (delta > 0) {
+          for (let i = 0; i < delta; i++) fol.push('fake_' + Math.floor(Math.random() * 9999999));
+        } else {
+          let rem = Math.abs(delta);
+          for (let i = fol.length - 1; i >= 0 && rem > 0; i--) {
+            if (String(fol[i]).startsWith('fake_')) { fol.splice(i, 1); rem--; }
+          }
+        }
+        db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Followers delta ' + delta + ': ' + uid); showToast('Followers diubah ' + (delta > 0 ? '+' : '') + delta); adLoadData(); });
+      });
+    }
+
+    function adClearFake(uid) {
+      db.ref('users/' + uid).once('value').then(s => {
+        const u = s.val() || {};
+        let fol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
+        fol = fol.filter(f => !String(f).startsWith('fake_'));
+        db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
+      });
+    }
+
+    function adSetKetupat(uid) {
+      Swal.fire({ title: 'Set Ketupat 💠', input: 'number', inputLabel: 'Jumlah ketupat', inputAttributes: { min: 0 }, background: '#0d0d15', color: '#fff' })
+        .then(r => { const v = parseInt(r.value, 10); if (!isNaN(v)) { db.ref('users/' + uid).update({ ketupat: v }).then(() => { addLog('Ketupat ' + v + ': ' + uid); showToast('Ketupat diset ' + v); adLoadData(); }); } });
+    }
+
     function adResetCD(uid) { db.ref('users/' + uid + '/lastUpload').remove().then(() => { addLog('Reset CD: ' + uid); showToast('Cooldown direset!'); }); }
     function adToggleBan(uid, status) { db.ref('users/' + uid).update({ banned: !status }).then(() => { addLog((status ? 'Unban' : 'Ban') + ': ' + uid); showToast((status ? 'Unbanned' : 'Banned') + '!'); adLoadData(); }); }
+
+    // VISUAL / DISCO
+    let discoInterval = null;
+    function adSetAccent(color) {
+      if (!color || !color.startsWith('#')) { showToast('Format warna salah (gunakan #hex)'); return; }
+      db.ref('settings').update({ accentColor: color });
+      document.documentElement.style.setProperty('--accent', color);
+      addLog('Accent color: ' + color);
+      showToast('Warna accent diubah: ' + color);
+    }
+
+    function adStartDisco() {
+      const variant = document.getElementById('adDiscoVariant').value;
+      const color = document.getElementById('adDiscoColor').value || '#00ff88';
+      db.ref('settings').update({ discoMode: true, discoVariant: variant, discoColor: color });
+      applyDiscoMode(variant, color);
+      addLog('Disco start: ' + variant);
+      showToast('🎉 Disco Mode ON!');
+    }
+    function adStopDisco() {
+      db.ref('settings').update({ discoMode: false });
+      if (discoInterval) { clearInterval(discoInterval); discoInterval = null; }
+      document.documentElement.style.setProperty('--accent', '#00ff88');
+      addLog('Disco stop');
+      showToast('Disco OFF');
+    }
+    function applyDiscoMode(variant, color) {
+      const c = color || '#00ff88';
+      if (discoInterval) { clearInterval(discoInterval); discoInterval = null; }
+      if (variant === 'rainbow') {
+        const cols = ['#00ff88','#00d4ff','#ff0050','#ffd700','#bf00ff','#ff69b4'];
+        let ci = 0;
+        discoInterval = setInterval(() => { document.documentElement.style.setProperty('--accent', cols[ci++ % cols.length]); }, 600);
+      } else if (variant === 'heartbeat') {
+        let tog = false;
+        discoInterval = setInterval(() => { document.documentElement.style.setProperty('--accent', tog ? c : '#ffffff'); tog = !tog; }, 800);
+      } else if (variant === 'ice') {
+        document.documentElement.style.setProperty('--accent', '#00d4ff');
+      } else {
+        document.documentElement.style.setProperty('--accent', c);
+      }
+    }
 
     function openCopyUrlCard() {
       document.getElementById('adCopySongId').value = '';
