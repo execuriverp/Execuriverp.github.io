@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.1 - Updated</title>
+  <title>ExeMusic 3.1</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -81,41 +81,6 @@
         transform-origin: left;
     }
     @keyframes countDown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-    @keyframes disco-pulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 50% { border-color: var(--accent); box-shadow: 0 20px 50px var(--accent); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } }
-    @keyframes disco-heartbeat { 
-      0% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-      20% { transform: scale(1.02); box-shadow: 0 25px 60px var(--accent); } 
-      40% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-      60% { transform: scale(1.03); box-shadow: 0 30px 70px var(--accent); } 
-      100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); } 
-    }
-    @keyframes rainbow-glow { 
-      0% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
-      16% { border-color: #ff7f00; box-shadow: inset 0 0 20px #ff7f00, 0 20px 50px #ff7f0080; } 
-      33% { border-color: #ffff00; box-shadow: inset 0 0 20px #ffff00, 0 20px 50px #ffff0080; } 
-      50% { border-color: #00ff00; box-shadow: inset 0 0 20px #00ff00, 0 20px 50px #00ff0080; } 
-      66% { border-color: #0000ff; box-shadow: inset 0 0 20px #0000ff, 0 20px 50px #0000ff80; } 
-      83% { border-color: #8b00ff; box-shadow: inset 0 0 20px #8b00ff, 0 20px 50px #8b00ff80; } 
-      100% { border-color: #ff0000; box-shadow: inset 0 0 20px #ff0000, 0 20px 50px #ff000080; } 
-    }
-    @keyframes snowfall { 
-      0% { transform: translateY(-10px) translateX(0); opacity: 1; } 
-      25% { transform: translateY(25vh) translateX(15px); opacity: 1; }
-      50% { transform: translateY(50vh) translateX(-10px); opacity: 1; }
-      75% { transform: translateY(75vh) translateX(20px); opacity: 1; }
-      100% { transform: translateY(100vh) translateX(0); opacity: 0; } 
-    }
-    .snowflake { 
-      position: fixed; 
-      top: -10px; 
-      color: #00d4ff; 
-      font-size: 1.5em; 
-      font-family: Arial, sans-serif; 
-      text-shadow: 0 0 5px #00d4ff; 
-      z-index: 1;
-      pointer-events: none;
-      animation: snowfall linear forwards;
-    }
 
     /* --- OVERLAYS --- */
     .full-overlay {
@@ -133,7 +98,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: 0.5s;
     }
-    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 2s linear infinite; }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--glass); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* --- MAIN APP --- */
@@ -449,12 +414,11 @@
       border: 2px solid rgba(0, 255, 136, 0.3);
       border-top: 2px solid var(--accent);
       border-radius: 50%;
-      animation: spin 1.5s linear infinite;
+      animation: spin 0.8s linear infinite;
       display: none;
       margin: 0 auto;
     }
     .loading-spinner.show { display: block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
     .dur-wrapper { display: flex; align-items: center; gap: 6px; }
 
     .main-ctrl { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 20px; flex-shrink: 0; position: relative; z-index: 110; }
@@ -581,196 +545,6 @@
     .inp-dark { width:100%; padding:14px; margin-bottom:12px; background:#0a0a0a; color:white; border:1px solid #333; border-radius: 12px; font-size: 14px; }
     .inp-dark:focus { border-color: var(--accent); }
     .btn-act { width:100%; padding:14px; background:var(--accent); border:none; border-radius:12px; font-weight:bold; color:black; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .prof-stat { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
-    .prof-stat div { text-align: center; }
-    .prof-stat b { display: block; font-size: 20px; color: white; }
-    .prof-stat span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
-    .section-title { font-size: 12px; font-weight: bold; margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-
-    /* PROFILE TAB STYLES */
-    .profile-tabs-wrapper { display: flex; gap: 0; margin: 20px -25px 0 -25px; border-bottom: 2px solid #222; }
-    .profile-tab-btn { 
-      flex: 1; 
-      background: transparent; 
-      border: none; 
-      color: #666; 
-      padding: 15px 20px; 
-      cursor: pointer; 
-      border-bottom: 3px solid transparent;
-      text-transform: uppercase; 
-      font-weight: 600; 
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .profile-tab-btn:hover { color: #999; }
-    .profile-tab-btn.active { 
-      color: var(--accent); 
-      border-bottom-color: var(--accent);
-    }
-
-    .profile-tab-content { 
-      display: none; 
-      padding: 25px 0;
-      animation: fadeIn 0.3s ease;
-    }
-    .profile-tab-content.active { display: block; }
-    
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    /* PROFILE GRID IMPROVEMENTS */
-    .profile-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin: 25px 0;
-      padding: 20px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 15px;
-      border: 1px solid #333;
-    }
-    .profile-stat-item {
-      text-align: center;
-      padding: 15px;
-      border-radius: 10px;
-      background: transparent;
-      transition: all 0.2s ease;
-      border: none;
-    }
-    .profile-stat-item:hover {
-      background: transparent;
-      transform: translateY(-2px);
-      border-color: transparent;
-    }
-    .profile-stat-item b { 
-      display: block; 
-      font-size: 24px; 
-      color: #fff;
-      margin-bottom: 5px;
-    }
-    .profile-stat-item span { 
-      font-size: 11px; 
-      color: var(--text-dim); 
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* ACCOUNT SETTINGS STYLES */
-    .account-setting-box {
-      padding: 18px;
-      margin-bottom: 15px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid #333;
-      border-radius: 12px;
-      transition: all 0.2s ease;
-    }
-    .account-setting-box:hover {
-      background: rgba(255,255,255,0.05);
-      border-color: #444;
-    }
-    .account-setting-label {
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-      display: block;
-    }
-    .account-setting-value {
-      color: #ddd;
-      font-size: 13px;
-      word-break: break-all;
-      margin-bottom: 12px;
-      padding: 12px;
-      background: #0a0a0a;
-      border-radius: 8px;
-      border: 1px solid #222;
-      font-family: 'Courier New', monospace;
-    }
-
-    /* RESPONSIVE POST LIST */
-    .posts-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
-    .posts-list::-webkit-scrollbar { width: 6px; }
-    .posts-list::-webkit-scrollbar-track { background: #0a0a0a; border-radius: 10px; }
-    .posts-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-    .posts-list::-webkit-scrollbar-thumb:hover { background: #00dd7a; }
-
-    /* BUTTON IMPROVEMENTS */
-    .btn-account {
-      width: 100%;
-      padding: 14px;
-      background: var(--accent);
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      color: black;
-      cursor: pointer;
-      margin-bottom: 10px;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.2s ease;
-    }
-    .btn-account:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px var(--accent);
-    }
-    .btn-account:active {
-      transform: translateY(0);
-    }
-    .btn-account.danger {
-      background: #ff6b6b;
-    }
-    .btn-account.danger:hover {
-      box-shadow: 0 8px 20px #ff6b6b40;
-    }
-    .btn-account.logout {
-      background: #222;
-      color: #ff6b6b;
-      border: 1px solid #333;
-    }
-    .btn-account.logout:hover {
-      background: #1a1a1a;
-      border-color: #ff6b6b;
-      box-shadow: 0 8px 20px #ff6b6b20;
-    }
-
-    /* MODAL MESSAGE STYLES */
-    .modal-msg {
-      text-align: center;
-      font-size: 12px;
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 8px;
-      display: none;
-    }
-    .modal-msg.show { display: block; }
-    .modal-msg.success {
-      color: var(--accent);
-      background: rgba(0,255,136,0.1);
-      border: 1px solid #00dd7a;
-    }
-    .modal-msg.error {
-      color: #ff6b6b;
-      background: rgba(255,107,107,0.1);
-      border: 1px solid #ff6b6b;
-    }
-
-    /* RESPONSIVE DESIGN */
-    @media (max-width: 480px) {
-      .spotify-banner {
-        height: 100px;
-        margin: -25px -25px 15px -25px;
-        padding: 15px;
-      }
-      .spotify-avatar {
-        width: 70px;
-        height: 70px;
-      }
-    }
 
     /* === NEW FEATURES CSS === */
     #btnFav {
@@ -823,107 +597,23 @@
       from { opacity: 1; transform: translateY(0); }
       to { opacity: 0; transform: translateY(-20px); }
     }
-    @media (max-width: 480px) {
-      .spotify-info {
-        margin-left: 12px;
-      }
-      .spotify-info h2 {
-        font-size: 18px;
-      }
-      .profile-stats-grid {
-        grid-template-columns: 1fr;
-        margin: 20px 0;
-        padding: 15px;
-        gap: 15px;
-      }
-      .profile-stats-grid b {
-        font-size: 20px;
-      }
-      .profile-tabs-wrapper {
-        margin: 15px -25px 0 -25px;
-      }
-      .profile-tab-btn {
-        padding: 12px 15px;
-        font-size: 11px;
-      }
-      .profile-tab-content {
-        padding: 20px 0;
-      }
-      .account-setting-box {
-        padding: 14px;
-        margin-bottom: 12px;
-      }
-      .btn-account {
-        padding: 12px;
-        font-size: 12px;
-        margin-bottom: 8px;
-      }
-      .posts-list {
-        max-height: 200px;
-      }
-    }
-
-    @media (min-width: 481px) and (max-width: 768px) {
-      .profile-stats-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .spotify-banner {
-        height: 110px;
-      }
-    }
-
-    @media (min-width: 769px) {
-      .profile-stats-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 4px; }
 
-    .spotify-banner {
-      width: 100%; height: 120px;
-      background: linear-gradient(to bottom, var(--accent), #181818);
-      margin: -25px -25px 20px -25px;
-      border-radius: 30px 30px 0 0;
-      display: flex; align-items: flex-end; padding: 20px;
-      position: relative;
-    }
-    .spotify-avatar {
-      width: 80px; height: 80px; background: #222; 
-      border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center; font-size: 30px;
-      border: 3px solid #181818;
-      overflow: hidden;
-      position: relative;
-    }
-    .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar-edit {
-        position: absolute; inset: 0; background: rgba(0,0,0,0.5);
-        display: none; align-items: center; justify-content: center;
-        font-size: 14px; cursor: pointer; color: white;
-    }
-    .spotify-avatar:hover .avatar-edit { display: flex; }
-
-    .spotify-info { margin-left: 15px; }
-    .spotify-info h2 { font-size: 24px; margin: 0; }
-    
     /* Updated Tag Styles */
     .user-tag {
       font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
       text-transform: uppercase; margin-left: 5px; vertical-align: middle; letter-spacing: 0.5px;
     }
     .tag-admin { background: #ff3333; color: #fff; }
-    .tag-velly\2665\FE0F { background: gold; color: #000; animation: pulse 2s infinite; }
     .tag-staff { background: #0088ff; color: #fff; }
-    .tag-execurive { background: #aa00ff; color: #fff; }
+    .tag-executive { background: #aa00ff; color: #fff; }
     .tag-user { background: #444; color: #eee; }
     .tag-sepuh { background: #1a1a1a; color: var(--accent); border: 1px solid var(--accent); }
     .tag-rich { background: linear-gradient(45deg, gold, #fff); color: #000; }
     .tag-galau { background: #555; color: #fff; font-style: italic; }
     .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
     .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 10px var(--purple); }
-    
-    /* New Fun Tags */
     .tag-owner { background: #00ff88; color: #000; border: 1px solid #fff; box-shadow: 0 0 10px #00ff88; font-weight: 900; }
     .tag-developer { background: #000; color: #00ff00; border: 1px solid #00ff00; font-family: 'Courier New', monospace; letter-spacing: 1px; }
     .tag-sultan { background: linear-gradient(135deg, #ffd700, #fbf5b7, #ffd700); color: #000; border: 1px solid #b8860b; font-weight: bold; }
@@ -939,9 +629,6 @@
     .tag-top-global { background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; font-weight: bold; box-shadow: 0 0 5px #00c6ff; }
     .tag-premium { background: linear-gradient(45deg, #8a2387, #e94057, #f27121); color: #fff; font-weight: bold; }
     .tag-influencer { background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d); color: #fff; }
-
-    
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
     /* About Modal Styling */
     .about-box { font-size: 13px; line-height: 1.6; color: #ccc; }
@@ -969,682 +656,26 @@
       text-shadow: 0 0 8px #00d4ff;
       display: inline;
     }
-    .event-card {
-      background: linear-gradient(180deg, rgba(24,24,24,0.95) 0%, rgba(18,18,18,0.95) 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-left: 4px solid var(--accent);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,255,136,0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    .event-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ffd700' stroke-width='2' opacity='0.12'%3E%3Cpath d='M60 10 l20 20 -20 20 -20 -20z'/%3E%3Cpath d='M20 50 l20 20 -20 20 -20 -20z'/%3E%3Cpath d='M100 50 l20 20 -20 20 -20 -20z'/%3E%3Cpath d='M60 90 l20 20 -20 20 -20 -20z'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 140px 140px;
-      background-repeat: repeat;
-      background-position: center;
-      opacity: 0.35;
-      filter: saturate(1.2);
-      pointer-events: none;
-    }
-    .countdown-wrap {
-      display: flex; gap: 12px; justify-content: center; align-items: center; margin: 10px 0 14px;
-    }
-    .count-item {
-      min-width: 64px; padding: 10px; border-radius: 12px; 
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
+
+    /* MODAL MESSAGE STYLES */
+    .modal-msg {
       text-align: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    }
-    .count-val { font-size: 20px; font-weight: 800; color: #fff; }
-    .count-lbl { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
-    .mini-row { display:flex; justify-content:center; gap:10px; align-items:center; font-size:12px; color:#aaa; margin-top:4px; }
-    .mini-badge { display:inline-flex; align-items:center; gap:6px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); padding:6px 10px; border-radius:999px; }
-    .claim-btn {
-      width:100%; padding:14px; background: linear-gradient(90deg, #ffd700, #fbf5b7); color:#000; border:none; border-radius:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; box-shadow: 0 10px 30px rgba(255,215,0,0.25);
-    }
-    .vip-trial-timer { margin-top: 8px; }
-    .shop-item { 
-      padding:12px; border-radius:16px; 
-      background: linear-gradient(180deg, rgba(28,28,28,0.96), rgba(20,20,20,0.96));
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 12px 35px rgba(0,0,0,0.6), inset 0 0 18px rgba(255,215,0,0.08);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      position: relative; overflow: hidden;
-    }
-    .shop-item::before {
-      content:'';
-      position:absolute; inset:0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ffd700' stroke-width='2' opacity='0.08'%3E%3Cpath d='M60 10 l20 20 -20 20 -20 -20z'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 120px 120px; background-repeat: repeat;
-      pointer-events:none;
-    }
-    .shop-item:hover { transform: translateY(-2px); box-shadow: 0 18px 45px rgba(0,0,0,0.7), inset 0 0 24px rgba(255,215,0,0.12); border-color: rgba(255,215,0,0.3); }
-    .shop-item-head { display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:10px; }
-    .shop-item-title { font-weight:800; color:#fff; letter-spacing:0.3px; }
-    .shop-price { font-size:12px; color:#000; background: linear-gradient(90deg, #ffd700, #fbf5b7); border: 1px solid rgba(255,215,0,0.45); border-radius:999px; padding:4px 10px; font-weight:800; box-shadow: 0 6px 18px rgba(255,215,0,0.25); }
-    .shop-action { 
-      width:100%; padding:12px; 
-      background: linear-gradient(90deg, #ffd700, #fbf5b7); 
-      color:#000; border:none; border-radius:10px; font-weight:800; cursor:pointer; 
-      box-shadow: 0 10px 30px rgba(255,215,0,0.25);
-    }
-    .claim-btn:active { transform: scale(0.98); }
-    .shop-btn {
-      width:100%; padding:12px; background:#222; color:#fff; border:1px solid #333; border-radius:12px; font-weight:700; cursor:pointer;
-    }
-    .gift-anim {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); animation: fadeIn 0.2s ease;
-    }
-    .gift-box {
-      width: 120px; height: 120px; border-radius: 18px; background: linear-gradient(135deg, #ff4d4d, #ffcc00); box-shadow: 0 15px 40px rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; color:#000; font-size:42px; animation: giftPop 0.8s ease forwards;
-    }
-    @keyframes giftPop { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); } }
-    @keyframes flipDown { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(40deg); } 100% { transform: rotateX(0deg); } }
-    .shop-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px; }
-    .shop-item { padding:10px; border-radius:12px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center; }
-    .shop-action { width:100%; padding:10px; background: var(--accent); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; }
-    .shop-row { display:flex; gap:8px; align-items:center; }
-    .shop-select { flex:1; }
-    @media (max-width: 480px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
-    /* Button Event - Sederhana */
-    #btnEvent {
-      position: relative;
-      width: 46px; height: 46px;
-      background: var(--accent);
-      border: none;
-      border-radius: 50%;
-      color: #000;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    #btnEvent:hover { transform: scale(1.1); }
-    #btnEvent:active { transform: scale(0.95); }
-    
-    /* Gacha Styles - Optimized */
-    .gacha-container {
-      background: #1a1a1a;
-      border: 1px solid var(--accent);
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px 0;
-      text-align: center;
-    }
-    .gacha-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-    .gacha-subtitle {
-      font-size: 13px;
-      color: #999;
-      margin-bottom: 20px;
-    }
-    .gacha-wheel-container {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      margin: 15px auto;
-    }
-    .gacha-wheel {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      border-radius: 50%;
-      background: conic-gradient(
-        from 0deg,
-        #ff6b6b 0deg 45deg,
-        #4ecdc4 45deg 90deg,
-        #45b7d1 90deg 135deg,
-        #96ceb4 135deg 180deg,
-        #ffeaa7 180deg 225deg,
-        #dda0dd 225deg 270deg,
-        #98d8c8 270deg 315deg,
-        #f7dc6f 315deg 360deg
-      );
-      box-shadow: 0 3px 12px rgba(0,0,0,0.35);
-    }
-    .gacha-wheel::before {
-      content: '';
-      position: absolute;
-      inset: 8px;
-      border-radius: 50%;
-      background: #111;
-    }
-    .gacha-pointer {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-top: 24px solid var(--accent);
-      z-index: 10;
-      pointer-events: none;
-    }
-    .gacha-button {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      border-radius: 25px;
-      padding: 12px 30px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin: 15px 0;
-    }
-    .gacha-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(255,215,0,0.3);
-    }
-    .gacha-button:disabled {
-      background: #444;
-      cursor: not-allowed;
-    }
-    .gacha-result {
-      background: #111;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 15px 0;
-      border: 1px solid var(--accent);
-      display: none;
-    }
-    .gacha-result.show {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-    .gacha-result-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-    .gacha-result-desc {
-      font-size: 14px;
-      color: #ccc;
-      margin-bottom: 12px;
-    }
-    .gacha-spinning {
-      animation: spin 2s ease-out;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(1440deg); }
-    }
-    
-    /* Perbaikan UI Toko Ketupat */
-    .shop-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-    
-    .shop-item {
-      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,215,0,0.2);
-      border-radius: 15px;
-      padding: 15px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .shop-item:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255,215,0,0.2);
-    }
-    
-    .shop-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .shop-item:hover::before {
-      left: 100%;
-    }
-    
-    .shop-item-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    
-    .shop-item-title {
-      font-weight: 700;
-      color: #fff;
-      font-size: 14px;
-    }
-    
-    .shop-price {
-      color: var(--accent);
-      font-weight: 800;
-      font-size: 14px;
-    }
-    
-    .shop-action {
-      background: linear-gradient(135deg, var(--accent), #ffed4e);
-      color: #000;
-      border: none;
-      border-radius: 25px;
-      padding: 8px 20px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-    }
-    
-    .shop-action:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 20px rgba(255,215,0,0.4);
-    }
-    
-    .shop-action:active {
-      transform: scale(0.95);
-    }
-    
-    .shop-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    
-    .shop-select {
-      flex: 1;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,215,0,0.3);
-      color: #fff;
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 14px;
-    }
-    
-    .shop-select:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    /* Styling untuk elemen code */
-    code {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
       font-size: 12px;
-      color: var(--accent);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-  
-    /* ========== ADMIN PANEL STYLES ========== */
-    :root {
-      --accent-admin: #f6d66f;
-      --accent2: #86d5f7;
-      --glow: rgba(255,215,0,0.15);
-      --card-bg-admin: #0e0e12;
-    }
-
-    body.admin-mode .app-container { display: none !important; }
-    body.admin-mode #adminPanel { display: flex !important; }
-    body.admin-mode { overflow: hidden; }
-
-    .admin-access-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, #f6d66f, #f9e56c);
-      border: 2px solid rgba(246, 214, 111, 0.5);
-      color: #000;
-      padding: 12px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      box-shadow: 0 8px 20px rgba(246, 214, 111, 0.3);
-      transition: all 0.3s ease;
-      z-index: 10000;
-      display: none;
-    }
-    .admin-access-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(246, 214, 111, 0.5);
-    }
-
-    #adminLockScreen {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(180deg, #000, #0a0a12);
-      z-index: 99999;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .lock-card {
-      background: linear-gradient(180deg, #121218, #0b0b12);
-      border: 1px solid rgba(246, 214, 111, 0.2);
-      border-radius: 20px;
-      padding: 40px;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 30px var(--glow);
-      max-width: 400px;
-      width: 90%;
-    }
-
-    .lock-icon { font-size: 60px; color: var(--accent-admin); margin-bottom: 20px; }
-    .lock-title { font-family: 'Rajdhani', sans-serif; font-size: 24px; color: var(--accent-admin); margin-bottom: 10px; }
-    .lock-subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 30px; }
-
-    .code-input-container {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .code-digit {
-      width: 50px;
-      height: 60px;
-      background: rgba(10,10,15,0.8);
-      border: 2px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      text-align: center;
-      font-size: 28px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--accent-admin);
-      font-weight: 700;
-    }
-    .code-digit:focus {
-      border-color: var(--accent-admin);
-      box-shadow: 0 0 15px var(--glow);
-    }
-
-    .lock-submit-btn, .lock-cancel-btn {
-      padding: 12px 40px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      transition: 0.2s;
-      margin: 5px;
-    }
-
-    .lock-submit-btn {
-      background: linear-gradient(180deg, #f9e56c, #f6d66f);
-      border: none;
-      color: #000;
-    }
-    .lock-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--glow); }
-
-    .lock-cancel-btn {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: var(--text-dim);
-    }
-    .lock-cancel-btn:hover { border-color: var(--danger); color: var(--danger); }
-
-    #adminPanel {
-      display: none;
-      width: 100vw;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: linear-gradient(180deg, #07070a, #0a0a10 35%, #000);
-      z-index: 99998;
-    }
-
-    .admin-sidebar {
-      width: 250px;
-      background: linear-gradient(180deg, rgba(20,20,30,0.9), rgba(10,10,15,0.9));
-      border-right: 1px solid rgba(255,255,255,0.08);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      z-index: 100;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      overflow-y: auto;
-    }
-
-    .admin-logo {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--accent-admin);
-      margin-bottom: 30px;
-      text-align: center;
-      padding: 15px;
-      background: rgba(246, 214, 111, 0.1);
-      border-radius: 12px;
-      border: 1px solid rgba(246, 214, 111, 0.2);
-    }
-
-    .admin-nav-btn {
-      width: 100%;
-      padding: 12px;
-      margin: 6px 0;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-dim);
-      cursor: pointer;
-      border-radius: 12px;
-      text-align: left;
-      transition: 0.2s;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .admin-nav-btn:hover {
-      color: var(--accent-admin);
-      border-color: var(--accent-admin);
-      box-shadow: 0 0 8px var(--glow);
-      transform: translateY(-1px);
-    }
-    .admin-nav-btn.active {
-      color: #000;
-      border-color: var(--accent-admin);
-      background: linear-gradient(180deg, #f9e56c, #f6d66f);
-      box-shadow: 0 0 12px var(--glow);
-    }
-
-    .admin-exit-btn {
-      margin-top: auto;
-      background: linear-gradient(180deg, #ff9aa0, #ff5252);
-      color: #000;
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 700;
-      transition: 0.2s;
-    }
-
-    .admin-main-view {
-      margin-left: 250px;
-      flex: 1;
-      overflow-y: auto;
-      padding: 30px;
-      height: 100vh;
-    }
-
-    .admin-view-section {
-      display: none;
-    }
-    .admin-view-section.active {
-      display: block;
-      animation: fadeIn 0.3s;
-    }
-
-    .admin-card {
-      background: linear-gradient(180deg, #121218, #0b0b12);
-      border-radius: 16px;
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      margin-bottom: 20px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.45), 0 0 14px var(--glow);
-    }
-
-    .admin-card h2 {
-      font-family: 'Rajdhani', sans-serif;
-      color: var(--accent-admin);
-      margin-bottom: 15px;
-      font-size: 20px;
-    }
-
-    .cyber-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-    }
-    .cyber-table th {
-      padding: 12px;
-      color: #000;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      background: linear-gradient(180deg, #f9e56c, #f6d66f);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 13px;
-    }
-    .cyber-table td {
-      padding: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      color: #ddd;
-    }
-    .cyber-table tr:hover td {
-      background: rgba(255,255,255,0.03);
-    }
-
-    .admin-btn {
-      padding: 8px 12px;
-      border: none;
-      background: linear-gradient(180deg, #f9e56c, #f6d66f);
-      color: #000;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 12px;
-      transition: 0.2s;
-      margin: 2px;
-    }
-    .admin-btn:hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-    }
-    .admin-btn-danger {
-      background: linear-gradient(180deg, #ff9aa0, #ff5252);
-    }
-    .admin-btn-warn {
-      background: linear-gradient(180deg, #ffeaa7, #ffcc66);
-    }
-
-    .cyber-input {
-      background: rgba(10,10,15,0.8);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    .cyber-input:focus {
-      border-color: var(--accent-admin);
-      box-shadow: 0 0 10px var(--glow);
-    }
-
-    .cyber-select {
-      background: rgba(10,10,15,0.8);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.12);
+      margin-top: 12px;
       padding: 10px;
       border-radius: 8px;
-      width: 100%;
-      margin-bottom: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      display: none;
     }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
+    .modal-msg.show { display: block; }
+    .modal-msg.success {
+      color: var(--accent);
+      background: rgba(0,255,136,0.1);
+      border: 1px solid #00dd7a;
     }
-
-    .stat-card {
-      background: linear-gradient(135deg, rgba(246, 214, 111, 0.1), rgba(246, 214, 111, 0.05));
-      border: 1px solid rgba(246, 214, 111, 0.2);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--accent-admin);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-top: 5px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .badge-tag {
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-weight: bold;
-      display: inline-block;
-    }
-    .tag-user { background: #333; color: #fff; }
-    .tag-sepuh { background: #ffcc00; color: #000; }
-    .tag-vvip { background: #bf00ff; color: #fff; }
-    .tag-admin { background: #ff3333; color: #fff; }
-    .tag-owner { background: #00ff88; color: #000; border: 1px solid #fff; }
-    .tag-developer { background: #000; color: #00ff00; border: 1px solid #00ff00; }
-
-    @media (max-width: 768px) {
-      .admin-sidebar { width: 200px; }
-      .admin-main-view { margin-left: 200px; padding: 15px; }
-      .code-digit { width: 40px; height: 50px; font-size: 22px; }
+    .modal-msg.error {
+      color: #ff6b6b;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid #ff6b6b;
     }
   </style>
 </head>
@@ -1662,93 +693,6 @@
       <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
   </div>
 
-  <div class="modal" id="modalKetupatShop" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <div class="event-card">
-        <div style="text-align:center; margin-bottom:10px; color:#fff; font-weight:800"><i class="fas fa-store"></i> Toko Ketupat</div>
-        
-        <!-- Gacha Section -->
-        <div class="gacha-container">
-          <div class="gacha-title">🎰 Gacha Ketupat</div>
-          <div class="gacha-subtitle">Coba keberuntunganmu! Dapatkan hadiah menarik</div>
-          <div class="gacha-wheel-container">
-            <div class="gacha-wheel" id="gachaWheel"></div>
-            <div class="gacha-pointer"></div>
-          </div>
-          <button class="gacha-button" id="gachaBtn" onclick="spinGacha()">
-            <span>🎲 Spin Gacha (100💠)</span>
-          </button>
-          <div class="gacha-result" id="gachaResult">
-            <div class="gacha-result-title" id="gachaResultTitle"></div>
-            <div class="gacha-result-desc" id="gachaResultDesc"></div>
-            <button class="shop-action" onclick="closeGachaResult()">Tutup</button>
-          </div>
-        </div>
-        
-        <div class="shop-grid">
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Tag Ramadhan</div><div class="shop-price">10💠</div></div>
-            <button class="shop-action" onclick="exchangeTag('ramadhan',10)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Tag Sepuh</div><div class="shop-price">10💠</div></div>
-            <button class="shop-action" onclick="exchangeTag('sepuh',10)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Tag Pro</div><div class="shop-price">10💠</div></div>
-            <button class="shop-action" onclick="exchangeTag('pro',10)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Background Merah</div><div class="shop-price">50💠</div></div>
-            <button class="shop-action" onclick="exchangeBg('red',50)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Background Biru</div><div class="shop-price">50💠</div></div>
-            <button class="shop-action" onclick="exchangeBg('blue',50)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Background Hijau</div><div class="shop-price">50💠</div></div>
-            <button class="shop-action" onclick="exchangeBg('green',50)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Background Ungu</div><div class="shop-price">50💠</div></div>
-            <button class="shop-action" onclick="exchangeBg('purple',50)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Background Gold</div><div class="shop-price">100💠</div></div>
-            <button class="shop-action" onclick="exchangeBg('gold',100)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Background Premium</div><div class="shop-price">150💠</div></div>
-            <button class="shop-action" onclick="exchangeBg('premium',150)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Tag Premium</div><div class="shop-price">25💠</div></div>
-            <button class="shop-action" onclick="exchangeTag('premium',25)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Tag Legend</div><div class="shop-price">50💠</div></div>
-            <button class="shop-action" onclick="exchangeTag('legend',50)">Tukar</button>
-          </div>
-          <div class="shop-item">
-            <div class="shop-item-head"><div class="shop-item-title">Tag Exclusive</div><div class="shop-price">75💠</div></div>
-            <button class="shop-action" onclick="exchangeTag('exclusive',75)">Tukar</button>
-          </div>
-          <div class="shop-item" style="grid-column: 1 / -1">
-            <div class="shop-item-head"><div class="shop-item-title">VIP Trial</div><div class="shop-price">100💠/Hari</div></div>
-            <div class="shop-row">
-              <select id="vipDaysSel" class="inp-dark shop-select">
-                <option value="1">VIP Trial 1 Hari (100💠)</option>
-                <option value="2">VIP Trial 2 Hari (200💠)</option>
-                <option value="3">VIP Trial 3 Hari (300💠)</option>
-              </select>
-              <button class="shop-action" onclick="exchangeVipTrial()">Tukar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <div id="mtScreen" class="full-overlay">
     <i class="fas fa-tools" style="color: var(--accent)"></i>
     <h1>Server Maintenance</h1>
@@ -1768,10 +712,6 @@
     <div class="header">
         <img src="exemusic.png" alt="Logo" onclick="openAbout()">
         <div class="header-right">
-          <button id="btnEvent" onclick="openEvent()" title="Event">
-            <span style="font-size:20px">🎁</span>
-            <span id="eventBadge" class="notif-badge"></span>
-          </button>
           <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
             <i class="fas fa-bell"></i>
             <span id="notifBadge" class="notif-badge"></span>
@@ -1779,8 +719,6 @@
           <button id="topLoginBtn" onclick="openProfile()">Log-in</button>
         </div>
     </div>
-
-    
 
     <div id="notifPanel" class="notif-panel">
       <div class="notif-panel-header">
@@ -1865,7 +803,7 @@
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container">
-          <img id="pAvatarImg" src="https://ui-avatars.com/api/?name=User&size=150&background=random" class="mp-avatar">
+          <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
         </div>
         <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
@@ -1874,7 +812,7 @@
           <span id="pUsername" class="mp-name">User</span>
           <span id="pBadge"></span>
         </div>
-        <span id="pEmail" class="mp-handle"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="592c2a3c2b193c34383035773a3634">[email&#160;protected]</a></span>
+        <span id="pEmail" class="mp-handle">user@email.com</span>
         <div id="pTagDisplay" style="margin-bottom:12px"></div>
 
         <div class="mp-stats">
@@ -1895,11 +833,6 @@
            <button class="mp-btn mp-btn-primary" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
         <div style="font-size:11px; color:#888; margin-top:8px" id="pVipStatus">Status VIP: NONVIP</div>
-        <div id="vipTrialTimer" class="countdown-wrap vip-trial-timer" style="display:none">
-          <div class="count-item"><div id="vipDays" class="count-val">0</div><div class="count-lbl">Hari</div></div>
-          <div class="count-item"><div id="vipHours" class="count-val">0</div><div class="count-lbl">Jam</div></div>
-          <div class="count-item"><div id="vipMinutes" class="count-val">0</div><div class="count-lbl">Menit</div></div>
-        </div>
       </div>
 
       <div class="mp-tabs">
@@ -1937,7 +870,7 @@
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container">
-          <img id="vAvatarImg" src="https://ui-avatars.com/api/?name=User&size=150&background=random" class="mp-avatar">
+          <img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
         </div>
         
         <div class="mp-name-row">
@@ -1967,8 +900,6 @@
     </div>
   </div>
 
-  
-
   <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Upload Lagu</h3>
@@ -1981,7 +912,6 @@
         untuk melihat tutorial nya.
       </p>
       <div id="uploadFormUser" style="display:none">
-          <!-- URL Upload Form Only -->
           <div id="urlUploadForm" style="display:block;">
             <p style="font-size:12px; color:#888; margin-bottom:10px;">Upload lagu menggunakan link direct dari Top4Top atau penyedia file hosting lainnya.</p>
             <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
@@ -2005,14 +935,14 @@
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>🎵 ExeMusic 3.1 Version</h3>
+        <h3>🎵 ExeMusic 3.1</h3>
         <p>Selamat datang di exemusic. Website ini dirancang khusus untuk para creator url yang ingin berbagi dan menikmati musik berkualitas tinggi dengan komunitas yang solid.</p>
         
         <p><b>Fitur Unggulan Platform</b></p>
         <ul class="about-features">
           <li><b>High-Fidelity Audio Streaming</b> – Nikmati streaming musik dengan kualitas audio lossless tanpa kompresi berlebihan</li>
           <li><b>Smart Social System</b> – Follow creator favorit Anda dan bangun komunitas musik dengan sistem following yang terintegrasi</li>
-          <li><b>Dynamic Badge System</b> – Dapatkan badge verifikasi otomatis saat mencapai 50+ followers sebagai tanda kreator original (bisa request ke admin)</li>
+          <li><b>Dynamic Badge System</b> – Dapatkan badge verifikasi otomatis saat mencapai 50+ followers sebagai tanda kreator original</li>
           <li><b>Deep Linking Technology</b> – Bagikan lagu spesifik dengan ID unik langsung ke teman via link khusus</li>
           <li><b>Anti-Spam Protection</b> – Sistem cooldown menjaga kualitas konten (VIP 15 menit, Non-VIP 30 menit)</li>
           <li><b>Real-time Sync System</b> – Semua data followers, likes, dan playlist tersinkronisasi secara real-time</li>
@@ -2022,26 +952,9 @@
 
         <p><b>Cara Upload Musik</b></p>
         <p><b>Untuk User yang Sudah Login:</b><br>
-        Anda dapat langsung mengupload musik dengan menekan tombol + (Add/Request), kemudian masukkan judul lagu dan link MP3 dari Top4Top. Setelah submit, lagu Anda akan langsung tersedia di platform dan dapat didengarkan oleh semua user.</p>
+        Anda dapat langsung mengupload musik dengan menekan tombol + (Add/Request), kemudian masukkan judul lagu dan link MP3 dari Top4Top. Setelah submit, lagu Anda akan langsung tersedia di platform.</p>
         <p><b>Untuk Guest (Belum Login):</b><br>
-        Jika Anda belum memiliki akun, Anda masih bisa request upload dengan mengirim detail lagu via WhatsApp ke admin. Setelah admin meninjau dan menyetujui, lagu Anda akan diupload ke platform dengan kredit nama Anda.</p>
-
-        <p><b>Program Reward & Incentive</b></p>
-        <p>Kami menghargai kontribusi para creator aktif dengan sistem reward yang menarik:</p>
-        <ul class="about-features">
-          <li>🏆 <b>VIP Membership</b> – Creator dengan performa terbaik berkesempatan mendapatkan akses VIP eksklusif dari admin</li>
-          <li>💰 <b>Cash Reward</b> – Raih reward hingga $0.99 atau Rp 16.000 untuk creator yang mencapai target followers dan engagement tertentu</li>
-          <li>📈 <b>Kriteria Penilaian:</b> Total followers, jumlah lagu terupload, engagement rate, dan konsistensi konten</li>
-        </ul>
-        <p><em>* Syarat dan ketentuan berlaku. Keputusan admin bersifat final.</em></p>
-        
-        <p><b>Fitur VIP</b></p>
-        <ul class="about-features">
-          <li>👑 Tema profil khusus VIP dengan animasi emas</li>
-          <li>⏱️ Cooldown upload dipercepat menjadi 15 menit</li>
-          <li>🎟️ Ikon mahkota di nama dan list lagu</li>
-          <li>🔗 Share profil cepat dengan deep link khusus</li>
-        </ul>
+        Jika Anda belum memiliki akun, Anda masih bisa request upload dengan mengirim detail lagu via WhatsApp ke admin.</p>
 
         <p><b>Badge Original User</b></p>
         <p>Sistem badge verifikasi akan otomatis muncul di profil Anda ketika berhasil mengumpulkan 50 followers organik. Badge ini menandakan bahwa Anda adalah creator original dan terpercaya di exemusic.</p>
@@ -2060,7 +973,7 @@
         <p style="margin-top:12px; color:#ddd">
           📱 Contact WhatsApp — <a href="https://wa.me/62895329018240" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
           📋 Changelogs — <a href="https://execuriverp.github.io/changelogs" target="_blank" rel="noopener" class="about-dev-link">click here</a><br>
-          📻 Use Boombox — <a href="javascript:void(0)" onclick="openBBTutorial()" class="about-dev-link">click here</a>
+          📻 Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a>
         </p>
         <p class="about-footer">Kami menerapkan zero-tolerance policy untuk menjaga kualitas dan keamanan exemusic. Mohon hormati aturan ini demi kenyamanan bersama.</p>
         <p class="about-credit">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic Website</p>
@@ -2079,45 +992,6 @@
       </div>
     </div>
   </div>
-  <div class="modal" id="modalEvent" onclick="if(event.target==this)closeEventModal()">
-    <div class="sheet">
-      <div class="event-card">
-        <div style="text-align:center; margin-bottom:8px; color:var(--accent); font-weight:800"><i class="fas fa-star"></i> ExeMusic Event — Idul Fitri 1447H</div>
-        <div style="text-align:center; margin-bottom:12px; background:rgba(0,0,0,0.3); border:1px solid var(--accent); border-radius:16px; padding:8px 12px; display:inline-flex; align-items:center; gap:6px; margin-left:auto; margin-right:auto;">
-          <span style="font-size:16px">💠</span>
-          <span id="eidKetVal" style="font-weight:700; font-size:15px; color:var(--accent);">0</span>
-          <span style="font-size:12px; color:#ccc;">Ketupat</span>
-        </div>
-        <div id="eidCountdown" class="countdown-wrap">
-          <div class="count-item">
-            <div class="count-val" id="cDays">0</div>
-            <div class="count-lbl">Hari</div>
-          </div>
-          <div class="count-item">
-            <div class="count-val" id="cHours">0</div>
-            <div class="count-lbl">Jam</div>
-          </div>
-          <div class="count-item">
-            <div class="count-val" id="cMins">0</div>
-            <div class="count-lbl">Menit</div>
-          </div>
-          <div class="count-item">
-            <div class="count-val" id="cSecs">0</div>
-            <div class="count-lbl">Detik</div>
-          </div>
-        </div>
-        <div class="mini-row">
-          <span class="mini-badge"><span style="color:#00ff88; font-size:14px">💠</span> <b id="eidKetVal">0</b></span>
-          <span id="eidClaimStatus">Belum claim</span>
-        </div>
-        <div style="display:flex; gap:10px; justify-content:center; margin:14px 0 10px">
-          <button id="claimBtn" class="claim-btn" onclick="claimTrialVip1d()">Claim VIP 1 Day</button>
-        </div>
-        <button class="shop-btn" onclick="openKetupatShop()">Buka Toko Ketupat</button>
-        <div style="text-align:center; color:#888; font-size:12px; margin-top:12px">Event hourly: setiap jam :00 ada disco mode random dan peluang dapat ketupat 1–10 jika online.</div>
-      </div>
-    </div>
-  </div>
 
   <div class="modal" id="modalCopyLink" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
@@ -2130,12 +1004,14 @@
       </div>
     </div>
   </div>
+
   <div class="modal" id="modalSocialList" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:12px; color:var(--accent)" id="socialTitle">Social</h3>
       <div id="socialList" class="mp-list"></div>
     </div>
   </div>
+
   <div class="modal" id="modalCopyAudio" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Salin URL Audio MP3</h3>
@@ -2146,15 +1022,17 @@
       </div>
     </div>
   </div>
+
   <div class="modal" id="modalBoombox" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">Tutorial BB Command</h3>
+      <h3 style="text-align:center; margin-bottom:10px; color:var(--accent)">How to use URL Top4Top</h3>
       <div style="font-size:13px; color:#ddd; line-height:1.6; margin-bottom:12px">
-        <p>1. Join server Executive Roleplay</p>
-        <p>2. Di chat, ketik: <code>/setbb [URL lagu dari ExeMusic]</code></p>
-        <p>3. Contoh: <code>/setbb https://exemusic.com/?id=123</code></p>
-        <p>4. Musik akan diputar di boombox kamu!</p>
-        <p>note: Pastikan URL valid dari ExeMusic.</p>
+        <p>1. pastikan kamu sudah punya boombox.</p>
+        <p>2. pakai command /placebb untuk menaruh boombox.</p>
+        <p>3. pakai command /setbb untuk memulai music.</p>
+        <p>4. pilih url paling bawah dan masukan url top4top nya.</p>
+        <p>note : jika url tidak bunyi silahkan hapus s di bagian https menjadi http dan pastikan url adalah top4top.</p>
+        <p>end.</p>
       </div>
       <div style="display:flex; gap:10px">
         <button class="btn-act" onclick="document.getElementById('modalBoombox').style.display='none'">Close</button>
@@ -2163,7 +1041,19 @@
   </div>
 
   <div id="toast-container"></div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  
+  <div class="tutorial-overlay" id="tutorialOverlay">
+    <div class="tutorial-card">
+      <button class="close-btn" onclick="closeTutorial()">&times;</button>
+      <h3>Tutorial Upload via Top4Top</h3>
+      <div class="video-container">
+        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <p>Video oleh: Hexky</p>
+    </div>
+  </div>
+
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
       authDomain: "exemusic-execuriverp.firebaseapp.com",
@@ -2179,30 +1069,44 @@
     const auth = firebase.auth();
     const db = firebase.database();
     const storage = firebase.storage();
-    let selectedAudioFile = null;
 
     let songs = [], i = 0, isLoginMode = true;
     
+    // DEFAULT REPEAT OFF (0) - Fixed with UI initialization
     let repeatMode = parseInt(localStorage.getItem('exeRepeat') || '0'); // 0: OFF, 1: ONE, 2: ALL
     let isShuf = localStorage.getItem('exeShuffle') === 'true';
     let fav = JSON.parse(localStorage.getItem("exeFav") || "[]");
     let savedVol = parseFloat(localStorage.getItem("exeVolume") || "0.8");
-    let lastSongData = JSON.parse(localStorage.getItem("exeLastSong") || "{}");
 
     let userData = null;
     const audio = new Audio();
-    audio.volume = savedVol; // Apply saved volume immediately
-    const eventAudio = new Audio();
-    eventAudio.volume = 1.0;
-    let vipTrialInterval = null;
+    audio.volume = savedVol;
     let broadcastTimeout;
-    let discoModeActive = false;
-    let discoColor = "#00ff88";
-    let lastDiscoUser = null;
-    let iceModeActive = false;
-    let snowflakeInterval = null;
     let notifList = [];
     const lastReadNotifTimeKey = 'exeNotifRead';
+
+    // Initialize UI button states on page load - FIXED
+    window.addEventListener('DOMContentLoaded', () => {
+      const repBtn = document.getElementById('rep');
+      if (repBtn) {
+        if (repeatMode === 0) {
+          repBtn.classList.remove('active');
+          repBtn.innerHTML = '<i class="fas fa-redo"></i>';
+        } else if (repeatMode === 1) {
+          repBtn.classList.add('active');
+          repBtn.innerHTML = '<i class="fas fa-redo"></i><span style="font-size:8px;position:absolute;top:8px;right:8px;font-weight:bold;background:var(--bg);border-radius:50%;padding:1px 3px;">1</span>';
+        } else {
+          repBtn.classList.add('active');
+          repBtn.innerHTML = '<i class="fas fa-redo"></i>';
+        }
+      }
+      
+      // Initialize shuffle button UI
+      const shufBtn = document.getElementById('shuf');
+      if (shufBtn) {
+        shufBtn.classList.toggle('active', isShuf);
+      }
+    });
 
     function getTagHTML(tag) {
       if(!tag || tag === "none") return '';
@@ -2217,24 +1121,10 @@
             db.ref('users/' + auth.currentUser?.uid + '/role').once('value', r => {
                 if(r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
             });
-        } else { document.getElementById('mtScreen').style.display = 'none'; }
-        if(val.announcement) triggerBroadcast(val.announcement);
-        
-        if(val.discoMode !== discoModeActive) {
-            discoModeActive = val.discoMode || false;
-            if(discoModeActive) {
-                const v = val.discoVariant || 'heartbeat';
-                const c = val.discoColor || '#00ff88';
-                applyDiscoMode(v, c);
-            } else {
-                resetTheme();
-                triggerBroadcast("Disco mode ended!");
-            }
-        } else if(discoModeActive) {
-            const v = val.discoVariant || 'heartbeat';
-            const c = val.discoColor || '#00ff88';
-            applyDiscoMode(v, c);
+        } else { 
+            document.getElementById('mtScreen').style.display = 'none'; 
         }
+        if(val.announcement) triggerBroadcast(val.announcement);
     });
 
     function loadNotifs() {
@@ -2248,8 +1138,10 @@
         });
       });
     }
+    
     let _globalNotifs = [];
     let _userNotifs = [];
+    
     function mergeAndRenderNotifs(list, source) {
       if (source === 'global') _globalNotifs = list;
       else _userNotifs = list;
@@ -2257,6 +1149,7 @@
       renderNotifList();
       updateNotifBadge();
     }
+    
     function timeAgo(ts) {
       if (!ts) return '';
       const s = Math.floor((Date.now() - ts) / 1000);
@@ -2266,6 +1159,7 @@
       if (s < 604800) return Math.floor(s / 86400) + ' hari lalu';
       return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
     }
+    
     function renderNotifList() {
       const el = document.getElementById('notifList');
       if (!el) return;
@@ -2280,6 +1174,7 @@
         return '<div class="notif-item"><div class="notif-item-icon ' + type + '"><i class="fas ' + icon + '"></i></div><div class="notif-item-body"><div class="n-text">' + escapeHtml(n.text || n.message || '') + '</div><div class="n-time">' + timeAgo(n.timestamp) + '</div></div></div>';
       }).join('');
     }
+    
     function updateNotifBadge() {
       const lastRead = parseInt(localStorage.getItem(lastReadNotifTimeKey) || '0', 10);
       const count = notifList.filter(n => (n.timestamp || 0) > lastRead).length;
@@ -2289,6 +1184,7 @@
         badge.classList.toggle('show', count > 0);
       }
     }
+    
     function toggleNotifPanel() {
       const panel = document.getElementById('notifPanel');
       if (panel.classList.toggle('show')) {
@@ -2296,19 +1192,21 @@
         updateNotifBadge();
       }
     }
+    
     function closeNotifPanel() {
       document.getElementById('notifPanel').classList.remove('show');
       localStorage.setItem(lastReadNotifTimeKey, String(Date.now()));
       updateNotifBadge();
     }
+    
     document.addEventListener('click', function(e) {
       const panel = document.getElementById('notifPanel');
       const btn = document.getElementById('btnNotif');
       if (panel && panel.classList.contains('show') && !panel.contains(e.target) && btn && !btn.contains(e.target))
         closeNotifPanel();
     });
+    
     loadNotifs();
-
 
     function triggerBroadcast(msg) {
         const el = document.getElementById('sysBroadcast');
@@ -2330,19 +1228,11 @@
         clearTimeout(broadcastTimeout);
         broadcastTimeout = setTimeout(closeBroadcast, 15000);
     }
+    
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-    }
-    function attrEscape(text) {
-        if(text == null) return '';
-        return String(text)
-          .replace(/&/g, '&amp;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
     }
 
     function closeBroadcast() {
@@ -2353,129 +1243,6 @@
         }, 400);
     }
 
-    function createSnowflake() {
-        const snowflake = document.createElement('div');
-        snowflake.className = 'snowflake';
-        snowflake.textContent = '❄';
-        snowflake.style.left = Math.random() * window.innerWidth + 'px';
-        const duration = Math.random() * 3 + 4; // 4-7 detik jatuh - lebih ringan dan cepat!
-        const delay = Math.random() * 0.3;
-        snowflake.style.animation = `snowfall ${duration}s linear ${delay}s forwards`;
-        document.body.appendChild(snowflake);
-        
-        setTimeout(() => snowflake.remove(), (duration + delay) * 1000);
-    }
-
-    function startSnowfall() {
-        if(snowflakeInterval) clearInterval(snowflakeInterval);
-        snowflakeInterval = setInterval(() => {
-            if(document.querySelectorAll('.snowflake').length < 30) createSnowflake();
-        }, 1200);
-        for(let i = 0; i < 6; i++) {
-            setTimeout(() => createSnowflake(), i * 150);
-        }
-    }
-
-    function stopSnowfall() {
-        if(snowflakeInterval) {
-            clearInterval(snowflakeInterval);
-            snowflakeInterval = null;
-        }
-        document.querySelectorAll('.snowflake').forEach(flake => flake.remove());
-    }
-
-    function applyDiscoMode(variant, color) {
-        const app = document.querySelector('.app');
-        document.documentElement.style.setProperty('--accent', color || '#00ff88');
-        if(app) app.style.animation = 'none';
-        stopSnowfall();
-        if(variant === 'ice') {
-            document.documentElement.style.setProperty('--accent', '#00d4ff');
-            if(app) app.style.animation = 'disco-heartbeat 1.2s infinite';
-            startSnowfall();
-            return;
-        }
-        if(variant === 'rainbow') {
-            if(app) app.style.animation = 'rainbow-glow 3s infinite linear';
-            return;
-        }
-        if(variant === 'heartbeat') {
-            if(app) app.style.animation = 'disco-heartbeat 1.2s infinite';
-            return;
-        }
-    }
-
-    function resetTheme() {
-        document.documentElement.style.setProperty('--accent', '#00ff88');
-        document.documentElement.style.setProperty('--bg', '#050505');
-        document.documentElement.style.setProperty('--card-bg', '#121212');
-        
-        document.body.style.background = '#050505';
-        
-        stopSnowfall();
-        
-        const app = document.querySelector('.app');
-        if(app) {
-            app.style.animation = 'none';
-            app.style.background = 'rgba(18, 18, 18, 0.6)';
-            app.style.borderColor = 'rgba(255,255,255,0.08)';
-            app.style.borderWidth = '1px';
-            app.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5)';
-        }
-        
-        document.querySelectorAll('.btn-act').forEach(btn => {
-            btn.style.background = 'var(--accent)';
-            btn.style.boxShadow = 'none';
-            btn.style.transform = 'scale(1)';
-        });
-        
-        document.querySelectorAll('.btn-play').forEach(btn => {
-            btn.style.background = 'var(--accent)';
-            btn.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)';
-            btn.style.color = '#000';
-        });
-        
-        document.querySelectorAll('.eq span').forEach(span => {
-            span.style.background = 'var(--accent)';
-            span.style.boxShadow = '0 0 15px var(--accent)';
-            span.style.filter = 'brightness(1)';
-        });
-        
-        const sbBar = document.getElementById('sbBar');
-        if(sbBar) {
-            sbBar.style.background = 'var(--accent)';
-            sbBar.style.boxShadow = 'none';
-        }
-        
-        document.querySelectorAll('.sys-container').forEach(el => {
-            el.style.background = 'rgba(255,255,255,0.03)';
-            el.style.border = '1px solid rgba(255,255,255,0.05)';
-            el.style.boxShadow = 'none';
-        });
-        
-        document.querySelectorAll('.sheet').forEach(el => {
-            el.style.background = '#181818';
-            el.style.borderTop = '1px solid #333';
-        });
-        
-        const title = document.getElementById('title');
-        if(title) {
-            title.style.color = '';
-            title.style.textShadow = '0 0 10px rgba(0,0,0,0.5)';
-        }
-        
-        const byEl = document.getElementById('by');
-        if(byEl) {
-            byEl.style.color = 'var(--accent)';
-            byEl.style.textShadow = 'none';
-        }
-    }
-
-    function generateFakeFollower() {
-      const randomNum = Math.floor(Math.random() * 999999) + 10000;
-      return `User_${randomNum}`;
-    }
-
     auth.onAuthStateChanged(u => {
       if(u) {
         db.ref('users/' + u.uid).on('value', snap => {
@@ -2483,13 +1250,17 @@
           if(!userData) return;
           if(userData.banned === true) {
               document.getElementById('bannedScreen').style.display = 'flex';
-              auth.signOut(); return;
+              auth.signOut(); 
+              return;
           }
+          
           const now = Date.now();
-          const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
+          const vipActive = !!(userData.vip);
+          
           document.getElementById('topLoginBtn').textContent = userData.username;
           document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
-          document.getElementById('pAvatarImg').src = userData.avatar || "https://ui-avatars.com/api/?name=User&size=150&background=random";
+          document.getElementById('pAvatarImg').src = userData.avatar || "https://via.placeholder.com/150";
+          
           (function(){
             const fol = userData.followers;
             let folCount = 0;
@@ -2498,6 +1269,7 @@
             else folCount = fol || 0;
             document.getElementById('pFol').innerText = folCount;
           })();
+          
           (function(){
             const flg = userData.following;
             let flgCount = 0;
@@ -2506,13 +1278,16 @@
             else flgCount = flg || 0;
             document.getElementById('pFollowing').innerText = flgCount;
           })();
+          
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
+          
           const followerCount = (() => {
             const fol = userData.followers;
             if(Array.isArray(fol)) return fol.length;
             if(fol && typeof fol === 'object') return Object.keys(fol).length;
             return fol || 0;
           })();
+          
           document.getElementById('pBadge').innerHTML = (followerCount >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
           
           const profHeader = document.querySelector('#modalProfile .modern-profile-header');
@@ -2521,18 +1296,9 @@
             if(!vipActive && userData.profileBg) profHeader.style.background = userData.profileBg;
             else profHeader.style.background = '';
           }
-          updateKetupatUI(userData.ketupat || 0);
-          updateEidMiniStatus();
+          
           const vs = document.getElementById('pVipStatus'); 
           if(vs) vs.textContent = 'Status VIP: ' + (vipActive ? 'AKTIF' : 'NONVIP');
-          updateClaimButtonVisibility();
-          const trialActive = !!(userData.trialvip && userData.trialvip.expireAt > now);
-          if(trialActive) startVipTrialCountdown(userData.trialvip.expireAt);
-          else {
-            const cont = document.getElementById('vipTrialTimer');
-            if(cont) cont.style.display = 'none';
-            if(vipTrialInterval) { clearInterval(vipTrialInterval); vipTrialInterval = null; }
-          }
           
           const email = u.email || "";
           const [name, domain] = email.split('@');
@@ -2549,14 +1315,6 @@
         document.getElementById('topLoginBtn').textContent = "Login";
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('adminBtn').style.display = 'none';
-        
-        // Tampilkan tutorial untuk guest yang belum pernah login
-        if(!localStorage.getItem('exeTutorialSeen')) {
-          setTimeout(() => {
-            const overlay = document.getElementById('guestTutorialOverlay');
-            if(overlay) overlay.style.display = 'flex';
-          }, 1500); // Tampilkan setelah 1.5 detik
-        }
       }
       document.getElementById('loadingCard').style.display = 'none';
     });
@@ -2577,23 +1335,26 @@
             db.ref('users/' + profileUid).get().then(snap => {
               if(snap.exists()) {
                 const userData = snap.val();
-                document.getElementById('vAvatarImg').src = userData?.avatar || "https://ui-avatars.com/api/?name=User&size=150&background=random";
+                document.getElementById('vAvatarImg').src = userData?.avatar || "https://via.placeholder.com/150";
+                
                 const followerCountView = (() => {
                   const fol = userData?.followers;
                   if(Array.isArray(fol)) return fol.length;
                   if(fol && typeof fol === 'object') return Object.keys(fol).length;
                   return fol || 0;
                 })();
-                const nowC = Date.now();
-                const creatorVipActive = !!(userData?.vip || (userData?.trialvip && userData.trialvip.expireAt > nowC));
+                
+                const creatorVipActive = !!(userData?.vip);
                 document.getElementById('vName').innerHTML = "@" + userData.username + ((followerCountView >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
                 document.getElementById('vFol').innerText = followerCountView;
+                
                 const followingCountView = (() => {
                   const flg = userData?.following;
                   if(Array.isArray(flg)) return flg.length;
                   if(flg && typeof flg === 'object') return Object.keys(flg).length;
                   return flg || 0;
                 })();
+                
                 document.getElementById('vFollowing').innerText = followingCountView;
                 document.getElementById('vTagDisplay').innerHTML = getTagHTML(userData?.tag);
                 
@@ -2603,15 +1364,15 @@
                 const creatorSongs = songs.filter(x => x.uid === profileUid);
                 creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
                 
-         document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
-             `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
-                 <div class="mp-song-icon"><i class="fas fa-music"></i></div>
-                 <div class="mp-song-info">
-                     <div class="mp-song-title">${x.title}</div>
-                 </div>
-                 <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
-              </div>`
-         ).join('');
+                document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
+                    `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
+                        <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                        <div class="mp-song-info">
+                            <div class="mp-song-title">${x.title}</div>
+                        </div>
+                        <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+                     </div>`
+                ).join('');
                 
                 document.getElementById('modalCreator').dataset.creatorUid = profileUid;
                 updateCreatorFollowUI(profileUid);
@@ -2643,7 +1404,6 @@
         }
       }
     });
-    initHourlyEvent();
 
     async function setup(idx, play = true) {
       if(!songs[idx]) return;
@@ -2654,20 +1414,23 @@
 
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
+      
       const cRef = await db.ref('users/' + songs[i].uid).get();
       const cData = cRef.val();
       const followerCountBadge = Array.isArray(cData?.followers) ? cData.followers.length : cData?.followers || 0;
       const badge = (followerCountBadge >= 50) ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-      const creatorVipActive = !!(cData?.vip || (cData?.trialvip && cData.trialvip.expireAt > Date.now()));
+      const creatorVipActive = !!(cData?.vip);
       const crown = creatorVipActive ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:12px"></i>' : '';
+      
       document.getElementById('by').innerHTML = "@" + (songs[i].by || "system") + badge + crown;
-      const hasCreator = !!songs[i].uid;
+      
       if(play) { 
         audio.play(); 
         document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
         document.getElementById('eq').classList.add('playing'); 
         showToast(`🎵 Now Playing: ${songs[i].title}`);
       }
+      
       updateFollowUI();
       updateFavoriteUI();
       saveLastSong();
@@ -2681,8 +1444,8 @@
         
         const lastUpload = userData.lastUpload || 0;
         const now = Date.now();
-        const diff = (now - lastUpload) / 1000 / 60; // dalam menit
-        const vipActive = !!(userData.vip || (userData.trialvip && userData.trialvip.expireAt > now));
+        const diff = (now - lastUpload) / 1000 / 60;
+        const vipActive = !!(userData.vip);
         const cooldown = (userData.role === 'admin') ? 0 : (vipActive ? 15 : 30);
         
         if(diff < cooldown && userData.role !== 'admin') {
@@ -2690,7 +1453,8 @@
                 icon: 'error',
                 title: 'Sabar...',
                 text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi untuk upload lagu berikutnya.`,
-                background: '#181818', color: '#fff'
+                background: '#181818', 
+                color: '#fff'
             });
         }
 
@@ -2736,11 +1500,24 @@
     }
 
     function toggle() {
-      if(audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
-      else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
+      if(audio.paused) { 
+        audio.play(); 
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
+        document.getElementById('eq').classList.add('playing'); 
+      } else { 
+        audio.pause(); 
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; 
+        document.getElementById('eq').classList.remove('playing'); 
+      }
     }
-    function next() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); }
-    function prev() { setup(isShuf ? Math.floor(Math.random()*songs.length) : (i-1+songs.length)%songs.length); }
+    
+    function next() { 
+      setup(isShuf ? Math.floor(Math.random()*songs.length) : (i+1)%songs.length); 
+    }
+    
+    function prev() { 
+      setup(isShuf ? Math.floor(Math.random()*songs.length) : (i-1+songs.length)%songs.length); 
+    }
     
     audio.ontimeupdate = () => {
       document.getElementById('seek').value = (audio.currentTime/audio.duration)*100 || 0;
@@ -2770,6 +1547,7 @@
     audio.onloadedmetadata = () => {
       document.getElementById('loadSpinner').classList.remove('show');
     };
+    
     document.getElementById('seek').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
     
     document.getElementById('vol').oninput = (e) => {
@@ -2778,12 +1556,12 @@
     };
     
     audio.onended = () => {
-        if(repeatMode === 1) { // Repeat One
+        if(repeatMode === 1) {
             audio.currentTime = 0;
             audio.play();
-        } else if (repeatMode === 2 || isShuf) { // Repeat All or Shuffle
+        } else if (repeatMode === 2 || isShuf) {
             next();
-        } else { // Repeat Off
+        } else {
             if(i < songs.length - 1) next();
         }
     };
@@ -2846,7 +1624,7 @@
       
       const btn = document.getElementById('btnFollow');
       if(isFollowing) {
-        btn.style.display = 'none'; // Hide button jika sudah follow
+        btn.style.display = 'none';
       } else {
         btn.style.display = 'flex';
         btn.innerHTML = '<i class="fas fa-plus"></i>';
@@ -2854,8 +1632,15 @@
       }
     }
 
-    function fmt(s) { if(isNaN(s)) return "0:00"; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+":"+(sec<10?"0"+sec:sec); }
-    function msg(m) { showToast(m, 'info'); }
+    function fmt(s) { 
+      if(isNaN(s)) return "0:00"; 
+      let m=Math.floor(s/60),sec=Math.floor(s%60); 
+      return m+":"+(sec<10?"0"+sec:sec); 
+    }
+    
+    function msg(m) { 
+      showToast(m, 'info'); 
+    }
 
     function showToast(text, type='info') {
       const container = document.getElementById('toast-container');
@@ -2876,335 +1661,26 @@
       setTimeout(() => el.remove(), 2900);
     }
     
-    function startVipTrialCountdown(expireAt) {
-      const cont = document.getElementById('vipTrialTimer');
-      if(!cont) return;
-      if(vipTrialInterval) { clearInterval(vipTrialInterval); vipTrialInterval = null; }
-      cont.style.display = 'flex';
-      function tick() {
-        const now = Date.now();
-        const diff = Math.max(0, expireAt - now);
-        const days = Math.floor(diff / (24*3600000));
-        const hours = Math.floor((diff % (24*3600000)) / 3600000);
-        const minutes = Math.floor((diff % 3600000) / 60000);
-        const dEl = document.getElementById('vipDays');
-        const hEl = document.getElementById('vipHours');
-        const mEl = document.getElementById('vipMinutes');
-        if(dEl) dEl.textContent = String(days);
-        if(hEl) hEl.textContent = String(hours);
-        if(mEl) mEl.textContent = String(minutes);
-        if(diff <= 0) {
-          clearInterval(vipTrialInterval); vipTrialInterval = null;
-          cont.style.display = 'none';
-          msg('VIP trial berakhir');
-        }
-      }
-      tick();
-      vipTrialInterval = setInterval(tick, 30000);
-    }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-    
-    function openEvent() { 
-      document.getElementById('modalEvent').style.display='block'; 
-      startEventCountdown(); 
-      updateEidMiniStatus(); 
-      updateClaimButtonVisibility();
-      try { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; } catch(e) {}
-      try { eventAudio.src = 'https://g.top4top.io/m_36891kox71.mp3'; eventAudio.play(); } catch(e) {} 
-    }
-    function startEventCountdown() {
-      const fallback = new Date('2026-03-20T00:00:00Z').getTime();
-      db.ref('settings/eidTs').get().then(s => {
-        const target = s.exists() ? s.val() : fallback;
-        if(window._eidInterval) clearInterval(window._eidInterval);
-        window._eidInterval = setInterval(() => {
-          const d = target - Date.now();
-          const dEl = document.getElementById('cDays');
-          const hEl = document.getElementById('cHours');
-          const mEl = document.getElementById('cMins');
-          const sEl = document.getElementById('cSecs');
-          if(!dEl || !hEl || !mEl || !sEl) return;
-          if(d <= 0) {
-            dEl.textContent = '0'; hEl.textContent = '0'; mEl.textContent = '0'; sEl.textContent = '0';
-            clearInterval(window._eidInterval);
-            return;
-          }
-          const days = Math.floor(d/86400000);
-          const hrs = Math.floor((d%86400000)/3600000);
-          const mins = Math.floor((d%3600000)/60000);
-          const secs = Math.floor((d%60000)/1000);
-          dEl.textContent = String(days);
-          hEl.textContent = String(hrs);
-          mEl.textContent = String(mins);
-          sEl.textContent = String(secs);
-          [dEl,hEl,mEl,sEl].forEach(x => { x.style.animation = 'none'; void x.offsetWidth; x.style.animation = 'flipDown 0.9s'; });
-        }, 1000);
-      });
-    }
-    function claimTrialVip1d() {
-      if(!auth.currentUser) return msg('Login dulu!');
-      const ref = db.ref('users/'+auth.currentUser.uid+'/trialvip');
-      ref.get().then(s => {
-        const cur = s.val() || {};
-        if(cur.freeClaimed === true) { msg('Kamu sudah claim VIP'); return; }
-        const expire = Date.now() + 24*3600000;
-        ref.set({ active: true, expireAt: expire, freeClaimed: true }).then(() => {
-          msg('Trial VIP 1 hari aktif');
-          playClaimAnimation();
-          updateEidMiniStatus();
-        });
-      });
-    }
-    function ensureKetupat(countNeeded) {
-      return db.ref('users/'+auth.currentUser.uid+'/ketupat').get().then(s => {
-        const cur = s.val() || 0;
-        if(cur < countNeeded) { msg('Ketupat kurang '+(countNeeded-cur)); return Promise.reject('insufficient'); }
-        return cur;
-      });
-    }
-    function exchangeTag(tag, cost) {
-      if(!auth.currentUser) return msg('Login dulu!');
-      ensureKetupat(cost).then(cur => {
-        const newVal = cur - cost;
-        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal, tag: tag });
-      }).then(() => msg('Tag diperbarui'));
-    }
-    function exchangeBg(color, cost) {
-      if(!auth.currentUser) return msg('Login dulu!');
-      ensureKetupat(cost).then(cur => {
-        const newVal = cur - cost;
-        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal, profileBg: color });
-      }).then(() => msg('Background profil diubah'));
-    }
-    function exchangeVipTrial() {
-      if(!auth.currentUser) return msg('Login dulu!');
-      const days = parseInt(document.getElementById('vipDaysSel').value, 10) || 1;
-      const cost = 100 * days;
-      ensureKetupat(cost).then(cur => {
-        const newVal = cur - cost;
-        const expire = Date.now() + days*24*3600000;
-        return db.ref('users/'+auth.currentUser.uid).update({ ketupat: newVal }).then(() => db.ref('users/'+auth.currentUser.uid+'/trialvip').update({ active: true, expireAt: expire }));
-      }).then(() => msg('VIP trial aktif'));
+    function closeModal() { 
+      document.querySelectorAll('.modal').forEach(m => m.style.display='none'); 
     }
     
-    // Gacha Functions
-    function spinGacha() {
-      if(!auth.currentUser) return msg('Login dulu!');
-      
-      const gachaBtn = document.getElementById('gachaBtn');
-      const gachaWheel = document.getElementById('gachaWheel');
-      const gachaResult = document.getElementById('gachaResult');
-      
-      // Cek ketupat cukup
-      ensureKetupat(100).then(cur => {
-        // Disable button
-        gachaBtn.disabled = true;
-        gachaBtn.innerHTML = '<span>🎲 Spinning...</span>';
-        
-        // Sembunyikan hasil sebelumnya
-        gachaResult.classList.remove('show');
-        
-        // Animasi spin
-        gachaWheel.classList.add('gacha-spinning');
-        
-        // Setelah 2 detik (sesuai animasi)
-        setTimeout(() => {
-          // Berhentikan animasi
-          gachaWheel.classList.remove('gacha-spinning');
-          
-          // Kurangi ketupat
-          const newVal = cur - 100;
-          
-          // Tentukan hadiah (weighted random)
-          const prizes = [
-            { name: 'Cashback 100💠', chance: 30, type: 'cashback', value: 100, message: 'Selamat! Kamu mendapatkan cashback 100 ketupat!' },
-            { name: 'Background Gold', chance: 20, type: 'background', value: 'gold', message: 'Wow! Background emas eksklusif!' },
-            { name: 'Tag Premium', chance: 15, type: 'tag', value: 'premium', message: 'Tag premium untukmu!' },
-            { name: 'VIP 1 Hari', chance: 10, type: 'vip', value: 1, message: 'VIP 1 hari aktif!' },
-            { name: 'Cashback 200💠', chance: 8, type: 'cashback', value: 200, message: 'Luar biasa! Cashback 200 ketupat!' },
-            { name: 'Background Premium', chance: 5, type: 'background', value: 'premium', message: 'Background premium spesial!' },
-            { name: 'Tag Legend', chance: 3, type: 'tag', value: 'legend', message: 'Tag legenda! Keren!' },
-            { name: 'Jackpot 500💠', chance: 1, type: 'cashback', value: 500, message: '🎉 JACKPOT! 500 ketupat!' }
-          ];
-          
-          const prize = selectGachaPrize(prizes);
-          
-          // Proses hadiah
-          processGachaPrize(prize, newVal);
-          
-          // Tampilkan hasil
-          showGachaResult(prize);
-          
-          // Enable button kembali
-          gachaBtn.disabled = false;
-          gachaBtn.innerHTML = '<span>🎲 Spin Gacha (100💠)</span>';
-          
-        }, 2000);
-        
-      }).catch(err => {
-        gachaBtn.disabled = false;
-        gachaBtn.innerHTML = '<span>🎲 Spin Gacha (100💠)</span>';
-      });
-    }
-    
-    function selectGachaPrize(prizes) {
-      const totalChance = prizes.reduce((sum, prize) => sum + prize.chance, 0);
-      let random = Math.random() * totalChance;
-      
-      for(let prize of prizes) {
-        if(random < prize.chance) {
-          return prize;
-        }
-        random -= prize.chance;
-      }
-      
-      return prizes[0]; // fallback
-    }
-    
-    function processGachaPrize(prize, ketupatAfter) {
-      const updates = { ketupat: ketupatAfter };
-      
-      switch(prize.type) {
-        case 'cashback':
-          updates.ketupat = ketupatAfter + prize.value;
-          break;
-        case 'background':
-          updates.profileBg = prize.value;
-          break;
-        case 'tag':
-          updates.tag = prize.value;
-          break;
-        case 'vip':
-          const expire = Date.now() + prize.value * 24 * 3600000;
-          db.ref('users/'+auth.currentUser.uid+'/trialvip').update({ active: true, expireAt: expire });
-          break;
-      }
-      
-      db.ref('users/'+auth.currentUser.uid).update(updates);
-      updateKetupatUI(updates.ketupat);
-    }
-    
-    function showGachaResult(prize) {
-      const gachaResult = document.getElementById('gachaResult');
-      const gachaResultTitle = document.getElementById('gachaResultTitle');
-      const gachaResultDesc = document.getElementById('gachaResultDesc');
-      
-      gachaResultTitle.textContent = prize.name;
-      gachaResultDesc.textContent = prize.message;
-      gachaResult.classList.add('show');
-      
-      msg('🎰 ' + prize.message);
-    }
-    
-    function closeGachaResult() {
-      document.getElementById('gachaResult').classList.remove('show');
-    }
-    
-    function updateKetupatUI(val) {
-      // UI ketupat di header dihapus, hanya update di event card
-      const k = document.getElementById('eidKetVal'); 
-      if(k) k.textContent = val ? String(val) : '0';
-    }
-    function updateEidMiniStatus() {
-      const sEl = document.getElementById('eidClaimStatus');
-      if(!sEl) return;
-      const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
-      sEl.textContent = claimed ? 'Claimed' : 'Belum claim';
-    }
-    function updateClaimButtonVisibility() {
-      const btn = document.getElementById('claimBtn');
-      if(!btn) return;
-      const claimed = !!(userData && userData.trialvip && userData.trialvip.freeClaimed === true);
-      btn.style.display = claimed ? 'none' : 'block';
-    }
-    function playClaimAnimation() { showToast('🎁 VIP claimed'); }
-    function closeEventModal() { const m = document.getElementById('modalEvent'); if(m) m.style.display='none'; try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} }
-    function openKetupatShop() { try { eventAudio.pause(); eventAudio.src=''; } catch(e) {} document.getElementById('modalEvent').style.display='none'; document.getElementById('modalKetupatShop').style.display='block'; }
-    function initHourlyEvent() {
-      let lastHour = null;
-      let isActive = false;
-      setInterval(() => {
-        const now = new Date();
-        const m = now.getMinutes();
-        const h = now.getHours();
-        if(m < 5) {
-          if(h !== lastHour || !isActive) {
-            lastHour = h;
-            isActive = true;
-            const variants = ['heartbeat','rainbow','minimal','ice'];
-            const colors = ['#00ff88','#00d4ff','#ff4d4d','#ffcc00'];
-            const v = variants[Math.floor(Math.random()*variants.length)];
-            const c = colors[Math.floor(Math.random()*colors.length)];
-            applyDiscoMode(v, c);
-            if(auth.currentUser) {
-              const slot = new Date().toDateString()+'-'+h;
-              const ref = db.ref('users/'+auth.currentUser.uid+'/lastEventHour');
-              ref.get().then(s => {
-                if(s.val() === slot) return;
-                const gain = Math.floor(Math.random()*10)+1;
-                db.ref('users/'+auth.currentUser.uid).transaction(u => {
-                  const cur = (u&&u.ketupat)||0;
-                  return Object.assign({}, u||{}, { ketupat: cur + gain, lastEventHour: slot });
-                }).then(() => {
-                  db.ref('users/'+auth.currentUser.uid+'/notifications').push({ type:'system', text:'+ '+gain+' 💠', timestamp: Date.now() });
-                  updateKetupatUI((userData&&userData.ketupat)||0 + gain);
-                });
-              });
-            }
-          }
-        } else if(isActive) {
-          resetTheme();
-          isActive = false;
-        }
-      }, 15000);
-    }
-    function openCreatorFollowers() {
-      const uid = document.getElementById('modalCreator').dataset.creatorUid;
-      if(!uid) return;
-      db.ref('users/'+uid+'/followers').get().then(s => {
-        const arr = s.val() || [];
-        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
-        if(!ids.length) { renderSocialList('Followers', []); return; }
-        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
-          renderSocialList('Followers', list);
-        });
-      });
-    }
-    function openCreatorFollowing() {
-      const uid = document.getElementById('modalCreator').dataset.creatorUid;
-      if(!uid) return;
-      db.ref('users/'+uid+'/following').get().then(s => {
-        const arr = s.val() || [];
-        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
-        if(!ids.length) { renderSocialList('Following', []); return; }
-        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
-          renderSocialList('Following', list);
-        });
-      });
-    }
-    function renderSocialList(title, items) {
-      const modal = document.getElementById('modalSocialList');
-      const sheet = modal.querySelector('.sheet');
-      sheet.querySelector('#socialTitle').textContent = title;
-      const box = sheet.querySelector('#socialList');
-      box.innerHTML = items.length ? items.map(x => `<div class="mp-song-item"><div class="mp-song-info"><div class="mp-song-title">@${x.name}</div></div></div>`).join('') : '<div class="notif-empty">Belum ada data</div>';
-      modal.style.display = 'block';
-    }
     function openProfile() { 
-        if(!auth.currentUser) document.getElementById('modalAuth').style.display='block'; 
-        else {
+        if(!auth.currentUser) {
+          document.getElementById('modalAuth').style.display='block';
+        } else {
             const myPosts = songs.filter(s => s.uid === auth.currentUser.uid);
             myPosts.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
             
-             document.getElementById('myPostList').innerHTML = myPosts.map(s => 
-                 `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
-                     <div class="mp-song-icon"><i class="fas fa-music"></i></div>
-                     <div class="mp-song-info">
-                         <div class="mp-song-title">${s.title}</div>
-                     </div>
-                     <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
-                  </div>`
-             ).join('');
+            document.getElementById('myPostList').innerHTML = myPosts.map(s => 
+                `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()">
+                    <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                    <div class="mp-song-info">
+                        <div class="mp-song-title">${s.title}</div>
+                    </div>
+                    <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+                 </div>`
+            ).join('');
             
             const myLikes = songs.filter(s => fav.includes(s.url));
             document.getElementById('myLikeList').innerHTML = myLikes.map(s => 
@@ -3222,12 +1698,6 @@
         }
     }
 
-    function fmtTimestamp(ts) {
-        if(!ts) return 'Unknown date';
-        const d = new Date(ts);
-        return d.toLocaleDateString();
-    }
-    
     async function viewCreator() {
         const s = songs[i]; 
         if(!s.uid) return;
@@ -3252,9 +1722,8 @@
           return flg || 0;
         })();
         
-        document.getElementById('vAvatarImg').src = cData?.avatar || "https://ui-avatars.com/api/?name=User&size=150&background=random";
-        const nowVC = Date.now();
-        const creatorVipActiveVC = !!(cData?.vip || (cData?.trialvip && cData.trialvip.expireAt > nowVC));
+        document.getElementById('vAvatarImg').src = cData?.avatar || "https://via.placeholder.com/150";
+        const creatorVipActiveVC = !!(cData?.vip);
         document.getElementById('vName').innerHTML = "@" + s.by + ((followerCountCreator >= 50) ? '<i class="fas fa-check-circle v-badge" style="font-size:14px; margin-left:5px"></i>' : '') + (creatorVipActiveVC ? ' <i class="fas fa-crown" style="color:#ffd700; font-size:14px; margin-left:6px"></i>' : '');
         document.getElementById('vFol').innerText = followerCountCreator;
         document.getElementById('vFollowing').innerText = followingCountCreator;
@@ -3266,15 +1735,15 @@
         const creatorSongs = songs.filter(x => x.uid === s.uid);
         creatorSongs.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
         
-                 document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
-                     `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
-                         <div class="mp-song-icon"><i class="fas fa-music"></i></div>
-                         <div class="mp-song-info">
-                             <div class="mp-song-title">${x.title}</div>
-                         </div>
-                         <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
-                      </div>`
-                 ).join('');
+        document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x => 
+            `<div class="mp-song-item" onclick="setup(${songs.indexOf(x)}); closeModal()">
+                <div class="mp-song-icon"><i class="fas fa-music"></i></div>
+                <div class="mp-song-info">
+                    <div class="mp-song-title">${x.title}</div>
+                </div>
+                <div style="font-size:10px; color:#555"><i class="fas fa-play"></i></div>
+             </div>`
+        ).join('');
         
         document.getElementById('modalCreator').dataset.creatorUid = s.uid;
         updateCreatorFollowUI(s.uid);
@@ -3306,7 +1775,7 @@
       if(!creatorUid || creatorUid === auth.currentUser.uid) return msg("Gak bisa follow diri sendiri");
       
       try {
-      const creatorRef = db.ref('users/' + creatorUid);
+        const creatorRef = db.ref('users/' + creatorUid);
         const currentRef = db.ref('users/' + auth.currentUser.uid);
         
         const creatorSnap = await creatorRef.get();
@@ -3315,22 +1784,22 @@
         const creatorData = creatorSnap.val();
         const currentData = currentSnap.val();
         
-      const followersArr = Array.isArray(creatorData?.followers) ? [...creatorData.followers] : (creatorData?.followers && typeof creatorData.followers === 'object' ? Object.keys(creatorData.followers) : []);
-      const followingArr = Array.isArray(currentData?.following) ? [...currentData.following] : (currentData?.following && typeof currentData.following === 'object' ? Object.keys(currentData.following) : []);
-      
-      const isFollowing = followersArr.includes(auth.currentUser.uid);
-      
-      if(isFollowing) {
-        const newFollowers = followersArr.filter(uid => uid !== auth.currentUser.uid);
-        const newFollowing = followingArr.filter(uid => uid !== creatorUid);
-        await creatorRef.update({ followers: newFollowers });
-        await currentRef.update({ following: newFollowing });
-        msg("Unfollowed!");
-      } else {
-        const newFollowers = [...followersArr, auth.currentUser.uid];
-        const newFollowing = [...followingArr, creatorUid];
-        await creatorRef.update({ followers: newFollowers });
-        await currentRef.update({ following: newFollowing });
+        const followersArr = Array.isArray(creatorData?.followers) ? [...creatorData.followers] : (creatorData?.followers && typeof creatorData.followers === 'object' ? Object.keys(creatorData.followers) : []);
+        const followingArr = Array.isArray(currentData?.following) ? [...currentData.following] : (currentData?.following && typeof currentData.following === 'object' ? Object.keys(currentData.following) : []);
+        
+        const isFollowing = followersArr.includes(auth.currentUser.uid);
+        
+        if(isFollowing) {
+          const newFollowers = followersArr.filter(uid => uid !== auth.currentUser.uid);
+          const newFollowing = followingArr.filter(uid => uid !== creatorUid);
+          await creatorRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
+          msg("Unfollowed!");
+        } else {
+          const newFollowers = [...followersArr, auth.currentUser.uid];
+          const newFollowing = [...followingArr, creatorUid];
+          await creatorRef.update({ followers: newFollowers });
+          await currentRef.update({ following: newFollowing });
           db.ref('users/' + creatorUid + '/notifications').push({
             type: 'follow',
             text: userData.username + ' mulai mengikuti kamu',
@@ -3381,18 +1850,18 @@
              db.ref('users/' + s.uid).get().then(snap => {
                  const val = snap.val() || {};
                  let count = 0;
-        const fol = val.followers;
-        if(Array.isArray(fol)) count = fol.length;
-        else if(fol && typeof fol === 'object') count = Object.keys(fol).length;
-        else count = fol || 0;
-        const vipActiveCache = !!(val.vip || (val.trialvip && val.trialvip.expireAt > Date.now()));
-        userCache[s.uid] = { followers: count, vip: vipActiveCache };
+                 const fol = val.followers;
+                 if(Array.isArray(fol)) count = fol.length;
+                 else if(fol && typeof fol === 'object') count = Object.keys(fol).length;
+                 else count = fol || 0;
+                 const vipActiveCache = !!(val.vip);
+                 userCache[s.uid] = { followers: count, vip: vipActiveCache };
                  
                  const els = document.querySelectorAll(`.artist[data-uid="${s.uid}"]`);
                  if(els && els.length) {
                      let add = '';
                      if(count >= 50) add += '<i class="fas fa-check-circle v-badge" style="font-size:10px; margin-left:3px"></i>';
-                     if(isVip) add += ' <i class="fas fa-crown" style="color:#ffd700; font-size:10px; margin-left:4px"></i>';
+                     if(vipActiveCache) add += ' <i class="fas fa-crown" style="color:#ffd700; font-size:10px; margin-left:4px"></i>';
                      els.forEach(e => { e.innerHTML = `@${s.by}${add}`; });
                  }
              });
@@ -3434,6 +1903,18 @@
         if(document.getElementById('modalList').style.display === 'block') openList(false);
     }
 
+    function updateFavoriteUI() {
+        if(!songs[i]) return;
+        const btn = document.getElementById('btnFav');
+        if(fav.includes(songs[i].url)) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-heart"></i>';
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="far fa-heart"></i>';
+        }
+    }
+
     function updateFavBtn() {
         if(!songs[i]) return;
         const btn = document.getElementById('btnFav');
@@ -3473,40 +1954,14 @@
         }
     }
 
-    function showToast(text) {
-        const container = document.getElementById('toast-container');
-        if(!container) return;
-        const el = document.createElement('div');
-        el.className = 'toast';
-        
-        let icon = 'fa-info-circle';
-        if(text.includes('Playing')) icon = 'fa-music';
-        if(text.includes('Favorit')) icon = 'fa-heart';
-        if(text.includes('Shuffle')) icon = 'fa-random';
-        if(text.includes('Repeat')) icon = 'fa-redo';
-        
-        el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
-        container.appendChild(el);
-        
-        setTimeout(() => {
-            el.classList.add('hide');
-            setTimeout(() => el.remove(), 300);
-        }, 2500);
+    function buildDeepLink() { 
+      return window.location.origin + window.location.pathname + "?id=" + i; 
     }
-
-    function buildDeepLink() { return window.location.origin + window.location.pathname + "?id=" + i; }
-    function copyRawUrl() { openCopyAudio(); }
     
-    function shareLink() { 
-        const link = buildDeepLink();
-        navigator.clipboard.writeText(link); 
-        msg("Link lagu dengan ID disalin"); 
+    function copyRawUrl() { 
+      openCopyAudio(); 
     }
-    function shareProfile(uid, username) {
-        const link = window.location.origin + window.location.pathname + '?profile_userid=' + uid;
-        navigator.clipboard.writeText(link);
-        showToast('Link profil @' + (username||'user') + ' disalin');
-    }
+    
     function shareToWhatsApp() {
         const name = (userData && userData.username) ? userData.username : 'Guest';
         const title = (songs[i] && songs[i].title) ? songs[i].title : 'Lagu ExeMusic';
@@ -3514,12 +1969,14 @@
         const text = "Hello " + name + " telah berbagi link ExeMusic:\n🎵 " + title + "\n🔗 " + link;
         window.open("https://wa.me/?text=" + encodeURIComponent(text));
     }
+    
     function openCopyAudio() {
         const url = (songs[i] && songs[i].url) ? songs[i].url : '';
         const el = document.getElementById('copyAudioText');
         if(el) el.textContent = url || 'URL belum dibuat';
         document.getElementById('modalCopyAudio').style.display = 'block';
     }
+    
     function copyBuiltAudio() {
         const t = document.getElementById('copyAudioText').textContent;
         if(!t || t === 'URL belum dibuat') return;
@@ -3527,13 +1984,27 @@
         document.getElementById('modalCopyAudio').style.display = 'none';
     }
     
-    function downloadSong() { window.open(songs[i].url); }
-    function openReq() { document.getElementById('modalReq').style.display='block'; }
-    function openAbout() { document.getElementById('modalAbout').style.display='block'; }
+    function downloadSong() { 
+      window.open(songs[i].url); 
+    }
+    
+    function openReq() { 
+      document.getElementById('modalReq').style.display='block'; 
+    }
+    
+    function openAbout() { 
+      document.getElementById('modalAbout').style.display='block'; 
+    }
+    
+    function openBoomboxTutorial() { 
+      document.getElementById('modalBoombox').style.display='block'; 
+    }
+    
     function openTutorial() {
         const overlay = document.getElementById('tutorialOverlay');
         if(overlay) overlay.style.display = 'flex';
     }
+    
     function closeTutorial() {
         const overlay = document.getElementById('tutorialOverlay');
         const video = document.getElementById('tutorialVideo');
@@ -3543,23 +2014,19 @@
             video.src = src;
         }
     }
-    function openBBTutorial() {
-        // Tampilkan modal BB tutorial
-        document.getElementById('modalBoombox').style.display = 'flex';
+    
+    function sendWA() { 
+      window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); 
     }
-    function closeGuestTutorial() {
-        const overlay = document.getElementById('guestTutorialOverlay');
-        if(overlay) overlay.style.display = 'none';
-        // Tandai bahwa user sudah melihat tutorial
-        localStorage.setItem('exeTutorialSeen', 'true');
+    
+    function openAdmin() { 
+      if(userData?.role === 'admin') window.location.href = 'admmenu.html'; 
     }
-    function toggleAuthMode() { /* Google Sign-In only - not used */ }
-    function sendWA() { window.open(`https://wa.me/62895329018240?text=Halo Admin, saya ${document.getElementById('guestName').value} ingin upload: ${document.getElementById('guestLagu').value}`); }
-    function openAdmin() { if(userData?.role === 'admin') window.location.href = 'admmenu.html'; }
 
     function openClearNotifConfirm() {
         document.getElementById('modalClearNotif').style.display = 'block';
     }
+    
     function confirmClearNotif() {
         if(!auth.currentUser) return msg("Login dulu!");
         const ref = db.ref('users/' + auth.currentUser.uid + '/notifications');
@@ -3578,12 +2045,14 @@
             showToast("Gagal menghapus notifikasi");
         });
     }
+    
     function openCopyLink() {
         const link = window.location.origin + window.location.pathname + "?id=" + i;
         const el = document.getElementById('copyLinkText');
         if(el) el.textContent = link;
         document.getElementById('modalCopyLink').style.display = 'block';
     }
+    
     function copyBuiltLink() {
         const t = document.getElementById('copyLinkText').textContent;
         if(!t || t === 'URL belum dibuat') return;
@@ -3591,11 +2060,48 @@
         document.getElementById('modalCopyLink').style.display = 'none';
     }
 
-    let isFirstTimeUser = false;
-
-    function handleAuth() {
-      /* Old function - replaced by handleGoogleAuth */
+    function shareProfile(uid, username) {
+        const link = window.location.origin + window.location.pathname + '?profile_userid=' + uid;
+        navigator.clipboard.writeText(link);
+        showToast('Link profil @' + (username||'user') + ' disalin');
     }
+
+    function openCreatorFollowers() {
+      const uid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!uid) return;
+      db.ref('users/'+uid+'/followers').get().then(s => {
+        const arr = s.val() || [];
+        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
+        if(!ids.length) { renderSocialList('Followers', []); return; }
+        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
+          renderSocialList('Followers', list);
+        });
+      });
+    }
+    
+    function openCreatorFollowing() {
+      const uid = document.getElementById('modalCreator').dataset.creatorUid;
+      if(!uid) return;
+      db.ref('users/'+uid+'/following').get().then(s => {
+        const arr = s.val() || [];
+        const ids = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? Object.keys(arr) : []);
+        if(!ids.length) { renderSocialList('Following', []); return; }
+        Promise.all(ids.map(id => db.ref('users/'+id+'/username').get().then(r => ({ id, name: r.val()||id })))).then(list => {
+          renderSocialList('Following', list);
+        });
+      });
+    }
+    
+    function renderSocialList(title, items) {
+      const modal = document.getElementById('modalSocialList');
+      const sheet = modal.querySelector('.sheet');
+      sheet.querySelector('#socialTitle').textContent = title;
+      const box = sheet.querySelector('#socialList');
+      box.innerHTML = items.length ? items.map(x => `<div class="mp-song-item"><div class="mp-song-info"><div class="mp-song-title">@${x.name}</div></div></div>`).join('') : '<div class="notif-empty">Belum ada data</div>';
+      modal.style.display = 'block';
+    }
+
+    let isFirstTimeUser = false;
 
     function handleGoogleAuth() {
       if(isFirstTimeUser) {
@@ -3618,7 +2124,7 @@
         db.ref('users/' + user.uid).set({
           username: username,
           email: user.email,
-          avatar: user.photoURL || "https://ui-avatars.com/api/?name=User&size=150&background=random",
+          avatar: user.photoURL || "https://via.placeholder.com/150",
           role: 'user',
           followers: {},
           following: {},
@@ -3807,760 +2313,7 @@
         msgEl.classList.add('show', 'error');
       }
     }
-  
-
-
-  
-
-// ========== ADMIN PANEL FUNCTIONS ==========
-let adminCode = '';
-
-function generateAdminCode() {
-  adminCode = Math.floor(10000 + Math.random() * 90000).toString();
-  console.log('%c🔐 ADMIN CODE: ' + adminCode, 'color: #f6d66f; font-size: 20px; font-weight: bold; background: #000; padding: 10px;');
-}
-
-function showAdminLock() {
-  document.getElementById('adminLockScreen').style.display = 'flex';
-  document.getElementById('code1').focus();
-  for(let i=1; i<=5; i++) document.getElementById('code'+i).value = '';
-}
-
-function hideAdminLock() {
-  document.getElementById('adminLockScreen').style.display = 'none';
-}
-
-function moveToNext(current, nextId) {
-  if (current.value.length === 1 && nextId) {
-    document.getElementById(nextId).focus();
-  } else if (current.value.length === 1 && !nextId) {
-    checkAdminCode();
-  }
-}
-
-function handlePaste(e) {
-  e.preventDefault();
-  const paste = (e.clipboardData || window.clipboardData).getData('text');
-  const digits = paste.replace(/\D/g, '').slice(0, 5);
-  for(let i=0; i<digits.length && i<5; i++) {
-    document.getElementById('code'+(i+1)).value = digits[i];
-  }
-  if(digits.length === 5) setTimeout(checkAdminCode, 100);
-}
-
-function checkAdminCode() {
-  let enteredCode = '';
-  for(let i=1; i<=5; i++) enteredCode += document.getElementById('code'+i).value;
-  
-  if (enteredCode.length === 5) {
-    if (enteredCode === adminCode) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Access Granted',
-        text: 'Welcome Admin',
-        background: '#121212',
-        color: '#fff',
-        timer: 1500,
-        showConfirmButton: false
-      });
-      setTimeout(enterAdminMode, 1500);
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Access Denied',
-        text: 'Invalid code',
-        background: '#121212',
-        color: '#fff'
-      });
-      for(let i=1; i<=5; i++) document.getElementById('code'+i).value = '';
-      document.getElementById('code1').focus();
-    }
-  }
-}
-
-function enterAdminMode() {
-  hideAdminLock();
-  document.body.classList.add('admin-mode');
-  loadAdminDashboard();
-  loadAdminUsers();
-  loadAdminSongs();
-}
-
-function exitAdminPanel() {
-  Swal.fire({
-    title: 'Exit Admin Panel?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Yes',
-    background: '#121212',
-    color: '#fff'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      document.body.classList.remove('admin-mode');
-      generateAdminCode();
-    }
-  });
-}
-
-function switchAdminView(viewName) {
-  document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.admin-view-section').forEach(sec => sec.classList.remove('active'));
-  document.getElementById('admin-' + viewName).classList.add('active');
-  event.target.classList.add('active');
-  
-  if(viewName === 'dashboard') loadAdminDashboard();
-  else if(viewName === 'users') loadAdminUsers();
-  else if(viewName === 'songs') loadAdminSongs();
-}
-
-function loadAdminDashboard() {
-  db.ref('users').once('value').then(s => {
-    document.getElementById('adminTotalUsers').textContent = Object.keys(s.val() || {}).length;
-  });
-  db.ref('songs').once('value').then(s => {
-    const songs = s.val() || {};
-    let plays = 0;
-    Object.values(songs).forEach(song => plays += (song.plays || 0));
-    document.getElementById('adminTotalSongs').textContent = Object.keys(songs).length;
-    document.getElementById('adminTotalPlays').textContent = plays;
-  });
-  document.getElementById('adminOnlineUsers').textContent = Math.floor(Math.random() * 50) + 10;
-}
-
-function loadAdminUsers() {
-  const tbody = document.getElementById('adminUsersTableBody');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
-  
-  db.ref('users').once('value').then(s => {
-    const users = s.val() || {};
-    tbody.innerHTML = '';
-    Object.entries(users).forEach(([uid, u]) => {
-      const row = tbody.insertRow();
-      row.innerHTML = `
-        <td>${u.username || 'N/A'}</td>
-        <td>${u.email || 'N/A'}</td>
-        <td><span class="badge-tag tag-${(u.role || 'user').toLowerCase()}">${u.role || 'User'}</span></td>
-        <td>${u.songs ? Object.keys(u.songs).length : 0}</td>
-        <td>${u.followers ? (Array.isArray(u.followers) ? u.followers.length : Object.keys(u.followers).length) : 0}</td>
-        <td>
-          <button class="admin-btn" onclick="editAdminUser('${uid}')"><i class="fas fa-edit"></i></button>
-          <button class="admin-btn admin-btn-warn" onclick="manageAdminFollowers('${uid}')"><i class="fas fa-users"></i></button>
-          <button class="admin-btn admin-btn-danger" onclick="deleteAdminUser('${uid}')"><i class="fas fa-trash"></i></button>
-        </td>
-      `;
-    });
-  });
-}
-
-function filterAdminUsers() {
-  const term = document.getElementById('searchUser').value.toLowerCase();
-  document.querySelectorAll('#adminUsersTableBody tr').forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
-  });
-}
-
-function editAdminUser(uid) {
-  db.ref('users/' + uid).once('value').then(s => {
-    const u = s.val() || {};
-    Swal.fire({
-      title: 'Edit: ' + u.username,
-      html: `
-        <input id="editUsername" class="swal2-input" value="${u.username || ''}" placeholder="Username" style="background:#1a1a1a;border:1px solid #333;color:#fff;">
-        <select id="editRole" class="swal2-input" style="background:#1a1a1a;border:1px solid #333;color:#fff;">
-          <option value="User" ${u.role === 'User' ? 'selected' : ''}>User</option>
-          <option value="Sepuh" ${u.role === 'Sepuh' ? 'selected' : ''}>Sepuh</option>
-          <option value="VVIP" ${u.role === 'VVIP' ? 'selected' : ''}>VVIP</option>
-          <option value="Admin" ${u.role === 'Admin' ? 'selected' : ''}>Admin</option>
-          <option value="Owner" ${u.role === 'Owner' ? 'selected' : ''}>Owner</option>
-        </select>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      background: '#121212',
-      color: '#fff',
-      preConfirm: () => ({
-        username: document.getElementById('editUsername').value,
-        role: document.getElementById('editRole').value
-      })
-    }).then(r => {
-      if(r.isConfirmed) {
-        db.ref('users/' + uid).update(r.value).then(() => {
-          Swal.fire('Updated!', '', 'success');
-          loadAdminUsers();
-        });
-      }
-    });
-  });
-}
-
-function manageAdminFollowers(uid) {
-  db.ref('users/' + uid).once('value').then(s => {
-    const u = s.val() || {};
-    let followers = [];
-    if(Array.isArray(u.followers)) followers = [...u.followers];
-    else if(u.followers) followers = Object.keys(u.followers);
-    
-    const fake = followers.filter(f => f.startsWith("User_")).length;
-    
-    Swal.fire({
-      title: 'Manage Followers',
-      html: `
-        <p style="color:#ccc;margin-bottom:15px;">Total: ${followers.length} (${followers.length-fake} real, ${fake} fake)</p>
-        <div style="display:grid;gap:10px;">
-          <button class="admin-btn" onclick="injectFakeFollowers('${uid}', 10)" style="width:100%;">+10 Fake</button>
-          <button class="admin-btn" onclick="injectFakeFollowers('${uid}', 50)" style="width:100%;">+50 Fake</button>
-          <button class="admin-btn" onclick="injectFakeFollowers('${uid}', 100)" style="width:100%;">+100 Fake</button>
-          <button class="admin-btn admin-btn-danger" onclick="clearFakeFollowers('${uid}')" style="width:100%;">Clear Fake</button>
-        </div>
-        <hr style="border-color:rgba(255,255,255,0.1);margin:15px 0;">
-        <input id="customFollowerCount" class="cyber-input" placeholder="Custom amount" type="number">
-        <select id="customFollowerMode" class="cyber-select">
-          <option value="add">Add</option>
-          <option value="remove">Remove</option>
-        </select>
-        <button class="admin-btn admin-btn-warn" onclick="applyCustomFollowers('${uid}')" style="width:100%;padding:12px;">Apply</button>
-      `,
-      background: '#121212',
-      color: '#fff',
-      showConfirmButton: false,
-      width: '500px'
-    });
-  });
-}
-
-function injectFakeFollowers(uid, amt) {
-  db.ref('users/' + uid).once('value').then(s => {
-    const u = s.val() || {};
-    let followers = [];
-    if(Array.isArray(u.followers)) followers = [...u.followers];
-    else if(u.followers) followers = Object.keys(u.followers);
-    
-    for(let i=0; i<amt; i++) followers.push("User_" + Math.floor(Math.random()*999999));
-    
-    db.ref('users/' + uid).update({followers}).then(() => {
-      Swal.fire('Added!', `${amt} fake followers added`, 'success');
-      loadAdminUsers();
-    });
-  });
-}
-
-function clearFakeFollowers(uid) {
-  db.ref('users/' + uid).once('value').then(s => {
-    const u = s.val() || {};
-    let followers = [];
-    if(Array.isArray(u.followers)) followers = [...u.followers];
-    else if(u.followers) followers = Object.keys(u.followers);
-    
-    followers = followers.filter(f => !f.startsWith("User_"));
-    
-    db.ref('users/' + uid).update({followers}).then(() => {
-      Swal.fire('Cleared!', 'Fake followers removed', 'success');
-      loadAdminUsers();
-    });
-  });
-}
-
-function applyCustomFollowers(uid) {
-  const count = parseInt(document.getElementById('customFollowerCount').value, 10);
-  const mode = document.getElementById('customFollowerMode').value;
-  
-  if(isNaN(count) || count <= 0) {
-    Swal.fire('Error', 'Enter valid number', 'error');
-    return;
-  }
-  
-  const delta = mode === 'add' ? count : -count;
-  
-  db.ref('users/' + uid).once('value').then(s => {
-    const u = s.val() || {};
-    let followers = [];
-    if(Array.isArray(u.followers)) followers = [...u.followers];
-    else if(u.followers) followers = Object.keys(u.followers);
-    
-    if(delta > 0) {
-      for(let i=0; i<delta; i++) followers.push("User_" + Math.floor(Math.random()*999999));
-    } else {
-      let toRemove = Math.abs(delta);
-      for(let i=followers.length-1; i>=0 && toRemove>0; i--) {
-        if(followers[i].startsWith("User_")) {
-          followers.splice(i, 1);
-          toRemove--;
-        }
-      }
-    }
-    
-    db.ref('users/' + uid).update({followers}).then(() => {
-      Swal.fire('Done!', 'Followers updated', 'success');
-      loadAdminUsers();
-    });
-  });
-}
-
-function deleteAdminUser(uid) {
-  Swal.fire({
-    title: 'Delete User?',
-    text: 'Cannot be undone!',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Delete',
-    confirmButtonColor: '#ff5252',
-    background: '#121212',
-    color: '#fff'
-  }).then(r => {
-    if(r.isConfirmed) {
-      db.ref('users/' + uid).remove().then(() => {
-        Swal.fire('Deleted!', '', 'success');
-        loadAdminUsers();
-      });
-    }
-  });
-}
-
-function quickAssignRole() {
-  const email = document.getElementById('roleUserEmail').value.trim();
-  const role = document.getElementById('roleSelect').value;
-  
-  if(!email) {
-    Swal.fire('Error', 'Enter email', 'error');
-    return;
-  }
-  
-  db.ref('users').orderByChild('email').equalTo(email).once('value').then(s => {
-    if(s.exists()) {
-      const uid = Object.keys(s.val())[0];
-      db.ref('users/' + uid).update({role}).then(() => {
-        Swal.fire('Success', `Role changed to ${role}`, 'success');
-        document.getElementById('roleUserEmail').value = '';
-      });
-    } else {
-      Swal.fire('Error', 'User not found', 'error');
-    }
-  });
-}
-
-function loadAdminSongs() {
-  const tbody = document.getElementById('adminSongsTableBody');
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Loading...</td></tr>';
-  
-  db.ref('songs').once('value').then(s => {
-    const songs = s.val() || {};
-    tbody.innerHTML = '';
-    Object.entries(songs).forEach(([sid, song]) => {
-      const row = tbody.insertRow();
-      row.innerHTML = `
-        <td>${song.title || 'Unknown'}</td>
-        <td>${song.artist || 'Unknown'}</td>
-        <td>${song.uploaderName || 'Unknown'}</td>
-        <td>${song.plays || 0}</td>
-        <td>
-          <button class="admin-btn admin-btn-danger" onclick="deleteAdminSong('${sid}')"><i class="fas fa-trash"></i></button>
-        </td>
-      `;
-    });
-  });
-}
-
-function filterAdminSongs() {
-  const term = document.getElementById('searchSong').value.toLowerCase();
-  document.querySelectorAll('#adminSongsTableBody tr').forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
-  });
-}
-
-function deleteAdminSong(sid) {
-  Swal.fire({
-    title: 'Delete Song?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Delete',
-    confirmButtonColor: '#ff5252',
-    background: '#121212',
-    color: '#fff'
-  }).then(r => {
-    if(r.isConfirmed) {
-      db.ref('songs/' + sid).remove().then(() => {
-        Swal.fire('Deleted!', '', 'success');
-        loadAdminSongs();
-      });
-    }
-  });
-}
-
-function sendAdminBroadcast() {
-  const title = document.getElementById('broadcastTitle').value.trim();
-  const message = document.getElementById('broadcastMessage').value.trim();
-  const duration = parseInt(document.getElementById('broadcastDuration').value);
-  
-  if(!title || !message) {
-    Swal.fire('Error', 'Fill all fields', 'error');
-    return;
-  }
-  
-  Swal.fire({
-    title: 'Send Broadcast?',
-    text: 'All users will see this',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Send',
-    background: '#121212',
-    color: '#fff'
-  }).then(r => {
-    if(r.isConfirmed) {
-      const data = {
-        title: title,
-        message: message,
-        duration: duration,
-        timestamp: Date.now(),
-        sender: userData.username || 'Admin'
-      };
-      
-      db.ref('broadcasts').push(data).then(() => {
-        Swal.fire('Sent!', 'Broadcast sent', 'success');
-        document.getElementById('broadcastTitle').value = 'SYSTEM ALERT';
-        document.getElementById('broadcastMessage').value = '';
-      });
-    }
-  });
-}
-
-// Check if user is admin and show button
-function checkAdminAccess() {
-  if(userData && (userData.role === 'Admin' || userData.role === 'Owner')) {
-    document.getElementById('adminAccessBtn').style.display = 'block';
-    generateAdminCode();
-  }
-}
-
-// Call this after user data is loaded
-setTimeout(checkAdminAccess, 2000);
-
-
-// Fix: Add missing updateFavoriteUI function
-function updateFavoriteUI(songId, isFavorite) {
-  if (!songId) return;
-  
-  // Update heart icon in player
-  const heartIcon = document.querySelector('#favBtn i');
-  if (heartIcon) {
-    if (isFavorite) {
-      heartIcon.classList.remove('fa-regular');
-      heartIcon.classList.add('fa-solid');
-      heartIcon.style.color = 'var(--tiktok-red)';
-    } else {
-      heartIcon.classList.remove('fa-solid');
-      heartIcon.classList.add('fa-regular');
-      heartIcon.style.color = '';
-    }
-  }
-  
-  // Update favorite buttons in song cards
-  const favBtns = document.querySelectorAll(`[data-song-id="${songId}"] .fav-btn, .song-card[data-id="${songId}"] .fav-btn`);
-  favBtns.forEach(btn => {
-    const icon = btn.querySelector('i');
-    if (icon) {
-      if (isFavorite) {
-        icon.classList.remove('fa-regular');
-        icon.classList.add('fa-solid');
-        icon.style.color = 'var(--tiktok-red)';
-      } else {
-        icon.classList.remove('fa-solid');
-        icon.classList.add('fa-regular');
-        icon.style.color = '';
-      }
-    }
-  });
-}
-
-// Fix: Add missing toggleFavorite function if not exists
-if (typeof toggleFavorite === 'undefined') {
-  window.toggleFavorite = function(songId) {
-    if (!currentUser) {
-      msg('Login untuk menambahkan favorit!');
-      return;
-    }
-    
-    const userFavRef = db.ref('users/' + currentUser.uid + '/favorites/' + songId);
-    
-    userFavRef.once('value').then(snapshot => {
-      if (snapshot.exists()) {
-        // Remove from favorites
-        userFavRef.remove().then(() => {
-          msg('Dihapus dari favorit');
-          updateFavoriteUI(songId, false);
-        });
-      } else {
-        // Add to favorites
-        userFavRef.set(true).then(() => {
-          msg('Ditambahkan ke favorit ❤️');
-          updateFavoriteUI(songId, true);
-        });
-      }
-    });
-  };
-}
-
-// Fix: Add safe initialization wrapper
-function safeInit() {
-  try {
-    if (typeof setup === 'function') {
-      // Wrap setup to handle errors
-      const originalSetup = setup;
-      window.setup = function() {
-        try {
-          originalSetup();
-        } catch(e) {
-          console.warn('Setup error (non-critical):', e.message);
-        }
-      };
-    }
-  } catch(e) {
-    console.warn('Init error (non-critical):', e.message);
-  }
-}
-
-// Call safe init after DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', safeInit);
-} else {
-  safeInit();
-}
-
-</script>
-
-  <div class="tutorial-overlay" id="tutorialOverlay">
-    <div class="tutorial-card">
-      <button class="close-btn" onclick="closeTutorial()">&times;</button>
-      <h3>Tutorial Upload via Top4Top</h3>
-      <div class="video-container">
-        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <p>Video oleh: Hexky</p>
-    </div>
-  </div>
-
-  <!-- Tutorial Card untuk Guest -->
-  <div class="tutorial-overlay" id="guestTutorialOverlay">
-    <div class="tutorial-card">
-      <button class="close-btn" onclick="closeGuestTutorial()">&times;</button>
-      <h3>Selamat Datang di ExeMusic! 🎵</h3>
-      <p style="font-size:14px; color:#ccc; margin-bottom:15px;">
-        Kamu masih sebagai <b>Guest</b>. Yuk, pelajari cara menggunakan ExeMusic:
-      </p>
-      
-      <div style="margin:15px 0;">
-        <div style="background:rgba(255,215,0,0.1); border:1px solid var(--accent); border-radius:8px; padding:12px; margin-bottom:10px;">
-          <h4 style="color:var(--accent); margin:0 0 8px 0; font-size:14px;">📤 Upload Lagu</h4>
-          <p style="font-size:12px; color:#ccc; margin:0;">
-            Klik tombol Upload, pilih file audio, dan bagikan musik favoritmu!
-          </p>
-          <button class="tutorial-link" onclick="openTutorial(); closeGuestTutorial();" style="background:transparent; border:none; color:#3498db; cursor:pointer; font-size:12px; margin-top:5px;">
-            View Tutorial Upload : click here
-          </button>
-        </div>
-        
-        <div style="background:rgba(255,215,0,0.1); border:1px solid var(--accent); border-radius:8px; padding:12px;">
-          <h4 style="color:var(--accent); margin:0 0 8px 0; font-size:14px;">🎧 Play URL BB di Server</h4>
-          <p style="font-size:12px; color:#ccc; margin:0;">
-            Gunakan command <code>/setbb</code> di server Execurive Roleplay untuk memutar musik.
-          </p>
-          <button class="tutorial-link" onclick="openBBTutorial(); closeGuestTutorial();" style="background:transparent; border:none; color:#3498db; cursor:pointer; font-size:12px; margin-top:5px;">
-            View Tutorial Play Url BB di server execurive roleplay : click here
-          </button>
-        </div>
-      </div>
-      
-      <div style="text-align:center; margin-top:20px;">
-        <button class="shop-action" onclick="closeGuestTutorial()" style="width:auto; padding:8px 20px;">
-          Lanjutkan sebagai Guest
-        </button>
-        <button class="shop-action" oncl
-  <!-- ADMIN PANEL FEATURES -->
-  <button class="admin-access-btn" id="adminAccessBtn" onclick="showAdminLock()">
-    <i class="fas fa-shield-alt"></i> Admin Panel
-  </button>
-
-  <!-- Admin Lock Screen -->
-  <div id="adminLockScreen">
-    <div class="lock-card">
-      <i class="fas fa-lock lock-icon"></i>
-      <div class="lock-title">ADMIN ACCESS</div>
-      <div class="lock-subtitle">Enter 5-digit security code</div>
-      
-      <div class="code-input-container">
-        <input type="text" maxlength="1" class="code-digit" id="code1" onkeyup="moveToNext(this, 'code2')" onpaste="handlePaste(event)">
-        <input type="text" maxlength="1" class="code-digit" id="code2" onkeyup="moveToNext(this, 'code3')">
-        <input type="text" maxlength="1" class="code-digit" id="code3" onkeyup="moveToNext(this, 'code4')">
-        <input type="text" maxlength="1" class="code-digit" id="code4" onkeyup="moveToNext(this, 'code5')">
-        <input type="text" maxlength="1" class="code-digit" id="code5" onkeyup="checkAdminCode()">
-      </div>
-
-      <button class="lock-submit-btn" onclick="checkAdminCode()">
-        <i class="fas fa-key"></i> Verify
-      </button>
-      <button class="lock-cancel-btn" onclick="hideAdminLock()">
-        <i class="fas fa-times"></i> Cancel
-      </button>
-    </div>
-  </div>
-
-  <!-- Admin Panel -->
-  <div id="adminPanel">
-    <div class="admin-sidebar">
-      <div class="admin-logo">
-        <i class="fas fa-shield-alt"></i><br>ADMIN PANEL
-      </div>
-
-      <button class="admin-nav-btn active" onclick="switchAdminView('dashboard')">
-        <i class="fas fa-home"></i> Dashboard
-      </button>
-      <button class="admin-nav-btn" onclick="switchAdminView('users')">
-        <i class="fas fa-users"></i> Users
-      </button>
-      <button class="admin-nav-btn" onclick="switchAdminView('roles')">
-        <i class="fas fa-user-tag"></i> Roles
-      </button>
-      <button class="admin-nav-btn" onclick="switchAdminView('songs')">
-        <i class="fas fa-music"></i> Songs
-      </button>
-      <button class="admin-nav-btn" onclick="switchAdminView('broadcast')">
-        <i class="fas fa-bullhorn"></i> Broadcast
-      </button>
-
-      <button class="admin-exit-btn" onclick="exitAdminPanel()">
-        <i class="fas fa-sign-out-alt"></i> Exit
-      </button>
-    </div>
-
-    <div class="admin-main-view">
-      <div class="admin-view-section active" id="admin-dashboard">
-        <h1 style="font-family: 'Rajdhani', sans-serif; color: var(--accent-admin); margin-bottom: 20px;">
-          <i class="fas fa-chart-line"></i> Dashboard
-        </h1>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value" id="adminTotalUsers">0</div>
-            <div class="stat-label">Total Users</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="adminTotalSongs">0</div>
-            <div class="stat-label">Total Songs</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="adminOnlineUsers">0</div>
-            <div class="stat-label">Online</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="adminTotalPlays">0</div>
-            <div class="stat-label">Total Plays</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-view-section" id="admin-users">
-        <h1 style="font-family: 'Rajdhani', sans-serif; color: var(--accent-admin); margin-bottom: 20px;">
-          <i class="fas fa-users"></i> User Management
-        </h1>
-        <div class="admin-card">
-          <h2>All Users</h2>
-          <input type="text" class="cyber-input" id="searchUser" placeholder="Search..." onkeyup="filterAdminUsers()" style="margin-bottom: 15px;">
-          <div style="overflow-x: auto;">
-            <table class="cyber-table">
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Songs</th>
-                  <th>Followers</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="adminUsersTableBody">
-                <tr><td colspan="6" style="text-align: center;">Loading...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-view-section" id="admin-roles">
-        <h1 style="font-family: 'Rajdhani', sans-serif; color: var(--accent-admin); margin-bottom: 20px;">
-          <i class="fas fa-user-tag"></i> Role Management
-        </h1>
-        <div class="admin-card">
-          <h2>Quick Assignment</h2>
-          <input type="email" class="cyber-input" id="roleUserEmail" placeholder="User email">
-          <select class="cyber-select" id="roleSelect">
-            <option value="User">User</option>
-            <option value="Sepuh">Sepuh</option>
-            <option value="VVIP">VVIP</option>
-            <option value="Admin">Admin</option>
-            <option value="Owner">Owner</option>
-            <option value="Developer">Developer</option>
-          </select>
-          <button class="admin-btn" style="width: 100%; padding: 12px;" onclick="quickAssignRole()">
-            <i class="fas fa-check"></i> Assign Role
-          </button>
-        </div>
-      </div>
-
-      <div class="admin-view-section" id="admin-songs">
-        <h1 style="font-family: 'Rajdhani', sans-serif; color: var(--accent-admin); margin-bottom: 20px;">
-          <i class="fas fa-music"></i> Song Management
-        </h1>
-        <div class="admin-card">
-          <h2>All Songs</h2>
-          <input type="text" class="cyber-input" id="searchSong" placeholder="Search..." onkeyup="filterAdminSongs()" style="margin-bottom: 15px;">
-          <div style="overflow-x: auto;">
-            <table class="cyber-table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Artist</th>
-                  <th>Uploader</th>
-                  <th>Plays</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="adminSongsTableBody">
-                <tr><td colspan="5" style="text-align: center;">Loading...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-view-section" id="admin-broadcast">
-        <h1 style="font-family: 'Rajdhani', sans-serif; color: var(--accent-admin); margin-bottom: 20px;">
-          <i class="fas fa-bullhorn"></i> Broadcast
-        </h1>
-        <div class="admin-card">
-          <h2>Send Message</h2>
-          <input type="text" class="cyber-input" id="broadcastTitle" placeholder="Title" value="SYSTEM ALERT">
-          <textarea class="cyber-input" id="broadcastMessage" rows="4" placeholder="Message..." style="resize: vertical;"></textarea>
-          <input type="number" class="cyber-input" id="broadcastDuration" value="10" min="3" max="30" placeholder="Duration (seconds)">
-          <button class="admin-btn admin-btn-warn" style="width: 100%; padding: 12px;" onclick="sendAdminBroadcast()">
-            <i class="fas fa-paper-plane"></i> Send Broadcast
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<script>
-// Handle image loading errors gracefully
-document.addEventListener('DOMContentLoaded', function() {
-  // Replace broken images with placeholder
-  document.querySelectorAll('img').forEach(img => {
-    img.addEventListener('error', function() {
-      if (!this.src.includes('ui-avatars.com')) {
-        this.src = 'https://ui-avatars.com/api/?name=ExeMusic&size=150&background=00ff88&color=000';
-      }
-    });
-  });
-});
-</script>
+  </script>
 
 </body>
 </html>
