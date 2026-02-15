@@ -568,29 +568,68 @@
       padding: 7px 10px;
       font-size: 11px;
       border-bottom: 1px solid rgba(255,255,255,0.04);
+      gap: 10px;
     }
     .upload-queue-item:last-child {
       border-bottom: none;
     }
-    .upload-queue-title {
+    .upload-queue-main {
       flex: 1;
-      margin-right: 8px;
+      min-width: 0;
+    }
+    .upload-queue-title {
+      margin-right: 4px;
       color: #ddd;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .upload-queue-meta {
-      text-align: right;
-      color: #aaa;
-    }
     .upload-queue-time {
       font-size: 10px;
+      color: #888;
+    }
+    .upload-queue-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .upload-queue-status {
-      font-size: 10px;
+      font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: #ccc;
+      white-space: nowrap;
+    }
+    .upload-queue-status.status-queued {
+      background: rgba(0,255,136,0.08);
+      color: #7bffb9;
+    }
+    .upload-queue-status.status-processing {
+      background: rgba(0,212,255,0.08);
+      color: #7be9ff;
+    }
+    .upload-queue-status.status-done {
+      background: rgba(120,120,120,0.2);
+      color: #bbb;
+    }
+    .upload-queue-btn {
+      border: none;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .upload-queue-btn:hover {
+      background: rgba(255,255,255,0.12);
     }
 
     /* ============================================================
@@ -2343,9 +2382,8 @@
       if (!section || !listEl || !infoEl || !userData) return;
       const vipType = getVipStatus(userData);
       const limit = userData.role === 'admin' ? 0 : (vipType ? 2 : 1);
-      const entries = Object.keys(map || {}).map(id => ({ id, ...(map[id] || {}) })).sort((a, b) => {
-        return (a.scheduledAt || 0) - (b.scheduledAt || 0);
-      });
+      const entries = Object.keys(map || {}).map(id => ({ id, ...(map[id] || {}) }))
+        .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0));
       if (!entries.length) {
         section.style.display = 'none';
         return;
@@ -2358,9 +2396,21 @@
         const t = it.title || '';
         const timeStr = it.scheduledAt ? new Date(it.scheduledAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
         let statusLabel = 'Queued';
-        if (it.status === 'processing') statusLabel = 'Processing';
-        else if (it.status === 'done') statusLabel = 'Uploaded';
-        return `<div class="upload-queue-item"><div class="upload-queue-title">${escapeHtml(t)}</div><div class="upload-queue-meta"><div class="upload-queue-time">${escapeHtml(timeStr)}</div><div class="upload-queue-status">${escapeHtml(statusLabel)}</div></div></div>`;
+        let statusClass = 'status-queued';
+        if (it.status === 'processing') { statusLabel = 'Processing'; statusClass = 'status-processing'; }
+        else if (it.status === 'done') { statusLabel = 'Uploaded'; statusClass = 'status-done'; }
+        const disabled = it.status === 'processing';
+        return `<div class="upload-queue-item">
+          <div class="upload-queue-main">
+            <div class="upload-queue-title">${escapeHtml(t)}</div>
+            <div class="upload-queue-time">${escapeHtml(timeStr)}</div>
+          </div>
+          <div class="upload-queue-actions">
+            <span class="upload-queue-status ${statusClass}">${escapeHtml(statusLabel)}</span>
+            <button class="upload-queue-btn" onclick="editUploadQueueItem('${it.id}')" ${disabled ? 'disabled' : ''}><i class="fas fa-pen"></i></button>
+            <button class="upload-queue-btn" onclick="deleteUploadQueueItem('${it.id}')" ${disabled ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+          </div>
+        </div>`;
       }).join('');
     }
     async function processUploadQueue(uid) {
@@ -2388,6 +2438,63 @@
       await itemRef.update({ status: 'done', uploadedAt: Date.now(), songKey });
       await db.ref('users/' + uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload (queue): ' + (cur.title || ''), fromName: userData.username, timestamp: Date.now() });
       msg('✅ Upload queue terupload: ' + (cur.title || ''));
+    }
+    async function editUploadQueueItem(id) {
+      if (!auth.currentUser || !userData || !id) return;
+      const uid = auth.currentUser.uid;
+      const snap = await db.ref('uploadQueue/' + uid + '/' + id).get();
+      const item = snap.val();
+      if (!item) { msg('Queue tidak ditemukan'); return; }
+      if (item.status === 'processing') { msg('Queue sedang diproses'); return; }
+      const safeTitle = (item.title || '').replace(/"/g, '&quot;');
+      const safeUrl = (item.url || '').replace(/"/g, '&quot;');
+      Swal.fire({
+        title: 'Edit Upload Queue',
+        html:
+          '<input id="qTitle" class="swal2-input" placeholder="Judul Lagu" value="' + safeTitle + '">' +
+          '<input id="qUrl" class="swal2-input" placeholder="URL MP3" value="' + safeUrl + '">',
+        focusConfirm: false,
+        showCancelButton: true,
+        background: '#181818',
+        color: '#fff',
+        confirmButtonColor: '#00ff88',
+        cancelButtonColor: '#d33',
+        preConfirm: () => {
+          const title = (document.getElementById('qTitle').value || '').trim();
+          const url = (document.getElementById('qUrl').value || '').trim();
+          if (!title || !url) {
+            Swal.showValidationMessage('Judul dan URL wajib diisi');
+            return;
+          }
+          return { title, url };
+        }
+      }).then(async res => {
+        if (!res.value) return;
+        await db.ref('uploadQueue/' + uid + '/' + id).update({
+          title: res.value.title,
+          url: res.value.url
+        });
+        msg('Queue diperbarui');
+      });
+    }
+    function deleteUploadQueueItem(id) {
+      if (!auth.currentUser || !id) return;
+      const uid = auth.currentUser.uid;
+      Swal.fire({
+        title: 'Hapus dari queue?',
+        text: 'Lagu tidak akan diupload otomatis.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4d4f',
+        cancelButtonColor: '#555',
+        confirmButtonText: 'Ya, hapus',
+        background: '#181818',
+        color: '#fff'
+      }).then(async r => {
+        if (!r.isConfirmed) return;
+        await db.ref('uploadQueue/' + uid + '/' + id).remove();
+        msg('Queue dihapus');
+      });
     }
     function getUploadQueueLimit() {
       if (!userData || userData.role === 'admin') return 0;
