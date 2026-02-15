@@ -2789,7 +2789,6 @@
           <div>
             <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">LAINNYA</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="swal2-confirm swal2-styled" style="background:#1565c0;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adSetKetupat('${uid}')">SET KETUPAT 💠</button>
               <button class="swal2-confirm swal2-styled" style="background:#388e3c;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adResetCD('${uid}')">RESET COOLDOWN</button>
             </div>
           </div>
@@ -2842,11 +2841,6 @@
         fol = fol.filter(f => !String(f).startsWith('fake_'));
         db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
       });
-    }
-
-    function adSetKetupat(uid) {
-      Swal.fire({ title: 'Set Ketupat 💠', input: 'number', inputLabel: 'Jumlah ketupat', inputAttributes: { min: 0 }, background: '#0d0d15', color: '#fff' })
-        .then(r => { const v = parseInt(r.value, 10); if (!isNaN(v)) { db.ref('users/' + uid).update({ ketupat: v }).then(() => { addLog('Ketupat ' + v + ': ' + uid); showToast('Ketupat diset ' + v); adLoadData(); }); } });
     }
 
     function adResetCD(uid) { db.ref('users/' + uid + '/lastUpload').remove().then(() => { addLog('Reset CD: ' + uid); showToast('Cooldown direset!'); }); }
