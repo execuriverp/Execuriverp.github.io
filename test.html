@@ -659,38 +659,86 @@
        VIP TRIAL SYSTEM
     ============================================================ */
     .vip-trial-banner {
-      background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,152,0,0.08));
-      border: 1px solid rgba(255,215,0,0.3);
+      background: linear-gradient(135deg, rgba(255,215,0,0.16), rgba(255,152,0,0.1));
+      border: 1px solid rgba(255,215,0,0.4);
       border-radius: 10px;
       padding: 10px 14px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       display: none;
       align-items: center;
       gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
     }
     .vip-trial-banner.show { display: flex; }
     .vip-trial-banner i { color: var(--gold); font-size: 18px; flex-shrink: 0; }
     .vip-trial-info { flex: 1; }
-    .vip-trial-info .vt-label { font-size: 10px; color: var(--gold); font-weight: 800; letter-spacing: 1px; font-family: 'Rajdhani', sans-serif; }
+    .vip-trial-info .vt-label { font-size: 10px; color: var(--gold); font-weight: 800; letter-spacing: 1px; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
     .vip-trial-info .vt-timer { font-size: 13px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; }
+
+    /* ============================================================
+       LEBARAN COUNTDOWN
+    ============================================================ */
+    .event-countdown {
+      background: linear-gradient(135deg, rgba(0,212,255,0.18), rgba(0,150,136,0.12));
+      border: 1px solid rgba(0,212,255,0.4);
+      border-radius: 10px;
+      padding: 9px 14px;
+      margin-bottom: 12px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    }
+    .event-countdown.show { display: flex; }
+    .event-countdown .ec-main { display: flex; flex-direction: column; gap: 2px; }
+    .event-countdown .ec-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase; color: #00d4ff; font-family: 'Rajdhani', sans-serif;
+    }
+    .event-countdown .ec-time {
+      font-size: 13px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace;
+    }
+    .event-countdown .ec-badge {
+      margin-left: auto; padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.5);
+      color: #ffd700;
+      border: 1px solid rgba(255,215,0,0.4);
+    }
+    .event-countdown.celebrate {
+      background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,152,0,0.24));
+      border-color: rgba(255,215,0,0.8);
+    }
 
     /* ============================================================
        ADMIN PANEL (built-in)
     ============================================================ */
     .admin-panel-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 5000;
-      display: none; flex-direction: column;
-      backdrop-filter: blur(15px);
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(12px);
     }
     .admin-panel-overlay.show { display: flex; }
 
     .admin-panel {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      flex: 1;
-      background: radial-gradient(ellipse at 50% -10%, rgba(255,193,7,0.08), transparent 60%),
+      width: 100%;
+      max-width: 960px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(ellipse at 50% -10%, rgba(255,193,7,0.1), transparent 60%),
                   linear-gradient(180deg, #05050c, #07070f);
+      border-radius: 18px;
       overflow: hidden;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255,255,255,0.06);
     }
 
     .admin-header {
@@ -1078,7 +1126,7 @@
   <div id="mtScreen" class="full-overlay"><i class="fas fa-tools" style="color:var(--accent)"></i><h1>Server Maintenance</h1><p>Kami sedang melakukan pembaruan sistem.<br>Mohon tunggu sebentar lagi.</p></div>
   <div id="bannedScreen" class="full-overlay"><i class="fas fa-user-slash" style="color:var(--danger)"></i><h1>Access Denied</h1><p>Akun anda telah diblokir secara permanen.</p></div>
 
-  <div id="toastLegacy">Notification</div>
+  <div id="toastLegacy" style="display:none"></div>
 
     <!-- Notif Panel — OUTSIDE .app to avoid overflow:hidden clipping -->
     <div id="notifPanel" class="notif-panel">
@@ -1116,8 +1164,17 @@
       <i class="fas fa-crown"></i>
       <div class="vip-trial-info">
         <div class="vt-label">VIP TRIAL AKTIF</div>
-        <div class="vt-timer" id="vipTrialTimer">--h --m --d</div>
+        <div class="vt-timer" id="vipTrialTimer">--d --h --m</div>
       </div>
+    </div>
+
+    <!-- Lebaran Countdown -->
+    <div class="event-countdown" id="lebaranCountdown">
+      <div class="ec-main">
+        <div class="ec-label">Countdown Lebaran</div>
+        <div class="ec-time" id="lebaranTimer">--d --h --m</div>
+      </div>
+      <div class="ec-badge">Idulfitri</div>
     </div>
 
     <div class="cover-box">
@@ -1246,6 +1303,16 @@
             <div style="display:flex; gap:8px; flex-wrap:wrap">
               <button class="admin-btn admin-btn-green" onclick="openCopyUrlCard()">COPY DEEP LINK</button>
               <button class="admin-btn admin-btn-red" onclick="adOpenClearNotif()">CLEAR MY NOTIFS</button>
+            </div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="fas fa-moon"></i> LEBARAN COUNTDOWN</h3>
+            <p style="font-size:11px; color:#888; margin-bottom:8px">Atur tanggal Idulfitri supaya countdown muncul untuk semua user.</p>
+            <input class="admin-inp" id="adLebaranDate" type="date">
+            <input class="admin-inp" id="adLebaranTime" type="time" value="00:00">
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+              <button class="admin-btn admin-btn-gold" onclick="adSaveLebaran()">SAVE</button>
+              <button class="admin-btn admin-btn-red" onclick="adClearLebaran()">CLEAR</button>
             </div>
           </div>
         </div>
@@ -1658,6 +1725,7 @@
     let userCache = {};
     let isFirstTimeUser = false;
     let adAllUsers = [], adAllSongs = [];
+    let lebaranInterval = null;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -1734,6 +1802,35 @@
         document.getElementById('mtScreen').style.display = 'none';
       }
       if (val.announcement) triggerBroadcast(val.announcement);
+
+      const lc = document.getElementById('lebaranCountdown');
+      const lt = document.getElementById('lebaranTimer');
+      if (val.lebaranTs && typeof val.lebaranTs === 'number') {
+        setupLebaranCountdown(val.lebaranTs);
+        if (lc && lt) {
+          lc.classList.add('show');
+        }
+        const dEl = document.getElementById('adLebaranDate');
+        const tEl = document.getElementById('adLebaranTime');
+        if (dEl && tEl) {
+          const dt = new Date(val.lebaranTs);
+          const yyyy = dt.getFullYear();
+          const mm = String(dt.getMonth() + 1).padStart(2, '0');
+          const dd = String(dt.getDate()).padStart(2, '0');
+          const hh = String(dt.getHours()).padStart(2, '0');
+          const mi = String(dt.getMinutes()).padStart(2, '0');
+          dEl.value = `${yyyy}-${mm}-${dd}`;
+          tEl.value = `${hh}:${mi}`;
+        }
+      } else {
+        if (lebaranInterval) {
+          clearInterval(lebaranInterval);
+          lebaranInterval = null;
+        }
+        if (lc) {
+          lc.classList.remove('show', 'celebrate');
+        }
+      }
     });
 
     // ============================================================
@@ -1935,11 +2032,44 @@
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}d ${h}h ${m}m remaining`;
+        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
         banner.classList.add('show');
       }
       update();
       setInterval(update, 60000);
+    }
+
+    // ============================================================
+    // LEBARAN COUNTDOWN
+    // ============================================================
+    function setupLebaranCountdown(targetTs) {
+      const wrap = document.getElementById('lebaranCountdown');
+      const timerEl = document.getElementById('lebaranTimer');
+      if (!wrap || !timerEl) return;
+      if (lebaranInterval) {
+        clearInterval(lebaranInterval);
+        lebaranInterval = null;
+      }
+      function updateLebaran() {
+        const now = Date.now();
+        const diff = targetTs - now;
+        if (diff <= 0) {
+          timerEl.textContent = 'Selamat Idulfitri! 🌙';
+          wrap.classList.add('celebrate');
+          if (lebaranInterval) {
+            clearInterval(lebaranInterval);
+            lebaranInterval = null;
+          }
+          return;
+        }
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        wrap.classList.add('show');
+      }
+      updateLebaran();
+      lebaranInterval = setInterval(updateLebaran, 60000);
     }
 
     // ============================================================
@@ -2574,6 +2704,30 @@
       showToast('✅ Broadcast terkirim!');
     }
     function adClearBC() { db.ref('settings/announcement').remove(); showToast('Broadcast dihapus'); }
+    function adSaveLebaran() {
+      const d = document.getElementById('adLebaranDate').value;
+      const t = document.getElementById('adLebaranTime').value || '00:00';
+      if (!d) { showToast('Isi tanggal Lebaran dulu!'); return; }
+      const partsD = d.split('-').map(Number);
+      const partsT = t.split(':').map(Number);
+      const year = partsD[0], month = (partsD[1] || 1) - 1, day = partsD[2] || 1;
+      const hour = partsT[0] || 0, minute = partsT[1] || 0;
+      const ts = new Date(year, month, day, hour, minute, 0).getTime();
+      if (isNaN(ts)) { showToast('Tanggal tidak valid'); return; }
+      db.ref('settings').update({ lebaranTs: ts }).then(() => {
+        addLog('Set Lebaran TS: ' + ts);
+        showToast('✅ Countdown Lebaran disimpan');
+      });
+    }
+    function adClearLebaran() {
+      db.ref('settings/lebaranTs').remove().then(() => {
+        addLog('Clear Lebaran TS');
+        showToast('Countdown Lebaran dimatikan');
+        const lc = document.getElementById('lebaranCountdown');
+        if (lc) lc.classList.remove('show', 'celebrate');
+        if (lebaranInterval) { clearInterval(lebaranInterval); lebaranInterval = null; }
+      });
+    }
     function adToggleMT() {
       adMtState = !adMtState;
       db.ref('settings').update({ mt: adMtState });
