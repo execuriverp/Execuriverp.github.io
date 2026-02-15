@@ -1412,7 +1412,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalProfile" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalProfile" onclick="if(event.target==this){this.style.display='none';stopHearts();}">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header" id="profileHeader">
         <div class="mp-avatar-container">
@@ -1786,7 +1786,10 @@
       setTimeout(() => el.remove(), 2900);
     }
     function msg(m) { showToast(m); }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+      stopHearts();
+    }
 
     // ============================================================
     // SETTINGS LISTENER
@@ -1976,12 +1979,8 @@
             profHeader.classList.remove('vip', 'pink-profile');
             if (userData.tag && userData.tag.toLowerCase() === 'velly') {
               profHeader.classList.add('pink-profile');
-              startHearts();
             } else if (vipActive) {
               profHeader.classList.add('vip');
-              stopHearts();
-            } else {
-              stopHearts();
             }
           }
 
@@ -2287,6 +2286,8 @@
         `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div class="mp-song-icon" style="color:var(--tiktok-red)"><i class="fas fa-heart"></i></div><div class="mp-song-info"><div class="mp-song-title">${escapeHtml(s.title)}</div><div class="mp-song-artist">@${escapeHtml(s.by)}</div></div></div>`
       ).join('');
       switchProfileTab('posts');
+      if (userData && userData.tag && userData.tag.toLowerCase() === 'velly') startHearts();
+      else stopHearts();
       document.getElementById('modalProfile').style.display = 'block';
     }
     function switchProfileTab(tab) {
