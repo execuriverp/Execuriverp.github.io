@@ -204,14 +204,35 @@
        VELLY TAG - PINK HEARTS EFFECT
     ============================================================ */
     .tag-velly {
-      background: linear-gradient(135deg, #ff1493, #ff69b4, #ff1493);
+      background:
+        radial-gradient(circle at 0 0, rgba(255,182,193,0.55), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(255,192,203,0.45), transparent 55%),
+        linear-gradient(135deg, #ff1493, #ff69b4, #ff1493);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.7);
       font-weight: 900;
-      box-shadow: 0 0 12px rgba(255,20,147,0.6), inset 0 0 8px rgba(255,255,255,0.2);
+      letter-spacing: 1px;
+      box-shadow: 0 0 14px rgba(255,20,147,0.9), 0 0 28px rgba(255,105,180,0.7);
       position: relative;
       overflow: visible;
-      animation: vellyPulse 2s ease-in-out infinite;
+      border-radius: 999px;
+      animation: vellyPulse 1.7s ease-in-out infinite;
+    }
+    .tag-velly::before,
+    .tag-velly::after {
+      content: '❤';
+      position: absolute;
+      top: -6px;
+      font-size: 9px;
+      opacity: 0.9;
+    }
+    .tag-velly::before {
+      left: -4px;
+      transform: rotate(-12deg);
+    }
+    .tag-velly::after {
+      right: -4px;
+      transform: rotate(10deg);
     }
     @keyframes vellyPulse {
       0%, 100% { box-shadow: 0 0 12px rgba(255,20,147,0.6), inset 0 0 8px rgba(255,255,255,0.2); }
@@ -650,8 +671,6 @@
     @keyframes savageFlash { 0%,100% { border-color: #ff0050; text-shadow: 0 0 8px #ff0050; } 50% { border-color: #ff6b6b; text-shadow: 0 0 16px #ff0050, 0 0 30px #ff0050; } }
     .tag-maniac { background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(233,30,99,0.5); }
     .tag-ultra { background: linear-gradient(135deg, #00bcd4, #009688, #4caf50); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(0,188,212,0.5); border: 1px solid rgba(255,255,255,0.3); }
-    /* VELLY TAG */
-    .tag-velly { background: linear-gradient(135deg, #ff1493, #ff69b4, #c2185b); color: #fff; border: 1px solid rgba(255,255,255,0.3); font-weight: 900; box-shadow: 0 0 12px rgba(255,20,147,0.6); animation: vellyPulse 2s ease-in-out infinite; }
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 3px; }
 
@@ -1470,7 +1489,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopProfileMusic();}">
+  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
@@ -2022,7 +2041,7 @@
           if (profHeader) {
             profHeader.classList.remove('vip', 'pink-profile');
             const tagLower = (userData.tag || '').toLowerCase();
-            if (tagLower.startsWith('velly')) {
+            if (tagLower.includes('velly')) {
               profHeader.classList.add('pink-profile');
             }
           }
@@ -2354,7 +2373,7 @@
       ).join('');
       switchProfileTab('posts');
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
-      if (myTagLower.startsWith('velly')) startHearts();
+      if (myTagLower.includes('velly')) startHearts();
       else stopHearts();
       if (userData && userData.profilemusic) playProfileMusic(userData.profilemusic);
       else stopProfileMusic();
@@ -2391,8 +2410,14 @@
       if (creatorHeader) {
         creatorHeader.classList.remove('vip', 'pink-profile');
         const cTagLower = (cData && cData.tag ? cData.tag.toLowerCase() : '');
-        if (cTagLower.startsWith('velly')) creatorHeader.classList.add('pink-profile');
-        else if (creatorVip) creatorHeader.classList.add('vip');
+        const isVellyCreator = cTagLower.includes('velly');
+        if (isVellyCreator) {
+          creatorHeader.classList.add('pink-profile');
+          startHearts();
+        } else {
+          if (creatorVip) creatorHeader.classList.add('vip');
+          stopHearts();
+        }
       }
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
