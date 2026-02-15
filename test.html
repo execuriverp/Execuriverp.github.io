@@ -674,6 +674,14 @@
     .vip-trial-info { flex: 1; }
     .vip-trial-info .vt-label { font-size: 10px; color: var(--gold); font-weight: 800; letter-spacing: 1px; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
     .vip-trial-info .vt-timer { font-size: 13px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; }
+    .vip-trial-close {
+      margin-left: 8px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      cursor: pointer;
+    }
 
     /* ============================================================
        LEBARAN COUNTDOWN
@@ -706,6 +714,14 @@
       background: rgba(0,0,0,0.5);
       color: #ffd700;
       border: 1px solid rgba(255,215,0,0.4);
+    }
+    .event-countdown .ec-close {
+      margin-left: 6px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      cursor: pointer;
     }
     .event-countdown.celebrate {
       background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,152,0,0.24));
@@ -1166,6 +1182,7 @@
         <div class="vt-label">VIP TRIAL AKTIF</div>
         <div class="vt-timer" id="vipTrialTimer">--d --h --m</div>
       </div>
+      <button class="vip-trial-close" onclick="closeVipTrialBanner()">×</button>
     </div>
 
     <!-- Lebaran Countdown -->
@@ -1175,6 +1192,7 @@
         <div class="ec-time" id="lebaranTimer">--d --h --m</div>
       </div>
       <div class="ec-badge">Idulfitri</div>
+      <button class="ec-close" onclick="closeLebaranCountdown()">×</button>
     </div>
 
     <div class="cover-box">
@@ -1732,6 +1750,7 @@
     let isFirstTimeUser = false;
     let adAllUsers = [], adAllSongs = [];
     let lebaranInterval = null;
+    let vipTrialBannerClosed = false;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -2002,7 +2021,8 @@
           const profHeader = document.getElementById('profileHeader');
           if (profHeader) {
             profHeader.classList.remove('vip', 'pink-profile');
-            if (userData.tag && userData.tag.toLowerCase() === 'velly') {
+            const tagLower = (userData.tag || '').toLowerCase();
+            if (tagLower.startsWith('velly')) {
               profHeader.classList.add('pink-profile');
             }
           }
@@ -2056,6 +2076,7 @@
       if (!banner || !timerEl) return;
 
       function update() {
+        if (vipTrialBannerClosed) { banner.classList.remove('show'); return; }
         const now = Date.now();
         const diff = expireAt - now;
         if (diff <= 0) { banner.classList.remove('show'); return; }
@@ -2067,6 +2088,12 @@
       }
       update();
       setInterval(update, 60000);
+    }
+
+    function closeVipTrialBanner() {
+      vipTrialBannerClosed = true;
+      const banner = document.getElementById('vipTrialBanner');
+      if (banner) banner.classList.remove('show');
     }
 
     // ============================================================
@@ -2100,6 +2127,15 @@
       }
       updateLebaran();
       lebaranInterval = setInterval(updateLebaran, 60000);
+    }
+
+    function closeLebaranCountdown() {
+      const wrap = document.getElementById('lebaranCountdown');
+      if (wrap) wrap.classList.remove('show', 'celebrate');
+      if (lebaranInterval) {
+        clearInterval(lebaranInterval);
+        lebaranInterval = null;
+      }
     }
 
     // ============================================================
@@ -2317,7 +2353,8 @@
         `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div class="mp-song-icon" style="color:var(--tiktok-red)"><i class="fas fa-heart"></i></div><div class="mp-song-info"><div class="mp-song-title">${escapeHtml(s.title)}</div><div class="mp-song-artist">@${escapeHtml(s.by)}</div></div></div>`
       ).join('');
       switchProfileTab('posts');
-      if (userData && userData.tag && userData.tag.toLowerCase() === 'velly') startHearts();
+      const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
+      if (myTagLower.startsWith('velly')) startHearts();
       else stopHearts();
       if (userData && userData.profilemusic) playProfileMusic(userData.profilemusic);
       else stopProfileMusic();
@@ -2353,7 +2390,8 @@
       const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
       if (creatorHeader) {
         creatorHeader.classList.remove('vip', 'pink-profile');
-        if (cData?.tag && cData.tag.toLowerCase() === 'velly') creatorHeader.classList.add('pink-profile');
+        const cTagLower = (cData && cData.tag ? cData.tag.toLowerCase() : '');
+        if (cTagLower.startsWith('velly')) creatorHeader.classList.add('pink-profile');
         else if (creatorVip) creatorHeader.classList.add('vip');
       }
 
