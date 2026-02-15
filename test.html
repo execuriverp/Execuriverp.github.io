@@ -2604,18 +2604,16 @@
     }
 
     function adLoadData() {
-      // Users
-      db.ref('users').once('value').then(snap => {
-        adAllUsers = [];
-        snap.forEach(child => adAllUsers.push({ uid: child.key, ...child.val() }));
+      db.ref('users').on('value', snap => {
+        const data = snap.val() || {};
+        adAllUsers = Object.keys(data).map(uid => ({ uid, ...data[uid] }));
         document.getElementById('adCountU').innerText = adAllUsers.length;
         adRenderUsers(adAllUsers);
       });
-      // Songs count from DB
-      db.ref('songs').once('value').then(snap => {
-        document.getElementById('adCountS').innerText = snap.numChildren();
-        adAllSongs = [];
-        snap.forEach(c => adAllSongs.push({ key: c.key, ...c.val() }));
+      db.ref('songs').on('value', snap => {
+        const data = snap.val() || {};
+        adAllSongs = Object.keys(data).map(key => ({ key, ...data[key] }));
+        document.getElementById('adCountS').innerText = adAllSongs.length;
       });
       // Logs - realtime
       db.ref('logs').limitToLast(50).on('value', snap => {
