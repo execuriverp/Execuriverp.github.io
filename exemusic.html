@@ -204,14 +204,35 @@
        VELLY TAG - PINK HEARTS EFFECT
     ============================================================ */
     .tag-velly {
-      background: linear-gradient(135deg, #ff1493, #ff69b4, #ff1493);
+      background:
+        radial-gradient(circle at 0 0, rgba(255,182,193,0.55), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(255,192,203,0.45), transparent 55%),
+        linear-gradient(135deg, #ff1493, #ff69b4, #ff1493);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.7);
       font-weight: 900;
-      box-shadow: 0 0 12px rgba(255,20,147,0.6), inset 0 0 8px rgba(255,255,255,0.2);
+      letter-spacing: 1px;
+      box-shadow: 0 0 14px rgba(255,20,147,0.9), 0 0 28px rgba(255,105,180,0.7);
       position: relative;
       overflow: visible;
-      animation: vellyPulse 2s ease-in-out infinite;
+      border-radius: 999px;
+      animation: vellyPulse 1.7s ease-in-out infinite;
+    }
+    .tag-velly::before,
+    .tag-velly::after {
+      content: '❤';
+      position: absolute;
+      top: -6px;
+      font-size: 9px;
+      opacity: 0.9;
+    }
+    .tag-velly::before {
+      left: -4px;
+      transform: rotate(-12deg);
+    }
+    .tag-velly::after {
+      right: -4px;
+      transform: rotate(10deg);
     }
     @keyframes vellyPulse {
       0%, 100% { box-shadow: 0 0 12px rgba(255,20,147,0.6), inset 0 0 8px rgba(255,255,255,0.2); }
@@ -498,9 +519,6 @@
     .footer button:hover { opacity: 0.8; }
     .active-btn { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
 
-    /* ============================================================
-       MODALS
-    ============================================================ */
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; backdrop-filter: blur(8px); }
     .sheet {
       position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%);
@@ -513,6 +531,106 @@
     @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
     .sheet::-webkit-scrollbar { width: 4px; }
     .sheet::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.3); border-radius: 10px; }
+
+    .upload-queue-section {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .upload-queue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+    .upload-queue-title-label {
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .upload-queue-info {
+      color: #aaa;
+      font-size: 10px;
+    }
+    .upload-queue-list {
+      max-height: 150px;
+      overflow-y: auto;
+      border-radius: 10px;
+      background: rgba(8,8,20,0.9);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .upload-queue-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      font-size: 11px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      gap: 10px;
+    }
+    .upload-queue-item:last-child {
+      border-bottom: none;
+    }
+    .upload-queue-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .upload-queue-title {
+      margin-right: 4px;
+      color: #ddd;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .upload-queue-time {
+      font-size: 10px;
+      color: #888;
+    }
+    .upload-queue-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .upload-queue-status {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: #ccc;
+      white-space: nowrap;
+    }
+    .upload-queue-status.status-queued {
+      background: rgba(0,255,136,0.08);
+      color: #7bffb9;
+    }
+    .upload-queue-status.status-processing {
+      background: rgba(0,212,255,0.08);
+      color: #7be9ff;
+    }
+    .upload-queue-status.status-done {
+      background: rgba(120,120,120,0.2);
+      color: #bbb;
+    }
+    .upload-queue-btn {
+      border: none;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .upload-queue-btn:hover {
+      background: rgba(255,255,255,0.12);
+    }
 
     /* ============================================================
        PROFILE UI
@@ -650,8 +768,6 @@
     @keyframes savageFlash { 0%,100% { border-color: #ff0050; text-shadow: 0 0 8px #ff0050; } 50% { border-color: #ff6b6b; text-shadow: 0 0 16px #ff0050, 0 0 30px #ff0050; } }
     .tag-maniac { background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(233,30,99,0.5); }
     .tag-ultra { background: linear-gradient(135deg, #00bcd4, #009688, #4caf50); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(0,188,212,0.5); border: 1px solid rgba(255,255,255,0.3); }
-    /* VELLY TAG */
-    .tag-velly { background: linear-gradient(135deg, #ff1493, #ff69b4, #c2185b); color: #fff; border: 1px solid rgba(255,255,255,0.3); font-weight: 900; box-shadow: 0 0 12px rgba(255,20,147,0.6); animation: vellyPulse 2s ease-in-out infinite; }
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 3px; }
 
@@ -1470,7 +1586,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopProfileMusic();}">
+  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
@@ -1499,6 +1615,13 @@
         <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
         <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
         <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
+        <div id="uploadQueueSection" class="upload-queue-section" style="display:none">
+          <div class="upload-queue-header">
+            <span class="upload-queue-title-label">UPLOAD QUEUE</span>
+            <span id="uploadQueueInfo" class="upload-queue-info"></span>
+          </div>
+          <div id="uploadQueueList" class="upload-queue-list"></div>
+        </div>
       </div>
       <div id="uploadFormGuest">
         <input id="guestName" class="inp-dark" placeholder="Nama Anda">
@@ -1751,6 +1874,8 @@
     let adAllUsers = [], adAllSongs = [];
     let lebaranInterval = null;
     let vipTrialBannerClosed = false;
+    let uploadQueueInterval = null;
+    let uploadQueueListenerUid = null;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -1841,6 +1966,11 @@
     db.ref('settings').on('value', s => {
       const val = s.val();
       if (!val) return;
+      if (val.accentColor && typeof val.accentColor === 'string') {
+        document.documentElement.style.setProperty('--accent', val.accentColor);
+      } else {
+        document.documentElement.style.setProperty('--accent', '#00ff88');
+      }
       if (val.mt === true) {
         db.ref('users/' + (auth.currentUser?.uid) + '/role').once('value', r => {
           if (r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
@@ -1992,6 +2122,7 @@
     // ============================================================
     auth.onAuthStateChanged(u => {
       if (u) {
+        startUploadQueueWatcher(u.uid);
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
           if (!userData) { dismissLoader(); return; }
@@ -2022,7 +2153,7 @@
           if (profHeader) {
             profHeader.classList.remove('vip', 'pink-profile');
             const tagLower = (userData.tag || '').toLowerCase();
-            if (tagLower.startsWith('velly')) {
+            if (tagLower.includes('velly')) {
               profHeader.classList.add('pink-profile');
             }
           }
@@ -2059,6 +2190,7 @@
           updateFollowUI();
         });
       } else {
+        stopUploadQueueWatcher();
         document.getElementById('topLoginBtn').textContent = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('btnAdmin').classList.remove('show');
@@ -2221,22 +2353,203 @@
     function saveLastSong() { localStorage.setItem('exeLastSongIdx', i); }
 
     // ============================================================
-    // UPLOAD / SAVE
+    // UPLOAD / SAVE + QUEUE
     // ============================================================
-    function confirmAndSave() {
+    function startUploadQueueWatcher(uid) {
+      if (!uid) return;
+      if (uploadQueueListenerUid && uploadQueueListenerUid !== uid) {
+        db.ref('uploadQueue/' + uploadQueueListenerUid).off();
+      }
+      uploadQueueListenerUid = uid;
+      db.ref('uploadQueue/' + uid).on('value', snap => {
+        const val = snap.val() || {};
+        renderUploadQueue(val);
+      });
+      if (uploadQueueInterval) clearInterval(uploadQueueInterval);
+      uploadQueueInterval = setInterval(() => processUploadQueue(uid), 15000);
+    }
+    function stopUploadQueueWatcher() {
+      if (uploadQueueInterval) {
+        clearInterval(uploadQueueInterval);
+        uploadQueueInterval = null;
+      }
+      if (uploadQueueListenerUid) {
+        db.ref('uploadQueue/' + uploadQueueListenerUid).off();
+        uploadQueueListenerUid = null;
+      }
+      const section = document.getElementById('uploadQueueSection');
+      if (section) section.style.display = 'none';
+    }
+    function renderUploadQueue(map) {
+      const section = document.getElementById('uploadQueueSection');
+      const listEl = document.getElementById('uploadQueueList');
+      const infoEl = document.getElementById('uploadQueueInfo');
+      if (!section || !listEl || !infoEl || !userData) return;
+      const vipType = getVipStatus(userData);
+      const limit = userData.role === 'admin' ? 0 : (vipType ? 2 : 1);
+      const entries = Object.keys(map || {}).map(id => ({ id, ...(map[id] || {}) }))
+        .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0));
+      if (!entries.length) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+      const activeCount = entries.filter(it => it.status !== 'done' && it.status !== 'cancelled').length;
+      if (limit) infoEl.textContent = activeCount + '/' + limit + ' slot terpakai';
+      else infoEl.textContent = '';
+      listEl.innerHTML = entries.map(it => {
+        const t = it.title || '';
+        const timeStr = it.scheduledAt ? new Date(it.scheduledAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
+        let statusLabel = 'Queued';
+        let statusClass = 'status-queued';
+        if (it.status === 'processing') { statusLabel = 'Processing'; statusClass = 'status-processing'; }
+        else if (it.status === 'done') { statusLabel = 'Uploaded'; statusClass = 'status-done'; }
+        const disabled = it.status === 'processing';
+        return `<div class="upload-queue-item">
+          <div class="upload-queue-main">
+            <div class="upload-queue-title">${escapeHtml(t)}</div>
+            <div class="upload-queue-time">${escapeHtml(timeStr)}</div>
+          </div>
+          <div class="upload-queue-actions">
+            <span class="upload-queue-status ${statusClass}">${escapeHtml(statusLabel)}</span>
+            <button class="upload-queue-btn" onclick="editUploadQueueItem('${it.id}')" ${disabled ? 'disabled' : ''}><i class="fas fa-pen"></i></button>
+            <button class="upload-queue-btn" onclick="deleteUploadQueueItem('${it.id}')" ${disabled ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    async function processUploadQueue(uid) {
+      if (!uid || !auth.currentUser || !userData || auth.currentUser.uid !== uid) return;
+      const now = Date.now();
+      const snap = await db.ref('uploadQueue/' + uid).orderByChild('scheduledAt').endAt(now).limitToFirst(1).get();
+      const val = snap.val();
+      if (!val) return;
+      const id = Object.keys(val)[0];
+      const item = val[id];
+      if (!item || item.status !== 'queued') return;
+      const itemRef = db.ref('uploadQueue/' + uid + '/' + id);
+      const txRes = await itemRef.transaction(cur => {
+        if (!cur || cur.status !== 'queued') return cur;
+        return { ...cur, status: 'processing', processingAt: now };
+      });
+      if (!txRes.committed) return;
+      const cur = txRes.snapshot.val();
+      if (!cur || cur.status !== 'processing') return;
+      const songRef = db.ref('songs').push();
+      const songData = { title: cur.title, url: cur.url, uid, by: userData.username, timestamp: Date.now() };
+      await songRef.set(songData);
+      const songKey = songRef.key;
+      await db.ref('users/' + uid).update({ lastUpload: Date.now() });
+      await itemRef.update({ status: 'done', uploadedAt: Date.now(), songKey });
+      await db.ref('users/' + uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload (queue): ' + (cur.title || ''), fromName: userData.username, timestamp: Date.now() });
+      msg('✅ Upload queue terupload: ' + (cur.title || ''));
+    }
+    async function editUploadQueueItem(id) {
+      if (!auth.currentUser || !userData || !id) return;
+      const uid = auth.currentUser.uid;
+      const snap = await db.ref('uploadQueue/' + uid + '/' + id).get();
+      const item = snap.val();
+      if (!item) { msg('Queue tidak ditemukan'); return; }
+      if (item.status === 'processing') { msg('Queue sedang diproses'); return; }
+      const safeTitle = (item.title || '').replace(/"/g, '&quot;');
+      const safeUrl = (item.url || '').replace(/"/g, '&quot;');
+      Swal.fire({
+        title: 'Edit Upload Queue',
+        html:
+          '<input id="qTitle" class="swal2-input" placeholder="Judul Lagu" value="' + safeTitle + '">' +
+          '<input id="qUrl" class="swal2-input" placeholder="URL MP3" value="' + safeUrl + '">',
+        focusConfirm: false,
+        showCancelButton: true,
+        background: '#181818',
+        color: '#fff',
+        confirmButtonColor: '#00ff88',
+        cancelButtonColor: '#d33',
+        preConfirm: () => {
+          const title = (document.getElementById('qTitle').value || '').trim();
+          const url = (document.getElementById('qUrl').value || '').trim();
+          if (!title || !url) {
+            Swal.showValidationMessage('Judul dan URL wajib diisi');
+            return;
+          }
+          return { title, url };
+        }
+      }).then(async res => {
+        if (!res.value) return;
+        await db.ref('uploadQueue/' + uid + '/' + id).update({
+          title: res.value.title,
+          url: res.value.url
+        });
+        msg('Queue diperbarui');
+      });
+    }
+    function deleteUploadQueueItem(id) {
+      if (!auth.currentUser || !id) return;
+      const uid = auth.currentUser.uid;
+      Swal.fire({
+        title: 'Hapus dari queue?',
+        text: 'Lagu tidak akan diupload otomatis.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4d4f',
+        cancelButtonColor: '#555',
+        confirmButtonText: 'Ya, hapus',
+        background: '#181818',
+        color: '#fff'
+      }).then(async r => {
+        if (!r.isConfirmed) return;
+        await db.ref('uploadQueue/' + uid + '/' + id).remove();
+        msg('Queue dihapus');
+      });
+    }
+    function getUploadQueueLimit() {
+      if (!userData || userData.role === 'admin') return 0;
+      const vipType = getVipStatus(userData);
+      return vipType ? 2 : 1;
+    }
+    async function confirmAndSave() {
       const title = document.getElementById('rLagu').value;
       const url = document.getElementById('rUrl').value;
       if (!title || !url) return msg('Isi semua data!');
+      if (!auth.currentUser || !userData) return msg('Login dulu!');
       const lastUpload = userData.lastUpload || 0;
       const now = Date.now();
       const diff = (now - lastUpload) / 1000 / 60;
       const vipType = getVipStatus(userData);
-      const cooldown = (userData.role === 'admin') ? 0 : (vipType ? 15 : 30);
-      if (diff < cooldown && userData.role !== 'admin') {
-        return Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi.`, background: '#181828', color: '#fff' });
+      const isAdmin = userData.role === 'admin';
+      const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
+      if (isAdmin || diff >= cooldown) {
+        Swal.fire({ title: 'Yakin?', text: 'Pelanggaran rules → BANNED PERMANENT!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#00ff88', cancelButtonColor: '#d33', confirmButtonText: 'Saya Bertanggung Jawab', background: '#181828', color: '#fff' })
+          .then(r => { if (r.isConfirmed) saveMusic(title, url); });
+        return;
       }
-      Swal.fire({ title: 'Yakin?', text: 'Pelanggaran rules → BANNED PERMANENT!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#00ff88', cancelButtonColor: '#d33', confirmButtonText: 'Saya Bertanggung Jawab', background: '#181828', color: '#fff' })
-        .then(r => { if (r.isConfirmed) saveMusic(title, url); });
+      const queueLimit = getUploadQueueLimit();
+      if (!queueLimit) {
+        Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi.`, background: '#181828', color: '#fff' });
+        return;
+      }
+      const qSnap = await db.ref('uploadQueue/' + auth.currentUser.uid).get();
+      const qVal = qSnap.val() || {};
+      let activeCount = 0;
+      Object.keys(qVal).forEach(k => {
+        const it = qVal[k];
+        if (!it) return;
+        if (it.status === 'done' || it.status === 'cancelled') return;
+        activeCount++;
+      });
+      if (activeCount >= queueLimit) {
+        Swal.fire({ icon: 'error', title: 'Queue penuh', text: 'Upload queue kamu sudah penuh, tunggu antrian terupload dulu.', background: '#181828', color: '#fff' });
+        return;
+      }
+      const scheduledAt = Math.max(lastUpload + cooldown * 60 * 1000, now);
+      Swal.fire({ title: 'Masuk Upload Queue?', text: 'Lagu akan otomatis diupload saat cooldown selesai.', icon: 'question', showCancelButton: true, confirmButtonColor: '#00ff88', cancelButtonColor: '#d33', confirmButtonText: 'Ya, antrikan', background: '#181828', color: '#fff' })
+        .then(async r => {
+          if (!r.isConfirmed) return;
+          const item = { title, url, uid: auth.currentUser.uid, by: userData.username, createdAt: now, scheduledAt, status: 'queued', cooldownMinutes: cooldown, vip: !!vipType };
+          await db.ref('uploadQueue/' + auth.currentUser.uid).push(item);
+          msg('✅ Lagu masuk upload queue');
+          document.getElementById('rLagu').value = '';
+          document.getElementById('rUrl').value = '';
+        });
     }
     function saveMusic(t, u) {
       const newSong = { title: t, url: u, uid: auth.currentUser.uid, by: userData.username, timestamp: Date.now() };
@@ -2354,7 +2667,7 @@
       ).join('');
       switchProfileTab('posts');
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
-      if (myTagLower.startsWith('velly')) startHearts();
+      if (myTagLower.includes('velly')) startHearts();
       else stopHearts();
       if (userData && userData.profilemusic) playProfileMusic(userData.profilemusic);
       else stopProfileMusic();
@@ -2391,8 +2704,14 @@
       if (creatorHeader) {
         creatorHeader.classList.remove('vip', 'pink-profile');
         const cTagLower = (cData && cData.tag ? cData.tag.toLowerCase() : '');
-        if (cTagLower.startsWith('velly')) creatorHeader.classList.add('pink-profile');
-        else if (creatorVip) creatorHeader.classList.add('vip');
+        const isVellyCreator = cTagLower.includes('velly');
+        if (isVellyCreator) {
+          creatorHeader.classList.add('pink-profile');
+          startHearts();
+        } else {
+          if (creatorVip) creatorHeader.classList.add('vip');
+          stopHearts();
+        }
       }
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
@@ -2837,13 +3156,23 @@
       if (!msg2) { showToast('Isi pesan dulu!'); return; }
       const payload = { type, text: msg2, fromName: 'Admin', timestamp: Date.now() };
       if (target) {
-        db.ref('users/' + target + '/notifications').push(payload).then(() => showToast('✅ Notif terkirim ke ' + target));
+        db.ref('users/' + target + '/notifications')
+          .push(payload)
+          .then(() => showToast('✅ Notif terkirim ke ' + target));
       } else {
         db.ref('users').once('value').then(snap => {
-          const ops = [];
-          snap.forEach(c => ops.push(db.ref('users/' + c.key + '/notifications').push(payload)));
+          const users = snap.val() || {};
+          const uids = Object.keys(users);
+          if (!uids.length) return;
+          const ops = uids.map(uid =>
+            db.ref('users/' + uid + '/notifications').push(payload)
+          );
           return Promise.all(ops);
-        }).then(() => { addLog('Global notif: ' + msg2); showToast('✅ Global notif terkirim!'); document.getElementById('adNMsg').value = ''; });
+        }).then(() => {
+          addLog('Global notif: ' + msg2);
+          showToast('✅ Global notif terkirim!');
+          document.getElementById('adNMsg').value = '';
+        });
       }
     }
 
