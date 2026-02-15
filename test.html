@@ -1412,7 +1412,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalProfile" onclick="if(event.target==this){this.style.display='none';stopHearts();}">
+  <div class="modal" id="modalProfile" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header" id="profileHeader">
         <div class="mp-avatar-container">
@@ -1433,8 +1433,13 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+          <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+        <div id="profileMusicRow" style="width:100%; padding:0 18px 8px; display:none">
+          <input id="profileMusicUrl" class="inp-dark" placeholder="Link MP3 khusus profil">
+          <button class="btn-act" style="margin-top:8px; width:100%" onclick="saveProfileMusic()">SIMPAN MUSIC PROFIL</button>
         </div>
         <div style="font-size:11px; color:#666; margin-top:6px" id="pVipStatus">Status: NONVIP</div>
       </div>
@@ -1447,7 +1452,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopProfileMusic();}">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
@@ -1719,6 +1724,7 @@
     let fav = JSON.parse(localStorage.getItem('exeFav') || '[]');
     let savedVol = parseFloat(localStorage.getItem('exeVolume') || '0.8');
     let userData = null;
+    let profileAudio = null;
     let broadcastTimeout;
     let notifList = [], _globalNotifs = [], _userNotifs = [];
     const lastReadNotifTimeKey = 'exeNotifRead';
@@ -1756,6 +1762,24 @@
       const t = tag.toLowerCase();
       return `<span class="user-tag tag-${t}">${tag.toUpperCase()}</span>`;
     }
+    function playProfileMusic(url) {
+      if (!url) return;
+      if (!profileAudio) profileAudio = new Audio();
+      if (!audio.paused) {
+        audio.pause();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        document.getElementById('eq').classList.remove('playing');
+      }
+      profileAudio.src = url;
+      profileAudio.loop = true;
+      profileAudio.play().catch(() => {});
+    }
+    function stopProfileMusic() {
+      if (profileAudio) {
+        profileAudio.pause();
+        profileAudio.currentTime = 0;
+      }
+    }
     function getVipStatus(u) {
       const now = Date.now();
       if (u && u.vip) return 'permanent';
@@ -1789,6 +1813,7 @@
     function closeModal() {
       document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
       stopHearts();
+      stopProfileMusic();
     }
 
     // ============================================================
@@ -1979,9 +2004,15 @@
             profHeader.classList.remove('vip', 'pink-profile');
             if (userData.tag && userData.tag.toLowerCase() === 'velly') {
               profHeader.classList.add('pink-profile');
-            } else if (vipActive) {
-              profHeader.classList.add('vip');
             }
+          }
+
+          const pmBtn = document.getElementById('btnProfileMusic');
+          const pmRow = document.getElementById('profileMusicRow');
+          if (pmBtn && pmRow) {
+            pmBtn.style.display = vipActive ? 'inline-flex' : 'none';
+            pmRow.style.display = 'none';
+            document.getElementById('profileMusicUrl').value = userData.profilemusic || '';
           }
 
           // VIP status text
@@ -2288,6 +2319,8 @@
       switchProfileTab('posts');
       if (userData && userData.tag && userData.tag.toLowerCase() === 'velly') startHearts();
       else stopHearts();
+      if (userData && userData.profilemusic) playProfileMusic(userData.profilemusic);
+      else stopProfileMusic();
       document.getElementById('modalProfile').style.display = 'block';
     }
     function switchProfileTab(tab) {
@@ -2323,6 +2356,9 @@
         if (cData?.tag && cData.tag.toLowerCase() === 'velly') creatorHeader.classList.add('pink-profile');
         else if (creatorVip) creatorHeader.classList.add('vip');
       }
+
+      if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
+      else stopProfileMusic();
 
       const creatorSongs = songs.filter(x => x.uid === uid).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x =>
@@ -2427,6 +2463,23 @@
       document.getElementById('cpMsg').innerText = ''; document.getElementById('cpMsg').classList.remove('show', 'success', 'error');
       ['cpOldPass', 'cpNewPass', 'cpConfirm'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('modalChangePass').style.display = 'block';
+    }
+    function toggleProfileMusicInput() {
+      const row = document.getElementById('profileMusicRow');
+      if (!row) return;
+      row.style.display = row.style.display === 'none' || row.style.display === '' ? 'block' : 'none';
+    }
+    function saveProfileMusic() {
+      if (!auth.currentUser || !userData) return msg('Login dulu!');
+      const vipType = getVipStatus(userData);
+      if (!vipType) return msg('Fitur ini khusus VIP / VIP Trial');
+      const inp = document.getElementById('profileMusicUrl');
+      if (!inp) return;
+      const url = inp.value.trim();
+      db.ref('users/' + auth.currentUser.uid).update({ profilemusic: url || null }).then(() => {
+        userData.profilemusic = url || null;
+        msg('Music profil disimpan');
+      }).catch(() => msg('Gagal menyimpan music profil'));
     }
     async function handleChangePassword() {
       const oldPass = document.getElementById('cpOldPass').value;
