@@ -1966,6 +1966,11 @@
     db.ref('settings').on('value', s => {
       const val = s.val();
       if (!val) return;
+      if (val.accentColor && typeof val.accentColor === 'string') {
+        document.documentElement.style.setProperty('--accent', val.accentColor);
+      } else {
+        document.documentElement.style.setProperty('--accent', '#00ff88');
+      }
       if (val.mt === true) {
         db.ref('users/' + (auth.currentUser?.uid) + '/role').once('value', r => {
           if (r.val() !== 'admin') document.getElementById('mtScreen').style.display = 'flex';
