@@ -343,6 +343,19 @@
       margin-left: 6px;
       white-space: nowrap;
     }
+    @media (max-width: 480px) {
+      .admin-float-chat {
+        top: 60px;
+        padding: 8px 10px;
+        width: calc(100% - 24px);
+      }
+      .admin-float-name {
+        font-size: 10px;
+      }
+      .admin-float-msg {
+        font-size: 11px;
+      }
+    }
     @keyframes floatChatIn {
       from { opacity: 0; transform: translate(-50%, -10px); }
       to { opacity: 1; transform: translate(-50%, 0); }
@@ -500,6 +513,9 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
+      max-width: 960px;
+      width: calc(100% - 24px);
+      margin: 0 auto;
     }
     .event-center-header {
       display: flex;
@@ -562,15 +578,23 @@
     }
     .event-center-layout {
       display: grid;
-      grid-template-columns: 110px minmax(0, 1fr) 130px;
+      grid-template-columns: 120px minmax(0, 1fr) 160px;
       gap: 10px;
       margin-top: 4px;
+      align-items: flex-start;
     }
-    @media (max-width: 420px) {
-      .event-center-layout {
-        grid-template-columns: 90px minmax(0,1fr);
-        grid-template-rows: auto auto;
+    @media (max-width: 900px) {
+      .event-center-sheet {
+        max-width: 100%;
       }
+    }
+    @media (max-width: 768px) {
+      .event-center-layout {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+      }
+      .event-center-sidebar,
+      .event-center-main,
       .event-center-sidepanel {
         grid-column: 1 / -1;
       }
@@ -2403,7 +2427,7 @@
       <div class="event-center-header">
         <div class="event-center-title">
           <i class="fas fa-gamepad"></i>
-          <span>EXEMUSIC EVENT SYSTEM</span>
+          <span>EVENT & QUEST EXEMUSIC</span>
         </div>
         <div class="event-center-coins">
           <div class="event-coins-icon">
@@ -2417,21 +2441,21 @@
       </div>
       <div class="event-center-layout">
         <div class="event-center-sidebar">
-          <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Daily Task</button>
-          <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Weekly Challenge</button>
-          <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Exchange Shop</button>
+          <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
+          <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
+          <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
         </div>
         <div class="event-center-main">
           <div id="evTabDaily" class="event-tab-view active">
-            <div class="event-tab-caption">Reset setiap 24 jam untuk semua user.</div>
+            <div class="event-tab-caption">Reset tiap 24 jam untuk semua akun.</div>
             <div id="evDailyList" class="event-quest-list"></div>
           </div>
           <div id="evTabWeekly" class="event-tab-view">
-            <div class="event-tab-caption">Reset setiap 7 hari. Fokus misi jangka panjang.</div>
+            <div class="event-tab-caption">Reset tiap 7 hari. Cocok untuk misi jangka panjang.</div>
             <div id="evWeeklyList" class="event-quest-list"></div>
           </div>
           <div id="evTabShop" class="event-tab-view">
-            <div class="event-tab-caption">Tukar ExeCoin kamu dengan tag dan VIP.</div>
+            <div class="event-tab-caption">Tukar ExeCoin dengan tag eksklusif dan VIP.</div>
             <div id="evShopList" class="event-quest-list"></div>
           </div>
         </div>
@@ -2447,9 +2471,9 @@
           <div class="event-side-card">
             <div class="event-side-label">Tips ExeCoin</div>
             <ul class="event-side-tips">
-              <li>Upload rutin untuk ambil semua Daily Task.</li>
+              <li>Upload rutin untuk ambil semua Tugas Harian.</li>
               <li>Aktif dengerin lagu sambil tab aktif.</li>
-              <li>Gunakan Exchange Shop untuk beli tag eksklusif.</li>
+              <li>Pakai Toko ExeCoin untuk beli tag eksklusif.</li>
             </ul>
           </div>
         </div>
@@ -3005,8 +3029,8 @@
           '</div>' +
         '</div>' +
         '<div class="event-quest-action">' +
-          '<div class="event-quest-badge">COMING SOON</div>' +
-          '<button class="event-quest-btn secondary" disabled>Belum bisa diklaim</button>' +
+          '<div class="event-quest-badge">Segera hadir</div>' +
+          '<button class="event-quest-btn secondary" disabled>Belum tersedia</button>' +
         '</div>' +
       '</div>';
     }
@@ -4642,7 +4666,7 @@
         expireAt: now + 15000
       };
       db.ref('adminFloatChat/current').set(data).then(() => {
-        showToast('✅ Admin float chat dikirim');
+        showToast('Chat admin dikirim');
         inp.value = '';
       });
     }
