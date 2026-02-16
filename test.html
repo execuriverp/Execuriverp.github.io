@@ -632,6 +632,40 @@
       background: rgba(255,255,255,0.12);
     }
 
+    .upload-cd-card {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 0 0, rgba(0,255,136,0.12), transparent 55%),
+                  radial-gradient(circle at 100% 100%, rgba(0,212,255,0.1), transparent 55%),
+                  rgba(6,6,18,0.95);
+      border: 1px solid rgba(0,255,136,0.3);
+      display: none;
+    }
+    .upload-cd-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .upload-cd-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a3a3ff;
+    }
+    .upload-cd-timer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: #00ff88;
+    }
+    .upload-cd-sub {
+      margin-top: 4px;
+      font-size: 10px;
+      color: #888;
+    }
+
     /* ============================================================
        PROFILE UI
     ============================================================ */
@@ -734,6 +768,17 @@
       text-transform: uppercase; margin-left: 4px; vertical-align: middle; letter-spacing: 0.5px;
       font-family: 'Rajdhani', sans-serif;
     }
+    .tag-vip {
+      background: linear-gradient(135deg, #ffd700, #ff9800);
+      color: #000;
+      box-shadow: 0 0 10px rgba(255,215,0,0.6);
+      border: 1px solid rgba(0,0,0,0.3);
+    }
+    .tag-newbie {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #7dd3fc;
+      border: 1px solid rgba(125,211,252,0.4);
+    }
     .tag-admin { background: #ff3333; color: #fff; }
     .tag-staff { background: #0088ff; color: #fff; }
     .tag-executive { background: #aa00ff; color: #fff; }
@@ -755,6 +800,12 @@
     .tag-dj { background: #ff00ff; color: #fff; box-shadow: 0 0 8px #ff00ff; }
     .tag-pro { background: linear-gradient(135deg, #ff4500, #ff6b35); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
     .tag-noob { background: #8b4513; color: #fff; border: 1px dashed #deb887; }
+    .tag-mythic {
+      background: linear-gradient(135deg, #4c1d95, #7c3aed, #f97316);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(124,58,237,0.7);
+      border: 1px solid rgba(249,115,22,0.7);
+    }
     .tag-top-global { background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; font-weight: bold; box-shadow: 0 0 5px #00c6ff; }
     .tag-premium { background: linear-gradient(45deg, #8a2387, #e94057, #f27121); color: #fff; font-weight: bold; }
     .tag-influencer { background: linear-gradient(45deg, #405de6, #833ab4, #c13584, #e1306c, #fd1d1d); color: #fff; }
@@ -768,6 +819,18 @@
     @keyframes savageFlash { 0%,100% { border-color: #ff0050; text-shadow: 0 0 8px #ff0050; } 50% { border-color: #ff6b6b; text-shadow: 0 0 16px #ff0050, 0 0 30px #ff0050; } }
     .tag-maniac { background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(233,30,99,0.5); }
     .tag-ultra { background: linear-gradient(135deg, #00bcd4, #009688, #4caf50); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(0,188,212,0.5); border: 1px solid rgba(255,255,255,0.3); }
+    .tag-terkeren {
+      background: linear-gradient(135deg, #00f5ff, #7c3aed);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(124,58,237,0.7);
+      border: 1px solid rgba(59,130,246,0.7);
+    }
+    .tag-tersulit {
+      background: linear-gradient(135deg, #ff0050, #ff8c00);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255,92,92,0.7);
+      border: 1px solid rgba(248,113,113,0.8);
+    }
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 3px; }
 
@@ -1546,7 +1609,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalProfile" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)closeProfileModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header" id="profileHeader">
         <div class="mp-avatar-container">
@@ -1567,6 +1630,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+          <button class="mp-btn mp-btn-sec" onclick="openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -1586,7 +1650,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
+  <div class="modal" id="modalCreator" onclick="if(event.target==this)closeCreatorModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
@@ -1621,6 +1685,13 @@
             <span id="uploadQueueInfo" class="upload-queue-info"></span>
           </div>
           <div id="uploadQueueList" class="upload-queue-list"></div>
+        </div>
+        <div id="uploadCdCard" class="upload-cd-card">
+          <div class="upload-cd-row">
+            <span class="upload-cd-label">COOLDOWN</span>
+            <span id="uploadCdTimer" class="upload-cd-timer">00:00</span>
+          </div>
+          <div class="upload-cd-sub" id="uploadCdSub">Menunggu...</div>
         </div>
       </div>
       <div id="uploadFormGuest">
@@ -1876,6 +1947,9 @@
     let vipTrialBannerClosed = false;
     let uploadQueueInterval = null;
     let uploadQueueListenerUid = null;
+    let uploadCooldownInterval = null;
+    let isAdminUnlocked = localStorage.getItem('exeAdminUnlocked') === '1';
+    let currentProfileUid = null;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -1930,6 +2004,88 @@
       if (u && u.trialvip && u.trialvip.expireAt && now < u.trialvip.expireAt) return 'trial';
       return false;
     }
+    function computeQuestTags(u, folCount, flgCount) {
+      const tags = {};
+      tags.user = true;
+      const vipType = getVipStatus(u);
+      if (vipType) tags.vip = true;
+      if (typeof folCount === 'number') {
+        if (folCount >= 10) tags.newbie = true;
+        if (folCount >= 50) tags.pro = true;
+        if (folCount >= 150) { tags.terkeren = true; tags.tersulit = true; }
+      }
+      return tags;
+    }
+    function syncUserQuestTags(uid, u, folCount, flgCount) {
+      if (!uid || !u) return;
+      const quest = computeQuestTags(u, folCount, flgCount);
+      const existing = u.alltag || {};
+      const merged = {};
+      let changed = false;
+      Object.keys(existing).forEach(k => {
+        merged[k] = existing[k];
+      });
+      Object.keys(quest).forEach(k => {
+        if (!merged[k]) {
+          merged[k] = true;
+          changed = true;
+        }
+      });
+      if (changed) {
+        db.ref('users/' + uid + '/alltag').set(merged);
+      }
+    }
+    function updateUploadCooldownCard() {
+      const card = document.getElementById('uploadCdCard');
+      const timerEl = document.getElementById('uploadCdTimer');
+      const subEl = document.getElementById('uploadCdSub');
+      if (!card || !timerEl || !subEl || !userData) return;
+      const lastUpload = userData.lastUpload || 0;
+      const now = Date.now();
+      const vipType = getVipStatus(userData);
+      const isAdmin = userData.role === 'admin';
+      const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
+      if (!cooldown) {
+        card.style.display = 'none';
+        return;
+      }
+      const nextAt = lastUpload + cooldown * 60 * 1000;
+      const diffMs = nextAt - now;
+      if (diffMs <= 0) {
+        card.style.display = 'none';
+        return;
+      }
+      card.style.display = 'block';
+      const totalSec = Math.floor(diffMs / 1000);
+      const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const s = String(totalSec % 60).padStart(2, '0');
+      timerEl.textContent = m + ':' + s;
+      if (vipType) subEl.textContent = 'VIP cooldown 15 menit';
+      else subEl.textContent = 'Non-VIP cooldown 30 menit';
+    }
+    function startUploadCooldownWatcher() {
+      if (uploadCooldownInterval) clearInterval(uploadCooldownInterval);
+      updateUploadCooldownCard();
+      uploadCooldownInterval = setInterval(updateUploadCooldownCard, 1000);
+    }
+    function stopUploadCooldownWatcher() {
+      if (uploadCooldownInterval) {
+        clearInterval(uploadCooldownInterval);
+        uploadCooldownInterval = null;
+      }
+      const card = document.getElementById('uploadCdCard');
+      if (card) card.style.display = 'none';
+    }
+    function applyProfileUrl(push = false) {
+      try {
+        const base = window.location.protocol + '//' + window.location.host + window.location.pathname;
+        let newUrl;
+        if (currentProfileUid) newUrl = base + '?profile_userid=' + encodeURIComponent(currentProfileUid);
+        else newUrl = base + '?id=' + i;
+        if (push) window.history.pushState({ path: newUrl }, '', newUrl);
+        else window.history.replaceState({ path: newUrl }, '', newUrl);
+      } catch (e) {}
+    }
     function fmt(s) { if (isNaN(s)) return '0:00'; let m = Math.floor(s / 60), sec = Math.floor(s % 60); return m + ':' + (sec < 10 ? '0' + sec : sec); }
     function addLog(msg) { db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() }); }
 
@@ -1958,6 +2114,8 @@
       document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
       stopHearts();
       stopProfileMusic();
+      currentProfileUid = null;
+      applyProfileUrl(true);
     }
 
     // ============================================================
@@ -2145,6 +2303,8 @@
           document.getElementById('pFol').innerText = folCount;
           document.getElementById('pFollowing').innerText = flgCount;
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
+          syncUserQuestTags(u.uid, userData, folCount, flgCount);
+          startUploadCooldownWatcher();
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
 
@@ -2191,6 +2351,7 @@
         });
       } else {
         stopUploadQueueWatcher();
+        stopUploadCooldownWatcher();
         document.getElementById('topLoginBtn').textContent = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('btnAdmin').classList.remove('show');
@@ -2306,8 +2467,7 @@
     async function setup(idx, play = true) {
       if (!songs[idx]) return;
       i = idx;
-      const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?id=' + i;
-      window.history.pushState({ path: newUrl }, '', newUrl);
+      applyProfileUrl(true);
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
       const cRef = await db.ref('users/' + songs[i].uid).get();
@@ -2584,6 +2744,10 @@
           db.ref('users/' + targetUid + '/notifications').push({ type: 'follow', text: userData.username + ' mulai mengikuti kamu', fromName: userData.username, fromUid: auth.currentUser.uid, timestamp: Date.now() });
           msg('Followed! ✅');
         }
+        const newFolCount = isF ? fArr.length - 1 : fArr.length + 1;
+        const newFlCount = isF ? flArr.length - 1 : flArr.length + 1;
+        syncUserQuestTags(targetUid, tData || {}, newFolCount, (tData && tData.following) ? (Array.isArray(tData.following) ? tData.following.length : (typeof tData.following === 'object' ? Object.keys(tData.following).length : 0)) : 0);
+        syncUserQuestTags(auth.currentUser.uid, cData || {}, (cData && cData.followers) ? (Array.isArray(cData.followers) ? cData.followers.length : (typeof cData.followers === 'object' ? Object.keys(cData.followers).length : 0)) : 0, newFlCount);
         await updateFollowUI();
       } catch (err) { msg('Error: ' + err.message); }
     }
@@ -2657,6 +2821,7 @@
     // ============================================================
     function openProfile() {
       if (!auth.currentUser) { document.getElementById('modalAuth').style.display = 'block'; return; }
+      currentProfileUid = auth.currentUser.uid;
       const myPosts = songs.filter(s => s.uid === auth.currentUser.uid).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       document.getElementById('myPostList').innerHTML = myPosts.map(s =>
         `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div class="mp-song-icon"><i class="fas fa-music"></i></div><div class="mp-song-info"><div class="mp-song-title">${escapeHtml(s.title)}</div></div><i class="fas fa-play" style="font-size:10px; color:#444"></i></div>`
@@ -2669,9 +2834,15 @@
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
       if (myTagLower.includes('velly')) startHearts();
       else stopHearts();
+      if (!audio.paused) {
+        audio.pause();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        document.getElementById('eq').classList.remove('playing');
+      }
       if (userData && userData.profilemusic) playProfileMusic(userData.profilemusic);
       else stopProfileMusic();
       document.getElementById('modalProfile').style.display = 'block';
+      applyProfileUrl(true);
     }
     function switchProfileTab(tab) {
       document.querySelectorAll('.mp-tab').forEach(t => t.classList.remove('active'));
@@ -2715,7 +2886,14 @@
       }
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
-      else stopProfileMusic();
+      else {
+        if (!audio.paused) {
+          audio.pause();
+          document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+          document.getElementById('eq').classList.remove('playing');
+        }
+        stopProfileMusic();
+      }
 
       const creatorSongs = songs.filter(x => x.uid === uid).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x =>
@@ -2725,6 +2903,8 @@
       document.getElementById('modalCreator').dataset.creatorUid = uid;
       updateCreatorFollowUI(uid);
       document.getElementById('modalCreator').style.display = 'block';
+      currentProfileUid = uid;
+      applyProfileUrl(true);
     }
 
     async function updateCreatorFollowUI(uid) {
@@ -2755,6 +2935,10 @@
           db.ref('users/' + creatorUid + '/notifications').push({ type: 'follow', text: userData.username + ' mulai mengikuti kamu', fromName: userData.username, fromUid: auth.currentUser.uid, timestamp: Date.now() });
           msg('Followed! ✅');
         }
+        const newFolCount = isF ? fArr.length - 1 : fArr.length + 1;
+        const newFlCount = isF ? flArr.length - 1 : flArr.length + 1;
+        syncUserQuestTags(creatorUid, cData || {}, newFolCount, (cData && cData.following) ? (Array.isArray(cData.following) ? cData.following.length : (typeof cData.following === 'object' ? Object.keys(cData.following).length : 0)) : 0);
+        syncUserQuestTags(auth.currentUser.uid, mData || {}, (mData && mData.followers) ? (Array.isArray(mData.followers) ? mData.followers.length : (typeof mData.followers === 'object' ? Object.keys(mData.followers).length : 0)) : 0, newFlCount);
         await updateCreatorFollowUI(creatorUid);
       } catch (err) { msg('Error: ' + err.message); }
     }
@@ -2776,6 +2960,55 @@
     function closeTutorial() { const o = document.getElementById('tutorialOverlay'); o.style.display = 'none'; const v = document.getElementById('tutorialVideo'); if (v) { const src = v.src; v.src = src; } }
     function sendWA() { window.open('https://wa.me/62895329018240?text=Halo Admin, saya ' + document.getElementById('guestName').value + ' ingin upload: ' + document.getElementById('guestLagu').value); }
     function shareProfile(uid, username) { if (!uid) return; navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?profile_userid=' + uid); showToast('Link profil @' + (username || 'user') + ' disalin'); }
+    function closeProfileModal() {
+      const modal = document.getElementById('modalProfile');
+      if (modal) modal.style.display = 'none';
+      stopHearts();
+      stopProfileMusic();
+      currentProfileUid = null;
+      applyProfileUrl(true);
+    }
+    function closeCreatorModal() {
+      const modal = document.getElementById('modalCreator');
+      if (modal) modal.style.display = 'none';
+      stopHearts();
+      stopProfileMusic();
+      currentProfileUid = null;
+      applyProfileUrl(true);
+    }
+    function openTagSelector() {
+      if (!auth.currentUser || !userData) { msg('Login dulu!'); return; }
+      const all = userData.alltag || {};
+      const keys = Object.keys(all).filter(k => all[k]);
+      if (!keys.length) { msg('Belum ada tag yang kebuka'); return; }
+      const opts = {};
+      keys.forEach(k => {
+        let label = k.toUpperCase();
+        if (k === 'newbie') label = 'NEWBIE (10+ followers)';
+        else if (k === 'pro') label = 'PRO (50+ followers)';
+        else if (k === 'terkeren') label = 'TERKEREN (150+ followers)';
+        else if (k === 'tersulit') label = 'TERSULIT (150+ followers)';
+        else if (k === 'vip') label = 'VIP (pernah VIP)';
+        opts[k] = label;
+      });
+      opts['none'] = 'TANPA TAG';
+      Swal.fire({
+        title: 'Pilih Tag',
+        input: 'select',
+        inputOptions: opts,
+        inputValue: userData.tag || 'none',
+        background: '#0d0d15',
+        color: '#fff',
+        showCancelButton: true,
+        confirmButtonColor: '#00ff88'
+      }).then(r => {
+        if (!r.value) return;
+        const val = r.value === 'none' ? 'none' : r.value;
+        db.ref('users/' + auth.currentUser.uid).update({ tag: val }).then(() => {
+          showToast('Tag diganti');
+        });
+      });
+    }
 
     // ============================================================
     // NOTIFICATIONS - CLEAR
@@ -2904,6 +3137,12 @@
       const gate = document.getElementById('adminLockGate');
       const inner = document.getElementById('adminPanelInner');
       overlay.classList.add('show');
+      if (isAdminUnlocked) {
+        gate.classList.add('unlocked');
+        inner.style.display = 'flex';
+        adLoadData();
+        return;
+      }
       gate.classList.remove('unlocked');
       inner.style.display = 'none';
       document.getElementById('algCapInput').value = '';
@@ -2982,7 +3221,6 @@
         return;
       }
 
-      // Captcha passed → grant access
       errEl.style.color = '#00ff88';
       errEl.textContent = '✓ ACCESS GRANTED';
       const gate = document.getElementById('adminLockGate');
@@ -2994,6 +3232,8 @@
           adLoadData();
         }, 380);
       }, 300);
+      isAdminUnlocked = true;
+      try { localStorage.setItem('exeAdminUnlocked', '1'); } catch (e) {}
     }
 
     function closeAdminPanel() {
@@ -3177,7 +3417,7 @@
     }
 
     function adChangeTag(uid) {
-      const tags = ['user','vvip','sepuh','admin','owner','developer','sultan','wibu','sadboy','hacker','verified','bot','npc','dj','pro','noob','top-global','premium','influencer','legend','mythic','godlike','savage','maniac','ultra','velly'];
+      const tags = ['user','vvip','sepuh','admin','owner','developer','sultan','wibu','sadboy','hacker','verified','bot','npc','dj','newbie','pro','top-global','premium','influencer','legend','mythic','godlike','savage','maniac','ultra','terkeren','tersulit','velly'];
       const opts = {}; tags.forEach(t => opts[t] = t.toUpperCase());
       Swal.fire({ title: 'Change Tag', input: 'select', inputOptions: opts, background: '#0d0d15', color: '#fff' })
         .then(r => { if (r.value) { db.ref('users/' + uid).update({ tag: r.value }); addLog('Tag: ' + uid + ' → ' + r.value); showToast('Tag diubah!'); adLoadData(); } });
