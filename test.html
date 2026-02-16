@@ -911,21 +911,21 @@
        ADMIN PANEL (built-in)
     ============================================================ */
     .admin-panel-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.88);
+      position: fixed;
+      inset: 0;
       z-index: 5000;
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      backdrop-filter: blur(12px);
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 70px 16px 16px;
+      pointer-events: none;
     }
-    .admin-panel-overlay.show { display: flex; }
+    .admin-panel-overlay.show { display: flex; pointer-events: auto; }
 
     .admin-panel {
-      width: 100%;
-      max-width: 960px;
-      max-height: 92vh;
+      width: 380px;
+      max-width: 420px;
+      max-height: 90vh;
       display: flex;
       flex-direction: column;
       background: radial-gradient(ellipse at 50% -10%, rgba(255,193,7,0.1), transparent 60%),
@@ -1427,43 +1427,8 @@
   </div>
 
   <!-- ADMIN PANEL (Built-in) -->
-  <div class="admin-panel-overlay" id="adminPanelOverlay">
-
-    <!-- LOCK GATE (shown first to everyone) -->
-    <div class="admin-lock-gate" id="adminLockGate">
-      <div class="alg-corner alg-tl"></div>
-      <div class="alg-corner alg-tr"></div>
-      <div class="alg-corner alg-bl"></div>
-      <div class="alg-corner alg-br"></div>
-
-      <div class="alg-badge">🛡️</div>
-      <div class="alg-title">Admin Control</div>
-      <div class="alg-sub">Security Gate · ExeMusic</div>
-
-      <div class="alg-cap-box">
-        <canvas id="algCapCanvas" width="290" height="80"></canvas>
-      </div>
-      <div class="alg-code-display" id="algCodeDisplay">-----</div>
-      <button class="alg-refresh" onclick="algGenCaptcha()">
-        <i class="fas fa-sync"></i> REFRESH CODE
-      </button>
-
-      <input type="text" id="algCapInput"
-        class="alg-inp"
-        placeholder="KETIK KODE"
-        maxlength="5"
-        autocomplete="off"
-        onpaste="return false"
-        ondrop="return false"
-        onkeydown="if(event.key==='Enter') algVerify()">
-
-      <div class="alg-error" id="algError"></div>
-      <button class="alg-enter-btn" onclick="algVerify()">
-        <i class="fas fa-lock-open"></i> MASUK PANEL
-      </button>
-    </div>
-
-    <div class="admin-panel" id="adminPanelInner" style="display:none; flex:1; flex-direction:column; width:100%; height:100%">
+    <div class="admin-panel-overlay" id="adminPanelOverlay">
+    <div class="admin-panel" id="adminPanelInner" style="display:none; flex:1; flex-direction:column">
       <div class="admin-header">
         <div class="admin-header-title">
           <i class="fas fa-shield-alt"></i> ADMIN CONTROL
@@ -1943,6 +1908,7 @@
     let userCache = {};
     let isFirstTimeUser = false;
     let adAllUsers = [], adAllSongs = [];
+    let adminLoaded = false;
     let lebaranInterval = null;
     let vipTrialBannerClosed = false;
     let uploadQueueInterval = null;
@@ -3134,20 +3100,10 @@
 
     function openAdminPanel() {
       const overlay = document.getElementById('adminPanelOverlay');
-      const gate = document.getElementById('adminLockGate');
       const inner = document.getElementById('adminPanelInner');
       overlay.classList.add('show');
-      if (isAdminUnlocked) {
-        gate.classList.add('unlocked');
-        inner.style.display = 'flex';
-        adLoadData();
-        return;
-      }
-      gate.classList.remove('unlocked');
-      inner.style.display = 'none';
-      document.getElementById('algCapInput').value = '';
-      document.getElementById('algError').textContent = '';
-      setTimeout(algGenCaptcha, 80);
+      inner.style.display = 'flex';
+      adLoadData();
     }
 
     function algGenCaptcha() {
@@ -3208,38 +3164,15 @@
     }
 
     function algVerify() {
-      const input = document.getElementById('algCapInput').value.toUpperCase().trim();
-      const errEl = document.getElementById('algError');
-
-      if (input !== algSecret) {
-        errEl.textContent = '✗ KODE SALAH — COBA LAGI';
-        document.getElementById('algCapInput').value = '';
-        algGenCaptcha();
-        const inp = document.getElementById('algCapInput');
-        inp.style.animation = 'none'; void inp.offsetWidth;
-        inp.style.animation = 'algShake 0.4s ease';
-        return;
-      }
-
-      errEl.style.color = '#00ff88';
-      errEl.textContent = '✓ ACCESS GRANTED';
-      const gate = document.getElementById('adminLockGate');
       const inner = document.getElementById('adminPanelInner');
-      setTimeout(() => {
-        gate.classList.add('unlocked');
-        setTimeout(() => {
-          inner.style.display = 'flex';
-          adLoadData();
-        }, 380);
-      }, 300);
-      isAdminUnlocked = true;
-      try { localStorage.setItem('exeAdminUnlocked', '1'); } catch (e) {}
+      if (!inner) return;
+      inner.style.display = 'flex';
+      adLoadData();
     }
 
     function closeAdminPanel() {
       document.getElementById('adminPanelOverlay').classList.remove('show');
       document.getElementById('adminPanelInner').style.display = 'none';
-      document.getElementById('adminLockGate').classList.remove('unlocked');
     }
 
     function switchAdminView(id, btn) {
@@ -3255,6 +3188,8 @@
     }
 
     function adLoadData() {
+      if (adminLoaded) return;
+      adminLoaded = true;
       db.ref('users').on('value', snap => {
         const data = snap.val() || {};
         adAllUsers = Object.keys(data).map(uid => ({ uid, ...data[uid] }));
