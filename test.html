@@ -1021,6 +1021,76 @@
       border-radius: 14px; padding: 16px; margin-bottom: 16px;
       position: relative; overflow: hidden;
     }
+    .tag-selector-sheet {
+      max-width: 640px;
+    }
+    .tag-selector-layout {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .tag-selector-col {
+      flex: 1;
+      min-width: 0;
+    }
+    .tag-section-title {
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+    .tag-current-text {
+      font-size: 12px;
+      color: #ddd;
+      margin-bottom: 8px;
+    }
+    .tag-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag-chip {
+      border: none;
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #eee;
+      transition: 0.16s;
+    }
+    .tag-chip:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-1px);
+    }
+    .tag-chip-none {
+      background: rgba(255,80,80,0.1);
+    }
+    .tag-meta-list {
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .tag-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .tag-meta-desc {
+      font-size: 10px;
+      color: #999;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .tag-selector-layout {
+        flex-direction: column;
+      }
+    }
     .admin-two-col {
       display: flex;
       gap: 10px;
@@ -1970,6 +2040,23 @@
     </div>
   </div>
 
+  <div class="modal" id="modalTagSelector" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet tag-selector-sheet">
+      <h3 style="text-align:center; margin-bottom:8px; color:var(--accent); font-family:'Rajdhani',sans-serif; letter-spacing:1px">PILIH TAG</h3>
+      <div class="tag-selector-layout">
+        <div class="tag-selector-col">
+          <div class="tag-section-title">EDIT TAG</div>
+          <div id="tagSelectorCurrent" class="tag-current-text"></div>
+          <div id="tagSelectorChipGrid" class="tag-chip-grid"></div>
+        </div>
+        <div class="tag-selector-col">
+          <div class="tag-section-title">ALL TAG & CARA DAPET</div>
+          <div id="tagSelectorAllInfo" class="tag-meta-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
@@ -2171,6 +2258,14 @@
       if (changed) {
         db.ref('users/' + uid + '/alltag').set(merged);
       }
+    }
+    function ensureCurrentTagInAlltag(uid, u) {
+      if (!uid || !u) return;
+      const t = (u.tag || '').toLowerCase();
+      if (!t || t === 'none') return;
+      const all = u.alltag || {};
+      if (all[t]) return;
+      db.ref('users/' + uid + '/alltag/' + t).set(true);
     }
     function setupTagDropWatcher() {
       if (tagDropInterval) {
@@ -2462,6 +2557,7 @@
           document.getElementById('pFollowing').innerText = flgCount;
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
           syncUserQuestTags(u.uid, userData, folCount, flgCount);
+          ensureCurrentTagInAlltag(u.uid, userData);
           startUploadCooldownWatcher();
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
@@ -2712,11 +2808,12 @@
       const limit = userData.role === 'admin' ? 0 : (vipType ? 2 : 1);
       const entries = Object.keys(map || {}).map(id => ({ id, ...(map[id] || {}) }))
         .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0));
+      section.style.display = 'block';
       if (!entries.length) {
-        section.style.display = 'none';
+        infoEl.textContent = 'Belum ada antrian upload';
+        listEl.innerHTML = '<div style="font-size:11px;color:#777;padding:6px 0">Kamu belum punya upload di queue.</div>';
         return;
       }
-      section.style.display = 'block';
       const activeCount = entries.filter(it => it.status !== 'done' && it.status !== 'cancelled').length;
       if (limit) infoEl.textContent = activeCount + '/' + limit + ' slot terpakai';
       else infoEl.textContent = '';
@@ -2845,8 +2942,35 @@
       const isAdmin = userData.role === 'admin';
       const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
       if (isAdmin || diff >= cooldown) {
-        Swal.fire({ title: 'Yakin?', text: 'Pelanggaran rules → BANNED PERMANENT!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#00ff88', cancelButtonColor: '#d33', confirmButtonText: 'Saya Bertanggung Jawab', background: '#181828', color: '#fff' })
-          .then(r => { if (r.isConfirmed) saveMusic(title, url); });
+        let cdInterval;
+        Swal.fire({
+          title: 'Yakin?',
+          html: 'Pelanggaran rules → BANNED PERMANENT!<br><span id="uploadConfirmCd" style="font-size:11px;display:block;margin-top:6px;color:#ccc">Tunggu 5 detik sebelum bisa upload...</span>',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#00ff88',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Saya Bertanggung Jawab',
+          background: '#181828',
+          color: '#fff',
+          didOpen: () => {
+            const btn = Swal.getConfirmButton();
+            const label = document.getElementById('uploadConfirmCd');
+            let sec = 5;
+            if (btn) btn.disabled = true;
+            cdInterval = setInterval(() => {
+              sec--;
+              if (label) label.textContent = sec > 0 ? `Tunggu ${sec} detik sebelum bisa upload...` : 'Silakan upload jika sudah yakin.';
+              if (sec <= 0) {
+                if (btn) btn.disabled = false;
+                clearInterval(cdInterval);
+              }
+            }, 1000);
+          },
+          willClose: () => {
+            if (cdInterval) clearInterval(cdInterval);
+          }
+        }).then(r => { if (r.isConfirmed) saveMusic(title, url); });
         return;
       }
       const queueLimit = getUploadQueueLimit();
@@ -3145,36 +3269,53 @@
     }
     function openTagSelector() {
       if (!auth.currentUser || !userData) { msg('Login dulu!'); return; }
+      ensureCurrentTagInAlltag(auth.currentUser.uid, userData);
       const all = userData.alltag || {};
       const keys = Object.keys(all).filter(k => all[k]);
       if (!keys.length) { msg('Belum ada tag yang kebuka'); return; }
-      const opts = {};
-      keys.forEach(k => {
-        let label = k.toUpperCase();
-        if (k === 'newbie') label = 'NEWBIE (10+ followers)';
-        else if (k === 'pro') label = 'PRO (50+ followers)';
-        else if (k === 'terkeren') label = 'TERKEREN (150+ followers)';
-        else if (k === 'tersulit') label = 'TERSULIT (150+ followers)';
-        else if (k === 'vip') label = 'VIP (pernah VIP)';
-        opts[k] = label;
-      });
-      opts['none'] = 'TANPA TAG';
-      Swal.fire({
-        title: 'Pilih Tag',
-        input: 'select',
-        inputOptions: opts,
-        inputValue: userData.tag || 'none',
-        background: '#0d0d15',
-        color: '#fff',
-        showCancelButton: true,
-        confirmButtonColor: '#00ff88'
-      }).then(r => {
-        if (!r.value) return;
-        const val = r.value === 'none' ? 'none' : r.value;
-        db.ref('users/' + auth.currentUser.uid).update({ tag: val }).then(() => {
-          showToast('Tag diganti');
+      const modal = document.getElementById('modalTagSelector');
+      const curEl = document.getElementById('tagSelectorCurrent');
+      const grid = document.getElementById('tagSelectorChipGrid');
+      const info = document.getElementById('tagSelectorAllInfo');
+      if (!modal || !curEl || !grid || !info) return;
+      const cur = (userData.tag || 'none').toLowerCase();
+      curEl.innerHTML = cur === 'none' ? 'Tanpa tag aktif' : 'Tag aktif: ' + getTagHTML(cur);
+      const chips = keys.map(k => {
+        const meta = TAG_META[k] || { title: k.toUpperCase() };
+        return `<button class="tag-chip" data-tag="${k}"><span class="user-tag tag-${k}">${meta.title}</span></button>`;
+      }).join('') + `<button class="tag-chip tag-chip-none" data-tag="none">TANPA TAG</button>`;
+      grid.innerHTML = chips;
+      if (!grid.dataset.bound) {
+        grid.dataset.bound = '1';
+        grid.addEventListener('click', function(e) {
+          const btn = e.target.closest('.tag-chip');
+          if (!btn) return;
+          const tag = btn.dataset.tag;
+          const uid = auth.currentUser && auth.currentUser.uid;
+          if (!uid || !userData) return;
+          const updates = {};
+          updates['users/' + uid + '/tag'] = tag === 'none' ? 'none' : tag;
+          if (tag !== 'none') {
+            updates['users/' + uid + '/alltag/' + tag] = true;
+          }
+          db.ref().update(updates).then(() => {
+            document.getElementById('modalTagSelector').style.display = 'none';
+            showToast('Tag diganti');
+          });
         });
-      });
+      }
+      if (!info.dataset.filled) {
+        const rows = Object.keys(TAG_META).map(k => {
+          const m = TAG_META[k];
+          return `<div class="tag-meta-row">
+            <div><span class="user-tag tag-${k}">${m.title}</span></div>
+            <div class="tag-meta-desc">${m.desc}</div>
+          </div>`;
+        }).join('');
+        info.innerHTML = rows;
+        info.dataset.filled = '1';
+      }
+      modal.style.display = 'block';
     }
 
     // ============================================================
