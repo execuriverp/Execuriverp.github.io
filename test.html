@@ -956,6 +956,39 @@
       transition: 0.2s;
     }
     .admin-header-close:hover { background: var(--danger); color: #fff; }
+    .admin-header-tools {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .admin-header-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #ccc;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      transition: 0.16s;
+    }
+    .admin-header-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .admin-panel.admin-full {
+      width: 100%;
+      max-width: none;
+      max-height: 100vh;
+    }
+    .admin-panel.admin-mini {
+      width: 230px;
+      max-width: 260px;
+    }
+    .admin-overlay-mini {
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 0 16px 16px;
+    }
+    .admin-panel.admin-mini .admin-nav,
+    .admin-panel.admin-mini .admin-content {
+      display: none;
+    }
 
     .admin-nav {
       display: flex; padding: 12px 15px 0;
@@ -987,6 +1020,96 @@
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 14px; padding: 16px; margin-bottom: 16px;
       position: relative; overflow: hidden;
+    }
+    .admin-two-col {
+      display: flex;
+      gap: 10px;
+    }
+    .admin-two-col > div {
+      flex: 1;
+      min-width: 0;
+    }
+    .admin-label {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .admin-users-layout {
+      display: flex;
+      gap: 12px;
+    }
+    .admin-users-left {
+      flex: 1.2;
+      min-width: 0;
+    }
+    .admin-users-right {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .admin-tag-active-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .admin-tag-user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .admin-tag-current {
+      font-size: 11px;
+      color: #aaa;
+    }
+    .admin-tag-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .admin-tag-chip {
+      border: none;
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #eee;
+      transition: 0.16s;
+    }
+    .admin-tag-chip:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-1px);
+    }
+    .admin-tag-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .admin-tag-meta-desc {
+      font-size: 10px;
+      color: #999;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .admin-users-layout {
+        flex-direction: column;
+      }
+      .admin-panel {
+        background: #05050c;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.75);
+      }
     }
     .admin-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -1429,11 +1552,15 @@
   <!-- ADMIN PANEL (Built-in) -->
     <div class="admin-panel-overlay" id="adminPanelOverlay">
     <div class="admin-panel" id="adminPanelInner" style="display:none; flex:1; flex-direction:column">
-      <div class="admin-header">
+      <div class="admin-header" onmousedown="startAdminDrag(event)">
         <div class="admin-header-title">
           <i class="fas fa-shield-alt"></i> ADMIN PANEL
         </div>
-        <button class="admin-header-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
+        <div class="admin-header-tools">
+          <button class="admin-header-btn" onclick="toggleAdminSize('mini')" title="Minimize"><i class="fas fa-minus"></i></button>
+          <button class="admin-header-btn" onclick="toggleAdminSize('full')" title="Full"><i class="fas fa-expand"></i></button>
+          <button class="admin-header-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
+        </div>
       </div>
       <div class="admin-nav">
         <button class="admin-nav-btn active" onclick="switchAdminView('dash', this)"><i class="fas fa-th-large"></i> DASH</button>
@@ -1468,6 +1595,25 @@
             </div>
           </div>
           <div class="admin-card">
+            <h3><i class="fas fa-gift"></i> EVENT TAG DROP</h3>
+            <div class="admin-two-col">
+              <div>
+                <div class="admin-label">Tag drop</div>
+                <input class="admin-inp" id="adTagDropName" placeholder="contoh: pro">
+              </div>
+              <div>
+                <div class="admin-label">Chance (%)</div>
+                <input class="admin-inp" id="adTagDropChance" type="number" min="0" max="100" step="1" value="10">
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <button class="admin-btn admin-btn-gold" onclick="adSaveTagDrop()">SAVE</button>
+              <button class="admin-btn admin-btn-blue" onclick="adPreviewTagDrop()">TEST</button>
+              <button class="admin-btn admin-btn-red" onclick="adClearTagDrop()">CLEAR</button>
+            </div>
+            <div id="adTagDropStatus" style="font-size:11px;color:#888;margin-top:6px"></div>
+          </div>
+          <div class="admin-card">
             <h3><i class="fas fa-moon"></i> LEBARAN COUNTDOWN</h3>
             <p style="font-size:11px; color:#888; margin-bottom:8px">Atur tanggal Idulfitri supaya countdown muncul untuk semua user.</p>
             <input class="admin-inp" id="adLebaranDate" type="date">
@@ -1481,8 +1627,29 @@
 
         <!-- USERS -->
         <div id="adv-users" class="admin-view">
-          <input class="admin-search" placeholder="Cari user..." id="adUserSearch" oninput="adFilterUsers(this.value)">
-          <div id="adUserList"><div style="text-align:center; padding:30px; color:#444; font-size:13px">Loading...</div></div>
+          <div class="admin-users-layout">
+            <div class="admin-users-left">
+              <input class="admin-search" placeholder="Cari user..." id="adUserSearch" oninput="adFilterUsers(this.value)">
+              <div id="adUserList"><div style="text-align:center; padding:30px; color:#444; font-size:13px">Loading...</div></div>
+            </div>
+            <div class="admin-users-right">
+              <div class="admin-card">
+                <h3><i class="fas fa-id-badge"></i> EDIT TAG USER</h3>
+                <div id="adTagEditorEmpty" style="font-size:12px;color:#777;padding:10px 0">Pilih user di kiri dulu.</div>
+                <div id="adTagEditor" style="display:none">
+                  <div class="admin-tag-active-row">
+                    <div id="adTagUserName" class="admin-tag-user-name"></div>
+                    <div id="adTagCurrentDisplay" class="admin-tag-current"></div>
+                  </div>
+                  <div id="adTagChipGrid" class="admin-tag-chip-grid"></div>
+                </div>
+              </div>
+              <div class="admin-card">
+                <h3><i class="fas fa-tags"></i> ALL TAG & CARA DAPET</h3>
+                <div id="adAllTagInfo"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- SONGS -->
@@ -1909,6 +2076,10 @@
     let isFirstTimeUser = false;
     let adAllUsers = [], adAllSongs = [];
     let adminLoaded = false;
+    let adminDrag = { active: false, offsetX: 0, offsetY: 0 };
+    let adminMode = 'normal';
+    let tagDropInterval = null;
+    let currentTagDrop = null;
     let lebaranInterval = null;
     let vipTrialBannerClosed = false;
     let uploadQueueInterval = null;
@@ -2000,6 +2171,27 @@
       if (changed) {
         db.ref('users/' + uid + '/alltag').set(merged);
       }
+    }
+    function setupTagDropWatcher() {
+      if (tagDropInterval) {
+        clearInterval(tagDropInterval);
+        tagDropInterval = null;
+      }
+      if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) return;
+      tagDropInterval = setInterval(() => {
+        if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active) return;
+        if (Math.random() < currentTagDrop.chance) {
+          const tag = String(currentTagDrop.tag).toLowerCase();
+          const all = userData.alltag || {};
+          if (!all[tag]) {
+            const updates = {};
+            updates['users/' + auth.currentUser.uid + '/alltag/' + tag] = true;
+            db.ref().update(updates).then(() => {
+              showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+            });
+          }
+        }
+      }, 30000);
     }
     function updateUploadCooldownCard() {
       const card = document.getElementById('uploadCdCard');
@@ -2315,9 +2507,14 @@
           }
           updateFollowUI();
         });
+        setupTagDropWatcher();
       } else {
         stopUploadQueueWatcher();
         stopUploadCooldownWatcher();
+        if (tagDropInterval) {
+          clearInterval(tagDropInterval);
+          tagDropInterval = null;
+        }
         document.getElementById('topLoginBtn').textContent = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('btnAdmin').classList.remove('show');
@@ -2637,6 +2834,10 @@
       const url = document.getElementById('rUrl').value;
       if (!title || !url) return msg('Isi semua data!');
       if (!auth.currentUser || !userData) return msg('Login dulu!');
+      if (userData.banUpload) {
+        msg('Akun ini dibanned dari upload');
+        return;
+      }
       const lastUpload = userData.lastUpload || 0;
       const now = Date.now();
       const diff = (now - lastUpload) / 1000 / 60;
@@ -3098,7 +3299,43 @@
     let algSecret = '';
     let adMtState = false;
 
-    function openAdminPanel() {
+    async function openAdminPanel() {
+      if (!auth.currentUser || !userData || (userData.role !== 'admin' && userData.role !== 'owner')) {
+        msg('Khusus admin');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const snap = await db.ref('users/' + uid + '/pwadmin').get();
+      let pw = snap.val();
+      if (!pw) {
+        const resSet = await Swal.fire({
+          title: 'Set Admin Password',
+          input: 'password',
+          inputPlaceholder: 'Password admin baru',
+          confirmButtonText: 'Simpan',
+          showCancelButton: true,
+          background: '#0d0d15',
+          color: '#fff'
+        });
+        if (!resSet.value) return;
+        pw = resSet.value;
+        await db.ref('users/' + uid).update({ pwadmin: pw });
+        showToast('Password admin disimpan');
+      } else {
+        const res = await Swal.fire({
+          title: 'Admin Password',
+          input: 'password',
+          inputPlaceholder: 'Masukkan password admin',
+          confirmButtonText: 'Masuk',
+          showCancelButton: true,
+          background: '#0d0d15',
+          color: '#fff'
+        });
+        if (!res.value || res.value !== pw) {
+          msg('Password admin salah');
+          return;
+        }
+      }
       const overlay = document.getElementById('adminPanelOverlay');
       const inner = document.getElementById('adminPanelInner');
       overlay.classList.add('show');
@@ -3171,8 +3408,74 @@
     }
 
     function closeAdminPanel() {
-      document.getElementById('adminPanelOverlay').classList.remove('show');
-      document.getElementById('adminPanelInner').style.display = 'none';
+      const overlay = document.getElementById('adminPanelOverlay');
+      const inner = document.getElementById('adminPanelInner');
+      if (!overlay || !inner) return;
+      overlay.classList.remove('show');
+      inner.style.display = 'none';
+      adminMode = 'normal';
+      inner.classList.remove('admin-full', 'admin-mini');
+      overlay.classList.remove('admin-overlay-mini');
+      inner.style.position = '';
+      inner.style.top = '';
+      inner.style.left = '';
+      inner.style.right = '';
+      inner.style.bottom = '';
+    }
+
+    function startAdminDrag(e) {
+      const panel = document.getElementById('adminPanelInner');
+      if (!panel || adminMode === 'full') return;
+      if (e.target.closest('button')) return;
+      adminDrag.active = true;
+      const rect = panel.getBoundingClientRect();
+      adminDrag.offsetX = e.clientX - rect.left;
+      adminDrag.offsetY = e.clientY - rect.top;
+      document.addEventListener('mousemove', onAdminDrag);
+      document.addEventListener('mouseup', stopAdminDrag);
+    }
+    function onAdminDrag(e) {
+      if (!adminDrag.active) return;
+      const panel = document.getElementById('adminPanelInner');
+      if (!panel) return;
+      panel.style.position = 'fixed';
+      panel.style.top = (e.clientY - adminDrag.offsetY) + 'px';
+      panel.style.left = (e.clientX - adminDrag.offsetX) + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    }
+    function stopAdminDrag() {
+      adminDrag.active = false;
+      document.removeEventListener('mousemove', onAdminDrag);
+      document.removeEventListener('mouseup', stopAdminDrag);
+    }
+    function toggleAdminSize(mode) {
+      const overlay = document.getElementById('adminPanelOverlay');
+      const panel = document.getElementById('adminPanelInner');
+      if (!overlay || !panel) return;
+      if (mode === 'full') {
+        adminMode = adminMode === 'full' ? 'normal' : 'full';
+      } else if (mode === 'mini') {
+        adminMode = adminMode === 'mini' ? 'normal' : 'mini';
+      }
+      panel.classList.remove('admin-full', 'admin-mini');
+      overlay.classList.remove('admin-overlay-mini');
+      if (adminMode === 'full') {
+        panel.classList.add('admin-full');
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      } else if (adminMode === 'mini') {
+        panel.classList.add('admin-mini');
+        overlay.classList.add('admin-overlay-mini');
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      } else {
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      }
     }
 
     function switchAdminView(id, btn) {
@@ -3187,6 +3490,67 @@
       }
     }
 
+    const TAG_META = {
+      user: { title: 'USER', desc: 'Tag default semua user' },
+      newbie: { title: 'NEWBIE', desc: '10+ followers' },
+      pro: { title: 'PRO', desc: '50+ followers' },
+      terkeren: { title: 'TERKEREN', desc: '150+ followers, special' },
+      tersulit: { title: 'TERSULIT', desc: '150+ followers, special' },
+      vip: { title: 'VIP', desc: 'Pernah VIP atau trial' },
+      vvip: { title: 'VVIP', desc: 'Tag spesial sangat langka' },
+      legend: { title: 'LEGEND', desc: 'Creator legend pilihan admin' },
+      mythic: { title: 'MYTHIC', desc: 'Tag event eksklusif' },
+      godlike: { title: 'GODLIKE', desc: 'Performa upload dan followers tinggi' },
+      savage: { title: 'SAVAGE', desc: 'Aktif upload dan support creator lain' },
+      ultra: { title: 'ULTRA', desc: 'Kombinasi event dan pencapaian' },
+      velly: { title: 'VELLY', desc: 'Tag spesial owner' }
+    };
+    let adSelectedUserUid = null;
+
+    function initAdminTagUI() {
+      const info = document.getElementById('adAllTagInfo');
+      if (info) {
+        const rows = Object.keys(TAG_META).map(k => {
+          const m = TAG_META[k];
+          return `<div class="admin-tag-meta-row">
+            <div><span class="user-tag tag-${k}">${m.title}</span></div>
+            <div class="admin-tag-meta-desc">${m.desc}</div>
+          </div>`;
+        }).join('');
+        info.innerHTML = rows;
+      }
+      const grid = document.getElementById('adTagChipGrid');
+      if (grid && !grid.dataset.bound) {
+        const chips = Object.keys(TAG_META).map(k => {
+          const m = TAG_META[k];
+          return `<button class="admin-tag-chip" data-tag="${k}"><span class="user-tag tag-${k}">${m.title}</span></button>`;
+        }).join('');
+        grid.innerHTML = chips;
+        grid.dataset.bound = '1';
+        grid.addEventListener('click', function(e) {
+          const btn = e.target.closest('.admin-tag-chip');
+          if (!btn) return;
+          const tag = btn.dataset.tag;
+          if (!adSelectedUserUid) return;
+          adSetUserTag(adSelectedUserUid, tag);
+        });
+      }
+    }
+
+    function adSelectUser(uid) {
+      const u = adAllUsers.find(x => x.uid === uid);
+      const body = document.getElementById('adTagEditor');
+      const empty = document.getElementById('adTagEditorEmpty');
+      if (!u || !body || !empty) return;
+      adSelectedUserUid = uid;
+      empty.style.display = 'none';
+      body.style.display = 'block';
+      const nameEl = document.getElementById('adTagUserName');
+      const curEl = document.getElementById('adTagCurrentDisplay');
+      if (nameEl) nameEl.textContent = '@' + (u.username || uid);
+      if (curEl) curEl.innerHTML = getTagHTML(u.tag);
+    }
+
     function adLoadData() {
       if (adminLoaded) return;
       adminLoaded = true;
@@ -3195,6 +3559,7 @@
         adAllUsers = Object.keys(data).map(uid => ({ uid, ...data[uid] }));
         document.getElementById('adCountU').innerText = adAllUsers.length;
         adRenderUsers(adAllUsers);
+        initAdminTagUI();
       });
       db.ref('songs').on('value', snap => {
         const data = snap.val() || {};
@@ -3209,11 +3574,27 @@
         snap.forEach(c => { const l = c.val(); h = `<div class="log-line"><span class="log-time">[${l.time}]</span> ${escapeHtml(l.msg)}</div>` + h; });
         box.innerHTML = h || '<div style="color:#333">No logs</div>';
       });
-      // Settings - load current announcement & maintenance state
-      db.ref('settings').once('value').then(s => {
+      db.ref('settings').on('value', s => {
         const sv = s.val() || {};
         adMtState = sv.mt || false;
         if (sv.announcement) document.getElementById('adBcInput').value = sv.announcement;
+        const td = sv.tagDrop || null;
+        const nameInp = document.getElementById('adTagDropName');
+        const chInp = document.getElementById('adTagDropChance');
+        const statusEl = document.getElementById('adTagDropStatus');
+        if (nameInp && chInp && statusEl) {
+          if (!td) {
+            nameInp.value = '';
+            chInp.value = '0';
+            statusEl.textContent = 'Event OFF';
+          } else {
+            nameInp.value = td.tag || '';
+            chInp.value = String(Math.round((td.chance || 0) * 100));
+            statusEl.textContent = td.active ? 'Event aktif: ' + (td.tag || '') : 'Event OFF';
+          }
+        }
+        currentTagDrop = td;
+        setupTagDropWatcher();
       });
     }
 
@@ -3227,12 +3608,12 @@
         return `<div class="user-row-admin">
           <div class="ur-top">
             <div style="flex:1">
-              <div class="ur-name">${escapeHtml(u.username || 'Unknown')} ${tagHtml}</div>
+              <div class="ur-name" onclick="adSelectUser('${u.uid}')">${escapeHtml(u.username || 'Unknown')} ${tagHtml}</div>
               <div class="ur-uid">${u.uid}</div>
             </div>
           </div>
           <div class="ur-actions">
-            <button class="admin-btn admin-btn-gold" onclick="adChangeTag('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
+            <button class="admin-btn admin-btn-gold" onclick="adSelectUser('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
             <button class="admin-btn admin-btn-blue" onclick="adOpenUserTools('${u.uid}','${escapeHtml(u.username||'')}')" style="padding:6px 10px;font-size:11px">TOOLS</button>
             <button class="admin-btn admin-btn-red" onclick="adToggleBan('${u.uid}', ${!!u.banned})" style="padding:6px 10px;font-size:11px">${u.banned ? 'UNBAN' : 'BAN'}</button>
           </div>
@@ -3351,11 +3732,48 @@
       }
     }
 
-    function adChangeTag(uid) {
-      const tags = ['user','vvip','sepuh','admin','owner','developer','sultan','wibu','sadboy','hacker','verified','bot','npc','dj','newbie','pro','top-global','premium','influencer','legend','mythic','godlike','savage','maniac','ultra','terkeren','tersulit','velly'];
-      const opts = {}; tags.forEach(t => opts[t] = t.toUpperCase());
-      Swal.fire({ title: 'Change Tag', input: 'select', inputOptions: opts, background: '#0d0d15', color: '#fff' })
-        .then(r => { if (r.value) { db.ref('users/' + uid).update({ tag: r.value }); addLog('Tag: ' + uid + ' → ' + r.value); showToast('Tag diubah!'); adLoadData(); } });
+    function adSetUserTag(uid, tag) {
+      const updates = {};
+      updates['users/' + uid + '/tag'] = tag || 'none';
+      if (tag && tag !== 'none') {
+        updates['users/' + uid + '/alltag/' + tag] = true;
+      }
+      db.ref().update(updates).then(() => {
+        addLog('Tag: ' + uid + ' → ' + (tag || 'none'));
+        showToast('Tag diubah!');
+      });
+    }
+
+    function adSaveTagDrop() {
+      const nameInp = document.getElementById('adTagDropName');
+      const chInp = document.getElementById('adTagDropChance');
+      if (!nameInp || !chInp) return;
+      const tag = nameInp.value.trim().toLowerCase();
+      let chance = parseFloat(chInp.value);
+      if (!tag) {
+        msg('Tag tidak boleh kosong');
+        return;
+      }
+      if (isNaN(chance) || chance <= 0) chance = 0;
+      if (chance > 100) chance = 100;
+      const active = chance > 0;
+      const data = { active, tag, chance: chance / 100 };
+      db.ref('settings/tagDrop').set(data).then(() => {
+        showToast('Event tag drop diupdate');
+      });
+    }
+    function adClearTagDrop() {
+      db.ref('settings/tagDrop').remove().then(() => {
+        const statusEl = document.getElementById('adTagDropStatus');
+        if (statusEl) statusEl.textContent = 'Event OFF';
+        showToast('Event tag drop dimatikan');
+      });
+    }
+    function adPreviewTagDrop() {
+      const chInp = document.getElementById('adTagDropChance');
+      if (!chInp) return;
+      const chance = parseFloat(chInp.value) || 0;
+      msg('Simulasi chance sekitar ' + chance.toFixed(1) + '% per tick untuk user online');
     }
 
     function adOpenUserTools(uid, name) {
