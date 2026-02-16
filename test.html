@@ -503,16 +503,19 @@
        EVENT CENTER (MLBB STYLE)
     ============================================================ */
     .event-center-sheet {
+      margin: 40px auto;
+      max-width: 900px;
+      width: calc(100% - 32px);
       padding: 18px 20px;
-      background: linear-gradient(180deg, #121220, #050510);
-      border-radius: 24px 24px 0 0;
+      background: linear-gradient(180deg, #111827, #020617);
+      border-radius: 20px;
       border: 1px solid rgba(37,99,235,0.7);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
       display: flex;
       flex-direction: column;
       gap: 16px;
-      max-width: 960px;
-      width: calc(100% - 32px);
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
     }
     .event-center-header {
       display: flex;
@@ -934,6 +937,15 @@
       background: rgba(15,23,42,0.95);
       color: #e5e7eb;
       border: 1px solid rgba(75,85,99,0.95);
+    }
+    @media (max-width: 640px) {
+      .event-center-sheet {
+        margin: 20px auto;
+        max-width: 100%;
+        width: calc(100% - 20px);
+        padding: 14px 12px;
+        border-radius: 16px;
+      }
     }
 
     /* ============================================================
@@ -2536,7 +2548,7 @@
   </div>
 
   <div class="modal" id="modalEventCenter" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet event-center-sheet">
+    <div class="event-center-sheet">
       <div class="event-center-header">
         <div class="event-center-title">
           <i class="fas fa-gamepad"></i>
