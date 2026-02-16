@@ -2304,11 +2304,21 @@
                 <input class="admin-inp" id="adTagDropChance" type="number" min="0" max="100" step="1" value="10">
               </div>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <button class="admin-btn admin-btn-gold" onclick="adSaveTagDrop()">SAVE</button>
-              <button class="admin-btn admin-btn-blue" onclick="adPreviewTagDrop()">TEST</button>
-              <button class="admin-btn admin-btn-red" onclick="adClearTagDrop()">CLEAR</button>
+          <div class="admin-two-col" style="margin-top:8px">
+            <div>
+              <div class="admin-label">Durasi event (detik)</div>
+              <input class="admin-inp" id="adTagDropDuration" type="number" min="10" step="10" value="1800">
             </div>
+            <div>
+              <div class="admin-label">Maks. pemenang (0 = unlimited)</div>
+              <input class="admin-inp" id="adTagDropMax" type="number" min="0" step="1" value="0">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button class="admin-btn admin-btn-gold" onclick="adSaveTagDrop()">START EVENT</button>
+            <button class="admin-btn admin-btn-blue" onclick="adPreviewTagDrop()">TEST</button>
+            <button class="admin-btn admin-btn-red" onclick="adClearTagDrop()">STOP</button>
+          </div>
             <div id="adTagDropStatus" style="font-size:11px;color:#888;margin-top:6px"></div>
           </div>
           <div class="admin-card">
@@ -3009,14 +3019,24 @@
       }
       tagDropInterval = setInterval(() => {
         if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active) return;
+        if (currentTagDrop.maxWinners && currentTagDrop.obtainedCount >= currentTagDrop.maxWinners) return;
         if (Math.random() < currentTagDrop.chance) {
           const tag = String(currentTagDrop.tag).toLowerCase();
           const all = userData.alltag || {};
           if (!all[tag]) {
             const updates = {};
             updates['users/' + auth.currentUser.uid + '/alltag/' + tag] = true;
-            db.ref().update(updates).then(() => {
-              showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+            const countRef = db.ref('settings/tagDrop/obtainedCount');
+            countRef.transaction(cur => {
+              const base = typeof cur === 'number' ? cur : 0;
+              if (currentTagDrop.maxWinners && base >= currentTagDrop.maxWinners) return;
+              return base + 1;
+            }).then(res => {
+              if (!res.committed) return;
+              currentTagDrop.obtainedCount = res.snapshot.val() || 0;
+              db.ref().update(updates).then(() => {
+                showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+              });
             });
           }
         }
@@ -4911,16 +4931,22 @@
         const td = sv.tagDrop || null;
         const nameInp = document.getElementById('adTagDropName');
         const chInp = document.getElementById('adTagDropChance');
+        const durInp = document.getElementById('adTagDropDuration');
+        const maxInp = document.getElementById('adTagDropMax');
         const statusEl = document.getElementById('adTagDropStatus');
-        if (nameInp && chInp && statusEl) {
+        if (nameInp && chInp && durInp && maxInp && statusEl) {
           if (!td) {
             nameInp.value = '';
             chInp.value = '0';
+            durInp.value = '1800';
+            maxInp.value = '0';
             statusEl.textContent = 'Event OFF';
           } else {
             nameInp.value = td.tag || '';
             chInp.value = String(Math.round((td.chance || 0) * 100));
-            statusEl.textContent = td.active ? 'Event aktif: ' + (td.tag || '') : 'Event OFF';
+            durInp.value = String(td.durationSec || 1800);
+            maxInp.value = String(td.maxWinners || 0);
+            statusEl.textContent = td.active ? 'Event aktif: ' + (td.tag || '') : 'Event tersimpan';
           }
         }
         currentTagDrop = td;
@@ -5099,7 +5125,9 @@
     function adSaveTagDrop() {
       const nameInp = document.getElementById('adTagDropName');
       const chInp = document.getElementById('adTagDropChance');
-      if (!nameInp || !chInp) return;
+      const durInp = document.getElementById('adTagDropDuration');
+      const maxInp = document.getElementById('adTagDropMax');
+      if (!nameInp || !chInp || !durInp || !maxInp) return;
       const tag = nameInp.value.trim().toLowerCase();
       let chance = parseFloat(chInp.value);
       if (!tag) {
@@ -5108,13 +5136,19 @@
       }
       if (isNaN(chance) || chance <= 0) chance = 0;
       if (chance > 100) chance = 100;
+      let durationSec = parseInt(durInp.value, 10);
+      if (isNaN(durationSec) || durationSec < 10) durationSec = 1800;
+      let maxWinners = parseInt(maxInp.value, 10);
+      if (isNaN(maxWinners) || maxWinners < 0) maxWinners = 0;
       const active = chance > 0;
       const now = Date.now();
-      const endAt = active ? now + 30 * 60 * 1000 : 0;
+      const endAt = active ? now + durationSec * 1000 : 0;
       const data = {
         active,
         tag,
         chance: chance / 100,
+        durationSec,
+        maxWinners,
         desc: 'Event tag drop dimulai oleh admin',
         startedBy: auth.currentUser ? (userData && userData.username) : 'Admin',
         startedAt: now,
