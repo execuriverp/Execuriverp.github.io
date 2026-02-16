@@ -2727,6 +2727,10 @@
     let isAdminUnlocked = localStorage.getItem('exeAdminUnlocked') === '1';
     let currentProfileUid = null;
     let adminFloatInterval = null;
+    let userQuestState = { daily: {}, weekly: {} };
+    let listenDailySeconds = 0;
+    let listenWeeklySeconds = 0;
+    let lastListenTick = 0;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -2927,7 +2931,9 @@
       }
       if (!modal) return;
       modal.style.display = 'block';
-      renderEventCenter();
+      loadUserQuests().then(() => {
+        renderEventCenter();
+      });
     }
     function switchEventTab(id, btn) {
       document.querySelectorAll('.event-tab-view').forEach(v => v.classList.remove('active'));
@@ -2962,23 +2968,86 @@
       if (shopEl) shopEl.innerHTML = buildShopHtml();
       updateEventSideFromTagDrop();
     }
+    function getDailyKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+    function getWeeklyKey() {
+      const d = new Date();
+      const onejan = new Date(d.getFullYear(), 0, 1);
+      const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+      return d.getFullYear() + '-w' + String(week).padStart(2, '0');
+    }
+    function loadUserQuests() {
+      if (!auth.currentUser) return Promise.resolve();
+      return db.ref('userQuests/' + auth.currentUser.uid).once('value').then(snap => {
+        const val = snap.val() || {};
+        userQuestState.daily = val.daily || {};
+        userQuestState.weekly = val.weekly || {};
+        listenDailySeconds = 0;
+        listenWeeklySeconds = 0;
+        lastListenTick = 0;
+      }).catch(() => {
+        userQuestState = { daily: {}, weekly: {} };
+        listenDailySeconds = 0;
+        listenWeeklySeconds = 0;
+        lastListenTick = 0;
+      });
+    }
     function buildDailyQuestsHtml() {
-      const quests = [
-        { id: 'daily_first_upload', title: 'First Upload', desc: 'Upload 1 musik hari ini', reward: 5, cur: 0, max: 1 },
-        { id: 'daily_music_producer', title: 'Music Producer', desc: 'Upload 5 musik dalam 1 hari', reward: 15, cur: 0, max: 5 },
-        { id: 'daily_top_listener_1', title: 'Top Listener I', desc: 'Putar musik 30 menit (tab aktif)', reward: 10, cur: 0, max: 30 },
-        { id: 'daily_follower_boost', title: 'Follower Boost', desc: 'Dapat 5 followers dalam 1 hari', reward: 20, cur: 0, max: 5 }
+      const defs = [
+        { id: 'daily_first_upload', title: 'First Upload', desc: 'Upload 1 musik hari ini', reward: 5, max: 1, type: 'daily', enabled: true },
+        { id: 'daily_music_producer', title: 'Music Producer', desc: 'Upload 5 musik dalam 1 hari', reward: 15, max: 5, type: 'daily', enabled: true },
+        { id: 'daily_top_listener_1', title: 'Top Listener I', desc: 'Putar musik 30 menit (tab aktif)', reward: 10, max: 30, type: 'daily', enabled: true },
+        { id: 'daily_follower_boost', title: 'Follower Boost', desc: 'Dapat 5 followers dalam 1 hari', reward: 20, max: 5, type: 'daily', enabled: false }
       ];
-      return quests.map(renderQuestCard).join('');
+      const key = getDailyKey();
+      return defs.map(def => {
+        const st = (userQuestState.daily && userQuestState.daily[def.id]) || {};
+        const samePeriod = st.periodKey === key;
+        const cur = samePeriod ? (st.cur || 0) : 0;
+        const claimed = samePeriod && !!st.claimed;
+        return renderQuestCard({
+          id: def.id,
+          title: def.title,
+          desc: def.desc,
+          reward: def.reward,
+          max: def.max,
+          cur,
+          claimed,
+          type: def.type,
+          enabled: def.enabled
+        });
+      }).join('');
     }
     function buildWeeklyQuestsHtml() {
-      const quests = [
-        { id: 'weekly_social_hunter', title: 'Social Hunter', desc: 'Follow 2 creator baru', reward: 50, cur: 0, max: 2 },
-        { id: 'weekly_top_listener_2', title: 'Top Listener II', desc: 'Putar musik 2 jam total', reward: 50, cur: 0, max: 120 },
-        { id: 'weekly_trending_uploader', title: 'Trending Uploader', desc: 'Total 100 play di lagu kamu', reward: 75, cur: 0, max: 100 },
-        { id: 'weekly_active_creator', title: 'Active Creator', desc: 'Upload 10 lagu dalam seminggu', reward: 100, cur: 0, max: 10 }
+      const defs = [
+        { id: 'weekly_social_hunter', title: 'Social Hunter', desc: 'Follow 2 creator baru', reward: 50, max: 2, type: 'weekly', enabled: true },
+        { id: 'weekly_top_listener_2', title: 'Top Listener II', desc: 'Putar musik 2 jam total', reward: 50, max: 120, type: 'weekly', enabled: true },
+        { id: 'weekly_trending_uploader', title: 'Trending Uploader', desc: 'Total 100 play di lagu kamu', reward: 75, max: 100, type: 'weekly', enabled: false },
+        { id: 'weekly_active_creator', title: 'Active Creator', desc: 'Upload 10 lagu dalam seminggu', reward: 100, max: 10, type: 'weekly', enabled: true }
       ];
-      return quests.map(renderQuestCard).join('');
+      const key = getWeeklyKey();
+      return defs.map(def => {
+        const st = (userQuestState.weekly && userQuestState.weekly[def.id]) || {};
+        const samePeriod = st.periodKey === key;
+        const cur = samePeriod ? (st.cur || 0) : 0;
+        const claimed = samePeriod && !!st.claimed;
+        return renderQuestCard({
+          id: def.id,
+          title: def.title,
+          desc: def.desc,
+          reward: def.reward,
+          max: def.max,
+          cur,
+          claimed,
+          type: def.type,
+          enabled: def.enabled
+        });
+      }).join('');
     }
     function buildShopHtml() {
       const items = [
@@ -3012,10 +3081,115 @@
         '</div>';
       }).join('');
     }
+    function getQuestDef(type, id) {
+      if (type === 'daily') {
+        if (id === 'daily_first_upload') return { id, type, title: 'First Upload', reward: 5, max: 1, enabled: true };
+        if (id === 'daily_music_producer') return { id, type, title: 'Music Producer', reward: 15, max: 5, enabled: true };
+        if (id === 'daily_top_listener_1') return { id, type, title: 'Top Listener I', reward: 10, max: 30, enabled: true };
+        if (id === 'daily_follower_boost') return { id, type, title: 'Follower Boost', reward: 20, max: 5, enabled: false };
+      } else if (type === 'weekly') {
+        if (id === 'weekly_social_hunter') return { id, type, title: 'Social Hunter', reward: 50, max: 2, enabled: true };
+        if (id === 'weekly_top_listener_2') return { id, type, title: 'Top Listener II', reward: 50, max: 120, enabled: true };
+        if (id === 'weekly_trending_uploader') return { id, type, title: 'Trending Uploader', reward: 75, max: 100, enabled: false };
+        if (id === 'weekly_active_creator') return { id, type, title: 'Active Creator', reward: 100, max: 10, enabled: true };
+      }
+      return null;
+    }
+    function updateQuestProgress(type, id, delta, uidOverride) {
+      if (!auth || !auth.currentUser || !delta) return;
+      const def = getQuestDef(type, id);
+      if (!def || def.enabled === false) return;
+      const uid = uidOverride || auth.currentUser.uid;
+      const periodKey = type === 'daily' ? getDailyKey() : getWeeklyKey();
+      const ref = db.ref('userQuests/' + uid + '/' + type + '/' + id);
+      return ref.transaction(cur => {
+        if (!cur || cur.periodKey !== periodKey) {
+          const curVal = Math.min(delta, def.max);
+          return { periodKey, cur: curVal, claimed: false };
+        }
+        const curVal = cur.cur || 0;
+        const nextVal = Math.min(curVal + delta, def.max);
+        if (nextVal === curVal) return cur;
+        return { ...cur, cur: nextVal };
+      }).then(res => {
+        if (!res.committed) return;
+        if (uid === (auth.currentUser && auth.currentUser.uid)) {
+          if (!userQuestState[type]) userQuestState[type] = {};
+          userQuestState[type][id] = res.snapshot.val() || {};
+        }
+      }).catch(() => {});
+    }
+    function grantCoins(uid, amount) {
+      if (!uid || !amount || amount <= 0) return Promise.resolve();
+      let remaining = amount;
+      const step = () => {
+        if (remaining <= 0) return Promise.resolve();
+        const chunk = remaining > 10 ? 10 : remaining;
+        remaining -= chunk;
+        const ref = db.ref('users/' + uid + '/coins');
+        return ref.transaction(cur => {
+          const base = typeof cur === 'number' ? cur : 0;
+          return base + chunk;
+        }).then(res => {
+          if (!res.committed) {
+            remaining += chunk;
+            return Promise.resolve();
+          }
+          return step();
+        });
+      };
+      return step();
+    }
+    function claimQuest(type, id) {
+      if (!auth || !auth.currentUser || !userData) return msg('Login dulu!');
+      const def = getQuestDef(type, id);
+      if (!def) return;
+      if (def.enabled === false) { showToast('Quest belum aktif'); return; }
+      const uid = auth.currentUser.uid;
+      const periodKey = type === 'daily' ? getDailyKey() : getWeeklyKey();
+      const ref = db.ref('userQuests/' + uid + '/' + type + '/' + id);
+      ref.once('value').then(snap => {
+        const st = snap.val() || {};
+        if (st.periodKey !== periodKey) { showToast('Quest sudah reset'); return; }
+        const cur = st.cur || 0;
+        if (cur < def.max) { showToast('Progress belum penuh'); return; }
+        if (st.claimed) { showToast('Quest sudah diklaim'); return; }
+        return grantCoins(uid, def.reward).then(() => {
+          return ref.update({ claimed: true, claimedAt: Date.now(), periodKey, cur });
+        }).then(() => {
+          return db.ref('users/' + uid + '/coins').once('value');
+        }).then(csnap => {
+          const newCoins = csnap.val() || 0;
+          userData.coins = newCoins;
+          if (!userQuestState[type]) userQuestState[type] = {};
+          userQuestState[type][id] = { periodKey, cur, claimed: true };
+          renderEventCenter();
+          showToast('Kamu mendapatkan ' + def.reward + ' ExeCoin dari quest ' + def.title);
+        });
+      }).catch(() => {
+        showToast('Gagal klaim quest');
+      });
+    }
     function renderQuestCard(q) {
-      const pct = Math.max(0, Math.min(1, q.max ? q.cur / q.max : 0));
+      const pct = Math.max(0, Math.min(1, q.max ? (q.cur || 0) / q.max : 0));
       const progressText = (q.cur || 0) + '/' + q.max;
-      const canClaim = false;
+      const completed = (q.cur || 0) >= q.max;
+      const claimed = !!q.claimed;
+      const enabled = q.enabled !== false;
+      let badgeText = 'Berjalan';
+      if (!enabled) badgeText = 'Segera hadir';
+      else if (claimed) badgeText = 'Selesai';
+      else if (completed) badgeText = 'Siap diklaim';
+      let btnLabel = 'Progress ' + progressText;
+      let btnAttrs = 'disabled';
+      if (!enabled) {
+        btnLabel = 'Belum tersedia';
+      } else if (claimed) {
+        btnLabel = 'Sudah diklaim';
+      } else if (completed) {
+        btnLabel = 'Klaim ' + q.reward + ' ExeCoin';
+        btnAttrs = 'onclick="claimQuest(\'' + q.type + '\', \'' + q.id + '\')"';
+      }
       return '<div class="event-quest-card">' +
         '<div class="event-quest-main">' +
           '<div class="event-quest-title-row">' +
@@ -3029,8 +3203,8 @@
           '</div>' +
         '</div>' +
         '<div class="event-quest-action">' +
-          '<div class="event-quest-badge">Segera hadir</div>' +
-          '<button class="event-quest-btn secondary" disabled>Belum tersedia</button>' +
+          '<div class="event-quest-badge">' + escapeHtml(badgeText) + '</div>' +
+          '<button class="event-quest-btn secondary" ' + btnAttrs + '>' + escapeHtml(btnLabel) + '</button>' +
         '</div>' +
       '</div>';
     }
@@ -3561,6 +3735,16 @@
       document.getElementById('dur').textContent = fmt(audio.duration);
       if (audio.duration > 0) document.getElementById('loadSpinner').classList.remove('show');
       if (Math.floor(audio.currentTime) % 2 === 0) localStorage.setItem('exeLastTime', audio.currentTime);
+      if (auth && auth.currentUser && !audio.paused && document.visibilityState === 'visible') {
+        const now = Date.now();
+        if (!lastListenTick) lastListenTick = now;
+        const diffSec = (now - lastListenTick) / 1000;
+        if (diffSec >= 5) {
+          lastListenTick = now;
+          const addSec = Math.floor(diffSec);
+          addListeningProgress(addSec);
+        }
+      }
     };
     audio.onplay = () => { if (!audio.duration || isNaN(audio.duration)) document.getElementById('loadSpinner').classList.add('show'); };
     audio.onpause = () => { localStorage.setItem('exeLastTime', audio.currentTime); };
@@ -3573,6 +3757,21 @@
       else if (i < songs.length - 1) next();
     };
     function saveLastSong() { localStorage.setItem('exeLastSongIdx', i); }
+    function addListeningProgress(sec) {
+      if (!auth || !auth.currentUser || !sec) return;
+      listenDailySeconds += sec;
+      listenWeeklySeconds += sec;
+      const addedDailyMin = Math.floor(listenDailySeconds / 60);
+      const addedWeeklyMin = Math.floor(listenWeeklySeconds / 60);
+      if (addedDailyMin > 0) {
+        listenDailySeconds -= addedDailyMin * 60;
+        updateQuestProgress('daily', 'daily_top_listener_1', addedDailyMin, auth.currentUser.uid);
+      }
+      if (addedWeeklyMin > 0) {
+        listenWeeklySeconds -= addedWeeklyMin * 60;
+        updateQuestProgress('weekly', 'weekly_top_listener_2', addedWeeklyMin, auth.currentUser.uid);
+      }
+    }
 
     // ============================================================
     // UPLOAD / SAVE + QUEUE
@@ -3665,6 +3864,9 @@
       await db.ref('users/' + uid).update({ lastUpload: Date.now() });
       await itemRef.update({ status: 'done', uploadedAt: Date.now(), songKey });
       await db.ref('users/' + uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload (queue): ' + (cur.title || ''), fromName: userData.username, timestamp: Date.now() });
+      updateQuestProgress('daily', 'daily_first_upload', 1, uid);
+      updateQuestProgress('daily', 'daily_music_producer', 1, uid);
+      updateQuestProgress('weekly', 'weekly_active_creator', 1, uid);
       msg('✅ Upload queue terupload: ' + (cur.title || ''));
     }
     async function editUploadQueueItem(id) {
@@ -3808,8 +4010,12 @@
     function saveMusic(t, u) {
       const newSong = { title: t, url: u, uid: auth.currentUser.uid, by: userData.username, timestamp: Date.now() };
       db.ref('songs').push(newSong).then(() => {
-        db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
-        db.ref('users/' + auth.currentUser.uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload: ' + t, fromName: userData.username, timestamp: Date.now() });
+        const uid = auth.currentUser.uid;
+        db.ref('users/' + uid).update({ lastUpload: Date.now() });
+        db.ref('users/' + uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload: ' + t, fromName: userData.username, timestamp: Date.now() });
+        updateQuestProgress('daily', 'daily_first_upload', 1, uid);
+        updateQuestProgress('daily', 'daily_music_producer', 1, uid);
+        updateQuestProgress('weekly', 'weekly_active_creator', 1, uid);
         msg('✅ Berhasil diposting!'); closeModal();
         document.getElementById('rLagu').value = ''; document.getElementById('rUrl').value = '';
       });
@@ -3842,6 +4048,9 @@
         const newFlCount = isF ? flArr.length - 1 : flArr.length + 1;
         syncUserQuestTags(targetUid, tData || {}, newFolCount, (tData && tData.following) ? (Array.isArray(tData.following) ? tData.following.length : (typeof tData.following === 'object' ? Object.keys(tData.following).length : 0)) : 0);
         syncUserQuestTags(auth.currentUser.uid, cData || {}, (cData && cData.followers) ? (Array.isArray(cData.followers) ? cData.followers.length : (typeof cData.followers === 'object' ? Object.keys(cData.followers).length : 0)) : 0, newFlCount);
+        if (!isF) {
+          updateQuestProgress('weekly', 'weekly_social_hunter', 1, auth.currentUser.uid);
+        }
         await updateFollowUI();
       } catch (err) { msg('Error: ' + err.message); }
     }
