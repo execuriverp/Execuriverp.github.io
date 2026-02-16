@@ -3503,13 +3503,29 @@
     }
 
     function setupGlobalNotifsWatcher() {
-      db.ref('globalNotifications').limitToLast(50).on('value', snap => {
-        const list = [];
+      let lastKey = null;
+      db.ref('globalNotifications').limitToLast(1).on('child_added', snap => {
         const val = snap.val();
-        if (val) {
-          Object.keys(val).forEach(k => list.push({ ...val[k], id: 'g_' + k }));
+        const key = snap.key;
+        if (!val || !key) return;
+        if (lastKey === null) {
+          lastKey = key;
+          mergeAndRenderNotifs([{ ...val, id: 'g_' + key }], 'global');
+          return;
         }
-        mergeAndRenderNotifs(list, 'global');
+        if (key === lastKey) {
+          mergeAndRenderNotifs([{ ...val, id: 'g_' + key }], 'global');
+          return;
+        }
+        lastKey = key;
+        mergeAndRenderNotifs([{ ...val, id: 'g_' + key }], 'global');
+        if (val.type === 'event') {
+          const text = val.text || '';
+          const from = val.fromName || 'Admin';
+          const title = 'EVENT DIMULAI';
+          const msg = text || ('Event baru dimulai oleh ' + from);
+          showBroadcast(title + ' • ' + msg);
+        }
       });
     }
 
