@@ -503,6 +503,11 @@
        EVENT CENTER (MLBB STYLE)
     ============================================================ */
     .event-center-sheet {
+      position: absolute;
+      top: 50%;
+      bottom: auto;
+      left: 50%;
+      transform: translate(-50%, -50%);
       padding: 18px 20px;
       background:
         radial-gradient(circle at 0 0, rgba(0,255,184,0.14), transparent 55%),
@@ -517,8 +522,8 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      max-width: 980px;
-      width: calc(100% - 24px);
+      max-width: 1040px;
+      width: min(1040px, 100% - 40px);
       margin: 0 auto;
     }
     .event-center-header {
@@ -646,9 +651,7 @@
     .event-quest-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 260px;
-      overflow-y: auto;
+      gap: 2px;
     }
     .event-quest-list::-webkit-scrollbar {
       width: 4px;
@@ -658,29 +661,27 @@
       border-radius: 999px;
     }
     .event-quest-card {
-      border-radius: 14px;
-      padding: 9px 10px;
-      background:
-        radial-gradient(circle at 0 0, rgba(56,189,248,0.16), transparent 70%),
-        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.16), transparent 70%),
-        rgba(15,23,42,0.98);
-      border: 1px solid rgba(37,99,235,0.9);
+      padding: 6px 4px;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
       display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      gap: 8px;
+      grid-template-columns: minmax(0,1.6fr) 120px 120px;
+      gap: 6px;
       align-items: center;
-      box-shadow: 0 0 18px rgba(15,23,42,0.9);
+      background: transparent;
+      box-shadow: none;
     }
     .event-quest-main {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
     .event-quest-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 4px;
     }
     .event-quest-title {
       font-size: 12px;
@@ -699,19 +700,19 @@
       font-size: 11px;
     }
     .event-quest-desc {
-      font-size: 11px;
+      font-size: 10px;
       color: #9ca3af;
     }
     .event-quest-progress-wrap {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 2px;
+      gap: 4px;
+      margin-top: 1px;
     }
     .event-quest-progress-bar {
       position: relative;
       flex: 1;
-      height: 4px;
+      height: 3px;
       border-radius: 999px;
       background: rgba(31,41,55,0.9);
       overflow: hidden;
@@ -733,7 +734,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 4px;
+      gap: 3px;
     }
     .event-quest-badge {
       font-size: 9px;
@@ -746,27 +747,27 @@
       border: 1px solid rgba(59,130,246,0.7);
     }
     .event-quest-btn {
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 999px;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #f9fafb;
-      box-shadow: 0 0 14px rgba(34,197,94,0.65);
+      background: rgba(34,197,94,0.2);
+      color: #bbf7d0;
+      box-shadow: none;
     }
     .event-quest-btn[disabled] {
-      opacity: 0.6;
+      opacity: 0.9;
       cursor: default;
       box-shadow: none;
-      background: rgba(55,65,81,0.85);
+      background: rgba(15,23,42,0.9);
     }
     .event-quest-btn.secondary {
-      background: rgba(31,41,55,0.95);
+      background: rgba(15,23,42,0.95);
       color: #e5e7eb;
       box-shadow: none;
       border: 1px solid rgba(75,85,99,0.95);
@@ -833,11 +834,25 @@
       background:
         radial-gradient(circle at 0 0, rgba(56,189,248,0.14), transparent 70%),
         rgba(15,23,42,0.98);
-      padding: 9px 10px 10px;
+      padding: 6px 10px 4px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
       box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+    @media (max-width: 768px) {
+      .event-center-sheet {
+        top: auto;
+        bottom: 0;
+        transform: translateX(-50%);
+        border-radius: 22px 22px 0 0;
+      }
+      .event-center-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .event-center-sidepanel {
+        margin-top: 8px;
+      }
     }
     .event-shop-section-title {
       font-size: 11px;
@@ -853,25 +868,26 @@
       gap: 6px;
     }
     .event-shop-card {
-      border-radius: 14px;
-      padding: 8px 9px;
-      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
-      border: 1px solid rgba(51,65,85,0.95);
+      padding: 6px 4px;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
       display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      gap: 8px;
+      grid-template-columns: minmax(0,1.6fr) 90px 120px;
+      gap: 6px;
       align-items: center;
+      background: transparent;
     }
     .event-shop-main {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
     .event-shop-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 4px;
     }
     .event-shop-title {
       font-size: 12px;
@@ -887,19 +903,19 @@
       white-space: nowrap;
     }
     .event-shop-desc {
-      font-size: 11px;
+      font-size: 10px;
       color: #9ca3af;
     }
     .event-shop-progress-wrap {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 2px;
+      gap: 4px;
+      margin-top: 1px;
     }
     .event-shop-progress-bar {
       position: relative;
       flex: 1;
-      height: 4px;
+      height: 3px;
       border-radius: 999px;
       background: rgba(31,41,55,0.9);
       overflow: hidden;
@@ -921,29 +937,29 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 4px;
+      gap: 3px;
     }
     .event-shop-badge {
       font-size: 9px;
       padding: 2px 6px;
-      border-radius: 999px;
+      border-radius: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #e5e7eb;
-      background: rgba(37,99,235,0.35);
-      border: 1px solid rgba(59,130,246,0.9);
+      background: rgba(37,99,235,0.15);
+      border: 1px solid rgba(59,130,246,0.7);
     }
     .event-shop-btn {
-      font-size: 11px;
-      padding: 5px 9px;
-      border-radius: 999px;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
       border: none;
       cursor: default;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(31,41,55,0.96);
+      background: rgba(15,23,42,0.95);
       color: #e5e7eb;
       border: 1px solid rgba(75,85,99,0.95);
     }
@@ -3339,10 +3355,10 @@
             '<div class="event-quest-reward"><i class="fas fa-coins"></i>' + q.reward + '</div>' +
           '</div>' +
           '<div class="event-quest-desc">' + escapeHtml(q.desc) + '</div>' +
-          '<div class="event-quest-progress-wrap">' +
-            '<div class="event-quest-progress-bar"><div class="event-quest-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
-            '<div class="event-quest-progress-text">' + escapeHtml(progressText) + '</div>' +
-          '</div>' +
+        '</div>' +
+        '<div class="event-quest-progress-wrap">' +
+          '<div class="event-quest-progress-bar"><div class="event-quest-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
+          '<div class="event-quest-progress-text">' + escapeHtml(progressText) + '</div>' +
         '</div>' +
         '<div class="event-quest-action">' +
           '<div class="event-quest-badge">' + escapeHtml(badgeText) + '</div>' +
