@@ -584,31 +584,34 @@
     }
     .event-center-layout {
       display: grid;
-      grid-template-columns: 140px minmax(0, 1fr) 190px;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
       gap: 14px;
       align-items: flex-start;
     }
     .event-center-sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      display: none;
     }
     .event-tab-btn {
-      width: 100%;
       border-radius: 18px;
       border: 1px solid rgba(30,64,175,0.9);
       background: radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 60%),
                   rgba(15,23,42,0.98);
       color: #9ca3af;
       font-size: 11px;
-      padding: 9px 9px;
-      display: flex;
+      padding: 7px 12px;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
       outline: none;
       transition: 0.18s;
       font-weight: 600;
+    }
+    .event-center-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
     }
     .event-tab-btn i {
       font-size: 13px;
@@ -938,6 +941,14 @@
       color: #e5e7eb;
       border: 1px solid rgba(75,85,99,0.95);
     }
+    @media (max-width: 900px) {
+      .event-center-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .event-center-sidepanel {
+        margin-top: 10px;
+      }
+    }
     @media (max-width: 640px) {
       .event-center-sheet {
         margin: 20px auto;
@@ -945,6 +956,14 @@
         width: calc(100% - 20px);
         padding: 14px 12px;
         border-radius: 16px;
+      }
+      .event-quest-card,
+      .event-shop-card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .event-quest-action,
+      .event-shop-action {
+        align-items: flex-start;
       }
     }
 
@@ -2565,12 +2584,12 @@
         </div>
       </div>
       <div class="event-center-layout">
-        <div class="event-center-sidebar">
-          <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
-          <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
-          <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
-        </div>
         <div class="event-center-main">
+          <div class="event-center-tabs">
+            <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
+            <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
+            <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
+          </div>
           <div id="evTabDaily" class="event-tab-view active">
             <div class="event-tab-caption">Reset tiap 24 jam untuk semua akun.</div>
             <div id="evDailyList" class="event-quest-list"></div>
