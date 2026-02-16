@@ -290,6 +290,65 @@
     .sb-dev-name { color: #00d4ff; font-weight: 700; text-shadow: 0 0 8px #00d4ff; }
 
     /* ============================================================
+       ADMIN FLOAT CHAT (GLOBAL)
+    ============================================================ */
+    .admin-float-chat {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 420px;
+      width: calc(100% - 40px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(0,212,255,0.35), transparent 55%),
+                  radial-gradient(circle at 100% 0, rgba(0,255,136,0.35), transparent 55%),
+                  rgba(5,5,15,0.96);
+      border: 1px solid rgba(0,255,136,0.3);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 12500;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .admin-float-chat.show {
+      display: flex;
+      animation: floatChatIn 0.25s ease-out;
+    }
+    .admin-float-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e0f2ff;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .admin-float-name i {
+      color: #1da1f2;
+    }
+    .admin-float-msg {
+      font-size: 12px;
+      color: #f5f5f5;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      flex: 1;
+    }
+    .admin-float-timer {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+    @keyframes floatChatIn {
+      from { opacity: 0; transform: translate(-50%, -10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    /* ============================================================
        OVERLAYS
     ============================================================ */
     .full-overlay {
@@ -362,7 +421,15 @@
     #btnNotif:hover { background: var(--accent); color: black; border-color: var(--accent); }
     #btnNotif .notif-badge { position: absolute; top: -2px; right: -2px; min-width: 17px; height: 17px; background: var(--danger); border-radius: 9px; font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 3px; }
     #btnNotif .notif-badge.show { display: flex; }
-    
+    #btnEvent {
+      width: 40px; height: 40px;
+      background: rgba(76,81,191,0.15);
+      border: 1px solid rgba(76,81,191,0.4);
+      border-radius: 50%; color: #c4b5fd; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s;
+    }
+    #btnEvent:hover { background: rgba(76,81,191,0.5); color: #fff; box-shadow: 0 0 18px rgba(76,81,191,0.6); }
+
     #btnAdmin {
       display: none;
       width: 40px; height: 40px;
@@ -418,6 +485,319 @@
     .notif-item-body .n-text { font-size: 12px; color: #ddd; line-height: 1.4; }
     .notif-item-body .n-time { font-size: 10px; color: #555; margin-top: 3px; }
     .notif-empty { padding: 30px 20px; text-align: center; color: #444; font-size: 12px; }
+
+    /* ============================================================
+       EVENT CENTER (MLBB STYLE)
+    ============================================================ */
+    .event-center-sheet {
+      padding: 16px;
+      background: radial-gradient(circle at 0 0, rgba(76,81,191,0.32), transparent 55%),
+                  radial-gradient(circle at 100% 100%, rgba(0,255,136,0.22), transparent 55%),
+                  #050510;
+      border-radius: 22px;
+      border: 1px solid rgba(76,81,191,0.5);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .event-center-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 10px;
+    }
+    .event-center-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1px;
+      font-size: 14px;
+      color: #e5e7eb;
+      text-transform: uppercase;
+    }
+    .event-center-title i {
+      color: #fbbf24;
+    }
+    .event-center-coins {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(17,24,39,0.95);
+      border: 1px solid rgba(252,211,77,0.45);
+    }
+    .event-coins-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fff7c2, #f59e0b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #92400e;
+      box-shadow: 0 0 12px rgba(245,158,11,0.8);
+    }
+    .event-coins-body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .event-coins-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: #f9fafb;
+      opacity: 0.8;
+    }
+    .event-coins-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fbbf24;
+      text-shadow: 0 0 8px rgba(245,158,11,0.7);
+    }
+    .event-center-layout {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr) 130px;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    @media (max-width: 420px) {
+      .event-center-layout {
+        grid-template-columns: 90px minmax(0,1fr);
+        grid-template-rows: auto auto;
+      }
+      .event-center-sidepanel {
+        grid-column: 1 / -1;
+      }
+    }
+    .event-center-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-tab-btn {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(17,24,39,0.96);
+      color: #9ca3af;
+      font-size: 11px;
+      padding: 7px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      outline: none;
+      transition: 0.18s;
+      font-weight: 600;
+    }
+    .event-tab-btn i {
+      font-size: 12px;
+    }
+    .event-tab-btn.active {
+      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(16,185,129,0.25));
+      border-color: rgba(16,185,129,0.85);
+      color: #e5e7eb;
+      box-shadow: 0 0 16px rgba(16,185,129,0.6);
+    }
+    .event-center-main {
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 55%),
+                  radial-gradient(circle at 100% 100%, rgba(16,185,129,0.15), transparent 55%),
+                  rgba(15,23,42,0.96);
+      border-radius: 16px;
+      border: 1px solid rgba(31,41,55,0.95);
+      padding: 10px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-tab-caption {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .event-quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .event-quest-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .event-quest-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #22c55e, #38bdf8);
+      border-radius: 999px;
+    }
+    .event-quest-card {
+      border-radius: 12px;
+      padding: 8px 9px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+      border: 1px solid rgba(55,65,81,0.9);
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      gap: 6px;
+      align-items: center;
+    }
+    .event-quest-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .event-quest-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .event-quest-title {
+      font-size: 12px;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+    .event-quest-reward {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .event-quest-reward i {
+      font-size: 11px;
+    }
+    .event-quest-desc {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .event-quest-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .event-quest-progress-bar {
+      position: relative;
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(31,41,55,0.9);
+      overflow: hidden;
+    }
+    .event-quest-progress-fill {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.2s ease-out;
+    }
+    .event-quest-progress-text {
+      font-size: 10px;
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+    .event-quest-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .event-quest-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #e5e7eb;
+      background: rgba(37,99,235,0.25);
+      border: 1px solid rgba(59,130,246,0.7);
+    }
+    .event-quest-btn {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #f9fafb;
+      box-shadow: 0 0 14px rgba(34,197,94,0.65);
+    }
+    .event-quest-btn[disabled] {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+      background: rgba(55,65,81,0.85);
+    }
+    .event-quest-btn.secondary {
+      background: rgba(31,41,55,0.95);
+      color: #e5e7eb;
+      box-shadow: none;
+      border: 1px solid rgba(75,85,99,0.95);
+    }
+    .event-center-sidepanel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-side-card {
+      border-radius: 14px;
+      background: rgba(15,23,42,0.96);
+      border: 1px solid rgba(55,65,81,0.95);
+      padding: 8px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-side-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9ca3af;
+    }
+    .event-side-body {
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+    .event-side-main {
+      font-weight: 600;
+    }
+    .event-side-sub {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .event-side-timer {
+      font-size: 10px;
+      color: #f97316;
+      margin-top: 4px;
+    }
+    .event-side-tips {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-side-tips li::before {
+      content: '•';
+      color: #22c55e;
+      display: inline-block;
+      margin-right: 4px;
+    }
 
     /* ============================================================
        COVER BOX
@@ -901,6 +1281,67 @@
       color: rgba(255,255,255,0.7);
       font-size: 14px;
       cursor: pointer;
+    }
+    .event-banner {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2600;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.55);
+      font-size: 11px;
+      color: #e5e7eb;
+      pointer-events: auto;
+    }
+    .event-banner.show {
+      display: flex;
+      animation: notifPanelIn 0.25s ease;
+    }
+    .event-banner-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #38bdf8, #1e40af);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .event-banner-body {
+      min-width: 0;
+    }
+    .event-banner-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5e7eb;
+      margin-bottom: 2px;
+    }
+    .event-banner-sub {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-banner-timer {
+      font-size: 11px;
+      font-weight: 700;
+      color: #facc15;
+      margin-left: 8px;
+    }
+    .event-banner-close {
+      border: none;
+      background: none;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
     }
     .event-countdown.celebrate {
       background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,152,0,0.24));
@@ -1528,10 +1969,19 @@
 
   <!-- MAIN APP -->
   <div class="app">
-    <div class="ml-corner-tl ml-corner"></div>
+  <div class="ml-corner-tl ml-corner"></div>
     <div class="ml-corner-tr ml-corner"></div>
     <div class="ml-corner-bl ml-corner"></div>
     <div class="ml-corner-br ml-corner"></div>
+
+  <div id="adminFloatChat" class="admin-float-chat">
+    <div class="admin-float-name">
+      <i class="fas fa-check-circle"></i>
+      <span id="adminFloatName"></span>
+    </div>
+    <div class="admin-float-msg" id="adminFloatMsg"></div>
+    <div class="admin-float-timer" id="adminFloatTimer"></div>
+  </div>
 
     <div class="header">
       <img src="exemusic.png" alt="Logo" onclick="openAbout()">
@@ -1539,6 +1989,9 @@
         <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
           <i class="fas fa-bell"></i>
           <span id="notifBadge" class="notif-badge"></span>
+        </button>
+        <button id="btnEvent" onclick="openEventCenter()" title="Event">
+          <i class="fas fa-calendar-alt"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
           <i class="fas fa-shield-alt"></i>
@@ -1655,6 +2108,13 @@
               <button class="admin-btn admin-btn-gold" onclick="adSendBC()">SEND</button>
               <button class="admin-btn admin-btn-red" onclick="adClearBC()">CLEAR</button>
               <button class="admin-btn admin-btn-blue" style="margin-left:auto" onclick="adToggleMT()">MAINTENANCE</button>
+            </div>
+            <div style="margin-top:10px">
+              <div class="admin-label">Admin Float Chat (15s, global)</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px">
+                <input class="admin-inp" id="adFloatMsg" placeholder="Contoh: who want free tag?" style="flex:1; min-width:0">
+                <button class="admin-btn admin-btn-blue" style="white-space:nowrap" onclick="adSendFloatChat()">SEND CHAT</button>
+              </div>
             </div>
           </div>
           <div class="admin-card">
@@ -1938,6 +2398,74 @@
     </div>
   </div>
 
+  <div class="modal" id="modalEventCenter" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet event-center-sheet">
+      <div class="event-center-header">
+        <div class="event-center-title">
+          <i class="fas fa-gamepad"></i>
+          <span>EXEMUSIC EVENT SYSTEM</span>
+        </div>
+        <div class="event-center-coins">
+          <div class="event-coins-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="event-coins-body">
+            <div class="event-coins-label">EXECOIN</div>
+            <div class="event-coins-value" id="evCoinBalance">0</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-center-layout">
+        <div class="event-center-sidebar">
+          <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Daily Task</button>
+          <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Weekly Challenge</button>
+          <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Exchange Shop</button>
+        </div>
+        <div class="event-center-main">
+          <div id="evTabDaily" class="event-tab-view active">
+            <div class="event-tab-caption">Reset setiap 24 jam untuk semua user.</div>
+            <div id="evDailyList" class="event-quest-list"></div>
+          </div>
+          <div id="evTabWeekly" class="event-tab-view">
+            <div class="event-tab-caption">Reset setiap 7 hari. Fokus misi jangka panjang.</div>
+            <div id="evWeeklyList" class="event-quest-list"></div>
+          </div>
+          <div id="evTabShop" class="event-tab-view">
+            <div class="event-tab-caption">Tukar ExeCoin kamu dengan tag dan VIP.</div>
+            <div id="evShopList" class="event-quest-list"></div>
+          </div>
+        </div>
+        <div class="event-center-sidepanel">
+          <div class="event-side-card">
+            <div class="event-side-label">Event Status</div>
+            <div id="evTagDropStatusBox" class="event-side-body">
+              <div class="event-side-main" id="evTagDropMain">Tidak ada event tag drop aktif</div>
+              <div class="event-side-sub" id="evTagDropSub">Tunggu admin mengaktifkan event.</div>
+              <div class="event-side-timer" id="evTagDropTimer">--:--</div>
+            </div>
+          </div>
+          <div class="event-side-card">
+            <div class="event-side-label">Tips ExeCoin</div>
+            <ul class="event-side-tips">
+              <li>Upload rutin untuk ambil semua Daily Task.</li>
+              <li>Aktif dengerin lagu sambil tab aktif.</li>
+              <li>Gunakan Exchange Shop untuk beli tag eksklusif.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="eventTagBanner" class="event-banner">
+    <div class="event-banner-icon"><i class="fas fa-bolt"></i></div>
+    <div class="event-banner-body">
+      <div class="event-banner-title" id="eventTagBannerTitle">TAG DROP EVENT</div>
+      <div class="event-banner-sub" id="eventTagBannerSub">Tag spesial lagi drop untuk user online!</div>
+    </div>
+    <div class="event-banner-timer" id="eventTagBannerTimer">--:--</div>
+    <button class="event-banner-close" onclick="closeEventTagBanner()">×</button>
+  </div>
   <div class="modal" id="modalChangeNames" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:18px; color:var(--accent); font-family:'Rajdhani',sans-serif">✏️ UBAH NAMA</h3>
@@ -2174,6 +2702,7 @@
     let uploadCooldownInterval = null;
     let isAdminUnlocked = localStorage.getItem('exeAdminUnlocked') === '1';
     let currentProfileUid = null;
+    let adminFloatInterval = null;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -2272,7 +2801,40 @@
         clearInterval(tagDropInterval);
         tagDropInterval = null;
       }
-      if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) return;
+      const banner = document.getElementById('eventTagBanner');
+      if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) {
+        if (banner) banner.classList.remove('show');
+        return;
+      }
+      if (banner) {
+        const titleEl = document.getElementById('eventTagBannerTitle');
+        const subEl = document.getElementById('eventTagBannerSub');
+        const timerEl = document.getElementById('eventTagBannerTimer');
+        if (titleEl) titleEl.textContent = 'TAG DROP: ' + String(currentTagDrop.tag || '').toUpperCase();
+        if (subEl) subEl.textContent = currentTagDrop.desc || 'Tag spesial lagi drop untuk user online!';
+        if (timerEl) {
+          if (currentTagDrop.endAt) {
+            const updateBannerTimer = () => {
+              const now = Date.now();
+              const diff = currentTagDrop.endAt - now;
+              if (diff <= 0) {
+                timerEl.textContent = 'EVENT SELESAI';
+                banner.classList.remove('show');
+                return;
+              }
+              const totalSec = Math.floor(diff / 1000);
+              const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+              const s = String(totalSec % 60).padStart(2, '0');
+              timerEl.textContent = m + ':' + s;
+            };
+            updateBannerTimer();
+            setInterval(updateBannerTimer, 1000);
+          } else {
+            timerEl.textContent = 'LIVE';
+          }
+        }
+        banner.classList.add('show');
+      }
       tagDropInterval = setInterval(() => {
         if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active) return;
         if (Math.random() < currentTagDrop.chance) {
@@ -2329,6 +2891,28 @@
       const card = document.getElementById('uploadCdCard');
       if (card) card.style.display = 'none';
     }
+    function closeEventTagBanner() {
+      const el = document.getElementById('eventTagBanner');
+      if (el) el.classList.remove('show');
+    }
+    function openEventCenter() {
+      const modal = document.getElementById('modalEventCenter');
+      if (!auth.currentUser || !userData) {
+        msg('Login dulu untuk akses event');
+        return;
+      }
+      if (!modal) return;
+      modal.style.display = 'block';
+      renderEventCenter();
+    }
+    function switchEventTab(id, btn) {
+      document.querySelectorAll('.event-tab-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.event-tab-btn').forEach(b => b.classList.remove('active'));
+      const tab = document.getElementById(id === 'daily' ? 'evTabDaily' : id === 'weekly' ? 'evTabWeekly' : 'evTabShop');
+      if (tab) tab.classList.add('active');
+      if (btn) btn.classList.add('active');
+      renderEventCenter();
+    }
     function applyProfileUrl(push = false) {
       try {
         const base = window.location.protocol + '//' + window.location.host + window.location.pathname;
@@ -2341,6 +2925,118 @@
     }
     function fmt(s) { if (isNaN(s)) return '0:00'; let m = Math.floor(s / 60), sec = Math.floor(s % 60); return m + ':' + (sec < 10 ? '0' + sec : sec); }
     function addLog(msg) { db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() }); }
+
+    function renderEventCenter() {
+      if (!auth.currentUser || !userData) return;
+      const coinsEl = document.getElementById('evCoinBalance');
+      if (coinsEl) coinsEl.textContent = String(userData.coins || 0);
+      const dailyEl = document.getElementById('evDailyList');
+      const weeklyEl = document.getElementById('evWeeklyList');
+      const shopEl = document.getElementById('evShopList');
+      if (dailyEl) dailyEl.innerHTML = buildDailyQuestsHtml();
+      if (weeklyEl) weeklyEl.innerHTML = buildWeeklyQuestsHtml();
+      if (shopEl) shopEl.innerHTML = buildShopHtml();
+      updateEventSideFromTagDrop();
+    }
+    function buildDailyQuestsHtml() {
+      const quests = [
+        { id: 'daily_first_upload', title: 'First Upload', desc: 'Upload 1 musik hari ini', reward: 5, cur: 0, max: 1 },
+        { id: 'daily_music_producer', title: 'Music Producer', desc: 'Upload 5 musik dalam 1 hari', reward: 15, cur: 0, max: 5 },
+        { id: 'daily_top_listener_1', title: 'Top Listener I', desc: 'Putar musik 30 menit (tab aktif)', reward: 10, cur: 0, max: 30 },
+        { id: 'daily_follower_boost', title: 'Follower Boost', desc: 'Dapat 5 followers dalam 1 hari', reward: 20, cur: 0, max: 5 }
+      ];
+      return quests.map(renderQuestCard).join('');
+    }
+    function buildWeeklyQuestsHtml() {
+      const quests = [
+        { id: 'weekly_social_hunter', title: 'Social Hunter', desc: 'Follow 2 creator baru', reward: 50, cur: 0, max: 2 },
+        { id: 'weekly_top_listener_2', title: 'Top Listener II', desc: 'Putar musik 2 jam total', reward: 50, cur: 0, max: 120 },
+        { id: 'weekly_trending_uploader', title: 'Trending Uploader', desc: 'Total 100 play di lagu kamu', reward: 75, cur: 0, max: 100 },
+        { id: 'weekly_active_creator', title: 'Active Creator', desc: 'Upload 10 lagu dalam seminggu', reward: 100, cur: 0, max: 10 }
+      ];
+      return quests.map(renderQuestCard).join('');
+    }
+    function buildShopHtml() {
+      const items = [
+        { id: 'shop_tag_gamers', title: 'Tag [GAMERS]', desc: 'Profile dark + aksen neon green', price: 100, badge: 'Tag Eksklusif' },
+        { id: 'shop_tag_legend', title: 'Tag [LEGEND]', desc: 'Nama glow + border emas', price: 500, badge: 'Tag Premium' },
+        { id: 'shop_tag_execurive', title: 'Tag [EXECURIVE]', desc: 'Boost visibility dan akses VIP', price: 1000, badge: 'Tag Ultra' },
+        { id: 'shop_vip_3', title: 'VIP 3 Hari', desc: 'Akses VIP sementara', price: 200, badge: 'VIP' },
+        { id: 'shop_vip_7', title: 'VIP 7 Hari', desc: 'Durasi VIP lebih lama', price: 500, badge: 'VIP' },
+        { id: 'shop_vip_30', title: 'VIP 30 Hari', desc: 'Paket VIP bulanan', price: 1200, badge: 'VIP' }
+      ];
+      return items.map(it => {
+        const canBuy = (userData.coins || 0) >= it.price;
+        const progressText = (userData.coins || 0) + '/' + it.price;
+        const pct = Math.max(0, Math.min(1, (userData.coins || 0) / it.price));
+        return '<div class="event-quest-card">' +
+          '<div class="event-quest-main">' +
+            '<div class="event-quest-title-row">' +
+              '<div class="event-quest-title">' + escapeHtml(it.title) + '</div>' +
+              '<div class="event-quest-reward"><i class="fas fa-coins"></i>' + it.price + '</div>' +
+            '</div>' +
+            '<div class="event-quest-desc">' + escapeHtml(it.desc) + '</div>' +
+            '<div class="event-quest-progress-wrap">' +
+              '<div class="event-quest-progress-bar"><div class="event-quest-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
+              '<div class="event-quest-progress-text">' + escapeHtml(progressText) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="event-quest-action">' +
+            '<div class="event-quest-badge">' + escapeHtml(it.badge) + '</div>' +
+            '<button class="event-quest-btn secondary" disabled>Beli via admin</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+    function renderQuestCard(q) {
+      const pct = Math.max(0, Math.min(1, q.max ? q.cur / q.max : 0));
+      const progressText = (q.cur || 0) + '/' + q.max;
+      const canClaim = false;
+      return '<div class="event-quest-card">' +
+        '<div class="event-quest-main">' +
+          '<div class="event-quest-title-row">' +
+            '<div class="event-quest-title">' + escapeHtml(q.title) + '</div>' +
+            '<div class="event-quest-reward"><i class="fas fa-coins"></i>' + q.reward + '</div>' +
+          '</div>' +
+          '<div class="event-quest-desc">' + escapeHtml(q.desc) + '</div>' +
+          '<div class="event-quest-progress-wrap">' +
+            '<div class="event-quest-progress-bar"><div class="event-quest-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
+            '<div class="event-quest-progress-text">' + escapeHtml(progressText) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="event-quest-action">' +
+          '<div class="event-quest-badge">COMING SOON</div>' +
+          '<button class="event-quest-btn secondary" disabled>Belum bisa diklaim</button>' +
+        '</div>' +
+      '</div>';
+    }
+    function updateEventSideFromTagDrop() {
+      const mainEl = document.getElementById('evTagDropMain');
+      const subEl = document.getElementById('evTagDropSub');
+      const timerEl = document.getElementById('evTagDropTimer');
+      if (!mainEl || !subEl || !timerEl) return;
+      if (!currentTagDrop || !currentTagDrop.active) {
+        mainEl.textContent = 'Tidak ada event tag drop aktif';
+        subEl.textContent = 'Tunggu admin mengaktifkan event.';
+        timerEl.textContent = '--:--';
+        return;
+      }
+      mainEl.textContent = 'TAG DROP: ' + String(currentTagDrop.tag || '').toUpperCase();
+      subEl.textContent = currentTagDrop.desc || 'Tag spesial lagi drop untuk user online!';
+      if (currentTagDrop.endAt) {
+        const diff = currentTagDrop.endAt - Date.now();
+        if (diff <= 0) {
+          timerEl.textContent = 'EVENT SELESAI';
+        } else {
+          const totalSec = Math.floor(diff / 1000);
+          const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+          const s = String(totalSec % 60).padStart(2, '0');
+          timerEl.textContent = m + ':' + s;
+        }
+      } else {
+        timerEl.textContent = 'LIVE';
+      }
+    }
 
     // ============================================================
     // TOAST
@@ -2447,12 +3143,82 @@
       setTimeout(() => el.classList.remove('active', 'sb-closing'), 400);
     }
 
+    function setupGlobalNotifsWatcher() {
+      db.ref('globalNotifications').limitToLast(50).on('value', snap => {
+        const list = [];
+        const val = snap.val();
+        if (val) {
+          Object.keys(val).forEach(k => list.push({ ...val[k], id: 'g_' + k }));
+        }
+        mergeAndRenderNotifs(list, 'global');
+      });
+    }
+
+    function setupAdminFloatChatWatcher() {
+      const wrap = document.getElementById('adminFloatChat');
+      const nameEl = document.getElementById('adminFloatName');
+      const msgEl = document.getElementById('adminFloatMsg');
+      const timerEl = document.getElementById('adminFloatTimer');
+      if (!wrap || !nameEl || !msgEl || !timerEl) return;
+      db.ref('adminFloatChat/current').on('value', snap => {
+        const val = snap.val();
+        if (adminFloatInterval) {
+          clearInterval(adminFloatInterval);
+          adminFloatInterval = null;
+        }
+        if (!val) {
+          wrap.classList.remove('show');
+          nameEl.textContent = '';
+          msgEl.textContent = '';
+          timerEl.textContent = '';
+          return;
+        }
+        const now = Date.now();
+        const expireAt = val.expireAt || 0;
+        if (expireAt && now >= expireAt) {
+          wrap.classList.remove('show');
+          nameEl.textContent = '';
+          msgEl.textContent = '';
+          timerEl.textContent = '';
+          if (auth.currentUser && userData && (userData.role === 'admin' || userData.role === 'owner')) {
+            db.ref('adminFloatChat/current').remove();
+          }
+          return;
+        }
+        nameEl.textContent = (val.name || 'Admin') + '';
+        msgEl.textContent = val.msg || '';
+        wrap.classList.add('show');
+        function updateTimer() {
+          const now2 = Date.now();
+          const diff = (val.expireAt || 0) - now2;
+          if (diff <= 0) {
+            timerEl.textContent = '0s';
+            wrap.classList.remove('show');
+            clearInterval(adminFloatInterval);
+            adminFloatInterval = null;
+            if (auth.currentUser && userData && (userData.role === 'admin' || userData.role === 'owner')) {
+              db.ref('adminFloatChat/current').remove();
+            }
+            return;
+          }
+          const sec = Math.ceil(diff / 1000);
+          timerEl.textContent = sec + 's';
+        }
+        updateTimer();
+        adminFloatInterval = setInterval(updateTimer, 500);
+      });
+    }
+
     // ============================================================
     // NOTIFICATIONS
     // ============================================================
     function loadNotifs() {
       auth.onAuthStateChanged(u => {
-        if (!u) { mergeAndRenderNotifs([], 'user'); return; }
+        if (!u) {
+          mergeAndRenderNotifs([], 'user');
+          showGuestIntroNotif();
+          return;
+        }
         db.ref('users/' + u.uid + '/notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
           const val = snap.val();
           const list = [];
@@ -2526,7 +3292,20 @@
       const panel = document.getElementById('notifPanel'); const btn = document.getElementById('btnNotif');
       if (panel && panel.classList.contains('show') && !panel.contains(e.target) && btn && !btn.contains(e.target)) closeNotifPanel();
     });
+    function showGuestIntroNotif() {
+      if (localStorage.getItem('exeGuestIntroShown') === '1') return;
+      localStorage.setItem('exeGuestIntroShown', '1');
+      const payload = {
+        type: 'system',
+        text: '[bot exemusic] Login dan daftarkan akun kamu ke ExeMusic sekarang!!',
+        fromName: 'bot exemusic',
+        timestamp: Date.now()
+      };
+      mergeAndRenderNotifs([payload], 'global');
+    }
     loadNotifs();
+    setupGlobalNotifsWatcher();
+    setupAdminFloatChatWatcher();
 
     // ============================================================
     // AUTH
@@ -3846,6 +4625,28 @@
     }
     function adClearLogs() { db.ref('logs').remove().then(() => showToast('Logs dihapus')); }
 
+    function adSendFloatChat() {
+      if (!auth.currentUser || !userData || (userData.role !== 'admin' && userData.role !== 'owner')) {
+        showToast('Hanya admin/owner yang bisa kirim chat ini');
+        return;
+      }
+      const inp = document.getElementById('adFloatMsg');
+      if (!inp) return;
+      const msg2 = inp.value.trim();
+      if (!msg2) { showToast('Isi pesan dulu!'); return; }
+      const now = Date.now();
+      const data = {
+        name: userData.username || 'Admin',
+        msg: msg2,
+        createdAt: now,
+        expireAt: now + 15000
+      };
+      db.ref('adminFloatChat/current').set(data).then(() => {
+        showToast('✅ Admin float chat dikirim');
+        inp.value = '';
+      });
+    }
+
     function adSendNotif() {
       const type = document.getElementById('adNType').value;
       const target = document.getElementById('adNTarget').value.trim();
@@ -3898,9 +4699,25 @@
       if (isNaN(chance) || chance <= 0) chance = 0;
       if (chance > 100) chance = 100;
       const active = chance > 0;
-      const data = { active, tag, chance: chance / 100 };
+      const now = Date.now();
+      const endAt = active ? now + 30 * 60 * 1000 : 0;
+      const data = {
+        active,
+        tag,
+        chance: chance / 100,
+        desc: 'Event tag drop dimulai oleh admin',
+        startedBy: auth.currentUser ? (userData && userData.username) : 'Admin',
+        startedAt: now,
+        endAt,
+        obtainedCount: 0
+      };
       db.ref('settings/tagDrop').set(data).then(() => {
         showToast('Event tag drop diupdate');
+        if (active) {
+          const msg2 = `Event tag drop ${tag.toUpperCase()} has started by ${data.startedBy}`;
+          const payload = { type: 'event', text: msg2, timestamp: now, fromName: data.startedBy };
+          db.ref('globalNotifications').push(payload);
+        }
       });
     }
     function adClearTagDrop() {
