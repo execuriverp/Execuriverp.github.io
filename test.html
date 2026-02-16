@@ -503,49 +503,60 @@
        EVENT CENTER (MLBB STYLE)
     ============================================================ */
     .event-center-sheet {
-      padding: 16px;
-      background: radial-gradient(circle at 0 0, rgba(76,81,191,0.32), transparent 55%),
-                  radial-gradient(circle at 100% 100%, rgba(0,255,136,0.22), transparent 55%),
-                  #050510;
+      padding: 18px 20px;
+      background:
+        radial-gradient(circle at 0 0, rgba(0,255,184,0.14), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(56,189,248,0.18), transparent 55%),
+        linear-gradient(145deg, #050712 0%, #050510 40%, #030308 100%);
       border-radius: 22px;
-      border: 1px solid rgba(76,81,191,0.5);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.85);
+      border: 1px solid rgba(37,99,235,0.7);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 18px 50px rgba(0,0,0,0.9),
+        inset 0 0 30px rgba(15,23,42,0.85);
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      max-width: 960px !important;
-      width: calc(100% - 24px) !important;
+      gap: 16px;
+      max-width: 980px;
+      width: calc(100% - 24px);
       margin: 0 auto;
     }
     .event-center-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      gap: 16px;
       padding-bottom: 10px;
+      border-bottom: 1px solid rgba(148,163,184,0.35);
     }
     .event-center-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 1px;
-      font-size: 14px;
+      letter-spacing: 1.1px;
+      font-size: 15px;
       color: #e5e7eb;
       text-transform: uppercase;
     }
     .event-center-title i {
-      color: #fbbf24;
+      padding: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, rgba(250,204,21,0.2), transparent),
+                  linear-gradient(135deg, #22c55e, #0ea5e9);
+      color: #0b1120;
+      box-shadow: 0 0 18px rgba(56,189,248,0.7);
     }
     .event-center-coins {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 10px;
+      padding: 7px 12px;
       border-radius: 999px;
-      background: rgba(17,24,39,0.95);
-      border: 1px solid rgba(252,211,77,0.45);
+      background: radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%),
+                  rgba(15,23,42,0.98);
+      border: 1px solid rgba(250,204,21,0.7);
+      box-shadow: 0 0 20px rgba(250,204,21,0.35);
     }
     .event-coins-icon {
       width: 26px;
@@ -556,7 +567,6 @@
       align-items: center;
       justify-content: center;
       color: #92400e;
-      box-shadow: 0 0 12px rgba(245,158,11,0.8);
     }
     .event-coins-body {
       display: flex;
@@ -567,78 +577,66 @@
     .event-coins-label {
       font-size: 9px;
       text-transform: uppercase;
-      color: #f9fafb;
-      opacity: 0.8;
+      color: #fef9c3;
+      opacity: 0.9;
     }
     .event-coins-value {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 800;
-      color: #fbbf24;
-      text-shadow: 0 0 8px rgba(245,158,11,0.7);
+      color: #facc15;
+      text-shadow: 0 0 8px rgba(245,158,11,0.9);
     }
     .event-center-layout {
       display: grid;
-      grid-template-columns: 120px minmax(0, 1fr) 160px;
-      gap: 10px;
-      margin-top: 4px;
+      grid-template-columns: 140px minmax(0, 1fr) 190px;
+      gap: 14px;
       align-items: flex-start;
-    }
-    @media (max-width: 900px) {
-      .event-center-sheet {
-        max-width: 100%;
-      }
-    }
-    @media (max-width: 768px) {
-      .event-center-layout {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto auto auto;
-      }
-      .event-center-sidebar,
-      .event-center-main,
-      .event-center-sidepanel {
-        grid-column: 1 / -1;
-      }
     }
     .event-center-sidebar {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
     .event-tab-btn {
       width: 100%;
-      border-radius: 16px;
-      border: 1px solid rgba(55,65,81,0.9);
-      background: rgba(17,24,39,0.96);
+      border-radius: 18px;
+      border: 1px solid rgba(30,64,175,0.9);
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 60%),
+                  rgba(15,23,42,0.98);
       color: #9ca3af;
       font-size: 11px;
-      padding: 7px 8px;
+      padding: 9px 9px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
       outline: none;
       transition: 0.18s;
       font-weight: 600;
     }
     .event-tab-btn i {
-      font-size: 12px;
+      font-size: 13px;
     }
     .event-tab-btn.active {
-      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(16,185,129,0.25));
-      border-color: rgba(16,185,129,0.85);
+      background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(56,189,248,0.3));
+      border-color: rgba(56,189,248,0.9);
       color: #e5e7eb;
-      box-shadow: 0 0 16px rgba(16,185,129,0.6);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 0 20px rgba(34,197,94,0.7);
     }
     .event-center-main {
-      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 55%),
-                  radial-gradient(circle at 100% 100%, rgba(16,185,129,0.15), transparent 55%),
-                  rgba(15,23,42,0.96);
-      border-radius: 16px;
-      border: 1px solid rgba(31,41,55,0.95);
-      padding: 10px 10px 8px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.16), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.16), transparent 55%),
+        rgba(15,23,42,0.97);
+      border-radius: 18px;
+      border: 1px solid rgba(30,64,175,0.9);
+      padding: 10px 12px 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
+      box-shadow: 0 0 24px rgba(15,23,42,0.8);
     }
     .event-tab-caption {
       font-size: 10px;
@@ -660,14 +658,18 @@
       border-radius: 999px;
     }
     .event-quest-card {
-      border-radius: 12px;
-      padding: 8px 9px;
-      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
-      border: 1px solid rgba(55,65,81,0.9);
+      border-radius: 14px;
+      padding: 9px 10px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.16), transparent 70%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.16), transparent 70%),
+        rgba(15,23,42,0.98);
+      border: 1px solid rgba(37,99,235,0.9);
       display: grid;
       grid-template-columns: minmax(0,1fr) auto;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
+      box-shadow: 0 0 18px rgba(15,23,42,0.9);
     }
     .event-quest-main {
       display: flex;
@@ -772,16 +774,19 @@
     .event-center-sidepanel {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
     .event-side-card {
-      border-radius: 14px;
-      background: rgba(15,23,42,0.96);
-      border: 1px solid rgba(55,65,81,0.95);
-      padding: 8px 9px;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.18), transparent 70%),
+        rgba(15,23,42,0.98);
+      border: 1px solid rgba(37,99,235,0.9);
+      padding: 9px 10px;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      box-shadow: 0 0 18px rgba(15,23,42,0.9);
     }
     .event-side-label {
       font-size: 10px;
@@ -821,6 +826,126 @@
       color: #22c55e;
       display: inline-block;
       margin-right: 4px;
+    }
+    .event-shop-section {
+      border-radius: 16px;
+      border: 1px solid rgba(30,64,175,0.8);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.14), transparent 70%),
+        rgba(15,23,42,0.98);
+      padding: 9px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+    .event-shop-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: #e5e7eb;
+      border-left: 3px solid #38bdf8;
+      padding-left: 6px;
+    }
+    .event-shop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-shop-card {
+      border-radius: 14px;
+      padding: 8px 9px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+      border: 1px solid rgba(51,65,85,0.95);
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .event-shop-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .event-shop-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .event-shop-title {
+      font-size: 12px;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+    .event-shop-price {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .event-shop-desc {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .event-shop-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .event-shop-progress-bar {
+      position: relative;
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(31,41,55,0.9);
+      overflow: hidden;
+    }
+    .event-shop-progress-fill {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.2s ease-out;
+    }
+    .event-shop-progress-text {
+      font-size: 10px;
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+    .event-shop-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .event-shop-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #e5e7eb;
+      background: rgba(37,99,235,0.35);
+      border: 1px solid rgba(59,130,246,0.9);
+    }
+    .event-shop-btn {
+      font-size: 11px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: none;
+      cursor: default;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(31,41,55,0.96);
+      color: #e5e7eb;
+      border: 1px solid rgba(75,85,99,0.95);
     }
 
     /* ============================================================
@@ -3050,36 +3175,53 @@
       }).join('');
     }
     function buildShopHtml() {
-      const items = [
+      const tags = [
         { id: 'shop_tag_gamers', title: 'Tag [GAMERS]', desc: 'Profile dark + aksen neon green', price: 100, badge: 'Tag Eksklusif' },
         { id: 'shop_tag_legend', title: 'Tag [LEGEND]', desc: 'Nama glow + border emas', price: 500, badge: 'Tag Premium' },
-        { id: 'shop_tag_execurive', title: 'Tag [EXECURIVE]', desc: 'Boost visibility dan akses VIP', price: 1000, badge: 'Tag Ultra' },
-        { id: 'shop_vip_3', title: 'VIP 3 Hari', desc: 'Akses VIP sementara', price: 200, badge: 'VIP' },
-        { id: 'shop_vip_7', title: 'VIP 7 Hari', desc: 'Durasi VIP lebih lama', price: 500, badge: 'VIP' },
-        { id: 'shop_vip_30', title: 'VIP 30 Hari', desc: 'Paket VIP bulanan', price: 1200, badge: 'VIP' }
+        { id: 'shop_tag_execurive', title: 'Tag [EXECURIVE]', desc: 'Boost visibility dan akses VIP', price: 1000, badge: 'Tag Ultra' }
       ];
-      return items.map(it => {
-        const canBuy = (userData.coins || 0) >= it.price;
-        const progressText = (userData.coins || 0) + '/' + it.price;
-        const pct = Math.max(0, Math.min(1, (userData.coins || 0) / it.price));
-        return '<div class="event-quest-card">' +
-          '<div class="event-quest-main">' +
-            '<div class="event-quest-title-row">' +
-              '<div class="event-quest-title">' + escapeHtml(it.title) + '</div>' +
-              '<div class="event-quest-reward"><i class="fas fa-coins"></i>' + it.price + '</div>' +
+      const vips = [
+        { id: 'shop_vip_3', title: 'VIP 3 Hari', desc: 'Akses VIP sementara', price: 200, badge: 'VIP Bronze' },
+        { id: 'shop_vip_7', title: 'VIP 7 Hari', desc: 'Durasi VIP lebih lama', price: 500, badge: 'VIP Silver' },
+        { id: 'shop_vip_30', title: 'VIP 30 Hari', desc: 'Paket VIP bulanan', price: 1200, badge: 'VIP Gold' }
+      ];
+      const renderItem = it => {
+        const coins = userData.coins || 0;
+        const progressText = coins + '/' + it.price;
+        const pct = Math.max(0, Math.min(1, coins / it.price));
+        const canBuy = coins >= it.price;
+        return '<div class="event-shop-card">' +
+          '<div class="event-shop-main">' +
+            '<div class="event-shop-title-row">' +
+              '<div class="event-shop-title">' + escapeHtml(it.title) + '</div>' +
+              '<div class="event-shop-price"><i class="fas fa-coins"></i>' + it.price + '</div>' +
             '</div>' +
-            '<div class="event-quest-desc">' + escapeHtml(it.desc) + '</div>' +
-            '<div class="event-quest-progress-wrap">' +
-              '<div class="event-quest-progress-bar"><div class="event-quest-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
-              '<div class="event-quest-progress-text">' + escapeHtml(progressText) + '</div>' +
+            '<div class="event-shop-desc">' + escapeHtml(it.desc) + '</div>' +
+            '<div class="event-shop-progress-wrap">' +
+              '<div class="event-shop-progress-bar"><div class="event-shop-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
+              '<div class="event-shop-progress-text">' + escapeHtml(progressText) + '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="event-quest-action">' +
-            '<div class="event-quest-badge">' + escapeHtml(it.badge) + '</div>' +
-            '<button class="event-quest-btn secondary" disabled>Beli via admin</button>' +
+          '<div class="event-shop-action">' +
+            '<div class="event-shop-badge">' + escapeHtml(it.badge) + '</div>' +
+            '<button class="event-shop-btn" disabled>' + (canBuy ? 'Beli via admin' : 'Coin belum cukup') + '</button>' +
           '</div>' +
         '</div>';
-      }).join('');
+      };
+      let html = '';
+      html += '<div class="event-shop-section">' +
+                '<div class="event-shop-section-title">Tag Eksklusif</div>' +
+                '<div class="event-shop-list">' +
+                  tags.map(renderItem).join('') +
+                '</div>' +
+              '</div>';
+      html += '<div class="event-shop-section">' +
+                '<div class="event-shop-section-title">Paket VIP</div>' +
+                '<div class="event-shop-list">' +
+                  vips.map(renderItem).join('') +
+                '</div>' +
+              '</div>';
+      return html;
     }
     function getQuestDef(type, id) {
       if (type === 'daily') {
