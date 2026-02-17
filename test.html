@@ -1437,6 +1437,123 @@
     border: 1px solid rgba(34,197,94,0.8);
     box-shadow: 0 0 10px rgba(34,197,94,0.6);
   }
+  .tag-frost {
+    background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,64,175,0.9), rgba(56,189,248,0.95));
+    color: #e0f7fa;
+    border: 1px solid rgba(144,202,249,0.55);
+    border-radius: 999px;
+    padding: 2px 8px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 12px rgba(56,189,248,0.35);
+  }
+  .tag-frost::before {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background-image:
+      radial-gradient(circle at 10% 0, rgba(191,219,254,0.32), transparent 55%),
+      radial-gradient(circle at 90% 100%, rgba(56,189,248,0.28), transparent 55%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .tag-frost::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% -10%, rgba(226,232,240,0.12), transparent 60%),
+      radial-gradient(circle at 80% 110%, rgba(148,163,184,0.12), transparent 60%);
+    mix-blend-mode: screen;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .tag-blaze {
+    background: radial-gradient(circle at 0 0, #7f1d1d, transparent 55%), radial-gradient(circle at 100% 100%, #9a3412, transparent 55%), linear-gradient(135deg, #b91c1c, #f97316, #facc15);
+    color: #fff7ed;
+    border-radius: 999px;
+    border: 1px solid rgba(248,113,113,0.85);
+    box-shadow: 0 0 14px rgba(248,113,113,0.65);
+    padding: 2px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tag-blaze::before {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    background-image:
+      radial-gradient(circle at 30% 0, rgba(248,250,252,0.26), transparent 55%),
+      radial-gradient(circle at 80% 120%, rgba(253,186,116,0.32), transparent 55%);
+    mix-blend-mode: screen;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .tag-cosmic {
+    background: radial-gradient(circle at 0 0, rgba(147,51,234,0.5), transparent 55%), radial-gradient(circle at 100% 100%, rgba(56,189,248,0.42), transparent 55%), linear-gradient(135deg, #020617, #111827, #1e293b);
+    color: #e5e7eb;
+    border-radius: 999px;
+    border: 1px solid rgba(129,140,248,0.65);
+    box-shadow: 0 0 14px rgba(129,140,248,0.5);
+    padding: 2px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tag-cosmic::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(248,250,252,0.35), transparent 55%),
+      radial-gradient(circle at 90% 90%, rgba(167,139,250,0.4), transparent 60%),
+      radial-gradient(circle at 50% 0, rgba(45,212,191,0.32), transparent 60%);
+    opacity: 0.9;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .tag-elite {
+    background: radial-gradient(circle at 0 0, rgba(24,24,27,0.9), transparent 55%), radial-gradient(circle at 100% 100%, rgba(23,23,23,0.9), transparent 55%);
+    color: #fef3c7;
+    border-radius: 999px;
+    border: 1px solid rgba(253,224,71,0.85);
+    box-shadow: 0 0 16px rgba(234,179,8,0.5);
+    padding: 2px 10px 2px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tag-elite::before {
+    content: '👑';
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+  }
+  .tag-elite {
+    padding-left: 16px;
+  }
+  .tag-neon {
+    background: #020617;
+    color: #f9fafb;
+    border-radius: 999px;
+    border: 1px solid rgba(236,72,153,0.8);
+    box-shadow: 0 0 10px rgba(236,72,153,0.7), 0 0 0 1px rgba(34,197,235,0.4);
+    padding: 2px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tag-neon::before {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    background-image:
+      linear-gradient(120deg, rgba(236,72,153,0.2), transparent 60%),
+      linear-gradient(-120deg, rgba(56,189,248,0.2), transparent 60%);
+    mix-blend-mode: screen;
+    opacity: 0.9;
+    pointer-events: none;
+  }
   /* NEW TAGS */
   .tag-legend { background: linear-gradient(135deg, #ff6b00, #ffd700, #ff6b00); color: #000; font-weight: 900; box-shadow: 0 0 10px rgba(255,107,0,0.5); animation: legendFlicker 2s ease-in-out infinite; }
   @keyframes legendFlicker { 0%,100% { box-shadow: 0 0 10px rgba(255,107,0,0.5); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 35px rgba(255,107,0,0.4); } }
@@ -2515,6 +2632,19 @@
             <div id="adTagDropStatus" style="font-size:11px;color:#888;margin-top:6px"></div>
           </div>
           <div class="admin-card">
+            <h3><i class="fas fa-bolt"></i> ADMIN EVENT COUNTDOWN</h3>
+            <p style="font-size:11px; color:#888; margin-bottom:8px">Atur judul dan waktu untuk event spesial agar muncul di semua user.</p>
+            <input class="admin-inp" id="adGlobalTitle" placeholder="Judul event, misalnya: Event Tag Drop Spesial">
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+              <input class="admin-inp" id="adGlobalDate" type="date" style="flex:1 1 140px">
+              <input class="admin-inp" id="adGlobalTime" type="time" value="00:00" style="flex:1 1 100px">
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+              <button class="admin-btn admin-btn-gold" onclick="adSaveGlobalCountdown()">SAVE</button>
+              <button class="admin-btn admin-btn-red" onclick="adClearGlobalCountdown()">CLEAR</button>
+            </div>
+          </div>
+          <div class="admin-card">
             <h3><i class="fas fa-moon"></i> LEBARAN COUNTDOWN</h3>
             <p style="font-size:11px; color:#888; margin-bottom:8px">Atur tanggal Idulfitri supaya countdown muncul untuk semua user.</p>
             <input class="admin-inp" id="adLebaranDate" type="date">
@@ -3111,6 +3241,63 @@
       const t = tag.toLowerCase();
       return `<span class="user-tag tag-${t}">${tag.toUpperCase()}</span>`;
     }
+    function buyShopItem(id) {
+      if (!auth.currentUser || !userData) {
+        msg('Login dulu untuk tukar ExeCoin');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const items = [
+        { id: 'shop_tag_gamers', type: 'tag', tag: 'gamers', price: 100 },
+        { id: 'shop_tag_legend', type: 'tag', tag: 'legend', price: 500 },
+        { id: 'shop_tag_execurive', type: 'tag', tag: 'execurive', price: 1000 },
+        { id: 'shop_vip_3', type: 'vip', days: 3, price: 200 },
+        { id: 'shop_vip_7', type: 'vip', days: 7, price: 500 },
+        { id: 'shop_vip_30', type: 'vip', days: 30, price: 1200 }
+      ];
+      const it = items.find(x => x.id === id);
+      if (!it) return;
+      const coinsRef = db.ref('users/' + uid + '/coins');
+      coinsRef.transaction(cur => {
+        const base = typeof cur === 'number' ? cur : 0;
+        if (base < it.price) return;
+        return base - it.price;
+      }).then(res => {
+        if (!res.committed) {
+          showToast('ExeCoin belum cukup');
+          return;
+        }
+        if (it.type === 'tag') {
+          const tagLower = String(it.tag || '').toLowerCase();
+          const updates = {};
+          updates['users/' + uid + '/tag'] = tagLower;
+          updates['users/' + uid + '/alltag/' + tagLower] = true;
+          db.ref().update(updates).then(() => {
+            userData.tag = tagLower;
+            if (!userData.alltag) userData.alltag = {};
+            userData.alltag[tagLower] = true;
+            const tagEl = document.getElementById('pTagDisplay');
+            if (tagEl) tagEl.innerHTML = getTagHTML(userData.tag);
+            showToast('Tag ' + tagLower.toUpperCase() + ' berhasil ditukar');
+            showTagUnlockBanner([tagLower]);
+          });
+        } else if (it.type === 'vip') {
+          const now = Date.now();
+          const ms = (it.days || 0) * 24 * 60 * 60 * 1000;
+          const expireAt = now + ms;
+          db.ref('users/' + uid + '/trialvip').set({ expireAt }).then(() => {
+            if (!userData.trialvip) userData.trialvip = {};
+            userData.trialvip.expireAt = expireAt;
+            showToast('VIP Trial ' + it.days + ' hari aktif');
+            updateVipTrialBanner(expireAt);
+          });
+        }
+        return coinsRef.once('value').then(csnap => {
+          userData.coins = csnap.val() || 0;
+          renderEventCenter();
+        });
+      });
+    }
     function showTagUnlockBanner(tags) {
       const wrap = document.getElementById('tagUnlockBanner');
       const listEl = document.getElementById('tagUnlockTags');
@@ -3483,6 +3670,8 @@
         const progressText = coins + '/' + it.price;
         const pct = Math.max(0, Math.min(1, coins / it.price));
         const canBuy = coins >= it.price;
+        const btnAttrs = canBuy ? ('onclick="buyShopItem(\'' + it.id + '\')"') : 'disabled';
+        const btnLabel = canBuy ? 'Tukar sekarang' : 'Coin belum cukup';
         return '<div class="event-shop-card">' +
           '<div class="event-shop-main">' +
             '<div class="event-shop-title-row">' +
@@ -3497,7 +3686,7 @@
           '</div>' +
           '<div class="event-shop-action">' +
             '<div class="event-shop-badge">' + escapeHtml(it.badge) + '</div>' +
-            '<button class="event-shop-btn" disabled>' + (canBuy ? 'Beli via admin' : 'Coin belum cukup') + '</button>' +
+            '<button class="event-shop-btn" ' + btnAttrs + '>' + escapeHtml(btnLabel) + '</button>' +
           '</div>' +
         '</div>';
       };
@@ -3751,6 +3940,11 @@
           lc.classList.remove('show', 'celebrate');
         }
       }
+      if (val.globalCountdown && typeof val.globalCountdown === 'object') {
+        setupGlobalCountdown(val.globalCountdown);
+      } else {
+        setupGlobalCountdown(null);
+      }
     });
 
     // ============================================================
@@ -3993,13 +4187,13 @@
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
 
-        // Profile header style
         const profHeader = document.getElementById('profileHeader');
         if (profHeader) {
-          profHeader.classList.remove('vip', 'pink-profile');
-          // Velly tetap aktifkan pink-profile, tapi background sekarang lebih simpel tanpa animasi berat
+          profHeader.classList.remove('vip', 'pink-profile', 'gamers-profile', 'legend-profile');
           const tagLower = (userData.tag || '').toLowerCase();
           if (tagLower.includes('velly')) profHeader.classList.add('pink-profile');
+          else if (tagLower.includes('gamers')) profHeader.classList.add('gamers-profile');
+          else if (tagLower.includes('legend')) profHeader.classList.add('legend-profile');
         }
 
           const pmBtn = document.getElementById('btnProfileMusic');
@@ -4040,6 +4234,10 @@
         if (tagDropInterval) {
           clearInterval(tagDropInterval);
           tagDropInterval = null;
+        }
+        if (tagDropBannerInterval) {
+          clearInterval(tagDropBannerInterval);
+          tagDropBannerInterval = null;
         }
         document.getElementById('topLoginBtn').textContent = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
@@ -4109,6 +4307,48 @@
       }
       updateLebaran();
       lebaranInterval = setInterval(updateLebaran, 60000);
+    }
+
+    function setupGlobalCountdown(cfg) {
+      const wrap = document.getElementById('globalCountdown');
+      const labelEl = document.getElementById('globalCountdownLabel');
+      const timerEl = document.getElementById('globalCountdownTimer');
+      if (!wrap || !labelEl || !timerEl) return;
+      if (globalCountdownInterval) {
+        clearInterval(globalCountdownInterval);
+        globalCountdownInterval = null;
+      }
+      if (!cfg || cfg.active === false || !cfg.targetTs) {
+        wrap.classList.remove('show');
+        return;
+      }
+      const title = cfg.title || 'Admin Event';
+      labelEl.textContent = title;
+      const update = () => {
+        const now = Date.now();
+        const diff = cfg.targetTs - now;
+        if (diff <= 0) {
+          timerEl.textContent = 'SEDANG BERLANGSUNG';
+          wrap.classList.add('show');
+          if (globalCountdownInterval) {
+            clearInterval(globalCountdownInterval);
+            globalCountdownInterval = null;
+          }
+          return;
+        }
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        wrap.classList.add('show');
+      };
+      update();
+      globalCountdownInterval = setInterval(update, 1000);
+    }
+
+    function closeGlobalCountdown() {
+      const wrap = document.getElementById('globalCountdown');
+      if (wrap) wrap.classList.remove('show');
     }
 
     function closeLebaranCountdown() {
@@ -5110,7 +5350,12 @@
       ultra: { title: 'ULTRA', desc: 'Kombinasi event dan pencapaian' },
       velly: { title: 'VELLY', desc: 'Tag spesial owner' },
       gamers: { title: 'GAMERS', desc: 'Tag eksklusif bisa dibeli pakai ExeCoin' },
-      execurive: { title: 'EXECURIVE', desc: 'Tag premium ExeCoin, terlihat lebih profesional' }
+      execurive: { title: 'EXECURIVE', desc: 'Tag premium ExeCoin, terlihat lebih profesional' },
+      frost: { title: 'FROST', desc: 'Calm elite listener dengan aura dingin dan clean' },
+      blaze: { title: 'BLAZE', desc: 'Energy dominator dengan vibe panas dan agresif' },
+      cosmic: { title: 'COSMIC', desc: 'Future listener dengan nuansa galaxy futuristik' },
+      elite: { title: 'ELITE', desc: 'Top tier member dengan kesan mahal dan prestige' },
+      neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' }
     };
     let adSelectedUserUid = null;
 
@@ -5222,6 +5467,27 @@
         }
         currentTagDrop = td;
         setupTagDropWatcher();
+        const gTitleEl = document.getElementById('adGlobalTitle');
+        const gDateEl = document.getElementById('adGlobalDate');
+        const gTimeEl = document.getElementById('adGlobalTime');
+        const gc = sv.globalCountdown || null;
+        if (gTitleEl && gDateEl && gTimeEl) {
+          if (gc && gc.targetTs) {
+            gTitleEl.value = gc.title || '';
+            const dt = new Date(gc.targetTs);
+            const yyyy = dt.getFullYear();
+            const mm = String(dt.getMonth() + 1).padStart(2, '0');
+            const dd = String(dt.getDate()).padStart(2, '0');
+            const hh = String(dt.getHours()).padStart(2, '0');
+            const mi = String(dt.getMinutes()).padStart(2, '0');
+            gDateEl.value = `${yyyy}-${mm}-${dd}`;
+            gTimeEl.value = `${hh}:${mi}`;
+          } else {
+            gTitleEl.value = '';
+            gDateEl.value = '';
+            gTimeEl.value = '00:00';
+          }
+        }
       });
     }
 
@@ -5296,6 +5562,39 @@
       showToast('✅ Broadcast terkirim!');
     }
     function adClearBC() { db.ref('settings/announcement').remove(); showToast('Broadcast dihapus'); }
+    function adSaveGlobalCountdown() {
+      const titleEl = document.getElementById('adGlobalTitle');
+      const dEl = document.getElementById('adGlobalDate');
+      const tEl = document.getElementById('adGlobalTime');
+      if (!titleEl || !dEl || !tEl) return;
+      const title = (titleEl.value || '').trim() || 'Admin Event';
+      const d = dEl.value;
+      const t = tEl.value || '00:00';
+      if (!d) { showToast('Isi tanggal event dulu!'); return; }
+      const partsD = d.split('-').map(Number);
+      const partsT = t.split(':').map(Number);
+      const year = partsD[0], month = (partsD[1] || 1) - 1, day = partsD[2] || 1;
+      const hour = partsT[0] || 0, minute = partsT[1] || 0;
+      const ts = new Date(year, month, day, hour, minute, 0).getTime();
+      if (isNaN(ts)) { showToast('Tanggal tidak valid'); return; }
+      const payload = { title, targetTs: ts, active: true };
+      db.ref('settings/globalCountdown').set(payload).then(() => {
+        addLog('Set GlobalCountdown: ' + ts + ' (' + title + ')');
+        showToast('✅ Countdown admin disimpan');
+      });
+    }
+    function adClearGlobalCountdown() {
+      db.ref('settings/globalCountdown').remove().then(() => {
+        addLog('Clear GlobalCountdown');
+        showToast('Countdown admin dimatikan');
+        const wrap = document.getElementById('globalCountdown');
+        if (wrap) wrap.classList.remove('show');
+        if (globalCountdownInterval) {
+          clearInterval(globalCountdownInterval);
+          globalCountdownInterval = null;
+        }
+      });
+    }
     function adSaveLebaran() {
       const d = document.getElementById('adLebaranDate').value;
       const t = document.getElementById('adLebaranTime').value || '00:00';
