@@ -289,6 +289,70 @@
     .sys-broadcast.sb-closing { top: -180px !important; opacity: 0; transition: top 0.4s ease, opacity 0.4s ease; }
     .sb-dev-name { color: #00d4ff; font-weight: 700; text-shadow: 0 0 8px #00d4ff; }
 
+    .tag-unlock-banner {
+      position: fixed;
+      bottom: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2600;
+      background: linear-gradient(135deg, #020617, #020617);
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.8);
+      padding: 10px 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.7);
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+    .tag-unlock-banner.show {
+      display: flex;
+      animation: notifPanelIn 0.25s ease;
+    }
+    .tag-unlock-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 0 0, rgba(34,197,94,0.32), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(56,189,248,0.28), transparent 60%),
+        #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bbf7d0;
+      flex-shrink: 0;
+    }
+    .tag-unlock-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .tag-unlock-text {
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tag-unlock-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .tag-unlock-tags .user-tag {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+    .tag-unlock-close {
+      border: none;
+      background: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
+
     /* ============================================================
        ADMIN FLOAT CHAT (GLOBAL)
     ============================================================ */
@@ -563,6 +627,8 @@
       align-items: center;
       justify-content: center;
       color: #92400e;
+      box-shadow: 0 0 12px rgba(250,204,21,0.6);
+      animation: coinPulse 2.4s ease-in-out infinite;
     }
     .event-coins-body {
       display: flex;
@@ -581,6 +647,10 @@
       font-weight: 800;
       color: #facc15;
       text-shadow: 0 0 8px rgba(245,158,11,0.9);
+    }
+    @keyframes coinPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
     }
     .event-center-layout {
       display: grid;
@@ -1231,7 +1301,6 @@
       background: radial-gradient(circle at 30% 30%, rgba(255,215,0,0.07), transparent 40%);
       animation: vipShine 6s linear infinite; pointer-events: none;
     }
-    /* PINK PROFILE (VELLY) — dibuat simpel tanpa animasi agar lebih responsif */
     .modern-profile-header.pink-profile {
       background: linear-gradient(135deg,
         rgba(255,20,147,0.10) 0%,
@@ -1245,6 +1314,58 @@
         radial-gradient(circle at 10% 0%, rgba(255,182,193,0.2), transparent 55%),
         radial-gradient(circle at 90% 0%, rgba(244,114,182,0.18), transparent 55%);
       opacity: 0.8;
+    }
+    .modern-profile-header.gamers-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(34,197,94,0.16), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.14), transparent 55%),
+        linear-gradient(180deg, #020617, #020617);
+    }
+    .modern-profile-header.legend-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(251,191,36,0.14), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(249,115,22,0.16), transparent 55%),
+        linear-gradient(180deg, #111827, #020617);
+    }
+    .modern-profile-header.frost-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(148,163,184,0.32), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.26), transparent 55%),
+        linear-gradient(180deg, #020617, #0f172a);
+    }
+    .modern-profile-header.frost-profile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(191,219,254,0.35), transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(56,189,248,0.3), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .modern-profile-header.blaze-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(239,68,68,0.3), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(249,115,22,0.28), transparent 55%),
+        linear-gradient(180deg, #111827, #020617);
+    }
+    .modern-profile-header.cosmic-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(129,140,248,0.34), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(56,189,248,0.28), transparent 55%),
+        linear-gradient(180deg, #020617, #020617);
+    }
+    .modern-profile-header.neon-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(236,72,153,0.34), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.28), transparent 55%),
+        linear-gradient(180deg, #020617, #020617);
+    }
+    .modern-profile-header.elite-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(250,204,21,0.22), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(234,179,8,0.24), transparent 55%),
+        linear-gradient(180deg, #020617, #111827);
     }
     @keyframes vipShine { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(10%,10%) rotate(20deg); } 100% { transform: translate(0,0) rotate(0deg); } }
 
@@ -1348,12 +1469,56 @@
   .tag-premium { background: linear-gradient(45deg, #8a2387, #e94057, #f27121); color: #fff; font-weight: bold; }
   .tag-influencer { background: linear-gradient(45deg, #405de6, #833ab4, #c13584, #e1306c, #fd1d1d); color: #fff; }
   .tag-gamers {
-    background: radial-gradient(circle at 0 0, #22c55e, transparent 60%),
-                radial-gradient(circle at 100% 100%, #0ea5e9, transparent 60%),
-                #020617;
+    background:
+      radial-gradient(circle at 0 0, #22c55e, transparent 60%),
+      radial-gradient(circle at 100% 100%, #0ea5e9, transparent 60%),
+      #020617;
     color: #bbf7d0;
     border: 1px solid rgba(34,197,94,0.8);
     box-shadow: 0 0 10px rgba(34,197,94,0.6);
+  }
+  .tag-frost {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #38bdf8);
+    color: #e0f7fa;
+    border: 1px solid rgba(148,163,184,0.6);
+    border-radius: 999px;
+  }
+  .tag-blaze {
+    background: linear-gradient(135deg, #7f1d1d, #b91c1c, #f97316);
+    color: #fff7ed;
+    border-radius: 999px;
+    border: 1px solid rgba(248,113,113,0.8);
+  }
+  .tag-cosmic {
+    background: radial-gradient(circle at 0 0, rgba(147,51,234,0.5), transparent 55%), linear-gradient(135deg, #020617, #111827, #1e293b);
+    color: #e5e7eb;
+    border-radius: 999px;
+    border: 1px solid rgba(129,140,248,0.6);
+  }
+  .tag-elite {
+    background: linear-gradient(135deg, #111827, #000000);
+    color: #fef3c7;
+    border-radius: 999px;
+    border: 1px solid rgba(253,224,71,0.85);
+    padding: 2px 10px 2px 8px;
+  }
+  .tag-elite::before {
+    content: '👑';
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+  }
+  .tag-elite {
+    padding-left: 16px;
+  }
+  .tag-neon {
+    background: linear-gradient(135deg, #020617, #111827);
+    color: #f9fafb;
+    border-radius: 999px;
+    border: 1px solid rgba(236,72,153,0.8);
+    box-shadow: 0 0 10px rgba(236,72,153,0.6);
   }
   /* NEW TAGS */
   .tag-legend { background: linear-gradient(135deg, #ff6b00, #ffd700, #ff6b00); color: #000; font-weight: 900; box-shadow: 0 0 10px rgba(255,107,0,0.5); animation: legendFlicker 2s ease-in-out infinite; }
@@ -1448,6 +1613,100 @@
       font-size: 14px;
       cursor: pointer;
     }
+    .global-countdown {
+      background: linear-gradient(135deg, rgba(56,189,248,0.22), rgba(34,197,94,0.16));
+      border: 1px solid rgba(56,189,248,0.55);
+      border-radius: 10px;
+      padding: 9px 14px;
+      margin-bottom: 10px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.52);
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+    .global-countdown.show { display: flex; }
+    .global-countdown-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #22c55e, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b1120;
+      flex-shrink: 0;
+    }
+    .global-countdown-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .global-countdown-label {
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .global-countdown-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #bbf7d0;
+    }
+    .player-badges {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .player-badges .vip-trial-banner,
+    .player-badges .event-countdown,
+    .player-badges .global-countdown {
+      padding: 4px 8px;
+      margin-bottom: 0;
+      box-shadow: none;
+      border-radius: 8px;
+    }
+    .player-badges .vip-trial-info .vt-label {
+      font-size: 9px;
+    }
+    .player-badges .vip-trial-info .vt-timer {
+      font-size: 10px;
+    }
+    .player-badges .event-countdown .ec-label {
+      font-size: 9px;
+    }
+    .player-badges .event-countdown .ec-time {
+      font-size: 10px;
+    }
+    .player-badges .global-countdown {
+      font-size: 9px;
+      gap: 6px;
+    }
+    .player-badges .global-countdown-icon {
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+    }
+    .player-badges .global-countdown-label {
+      font-size: 9px;
+    }
+    .player-badges .global-countdown-time {
+      font-size: 10px;
+    }
+    .global-countdown-close {
+      margin-left: 6px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      cursor: pointer;
+    }
     .event-banner {
       position: fixed;
       top: 70px;
@@ -1508,6 +1767,25 @@
       cursor: pointer;
       font-size: 14px;
       padding: 4px;
+    }
+    @media (max-width: 480px) {
+      .event-banner {
+        top: 62px;
+        width: 94vw;
+        max-width: 94vw;
+        padding: 9px 10px;
+        gap: 8px;
+      }
+      .event-banner-title {
+        font-size: 11px;
+        white-space: normal;
+      }
+      .event-banner-sub {
+        font-size: 9px;
+      }
+      .event-banner-timer {
+        font-size: 10px;
+      }
     }
     .event-countdown.celebrate {
       background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,152,0,0.24));
@@ -2140,6 +2418,15 @@
     <div class="sb-progress"><div id="sbBar" class="sb-bar"></div></div>
   </div>
 
+  <div id="tagUnlockBanner" class="tag-unlock-banner">
+    <div class="tag-unlock-icon"><i class="fas fa-tags"></i></div>
+    <div class="tag-unlock-main">
+      <div id="tagUnlockText" class="tag-unlock-text">Kamu membuka tag baru</div>
+      <div id="tagUnlockTags" class="tag-unlock-tags"></div>
+    </div>
+    <button class="tag-unlock-close" onclick="closeTagUnlockBanner()"><i class="fas fa-times"></i></button>
+  </div>
+
   <!-- MAINTENANCE / BANNED -->
   <div id="mtScreen" class="full-overlay"><i class="fas fa-tools" style="color:var(--accent)"></i><h1>Server Maintenance</h1><p>Kami sedang melakukan pembaruan sistem.<br>Mohon tunggu sebentar lagi.</p></div>
   <div id="bannedScreen" class="full-overlay"><i class="fas fa-user-slash" style="color:var(--danger)"></i><h1>Access Denied</h1><p>Akun anda telah diblokir secara permanen.</p></div>
@@ -2189,26 +2476,6 @@
       </div>
     </div>
 
-    <!-- VIP Trial Banner -->
-    <div class="vip-trial-banner" id="vipTrialBanner">
-      <i class="fas fa-crown"></i>
-      <div class="vip-trial-info">
-        <div class="vt-label">VIP TRIAL AKTIF</div>
-        <div class="vt-timer" id="vipTrialTimer">--d --h --m</div>
-      </div>
-      <button class="vip-trial-close" onclick="closeVipTrialBanner()">×</button>
-    </div>
-
-    <!-- Lebaran Countdown -->
-    <div class="event-countdown" id="lebaranCountdown">
-      <div class="ec-main">
-        <div class="ec-label">Countdown Lebaran</div>
-        <div class="ec-time" id="lebaranTimer">--d --h --m</div>
-      </div>
-      <div class="ec-badge">Idulfitri</div>
-      <button class="ec-close" onclick="closeLebaranCountdown()">×</button>
-    </div>
-
     <div class="cover-box">
       <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
     </div>
@@ -2219,6 +2486,32 @@
         <div id="by" onclick="viewCreator()">@system</div>
         <button id="btnFav" onclick="toggleFavorite()"><i class="far fa-heart"></i></button>
         <button id="btnFollow" onclick="followUser()"><i class="fas fa-plus"></i></button>
+      </div>
+      <div class="player-badges">
+        <div class="vip-trial-banner" id="vipTrialBanner">
+          <i class="fas fa-crown"></i>
+          <div class="vip-trial-info">
+            <div class="vt-label">VIP TRIAL AKTIF</div>
+            <div class="vt-timer" id="vipTrialTimer">--d --h --m</div>
+          </div>
+          <button class="vip-trial-close" onclick="closeVipTrialBanner()">×</button>
+        </div>
+        <div class="event-countdown" id="lebaranCountdown">
+          <div class="ec-main">
+            <div class="ec-label">Countdown Lebaran</div>
+            <div class="ec-time" id="lebaranTimer">--d --h --m</div>
+          </div>
+          <div class="ec-badge">Idulfitri</div>
+          <button class="ec-close" onclick="closeLebaranCountdown()">×</button>
+        </div>
+        <div class="global-countdown" id="globalCountdown">
+          <div class="global-countdown-icon"><i class="fas fa-bolt"></i></div>
+          <div class="global-countdown-main">
+            <div class="global-countdown-label" id="globalCountdownLabel">Admin Event</div>
+            <div class="global-countdown-time" id="globalCountdownTimer">--:--</div>
+          </div>
+          <button class="global-countdown-close" onclick="closeGlobalCountdown()">×</button>
+        </div>
       </div>
     </div>
 
@@ -2341,6 +2634,19 @@
             <button class="admin-btn admin-btn-red" onclick="adClearTagDrop()">STOP</button>
           </div>
             <div id="adTagDropStatus" style="font-size:11px;color:#888;margin-top:6px"></div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="fas fa-bolt"></i> ADMIN EVENT COUNTDOWN</h3>
+            <p style="font-size:11px; color:#888; margin-bottom:8px">Atur judul dan waktu untuk event spesial agar muncul di semua user.</p>
+            <input class="admin-inp" id="adGlobalTitle" placeholder="Judul event, misalnya: Event Tag Drop Spesial">
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+              <input class="admin-inp" id="adGlobalDate" type="date" style="flex:1 1 140px">
+              <input class="admin-inp" id="adGlobalTime" type="time" value="00:00" style="flex:1 1 100px">
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+              <button class="admin-btn admin-btn-gold" onclick="adSaveGlobalCountdown()">SAVE</button>
+              <button class="admin-btn admin-btn-red" onclick="adClearGlobalCountdown()">CLEAR</button>
+            </div>
           </div>
           <div class="admin-card">
             <h3><i class="fas fa-moon"></i> LEBARAN COUNTDOWN</h3>
@@ -2843,16 +3149,18 @@
     }
     runLoadSequence();
 
-    // ============================================================
-    // HEARTS SYSTEM (for velly tag)
-    // ============================================================
     let heartsInterval = null;
+    let heartsMode = 'love';
     function createHeart() {
       const c = document.getElementById('heartsContainer');
       if (!c) return;
       const h = document.createElement('div');
       h.className = 'heart-particle';
-      h.textContent = ['❤️','💗','💓','💕','💖','🩷'][Math.floor(Math.random() * 6)];
+      let set = ['❤️','💗','💓','💕','💖','🩷'];
+      if (heartsMode === 'game') {
+        set = ['🎮','🕹️','🎧','🎲','🎯','💿'];
+      }
+      h.textContent = set[Math.floor(Math.random() * set.length)];
       h.style.left = Math.random() * 100 + 'vw';
       h.style.fontSize = (10 + Math.random() * 16) + 'px';
       h.style.animationDuration = (4 + Math.random() * 4) + 's';
@@ -2860,9 +3168,10 @@
       c.appendChild(h);
       setTimeout(() => h.remove(), 9000);
     }
-    function startHearts() {
+    function startHearts(mode) {
       const c = document.getElementById('heartsContainer');
       if (!c) return;
+      heartsMode = mode || 'love';
       c.classList.add('active');
       if (heartsInterval) return;
       heartsInterval = setInterval(createHeart, 600);
@@ -2893,8 +3202,11 @@
     let adminDrag = { active: false, offsetX: 0, offsetY: 0 };
     let adminMode = 'normal';
     let tagDropInterval = null;
+    let tagDropBannerInterval = null;
     let currentTagDrop = null;
     let lebaranInterval = null;
+    let globalCountdownInterval = null;
+    let tagUnlockTimeout = null;
     let vipTrialBannerClosed = false;
     let uploadQueueInterval = null;
     let uploadQueueListenerUid = null;
@@ -2935,6 +3247,93 @@
       if (!tag || tag === 'none') return '';
       const t = tag.toLowerCase();
       return `<span class="user-tag tag-${t}">${tag.toUpperCase()}</span>`;
+    }
+    function buyShopItem(id) {
+      if (!auth.currentUser || !userData) {
+        msg('Login dulu untuk tukar ExeCoin');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const items = [
+        { id: 'shop_tag_gamers', type: 'tag', tag: 'gamers', price: 100 },
+        { id: 'shop_tag_legend', type: 'tag', tag: 'legend', price: 500 },
+        { id: 'shop_tag_execurive', type: 'tag', tag: 'execurive', price: 1000 },
+        { id: 'shop_vip_3', type: 'vip', days: 3, price: 200 },
+        { id: 'shop_vip_7', type: 'vip', days: 7, price: 500 },
+        { id: 'shop_vip_30', type: 'vip', days: 30, price: 1200 }
+      ];
+      const it = items.find(x => x.id === id);
+      if (!it) return;
+      const coinsRef = db.ref('users/' + uid + '/coins');
+      coinsRef.transaction(cur => {
+        const base = typeof cur === 'number' ? cur : 0;
+        if (base < it.price) return;
+        return base - it.price;
+      }).then(res => {
+        if (!res.committed) {
+          showToast('ExeCoin belum cukup');
+          return;
+        }
+        if (it.type === 'tag') {
+          const tagLower = String(it.tag || '').toLowerCase();
+          const updates = {};
+          updates['users/' + uid + '/tag'] = tagLower;
+          updates['users/' + uid + '/alltag/' + tagLower] = true;
+          db.ref().update(updates).then(() => {
+            userData.tag = tagLower;
+            if (!userData.alltag) userData.alltag = {};
+            userData.alltag[tagLower] = true;
+            const tagEl = document.getElementById('pTagDisplay');
+            if (tagEl) tagEl.innerHTML = getTagHTML(userData.tag);
+            showToast('Tag ' + tagLower.toUpperCase() + ' berhasil ditukar');
+            showTagUnlockBanner([tagLower]);
+          });
+        } else if (it.type === 'vip') {
+          const now = Date.now();
+          const ms = (it.days || 0) * 24 * 60 * 60 * 1000;
+          const expireAt = now + ms;
+          db.ref('users/' + uid + '/trialvip').set({ expireAt }).then(() => {
+            if (!userData.trialvip) userData.trialvip = {};
+            userData.trialvip.expireAt = expireAt;
+            showToast('VIP Trial ' + it.days + ' hari aktif');
+            updateVipTrialBanner(expireAt);
+          });
+        }
+        return coinsRef.once('value').then(csnap => {
+          userData.coins = csnap.val() || 0;
+          renderEventCenter();
+        });
+      });
+    }
+    function showTagUnlockBanner(tags) {
+      const wrap = document.getElementById('tagUnlockBanner');
+      const listEl = document.getElementById('tagUnlockTags');
+      if (!wrap || !listEl) return;
+      listEl.innerHTML = '';
+      (tags || []).forEach(raw => {
+        const t = String(raw || '').toLowerCase();
+        if (!t) return;
+        const span = document.createElement('span');
+        span.className = 'user-tag tag-' + t;
+        span.textContent = t.toUpperCase();
+        listEl.appendChild(span);
+      });
+      wrap.classList.add('show');
+      if (tagUnlockTimeout) {
+        clearTimeout(tagUnlockTimeout);
+        tagUnlockTimeout = null;
+      }
+      tagUnlockTimeout = setTimeout(() => {
+        wrap.classList.remove('show');
+      }, 5000);
+    }
+    function closeTagUnlockBanner() {
+      const wrap = document.getElementById('tagUnlockBanner');
+      if (wrap) wrap.classList.remove('show');
+      if (tagUnlockTimeout) {
+        clearTimeout(tagUnlockTimeout);
+        tagUnlockTimeout = null;
+      }
     }
     function playProfileMusic(url) {
       if (!url) return;
@@ -3009,9 +3408,14 @@
         clearInterval(tagDropInterval);
         tagDropInterval = null;
       }
+      if (tagDropBannerInterval) {
+        clearInterval(tagDropBannerInterval);
+        tagDropBannerInterval = null;
+      }
       const banner = document.getElementById('eventTagBanner');
       if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) {
         if (banner) banner.classList.remove('show');
+        updateEventSideFromTagDrop();
         return;
       }
       if (banner) {
@@ -3028,6 +3432,11 @@
               if (diff <= 0) {
                 timerEl.textContent = 'EVENT SELESAI';
                 banner.classList.remove('show');
+                if (tagDropBannerInterval) {
+                  clearInterval(tagDropBannerInterval);
+                  tagDropBannerInterval = null;
+                }
+                updateEventSideFromTagDrop();
                 return;
               }
               const totalSec = Math.floor(diff / 1000);
@@ -3036,13 +3445,14 @@
               timerEl.textContent = m + ':' + s;
             };
             updateBannerTimer();
-            setInterval(updateBannerTimer, 1000);
+            tagDropBannerInterval = setInterval(updateBannerTimer, 1000);
           } else {
             timerEl.textContent = 'LIVE';
           }
         }
         banner.classList.add('show');
       }
+      updateEventSideFromTagDrop();
       tagDropInterval = setInterval(() => {
         if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active) return;
         if (currentTagDrop.maxWinners && currentTagDrop.obtainedCount >= currentTagDrop.maxWinners) return;
@@ -3063,6 +3473,14 @@
               db.ref().update(updates).then(() => {
                 showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
                 updateQuestProgress('weekly', 'weekly_new_tags_2', 1, auth.currentUser.uid);
+                showTagUnlockBanner([tag]);
+                const payload = {
+                  type: 'event',
+                  text: 'Kamu mendapatkan tag ' + tag.toUpperCase() + ' dari event Tag Drop',
+                  fromName: 'System',
+                  timestamp: Date.now()
+                };
+                db.ref('users/' + auth.currentUser.uid + '/notifications').push(payload);
               });
             });
           }
@@ -3259,6 +3677,8 @@
         const progressText = coins + '/' + it.price;
         const pct = Math.max(0, Math.min(1, coins / it.price));
         const canBuy = coins >= it.price;
+        const btnAttrs = canBuy ? ('onclick="buyShopItem(\'' + it.id + '\')"') : 'disabled';
+        const btnLabel = canBuy ? 'Tukar sekarang' : 'Coin belum cukup';
         return '<div class="event-shop-card">' +
           '<div class="event-shop-main">' +
             '<div class="event-shop-title-row">' +
@@ -3273,7 +3693,7 @@
           '</div>' +
           '<div class="event-shop-action">' +
             '<div class="event-shop-badge">' + escapeHtml(it.badge) + '</div>' +
-            '<button class="event-shop-btn" disabled>' + (canBuy ? 'Beli via admin' : 'Coin belum cukup') + '</button>' +
+            '<button class="event-shop-btn" ' + btnAttrs + '>' + escapeHtml(btnLabel) + '</button>' +
           '</div>' +
         '</div>';
       };
@@ -3527,6 +3947,11 @@
           lc.classList.remove('show', 'celebrate');
         }
       }
+      if (val.globalCountdown && typeof val.globalCountdown === 'object') {
+        setupGlobalCountdown(val.globalCountdown);
+      } else {
+        setupGlobalCountdown(null);
+      }
     });
 
     // ============================================================
@@ -3769,13 +4194,28 @@
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
 
-        // Profile header style
         const profHeader = document.getElementById('profileHeader');
         if (profHeader) {
-          profHeader.classList.remove('vip', 'pink-profile');
-          // Velly tetap aktifkan pink-profile, tapi background sekarang lebih simpel tanpa animasi berat
+          profHeader.classList.remove(
+            'vip',
+            'pink-profile',
+            'gamers-profile',
+            'legend-profile',
+            'frost-profile',
+            'blaze-profile',
+            'cosmic-profile',
+            'elite-profile',
+            'neon-profile'
+          );
           const tagLower = (userData.tag || '').toLowerCase();
           if (tagLower.includes('velly')) profHeader.classList.add('pink-profile');
+          else if (tagLower.includes('gamers')) profHeader.classList.add('gamers-profile');
+          else if (tagLower.includes('legend')) profHeader.classList.add('legend-profile');
+          else if (tagLower.includes('frost')) profHeader.classList.add('frost-profile');
+          else if (tagLower.includes('blaze')) profHeader.classList.add('blaze-profile');
+          else if (tagLower.includes('cosmic')) profHeader.classList.add('cosmic-profile');
+          else if (tagLower.includes('elite')) profHeader.classList.add('elite-profile');
+          else if (tagLower.includes('neon')) profHeader.classList.add('neon-profile');
         }
 
           const pmBtn = document.getElementById('btnProfileMusic');
@@ -3816,6 +4256,10 @@
         if (tagDropInterval) {
           clearInterval(tagDropInterval);
           tagDropInterval = null;
+        }
+        if (tagDropBannerInterval) {
+          clearInterval(tagDropBannerInterval);
+          tagDropBannerInterval = null;
         }
         document.getElementById('topLoginBtn').textContent = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
@@ -3885,6 +4329,48 @@
       }
       updateLebaran();
       lebaranInterval = setInterval(updateLebaran, 60000);
+    }
+
+    function setupGlobalCountdown(cfg) {
+      const wrap = document.getElementById('globalCountdown');
+      const labelEl = document.getElementById('globalCountdownLabel');
+      const timerEl = document.getElementById('globalCountdownTimer');
+      if (!wrap || !labelEl || !timerEl) return;
+      if (globalCountdownInterval) {
+        clearInterval(globalCountdownInterval);
+        globalCountdownInterval = null;
+      }
+      if (!cfg || cfg.active === false || !cfg.targetTs) {
+        wrap.classList.remove('show');
+        return;
+      }
+      const title = cfg.title || 'Admin Event';
+      labelEl.textContent = title;
+      const update = () => {
+        const now = Date.now();
+        const diff = cfg.targetTs - now;
+        if (diff <= 0) {
+          timerEl.textContent = 'SEDANG BERLANGSUNG';
+          wrap.classList.add('show');
+          if (globalCountdownInterval) {
+            clearInterval(globalCountdownInterval);
+            globalCountdownInterval = null;
+          }
+          return;
+        }
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        wrap.classList.add('show');
+      };
+      update();
+      globalCountdownInterval = setInterval(update, 1000);
+    }
+
+    function closeGlobalCountdown() {
+      const wrap = document.getElementById('globalCountdown');
+      if (wrap) wrap.classList.remove('show');
     }
 
     function closeLebaranCountdown() {
@@ -4365,7 +4851,8 @@
       ).join('');
       switchProfileTab('posts');
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
-      if (myTagLower.includes('velly')) startHearts();
+      if (myTagLower.includes('velly')) startHearts('love');
+      else if (myTagLower.includes('gamers')) startHearts('game');
       else stopHearts();
       if (!audio.paused) {
         audio.pause();
@@ -4403,18 +4890,35 @@
       document.getElementById('vFollowing').innerText = flgr;
       document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
 
-      // Apply vip/pink header to creator modal
       const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
       if (creatorHeader) {
-        creatorHeader.classList.remove('vip', 'pink-profile');
+        creatorHeader.classList.remove(
+          'vip',
+          'pink-profile',
+          'gamers-profile',
+          'legend-profile',
+          'frost-profile',
+          'blaze-profile',
+          'cosmic-profile',
+          'elite-profile',
+          'neon-profile'
+        );
         const cTagLower = (cData && cData.tag ? cData.tag.toLowerCase() : '');
-        const isVellyCreator = cTagLower.includes('velly');
-        if (isVellyCreator) {
-          creatorHeader.classList.add('pink-profile');
-        } else if (creatorVip) {
-          creatorHeader.classList.add('vip');
-        }
+        if (cTagLower.includes('velly')) creatorHeader.classList.add('pink-profile');
+        else if (cTagLower.includes('gamers')) creatorHeader.classList.add('gamers-profile');
+        else if (cTagLower.includes('legend')) creatorHeader.classList.add('legend-profile');
+        else if (cTagLower.includes('frost')) creatorHeader.classList.add('frost-profile');
+        else if (cTagLower.includes('blaze')) creatorHeader.classList.add('blaze-profile');
+        else if (cTagLower.includes('cosmic')) creatorHeader.classList.add('cosmic-profile');
+        else if (cTagLower.includes('elite')) creatorHeader.classList.add('elite-profile');
+        else if (cTagLower.includes('neon')) creatorHeader.classList.add('neon-profile');
+        else if (creatorVip) creatorHeader.classList.add('vip');
       }
+
+      const cTagLower2 = (cData && cData.tag ? cData.tag.toLowerCase() : '');
+      if (cTagLower2.includes('velly')) startHearts('love');
+      else if (cTagLower2.includes('gamers')) startHearts('game');
+      else stopHearts();
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
       else {
@@ -4886,7 +5390,12 @@
       ultra: { title: 'ULTRA', desc: 'Kombinasi event dan pencapaian' },
       velly: { title: 'VELLY', desc: 'Tag spesial owner' },
       gamers: { title: 'GAMERS', desc: 'Tag eksklusif bisa dibeli pakai ExeCoin' },
-      execurive: { title: 'EXECURIVE', desc: 'Tag premium ExeCoin, terlihat lebih profesional' }
+      execurive: { title: 'EXECURIVE', desc: 'Tag premium ExeCoin, terlihat lebih profesional' },
+      frost: { title: 'FROST', desc: 'Calm elite listener dengan aura dingin dan clean' },
+      blaze: { title: 'BLAZE', desc: 'Energy dominator dengan vibe panas dan agresif' },
+      cosmic: { title: 'COSMIC', desc: 'Future listener dengan nuansa galaxy futuristik' },
+      elite: { title: 'ELITE', desc: 'Top tier member dengan kesan mahal dan prestige' },
+      neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' }
     };
     let adSelectedUserUid = null;
 
@@ -4998,6 +5507,27 @@
         }
         currentTagDrop = td;
         setupTagDropWatcher();
+        const gTitleEl = document.getElementById('adGlobalTitle');
+        const gDateEl = document.getElementById('adGlobalDate');
+        const gTimeEl = document.getElementById('adGlobalTime');
+        const gc = sv.globalCountdown || null;
+        if (gTitleEl && gDateEl && gTimeEl) {
+          if (gc && gc.targetTs) {
+            gTitleEl.value = gc.title || '';
+            const dt = new Date(gc.targetTs);
+            const yyyy = dt.getFullYear();
+            const mm = String(dt.getMonth() + 1).padStart(2, '0');
+            const dd = String(dt.getDate()).padStart(2, '0');
+            const hh = String(dt.getHours()).padStart(2, '0');
+            const mi = String(dt.getMinutes()).padStart(2, '0');
+            gDateEl.value = `${yyyy}-${mm}-${dd}`;
+            gTimeEl.value = `${hh}:${mi}`;
+          } else {
+            gTitleEl.value = '';
+            gDateEl.value = '';
+            gTimeEl.value = '00:00';
+          }
+        }
       });
     }
 
@@ -5072,6 +5602,39 @@
       showToast('✅ Broadcast terkirim!');
     }
     function adClearBC() { db.ref('settings/announcement').remove(); showToast('Broadcast dihapus'); }
+    function adSaveGlobalCountdown() {
+      const titleEl = document.getElementById('adGlobalTitle');
+      const dEl = document.getElementById('adGlobalDate');
+      const tEl = document.getElementById('adGlobalTime');
+      if (!titleEl || !dEl || !tEl) return;
+      const title = (titleEl.value || '').trim() || 'Admin Event';
+      const d = dEl.value;
+      const t = tEl.value || '00:00';
+      if (!d) { showToast('Isi tanggal event dulu!'); return; }
+      const partsD = d.split('-').map(Number);
+      const partsT = t.split(':').map(Number);
+      const year = partsD[0], month = (partsD[1] || 1) - 1, day = partsD[2] || 1;
+      const hour = partsT[0] || 0, minute = partsT[1] || 0;
+      const ts = new Date(year, month, day, hour, minute, 0).getTime();
+      if (isNaN(ts)) { showToast('Tanggal tidak valid'); return; }
+      const payload = { title, targetTs: ts, active: true };
+      db.ref('settings/globalCountdown').set(payload).then(() => {
+        addLog('Set GlobalCountdown: ' + ts + ' (' + title + ')');
+        showToast('✅ Countdown admin disimpan');
+      });
+    }
+    function adClearGlobalCountdown() {
+      db.ref('settings/globalCountdown').remove().then(() => {
+        addLog('Clear GlobalCountdown');
+        showToast('Countdown admin dimatikan');
+        const wrap = document.getElementById('globalCountdown');
+        if (wrap) wrap.classList.remove('show');
+        if (globalCountdownInterval) {
+          clearInterval(globalCountdownInterval);
+          globalCountdownInterval = null;
+        }
+      });
+    }
     function adSaveLebaran() {
       const d = document.getElementById('adLebaranDate').value;
       const t = document.getElementById('adLebaranTime').value || '00:00';
