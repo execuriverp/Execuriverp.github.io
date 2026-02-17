@@ -630,6 +630,9 @@
       box-shadow: 0 0 12px rgba(250,204,21,0.6);
       animation: coinPulse 2.4s ease-in-out infinite;
     }
+    .event-coins-icon.gain {
+      animation: coinGain 0.6s ease-out;
+    }
     .event-coins-body {
       display: flex;
       flex-direction: column;
@@ -651,6 +654,11 @@
     @keyframes coinPulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.06); }
+    }
+    @keyframes coinGain {
+      0% { transform: scale(1); text-shadow: 0 0 8px rgba(245,158,11,0.9); }
+      40% { transform: scale(1.18); text-shadow: 0 0 16px rgba(250,204,21,1); }
+      100% { transform: scale(1); text-shadow: 0 0 8px rgba(245,158,11,0.9); }
     }
     .event-center-layout {
       display: grid;
@@ -735,6 +743,8 @@
       align-items: center;
       background: transparent;
       box-shadow: none;
+      animation: eventCardIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+      transform-origin: center top;
     }
     .event-quest-main {
       display: flex;
@@ -759,6 +769,16 @@
       align-items: center;
       gap: 4px;
       white-space: nowrap;
+    }
+    @keyframes eventCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
     .event-quest-reward i {
       font-size: 11px;
@@ -2318,22 +2338,97 @@
     /* ============================================================
        TOAST
     ============================================================ */
-    #toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 99999; pointer-events: none; }
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 99999;
+      pointer-events: none;
+    }
     .toast {
       background: rgba(10,10,18,0.95);
       border: 1px solid rgba(255,255,255,0.08);
       border-left: 3px solid var(--accent);
-      color: #fff; padding: 9px 18px;
-      border-radius: 8px; font-size: 12px;
-      display: flex; align-items: center; gap: 9px;
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.5);
       animation: toastIn 0.3s cubic-bezier(0.68,-0.55,0.27,1.55);
       backdrop-filter: blur(10px);
       white-space: nowrap;
+      pointer-events: auto;
     }
     .toast.hide { animation: toastOut 0.3s forwards; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
+    .toast.toast-success { border-left-color: #22c55e; }
+    .toast.toast-error { border-left-color: #f97316; }
+    .toast.toast-event { border-left-color: #38bdf8; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(-12px) scale(0.96); }
+    }
+
+    .global-event-pill {
+      position: fixed;
+      top: 64px;
+      right: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.6);
+      box-shadow: 0 0 16px rgba(56,189,248,0.5);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #e5f4ff;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .global-event-pill.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .global-event-pill .pill-icon {
+      font-size: 13px;
+    }
+    .global-event-pill .pill-time {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+    .global-event-pill.pulse {
+      animation: pillPulse 5s ease-in-out infinite;
+    }
+    .global-event-pill.urgent {
+      border-color: rgba(248,113,113,0.9);
+      box-shadow: 0 0 20px rgba(248,113,113,0.9);
+      color: #fee2e2;
+    }
+    @keyframes pillPulse {
+      0%, 95% {
+        box-shadow: 0 0 16px rgba(56,189,248,0.5);
+      }
+      97% {
+        box-shadow: 0 0 22px rgba(56,189,248,0.8);
+      }
+      100% {
+        box-shadow: 0 0 16px rgba(56,189,248,0.5);
+      }
+    }
 
     /* Modal messages */
     .modal-msg { text-align: center; font-size: 12px; margin-top: 10px; padding: 9px; border-radius: 8px; display: none; }
@@ -2492,14 +2587,14 @@
           <i class="fas fa-crown"></i>
           <div class="vip-trial-info">
             <div class="vt-label">VIP TRIAL AKTIF</div>
-            <div class="vt-timer" id="vipTrialTimer">--d --h --m</div>
+            <div class="vt-timer" id="vipTrialTimer">--:--:--</div>
           </div>
           <button class="vip-trial-close" onclick="closeVipTrialBanner()">×</button>
         </div>
         <div class="event-countdown" id="lebaranCountdown">
           <div class="ec-main">
             <div class="ec-label">Countdown Lebaran</div>
-            <div class="ec-time" id="lebaranTimer">--d --h --m</div>
+            <div class="ec-time" id="lebaranTimer">--:--:--</div>
           </div>
           <div class="ec-badge">Idulfitri</div>
           <button class="ec-close" onclick="closeLebaranCountdown()">×</button>
@@ -3060,6 +3155,10 @@
     </div>
   </div>
 
+  <div id="globalEventPill" class="global-event-pill">
+    <span class="pill-icon">🎁</span>
+    <span class="pill-time" id="globalEventPillTime">--:--</span>
+  </div>
   <div id="toast-container"></div>
 
   <div class="tutorial-overlay" id="tutorialOverlay">
@@ -3204,6 +3303,7 @@
     let tagDropInterval = null;
     let tagDropBannerInterval = null;
     let currentTagDrop = null;
+    let lastTagDropToastKey = null;
     let lebaranInterval = null;
     let globalCountdownInterval = null;
     let tagUnlockTimeout = null;
@@ -3413,44 +3513,51 @@
         tagDropBannerInterval = null;
       }
       const banner = document.getElementById('eventTagBanner');
+      const pill = document.getElementById('globalEventPill');
+      const pillTime = document.getElementById('globalEventPillTime');
       if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) {
         if (banner) banner.classList.remove('show');
+        if (pill) {
+          pill.classList.remove('show', 'urgent', 'pulse');
+        }
+        if (pillTime) pillTime.textContent = '--:--';
         updateEventSideFromTagDrop();
         return;
       }
-      if (banner) {
-        const titleEl = document.getElementById('eventTagBannerTitle');
-        const subEl = document.getElementById('eventTagBannerSub');
-        const timerEl = document.getElementById('eventTagBannerTimer');
-        if (titleEl) titleEl.textContent = 'TAG DROP: ' + String(currentTagDrop.tag || '').toUpperCase();
-        if (subEl) subEl.textContent = currentTagDrop.desc || 'Tag spesial lagi drop untuk user online!';
-        if (timerEl) {
-          if (currentTagDrop.endAt) {
-            const updateBannerTimer = () => {
-              const now = Date.now();
-              const diff = currentTagDrop.endAt - now;
-              if (diff <= 0) {
-                timerEl.textContent = 'EVENT SELESAI';
-                banner.classList.remove('show');
-                if (tagDropBannerInterval) {
-                  clearInterval(tagDropBannerInterval);
-                  tagDropBannerInterval = null;
-                }
-                updateEventSideFromTagDrop();
-                return;
-              }
-              const totalSec = Math.floor(diff / 1000);
-              const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
-              const s = String(totalSec % 60).padStart(2, '0');
-              timerEl.textContent = m + ':' + s;
-            };
-            updateBannerTimer();
-            tagDropBannerInterval = setInterval(updateBannerTimer, 1000);
-          } else {
-            timerEl.textContent = 'LIVE';
+      if (banner) banner.classList.remove('show');
+      const eventKey = String(currentTagDrop.tag || '') + '|' + String(currentTagDrop.endAt || 0);
+      if (eventKey && lastTagDropToastKey !== eventKey) {
+        lastTagDropToastKey = eventKey;
+        showToast('🎁 Tag Drop Event has started!', 'event');
+        const chancePct = Math.round((currentTagDrop.chance || 0) * 100);
+        const tagName = String(currentTagDrop.tag || '').toUpperCase();
+        const winnersText = currentTagDrop.maxWinners ? `only ${currentTagDrop.maxWinners} winners` : 'unlimited winners';
+        showToast(`tag drop: ${chancePct}% chance, tag: ${tagName}, ${winnersText}`, 'event');
+      }
+      if (pill && pillTime) {
+        const updatePill = () => {
+          const now = Date.now();
+          const diff = currentTagDrop.endAt ? currentTagDrop.endAt - now : 0;
+          if (!currentTagDrop.endAt || diff <= 0) {
+            pill.classList.remove('show', 'urgent', 'pulse');
+            pillTime.textContent = '0:00';
+            if (tagDropBannerInterval) {
+              clearInterval(tagDropBannerInterval);
+              tagDropBannerInterval = null;
+            }
+            updateEventSideFromTagDrop();
+            return;
           }
-        }
-        banner.classList.add('show');
+          const totalSec = Math.floor(diff / 1000);
+          const m = Math.floor(totalSec / 60);
+          const s = totalSec % 60;
+          pillTime.textContent = `${m}:${String(s).padStart(2, '0')}`;
+          pill.classList.add('show', 'pulse');
+          if (totalSec <= 10) pill.classList.add('urgent');
+          else pill.classList.remove('urgent');
+        };
+        updatePill();
+        tagDropBannerInterval = setInterval(updatePill, 1000);
       }
       updateEventSideFromTagDrop();
       tagDropInterval = setInterval(() => {
@@ -3471,7 +3578,7 @@
               if (!res.committed) return;
               currentTagDrop.obtainedCount = res.snapshot.val() || 0;
               db.ref().update(updates).then(() => {
-                showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+                showToast('🎉 You won the ' + tag.toUpperCase() + ' tag!', 'success');
                 updateQuestProgress('weekly', 'weekly_new_tags_2', 1, auth.currentUser.uid);
                 showTagUnlockBanner([tag]);
                 const payload = {
@@ -3798,6 +3905,11 @@
           if (!userQuestState[type]) userQuestState[type] = {};
           userQuestState[type][id] = { periodKey, cur, claimed: true };
           renderEventCenter();
+          const iconEl = document.querySelector('.event-coins-icon');
+          if (iconEl) {
+            iconEl.classList.add('gain');
+            setTimeout(() => iconEl.classList.remove('gain'), 600);
+          }
           showToast('Kamu mendapatkan ' + def.reward + ' ExeCoin dari quest ' + def.title);
         });
       }).catch(() => {
@@ -3876,15 +3988,24 @@
     function showToast(text, type = 'info') {
       const container = document.getElementById('toast-container');
       if (!container) return;
+      if (container.children.length >= 3) {
+        container.removeChild(container.firstElementChild);
+      }
       const el = document.createElement('div');
       el.className = 'toast';
       let icon = 'fa-info-circle';
-      if (text.includes('Playing')) icon = 'fa-music';
-      else if (text.includes('Favorit') || text.includes('heart') || text.includes('❤')) icon = 'fa-heart';
-      else if (text.includes('Shuffle') || text.includes('🔀')) icon = 'fa-random';
-      else if (text.includes('Repeat') || text.includes('🔁')) icon = 'fa-redo';
-      else if (text.includes('✅') || text.includes('berhasil')) icon = 'fa-check-circle';
-      else if (text.includes('Error') || text.includes('❌')) icon = 'fa-exclamation-triangle';
+      if (type === 'success') icon = 'fa-check-circle';
+      else if (type === 'error') icon = 'fa-exclamation-triangle';
+      else if (type === 'event') icon = 'fa-bolt';
+      else {
+        if (text.includes('Playing')) icon = 'fa-music';
+        else if (text.includes('Favorit') || text.includes('heart') || text.includes('❤')) icon = 'fa-heart';
+        else if (text.includes('Shuffle') || text.includes('🔀')) icon = 'fa-random';
+        else if (text.includes('Repeat') || text.includes('🔁')) icon = 'fa-redo';
+        else if (text.includes('✅') || text.includes('berhasil')) icon = 'fa-check-circle';
+        else if (text.includes('Error') || text.includes('❌')) icon = 'fa-exclamation-triangle';
+      }
+      el.classList.add('toast-' + type);
       el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
       container.appendChild(el);
       setTimeout(() => el.classList.add('hide'), 2500);
@@ -4285,7 +4406,10 @@
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        const ds = String(d).padStart(2, '0');
+        const hs = String(h).padStart(2, '0');
+        const ms = String(m).padStart(2, '0');
+        timerEl.textContent = `${ds}:${hs}:${ms}`;
         banner.classList.add('show');
       }
       update();
@@ -4324,7 +4448,10 @@
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        const ds = String(d).padStart(2, '0');
+        const hs = String(h).padStart(2, '0');
+        const ms = String(m).padStart(2, '0');
+        timerEl.textContent = `${ds}:${hs}:${ms}`;
         wrap.classList.add('show');
       }
       updateLebaran();
@@ -4361,7 +4488,10 @@
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        const ds = String(d).padStart(2, '0');
+        const hs = String(h).padStart(2, '0');
+        const ms = String(m).padStart(2, '0');
+        timerEl.textContent = `${ds}:${hs}:${ms}`;
         wrap.classList.add('show');
       };
       update();
