@@ -3145,16 +3145,18 @@
     }
     runLoadSequence();
 
-    // ============================================================
-    // HEARTS SYSTEM (for velly tag)
-    // ============================================================
     let heartsInterval = null;
+    let heartsMode = 'love';
     function createHeart() {
       const c = document.getElementById('heartsContainer');
       if (!c) return;
       const h = document.createElement('div');
       h.className = 'heart-particle';
-      h.textContent = ['❤️','💗','💓','💕','💖','🩷'][Math.floor(Math.random() * 6)];
+      let set = ['❤️','💗','💓','💕','💖','🩷'];
+      if (heartsMode === 'game') {
+        set = ['🎮','🕹️','🎧','🎲','🎯','💿'];
+      }
+      h.textContent = set[Math.floor(Math.random() * set.length)];
       h.style.left = Math.random() * 100 + 'vw';
       h.style.fontSize = (10 + Math.random() * 16) + 'px';
       h.style.animationDuration = (4 + Math.random() * 4) + 's';
@@ -3162,9 +3164,10 @@
       c.appendChild(h);
       setTimeout(() => h.remove(), 9000);
     }
-    function startHearts() {
+    function startHearts(mode) {
       const c = document.getElementById('heartsContainer');
       if (!c) return;
+      heartsMode = mode || 'love';
       c.classList.add('active');
       if (heartsInterval) return;
       heartsInterval = setInterval(createHeart, 600);
@@ -4829,7 +4832,8 @@
       ).join('');
       switchProfileTab('posts');
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
-      if (myTagLower.includes('velly')) startHearts();
+      if (myTagLower.includes('velly')) startHearts('love');
+      else if (myTagLower.includes('gamers')) startHearts('game');
       else stopHearts();
       if (!audio.paused) {
         audio.pause();
@@ -4867,18 +4871,23 @@
       document.getElementById('vFollowing').innerText = flgr;
       document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
 
-      // Apply vip/pink header to creator modal
       const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
       if (creatorHeader) {
-        creatorHeader.classList.remove('vip', 'pink-profile');
+        creatorHeader.classList.remove('vip', 'pink-profile', 'gamers-profile', 'legend-profile');
         const cTagLower = (cData && cData.tag ? cData.tag.toLowerCase() : '');
         const isVellyCreator = cTagLower.includes('velly');
-        if (isVellyCreator) {
-          creatorHeader.classList.add('pink-profile');
-        } else if (creatorVip) {
-          creatorHeader.classList.add('vip');
-        }
+        const isGamersCreator = cTagLower.includes('gamers');
+        const isLegendCreator = cTagLower.includes('legend');
+        if (isVellyCreator) creatorHeader.classList.add('pink-profile');
+        else if (isGamersCreator) creatorHeader.classList.add('gamers-profile');
+        else if (isLegendCreator) creatorHeader.classList.add('legend-profile');
+        else if (creatorVip) creatorHeader.classList.add('vip');
       }
+
+      const cTagLower2 = (cData && cData.tag ? cData.tag.toLowerCase() : '');
+      if (cTagLower2.includes('velly')) startHearts('love');
+      else if (cTagLower2.includes('gamers')) startHearts('game');
+      else stopHearts();
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
       else {
