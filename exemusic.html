@@ -290,6 +290,78 @@
     .sb-dev-name { color: #00d4ff; font-weight: 700; text-shadow: 0 0 8px #00d4ff; }
 
     /* ============================================================
+       ADMIN FLOAT CHAT (GLOBAL)
+    ============================================================ */
+    .admin-float-chat {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 420px;
+      width: calc(100% - 40px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(0,212,255,0.35), transparent 55%),
+                  radial-gradient(circle at 100% 0, rgba(0,255,136,0.35), transparent 55%),
+                  rgba(5,5,15,0.96);
+      border: 1px solid rgba(0,255,136,0.3);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 12500;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .admin-float-chat.show {
+      display: flex;
+      animation: floatChatIn 0.25s ease-out;
+    }
+    .admin-float-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e0f2ff;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .admin-float-name i {
+      color: #1da1f2;
+    }
+    .admin-float-msg {
+      font-size: 12px;
+      color: #f5f5f5;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      flex: 1;
+    }
+    .admin-float-timer {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+    @media (max-width: 480px) {
+      .admin-float-chat {
+        top: 60px;
+        padding: 8px 10px;
+        width: calc(100% - 24px);
+      }
+      .admin-float-name {
+        font-size: 10px;
+      }
+      .admin-float-msg {
+        font-size: 11px;
+      }
+    }
+    @keyframes floatChatIn {
+      from { opacity: 0; transform: translate(-50%, -10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    /* ============================================================
        OVERLAYS
     ============================================================ */
     .full-overlay {
@@ -362,7 +434,15 @@
     #btnNotif:hover { background: var(--accent); color: black; border-color: var(--accent); }
     #btnNotif .notif-badge { position: absolute; top: -2px; right: -2px; min-width: 17px; height: 17px; background: var(--danger); border-radius: 9px; font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 3px; }
     #btnNotif .notif-badge.show { display: flex; }
-    
+    #btnEvent {
+      width: 40px; height: 40px;
+      background: rgba(76,81,191,0.15);
+      border: 1px solid rgba(76,81,191,0.4);
+      border-radius: 50%; color: #c4b5fd; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s;
+    }
+    #btnEvent:hover { background: rgba(76,81,191,0.5); color: #fff; box-shadow: 0 0 18px rgba(76,81,191,0.6); }
+
     #btnAdmin {
       display: none;
       width: 40px; height: 40px;
@@ -418,6 +498,474 @@
     .notif-item-body .n-text { font-size: 12px; color: #ddd; line-height: 1.4; }
     .notif-item-body .n-time { font-size: 10px; color: #555; margin-top: 3px; }
     .notif-empty { padding: 30px 20px; text-align: center; color: #444; font-size: 12px; }
+
+    /* ============================================================
+       EVENT CENTER (MLBB STYLE)
+    ============================================================ */
+    .event-center-sheet {
+      margin: 40px auto;
+      max-width: 900px;
+      width: calc(100% - 32px);
+      padding: 18px 20px;
+      background: linear-gradient(180deg, #111827, #020617);
+      border-radius: 20px;
+      border: 1px solid rgba(37,99,235,0.7);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    .event-center-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(148,163,184,0.35);
+    }
+    .event-center-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1.1px;
+      font-size: 15px;
+      color: #e5e7eb;
+      text-transform: uppercase;
+    }
+    .event-center-title i {
+      padding: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, rgba(250,204,21,0.2), transparent),
+                  linear-gradient(135deg, #22c55e, #0ea5e9);
+      color: #0b1120;
+      box-shadow: 0 0 18px rgba(56,189,248,0.7);
+    }
+    .event-center-coins {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(250,204,21,0.16), transparent 60%),
+                  rgba(15,23,42,0.98);
+      border: 1px solid rgba(250,204,21,0.7);
+      box-shadow: 0 0 20px rgba(250,204,21,0.35);
+    }
+    .event-coins-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fff7c2, #f59e0b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #92400e;
+    }
+    .event-coins-body {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .event-coins-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: #fef9c3;
+      opacity: 0.9;
+    }
+    .event-coins-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #facc15;
+      text-shadow: 0 0 8px rgba(245,158,11,0.9);
+    }
+    .event-center-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .event-center-sidebar {
+      display: none;
+    }
+    .event-tab-btn {
+      border-radius: 18px;
+      border: 1px solid rgba(30,64,175,0.9);
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 60%),
+                  rgba(15,23,42,0.98);
+      color: #9ca3af;
+      font-size: 11px;
+      padding: 7px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      outline: none;
+      transition: 0.18s;
+      font-weight: 600;
+    }
+    .event-center-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .event-tab-btn i {
+      font-size: 13px;
+    }
+    .event-tab-btn.active {
+      background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(56,189,248,0.3));
+      border-color: rgba(56,189,248,0.9);
+      color: #e5e7eb;
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 0 20px rgba(34,197,94,0.7);
+    }
+    .event-center-main {
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.16), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.16), transparent 55%),
+        rgba(15,23,42,0.97);
+      border-radius: 18px;
+      border: 1px solid rgba(30,64,175,0.9);
+      padding: 10px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 0 24px rgba(15,23,42,0.8);
+    }
+    .event-tab-caption {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .event-quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .event-quest-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .event-quest-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #22c55e, #38bdf8);
+      border-radius: 999px;
+    }
+    .event-quest-card {
+      padding: 6px 4px;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+      display: grid;
+      grid-template-columns: minmax(0,1.6fr) 120px 120px;
+      gap: 6px;
+      align-items: center;
+      background: transparent;
+      box-shadow: none;
+    }
+    .event-quest-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .event-quest-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .event-quest-title {
+      font-size: 12px;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+    .event-quest-reward {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .event-quest-reward i {
+      font-size: 11px;
+    }
+    .event-quest-desc {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-quest-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 1px;
+    }
+    .event-quest-progress-bar {
+      position: relative;
+      flex: 1;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(31,41,55,0.9);
+      overflow: hidden;
+    }
+    .event-quest-progress-fill {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.2s ease-out;
+    }
+    .event-quest-progress-text {
+      font-size: 10px;
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+    .event-quest-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+    .event-quest-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #e5e7eb;
+      background: rgba(37,99,235,0.25);
+      border: 1px solid rgba(59,130,246,0.7);
+    }
+    .event-quest-btn {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34,197,94,0.2);
+      color: #bbf7d0;
+      box-shadow: none;
+    }
+    .event-quest-btn[disabled] {
+      opacity: 0.9;
+      cursor: default;
+      box-shadow: none;
+      background: rgba(15,23,42,0.9);
+    }
+    .event-quest-btn.secondary {
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      box-shadow: none;
+      border: 1px solid rgba(75,85,99,0.95);
+    }
+    .event-center-sidepanel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .event-side-card {
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.18), transparent 70%),
+        rgba(15,23,42,0.98);
+      border: 1px solid rgba(37,99,235,0.9);
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+    .event-side-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9ca3af;
+    }
+    .event-side-body {
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+    .event-side-main {
+      font-weight: 600;
+    }
+    .event-side-sub {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .event-side-timer {
+      font-size: 10px;
+      color: #f97316;
+      margin-top: 4px;
+    }
+    .event-side-tips {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-side-tips li::before {
+      content: '•';
+      color: #22c55e;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    .event-shop-section {
+      border-radius: 12px;
+      border: 1px solid rgba(30,64,175,0.5);
+      background: rgba(15,23,42,0.98);
+      padding: 6px 10px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 0 12px rgba(15,23,42,0.8);
+    }
+    .event-shop-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: #e5e7eb;
+      border-left: 3px solid #38bdf8;
+      padding-left: 6px;
+    }
+    .event-shop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-shop-card {
+      padding: 6px 4px;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+      display: grid;
+      grid-template-columns: minmax(0,1.6fr) 90px 120px;
+      gap: 6px;
+      align-items: center;
+      background: transparent;
+    }
+    .event-shop-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .event-shop-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .event-shop-title {
+      font-size: 12px;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+    .event-shop-price {
+      font-size: 11px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .event-shop-desc {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-shop-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 1px;
+    }
+    .event-shop-progress-bar {
+      position: relative;
+      flex: 1;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(31,41,55,0.9);
+      overflow: hidden;
+    }
+    .event-shop-progress-fill {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.2s ease-out;
+    }
+    .event-shop-progress-text {
+      font-size: 10px;
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+    .event-shop-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+    .event-shop-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #e5e7eb;
+      background: rgba(37,99,235,0.15);
+      border: 1px solid rgba(59,130,246,0.7);
+    }
+    .event-shop-btn {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: none;
+      cursor: default;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      border: 1px solid rgba(75,85,99,0.95);
+    }
+    @media (max-width: 900px) {
+      .event-center-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .event-center-sidepanel {
+        margin-top: 10px;
+      }
+    }
+    @media (max-width: 640px) {
+      .event-center-sheet {
+        margin: 20px auto;
+        max-width: 100%;
+        width: calc(100% - 20px);
+        padding: 14px 12px;
+        border-radius: 16px;
+      }
+      .event-quest-card,
+      .event-shop-card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .event-quest-action,
+      .event-shop-action {
+        align-items: flex-start;
+      }
+    }
 
     /* ============================================================
        COVER BOX
@@ -632,6 +1180,40 @@
       background: rgba(255,255,255,0.12);
     }
 
+    .upload-cd-card {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 0 0, rgba(0,255,136,0.12), transparent 55%),
+                  radial-gradient(circle at 100% 100%, rgba(0,212,255,0.1), transparent 55%),
+                  rgba(6,6,18,0.95);
+      border: 1px solid rgba(0,255,136,0.3);
+      display: none;
+    }
+    .upload-cd-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .upload-cd-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a3a3ff;
+    }
+    .upload-cd-timer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: #00ff88;
+    }
+    .upload-cd-sub {
+      margin-top: 4px;
+      font-size: 10px;
+      color: #888;
+    }
+
     /* ============================================================
        PROFILE UI
     ============================================================ */
@@ -649,33 +1231,26 @@
       background: radial-gradient(circle at 30% 30%, rgba(255,215,0,0.07), transparent 40%);
       animation: vipShine 6s linear infinite; pointer-events: none;
     }
-    /* PINK PROFILE */
+    /* PINK PROFILE (VELLY) — dibuat simpel tanpa animasi agar lebih responsif */
     .modern-profile-header.pink-profile {
       background: linear-gradient(135deg,
-        rgba(255,20,147,0.12) 0%,
-        rgba(255,105,180,0.08) 30%,
-        rgba(180,0,80,0.06) 60%,
-        rgba(255,255,255,0.02) 100%
+        rgba(255,20,147,0.10) 0%,
+        rgba(255,105,180,0.06) 40%,
+        rgba(15,23,42,1) 100%
       );
     }
     .modern-profile-header.pink-profile::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: 0;
+      content: ''; position: absolute; inset: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse at 20% 0%, rgba(255,20,147,0.15), transparent 50%),
-        radial-gradient(ellipse at 80% 0%, rgba(255,105,180,0.1), transparent 50%);
+        radial-gradient(circle at 10% 0%, rgba(255,182,193,0.2), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(244,114,182,0.18), transparent 55%);
+      opacity: 0.8;
     }
-    .modern-profile-header.pink-profile::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, #ff1493, #ff69b4, #ff1493, transparent);
-      animation: pinkSweep 3s ease-in-out infinite;
-    }
-    @keyframes pinkSweep { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     @keyframes vipShine { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(10%,10%) rotate(20deg); } 100% { transform: translate(0,0) rotate(0deg); } }
 
     .mp-avatar-container { position: relative; margin-bottom: 14px; }
     .mp-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); box-shadow: 0 8px 25px rgba(0,255,136,0.2); }
     .modern-profile-header.vip .mp-avatar { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.12), 0 8px 25px rgba(255,215,0,0.2); }
-    .modern-profile-header.pink-profile .mp-avatar { border-color: var(--deep-pink); box-shadow: 0 0 0 3px rgba(255,20,147,0.15), 0 8px 25px rgba(255,20,147,0.25); }
     .mp-edit-badge { position: absolute; bottom: 0; right: 0; background: #1a1a2e; color: #fff; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 11px; }
     .mp-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; justify-content: center; }
     .mp-name { font-size: 18px; font-weight: 800; color: #fff; font-family: 'Rajdhani', sans-serif; }
@@ -726,48 +1301,82 @@
     }
     .btn-act:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,255,136,0.4); }
 
-    /* ============================================================
-       TAGS
-    ============================================================ */
-    .user-tag {
-      font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
-      text-transform: uppercase; margin-left: 4px; vertical-align: middle; letter-spacing: 0.5px;
-      font-family: 'Rajdhani', sans-serif;
-    }
-    .tag-admin { background: #ff3333; color: #fff; }
-    .tag-staff { background: #0088ff; color: #fff; }
-    .tag-executive { background: #aa00ff; color: #fff; }
-    .tag-user { background: #2a2a3a; color: #999; border: 1px solid rgba(255,255,255,0.1); }
-    .tag-sepuh { background: #1a1a2e; color: var(--accent); border: 1px solid var(--accent); }
-    .tag-rich { background: linear-gradient(45deg, gold, #fff9c4); color: #000; }
-    .tag-galau { background: #2a2a3a; color: #aaa; font-style: italic; }
-    .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
-    .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 8px var(--purple); }
-    .tag-owner { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 10px var(--accent); font-weight: 900; }
-    .tag-developer { background: #000; color: #00ff00; border: 1px solid #00ff00; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-shadow: 0 0 6px #0f0; }
-    .tag-sultan { background: linear-gradient(135deg, #ffd700, #fbf5b7, #ffd700); color: #000; border: 1px solid #b8860b; font-weight: bold; }
-    .tag-wibu { background: #ff69b4; color: #fff; border: 1px solid #ff1493; }
-    .tag-sadboy { background: #000080; color: #add8e6; border: 1px solid #add8e6; font-style: italic; }
-    .tag-hacker { background: #000; color: #0f0; text-shadow: 0 0 5px #0f0; font-family: 'JetBrains Mono', monospace; }
-    .tag-verified { background: #1da1f2; color: #fff; }
-    .tag-bot { background: #708090; color: #fff; }
-    .tag-npc { background: #d3d3d3; color: #000; }
-    .tag-dj { background: #ff00ff; color: #fff; box-shadow: 0 0 8px #ff00ff; }
-    .tag-pro { background: linear-gradient(135deg, #ff4500, #ff6b35); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-    .tag-noob { background: #8b4513; color: #fff; border: 1px dashed #deb887; }
-    .tag-top-global { background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; font-weight: bold; box-shadow: 0 0 5px #00c6ff; }
-    .tag-premium { background: linear-gradient(45deg, #8a2387, #e94057, #f27121); color: #fff; font-weight: bold; }
-    .tag-influencer { background: linear-gradient(45deg, #405de6, #833ab4, #c13584, #e1306c, #fd1d1d); color: #fff; }
-    /* NEW TAGS */
-    .tag-legend { background: linear-gradient(135deg, #ff6b00, #ffd700, #ff6b00); color: #000; font-weight: 900; box-shadow: 0 0 10px rgba(255,107,0,0.5); animation: legendFlicker 2s ease-in-out infinite; }
-    @keyframes legendFlicker { 0%,100% { box-shadow: 0 0 10px rgba(255,107,0,0.5); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 35px rgba(255,107,0,0.4); } }
-    .tag-mythic { background: linear-gradient(135deg, #9c27b0, #673ab7, #3f51b5); color: #fff; font-weight: 900; box-shadow: 0 0 12px rgba(156,39,176,0.6); border: 1px solid rgba(255,255,255,0.2); }
-    .tag-godlike { background: linear-gradient(135deg, #ffd700, #ff8c00, #ffd700); color: #000; font-weight: 900; border: 1px solid #fff; box-shadow: 0 0 15px rgba(255,215,0,0.7), 0 0 30px rgba(255,140,0,0.4); animation: godPulse 1.5s ease-in-out infinite; }
-    @keyframes godPulse { 0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.7); } 50% { box-shadow: 0 0 25px rgba(255,215,0,1), 0 0 45px rgba(255,140,0,0.6); } }
-    .tag-savage { background: #000; color: #ff0050; border: 2px solid #ff0050; font-weight: 900; text-shadow: 0 0 8px #ff0050; letter-spacing: 2px; animation: savageFlash 0.8s ease-in-out infinite; }
-    @keyframes savageFlash { 0%,100% { border-color: #ff0050; text-shadow: 0 0 8px #ff0050; } 50% { border-color: #ff6b6b; text-shadow: 0 0 16px #ff0050, 0 0 30px #ff0050; } }
-    .tag-maniac { background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(233,30,99,0.5); }
-    .tag-ultra { background: linear-gradient(135deg, #00bcd4, #009688, #4caf50); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(0,188,212,0.5); border: 1px solid rgba(255,255,255,0.3); }
+  .user-tag {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800;
+    text-transform: uppercase; margin-left: 4px; vertical-align: middle; letter-spacing: 0.5px;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .tag-vip {
+    background: linear-gradient(135deg, #ffd700, #ff9800);
+    color: #000;
+    box-shadow: 0 0 10px rgba(255,215,0,0.6);
+    border: 1px solid rgba(0,0,0,0.3);
+  }
+  .tag-newbie {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #7dd3fc;
+    border: 1px solid rgba(125,211,252,0.4);
+  }
+  .tag-admin { background: #ff3333; color: #fff; }
+  .tag-staff { background: #0088ff; color: #fff; }
+  .tag-execurive { background: #aa00ff; color: #fff; }
+  .tag-user { background: #2a2a3a; color: #999; border: 1px solid rgba(255,255,255,0.1); }
+  .tag-sepuh { background: #1a1a2e; color: var(--accent); border: 1px solid var(--accent); }
+  .tag-rich { background: linear-gradient(45deg, gold, #fff9c4); color: #000; }
+  .tag-galau { background: #2a2a3a; color: #aaa; font-style: italic; }
+  .tag-cheater { background: #ff0050; color: #fff; text-decoration: line-through; }
+  .tag-vvip { background: var(--purple); color: #fff; box-shadow: 0 0 8px var(--purple); }
+  .tag-owner { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 10px var(--accent); font-weight: 900; }
+  .tag-developer { background: #000; color: #00ff00; border: 1px solid #00ff00; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-shadow: 0 0 6px #0f0; }
+  .tag-sultan { background: linear-gradient(135deg, #ffd700, #fbf5b7, #ffd700); color: #000; border: 1px solid #b8860b; font-weight: bold; }
+  .tag-wibu { background: #ff69b4; color: #fff; border: 1px solid #ff1493; }
+  .tag-sadboy { background: #000080; color: #add8e6; border: 1px solid #add8e6; font-style: italic; }
+  .tag-hacker { background: #000; color: #0f0; text-shadow: 0 0 5px #0f0; font-family: 'JetBrains Mono', monospace; }
+  .tag-verified { background: #1da1f2; color: #fff; }
+  .tag-bot { background: #708090; color: #fff; }
+  .tag-npc { background: #d3d3d3; color: #000; }
+  .tag-dj { background: #ff00ff; color: #fff; box-shadow: 0 0 8px #ff00ff; }
+  .tag-pro { background: linear-gradient(135deg, #ff4500, #ff6b35); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+  .tag-noob { background: #8b4513; color: #fff; border: 1px dashed #deb887; }
+  .tag-mythic {
+    background: linear-gradient(135deg, #4c1d95, #7c3aed, #f97316);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(124,58,237,0.7);
+    border: 1px solid rgba(249,115,22,0.7);
+  }
+  .tag-top-global { background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; font-weight: bold; box-shadow: 0 0 5px #00c6ff; }
+  .tag-premium { background: linear-gradient(45deg, #8a2387, #e94057, #f27121); color: #fff; font-weight: bold; }
+  .tag-influencer { background: linear-gradient(45deg, #405de6, #833ab4, #c13584, #e1306c, #fd1d1d); color: #fff; }
+  .tag-gamers {
+    background: radial-gradient(circle at 0 0, #22c55e, transparent 60%),
+                radial-gradient(circle at 100% 100%, #0ea5e9, transparent 60%),
+                #020617;
+    color: #bbf7d0;
+    border: 1px solid rgba(34,197,94,0.8);
+    box-shadow: 0 0 10px rgba(34,197,94,0.6);
+  }
+  /* NEW TAGS */
+  .tag-legend { background: linear-gradient(135deg, #ff6b00, #ffd700, #ff6b00); color: #000; font-weight: 900; box-shadow: 0 0 10px rgba(255,107,0,0.5); animation: legendFlicker 2s ease-in-out infinite; }
+  @keyframes legendFlicker { 0%,100% { box-shadow: 0 0 10px rgba(255,107,0,0.5); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 35px rgba(255,107,0,0.4); } }
+  .tag-mythic { background: linear-gradient(135deg, #9c27b0, #673ab7, #3f51b5); color: #fff; font-weight: 900; box-shadow: 0 0 12px rgba(156,39,176,0.6); border: 1px solid rgba(255,255,255,0.2); }
+  .tag-godlike { background: linear-gradient(135deg, #ffd700, #ff8c00, #ffd700); color: #000; font-weight: 900; border: 1px solid #fff; box-shadow: 0 0 15px rgba(255,215,0,0.7), 0 0 30px rgba(255,140,0,0.4); animation: godPulse 1.5s ease-in-out infinite; }
+  @keyframes godPulse { 0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.7); } 50% { box-shadow: 0 0 25px rgba(255,215,0,1), 0 0 45px rgba(255,140,0,0.6); } }
+  .tag-savage { background: #000; color: #ff0050; border: 2px solid #ff0050; font-weight: 900; text-shadow: 0 0 8px #ff0050; letter-spacing: 2px; animation: savageFlash 0.8s ease-in-out infinite; }
+  @keyframes savageFlash { 0%,100% { border-color: #ff0050; text-shadow: 0 0 8px #ff0050; } 50% { border-color: #ff6b6b; text-shadow: 0 0 16px #ff0050, 0 0 30px #ff0050; } }
+  .tag-maniac { background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(233,30,99,0.5); }
+  .tag-ultra { background: linear-gradient(135deg, #00bcd4, #009688, #4caf50); color: #fff; font-weight: 900; box-shadow: 0 0 10px rgba(0,188,212,0.5); border: 1px solid rgba(255,255,255,0.3); }
+  .tag-terkeren {
+    background: linear-gradient(135deg, #00f5ff, #7c3aed);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(124,58,237,0.7);
+    border: 1px solid rgba(59,130,246,0.7);
+  }
+  .tag-tersulit {
+    background: linear-gradient(135deg, #ff0050, #ff8c00);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(255,92,92,0.7);
+    border: 1px solid rgba(248,113,113,0.8);
+  }
 
     .v-badge { color: #1da1f2; font-size: 12px; margin-left: 3px; }
 
@@ -839,6 +1448,67 @@
       font-size: 14px;
       cursor: pointer;
     }
+    .event-banner {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2600;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.55);
+      font-size: 11px;
+      color: #e5e7eb;
+      pointer-events: auto;
+    }
+    .event-banner.show {
+      display: flex;
+      animation: notifPanelIn 0.25s ease;
+    }
+    .event-banner-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #38bdf8, #1e40af);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .event-banner-body {
+      min-width: 0;
+    }
+    .event-banner-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5e7eb;
+      margin-bottom: 2px;
+    }
+    .event-banner-sub {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-banner-timer {
+      font-size: 11px;
+      font-weight: 700;
+      color: #facc15;
+      margin-left: 8px;
+    }
+    .event-banner-close {
+      border: none;
+      background: none;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
     .event-countdown.celebrate {
       background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,152,0,0.24));
       border-color: rgba(255,215,0,0.8);
@@ -848,29 +1518,31 @@
        ADMIN PANEL (built-in)
     ============================================================ */
     .admin-panel-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.88);
+      position: fixed;
+      inset: 0;
       z-index: 5000;
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      backdrop-filter: blur(12px);
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 70px 16px 16px;
+      pointer-events: none;
     }
-    .admin-panel-overlay.show { display: flex; }
+    .admin-panel-overlay.show { display: flex; pointer-events: auto; }
 
     .admin-panel {
-      width: 100%;
-      max-width: 960px;
-      max-height: 92vh;
+      width: 380px;
+      max-width: 420px;
+      max-height: 90vh;
       display: flex;
       flex-direction: column;
-      background: radial-gradient(ellipse at 50% -10%, rgba(255,193,7,0.1), transparent 60%),
-                  linear-gradient(180deg, #05050c, #07070f);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.16), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(251,191,36,0.18), transparent 55%),
+        linear-gradient(180deg, #020617, #020617, #020617);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.8);
-      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.9);
+      border: 1px solid rgba(148,163,184,0.4);
     }
 
     .admin-header {
@@ -893,6 +1565,39 @@
       transition: 0.2s;
     }
     .admin-header-close:hover { background: var(--danger); color: #fff; }
+    .admin-header-tools {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .admin-header-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #ccc;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      transition: 0.16s;
+    }
+    .admin-header-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .admin-panel.admin-full {
+      width: 100%;
+      max-width: none;
+      max-height: 100vh;
+    }
+    .admin-panel.admin-mini {
+      width: 230px;
+      max-width: 260px;
+    }
+    .admin-overlay-mini {
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 0 16px 16px;
+    }
+    .admin-panel.admin-mini .admin-nav,
+    .admin-panel.admin-mini .admin-content {
+      display: none;
+    }
 
     .admin-nav {
       display: flex; padding: 12px 15px 0;
@@ -920,10 +1625,191 @@
     .admin-view.active { display: block; }
 
     .admin-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px; padding: 16px; margin-bottom: 16px;
-      position: relative; overflow: hidden;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(234,179,8,0.12), transparent 60%),
+        rgba(15,23,42,0.96);
+      border: 1px solid rgba(148,163,184,0.55);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .admin-card h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .admin-card h3 i {
+      color: var(--ml-gold);
+      text-shadow: 0 0 8px rgba(252,211,77,0.7);
+    }
+    .tag-selector-sheet {
+      max-width: 640px;
+    }
+    .tag-selector-layout {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .tag-selector-col {
+      flex: 1;
+      min-width: 0;
+    }
+    .tag-section-title {
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+    .tag-current-text {
+      font-size: 12px;
+      color: #ddd;
+      margin-bottom: 8px;
+    }
+    .tag-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag-chip {
+      border: none;
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #eee;
+      transition: 0.16s;
+    }
+    .tag-chip:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-1px);
+    }
+    .tag-chip-none {
+      background: rgba(255,80,80,0.1);
+    }
+    .tag-meta-list {
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .tag-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .tag-meta-desc {
+      font-size: 10px;
+      color: #999;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .tag-selector-layout {
+        flex-direction: column;
+      }
+    }
+    .admin-two-col {
+      display: flex;
+      gap: 10px;
+    }
+    .admin-two-col > div {
+      flex: 1;
+      min-width: 0;
+    }
+    .admin-label {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .admin-users-layout {
+      display: flex;
+      gap: 12px;
+    }
+    .admin-users-left {
+      flex: 1.2;
+      min-width: 0;
+    }
+    .admin-users-right {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .admin-tag-active-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .admin-tag-user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .admin-tag-current {
+      font-size: 11px;
+      color: #aaa;
+    }
+    .admin-tag-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .admin-tag-chip {
+      border: none;
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #eee;
+      transition: 0.16s;
+    }
+    .admin-tag-chip:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-1px);
+    }
+    .admin-tag-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .admin-tag-meta-desc {
+      font-size: 10px;
+      color: #999;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .admin-users-layout {
+        flex-direction: column;
+      }
+      .admin-panel {
+        background: #05050c;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.75);
+      }
     }
     .admin-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -1272,10 +2158,19 @@
 
   <!-- MAIN APP -->
   <div class="app">
-    <div class="ml-corner-tl ml-corner"></div>
+  <div class="ml-corner-tl ml-corner"></div>
     <div class="ml-corner-tr ml-corner"></div>
     <div class="ml-corner-bl ml-corner"></div>
     <div class="ml-corner-br ml-corner"></div>
+
+  <div id="adminFloatChat" class="admin-float-chat">
+    <div class="admin-float-name">
+      <i class="fas fa-check-circle"></i>
+      <span id="adminFloatName"></span>
+    </div>
+    <div class="admin-float-msg" id="adminFloatMsg"></div>
+    <div class="admin-float-timer" id="adminFloatTimer"></div>
+  </div>
 
     <div class="header">
       <img src="exemusic.png" alt="Logo" onclick="openAbout()">
@@ -1283,6 +2178,9 @@
         <button id="btnNotif" onclick="toggleNotifPanel()" title="Notifikasi">
           <i class="fas fa-bell"></i>
           <span id="notifBadge" class="notif-badge"></span>
+        </button>
+        <button id="btnEvent" onclick="openEventCenter()" title="Event">
+          <i class="fas fa-calendar-alt"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
           <i class="fas fa-shield-alt"></i>
@@ -1364,48 +2262,17 @@
   </div>
 
   <!-- ADMIN PANEL (Built-in) -->
-  <div class="admin-panel-overlay" id="adminPanelOverlay">
-
-    <!-- LOCK GATE (shown first to everyone) -->
-    <div class="admin-lock-gate" id="adminLockGate">
-      <div class="alg-corner alg-tl"></div>
-      <div class="alg-corner alg-tr"></div>
-      <div class="alg-corner alg-bl"></div>
-      <div class="alg-corner alg-br"></div>
-
-      <div class="alg-badge">🛡️</div>
-      <div class="alg-title">Admin Control</div>
-      <div class="alg-sub">Security Gate · ExeMusic</div>
-
-      <div class="alg-cap-box">
-        <canvas id="algCapCanvas" width="290" height="80"></canvas>
-      </div>
-      <div class="alg-code-display" id="algCodeDisplay">-----</div>
-      <button class="alg-refresh" onclick="algGenCaptcha()">
-        <i class="fas fa-sync"></i> REFRESH CODE
-      </button>
-
-      <input type="text" id="algCapInput"
-        class="alg-inp"
-        placeholder="KETIK KODE"
-        maxlength="5"
-        autocomplete="off"
-        onpaste="return false"
-        ondrop="return false"
-        onkeydown="if(event.key==='Enter') algVerify()">
-
-      <div class="alg-error" id="algError"></div>
-      <button class="alg-enter-btn" onclick="algVerify()">
-        <i class="fas fa-lock-open"></i> MASUK PANEL
-      </button>
-    </div>
-
-    <div class="admin-panel" id="adminPanelInner" style="display:none; flex:1; flex-direction:column; width:100%; height:100%">
-      <div class="admin-header">
+    <div class="admin-panel-overlay" id="adminPanelOverlay">
+    <div class="admin-panel" id="adminPanelInner" style="display:none; flex:1; flex-direction:column">
+      <div class="admin-header" onmousedown="startAdminDrag(event)">
         <div class="admin-header-title">
-          <i class="fas fa-shield-alt"></i> ADMIN CONTROL
+          <i class="fas fa-shield-alt"></i> ADMIN PANEL
         </div>
-        <button class="admin-header-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
+        <div class="admin-header-tools">
+          <button class="admin-header-btn" onclick="toggleAdminSize('mini')" title="Minimize"><i class="fas fa-minus"></i></button>
+          <button class="admin-header-btn" onclick="toggleAdminSize('full')" title="Full"><i class="fas fa-expand"></i></button>
+          <button class="admin-header-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
+        </div>
       </div>
       <div class="admin-nav">
         <button class="admin-nav-btn active" onclick="switchAdminView('dash', this)"><i class="fas fa-th-large"></i> DASH</button>
@@ -1431,6 +2298,13 @@
               <button class="admin-btn admin-btn-red" onclick="adClearBC()">CLEAR</button>
               <button class="admin-btn admin-btn-blue" style="margin-left:auto" onclick="adToggleMT()">MAINTENANCE</button>
             </div>
+            <div style="margin-top:10px">
+              <div class="admin-label">Admin Float Chat (15s, global)</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px">
+                <input class="admin-inp" id="adFloatMsg" placeholder="Contoh: who want free tag?" style="flex:1; min-width:0">
+                <button class="admin-btn admin-btn-blue" style="white-space:nowrap" onclick="adSendFloatChat()">SEND CHAT</button>
+              </div>
+            </div>
           </div>
           <div class="admin-card">
             <h3><i class="fas fa-cog"></i> SYSTEM TOOLS</h3>
@@ -1438,6 +2312,35 @@
               <button class="admin-btn admin-btn-green" onclick="openCopyUrlCard()">COPY DEEP LINK</button>
               <button class="admin-btn admin-btn-red" onclick="adOpenClearNotif()">CLEAR MY NOTIFS</button>
             </div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="fas fa-gift"></i> EVENT TAG DROP</h3>
+            <div class="admin-two-col">
+              <div>
+                <div class="admin-label">Tag drop</div>
+                <select class="admin-sel" id="adTagDropName"></select>
+              </div>
+              <div>
+                <div class="admin-label">Chance (%)</div>
+                <input class="admin-inp" id="adTagDropChance" type="number" min="0" max="100" step="1" value="10">
+              </div>
+            </div>
+          <div class="admin-two-col" style="margin-top:8px">
+            <div>
+              <div class="admin-label">Durasi event (detik)</div>
+              <input class="admin-inp" id="adTagDropDuration" type="number" min="10" step="10" value="1800">
+            </div>
+            <div>
+              <div class="admin-label">Maks. pemenang (0 = unlimited)</div>
+              <input class="admin-inp" id="adTagDropMax" type="number" min="0" step="1" value="0">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button class="admin-btn admin-btn-gold" onclick="adSaveTagDrop()">START EVENT</button>
+            <button class="admin-btn admin-btn-blue" onclick="adPreviewTagDrop()">TEST</button>
+            <button class="admin-btn admin-btn-red" onclick="adClearTagDrop()">STOP</button>
+          </div>
+            <div id="adTagDropStatus" style="font-size:11px;color:#888;margin-top:6px"></div>
           </div>
           <div class="admin-card">
             <h3><i class="fas fa-moon"></i> LEBARAN COUNTDOWN</h3>
@@ -1453,8 +2356,29 @@
 
         <!-- USERS -->
         <div id="adv-users" class="admin-view">
-          <input class="admin-search" placeholder="Cari user..." id="adUserSearch" oninput="adFilterUsers(this.value)">
-          <div id="adUserList"><div style="text-align:center; padding:30px; color:#444; font-size:13px">Loading...</div></div>
+          <div class="admin-users-layout">
+            <div class="admin-users-left">
+              <input class="admin-search" placeholder="Cari user..." id="adUserSearch" oninput="adFilterUsers(this.value)">
+              <div id="adUserList"><div style="text-align:center; padding:30px; color:#444; font-size:13px">Loading...</div></div>
+            </div>
+            <div class="admin-users-right">
+              <div class="admin-card">
+                <h3><i class="fas fa-id-badge"></i> EDIT TAG USER</h3>
+                <div id="adTagEditorEmpty" style="font-size:12px;color:#777;padding:10px 0">Pilih user di kiri dulu.</div>
+                <div id="adTagEditor" style="display:none">
+                  <div class="admin-tag-active-row">
+                    <div id="adTagUserName" class="admin-tag-user-name"></div>
+                    <div id="adTagCurrentDisplay" class="admin-tag-current"></div>
+                  </div>
+                  <div id="adTagChipGrid" class="admin-tag-chip-grid"></div>
+                </div>
+              </div>
+              <div class="admin-card">
+                <h3><i class="fas fa-tags"></i> ALL TAG & CARA DAPET</h3>
+                <div id="adAllTagInfo"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- SONGS -->
@@ -1546,7 +2470,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalProfile" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
+  <div class="modal" id="modalProfile" onclick="if(event.target==this)closeProfileModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header" id="profileHeader">
         <div class="mp-avatar-container">
@@ -1567,6 +2491,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
+          <button class="mp-btn mp-btn-sec" onclick="openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -1586,7 +2511,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalCreator" onclick="if(event.target==this){this.style.display='none';stopHearts();stopProfileMusic();}">
+  <div class="modal" id="modalCreator" onclick="if(event.target==this)closeCreatorModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
         <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
@@ -1621,6 +2546,13 @@
             <span id="uploadQueueInfo" class="upload-queue-info"></span>
           </div>
           <div id="uploadQueueList" class="upload-queue-list"></div>
+        </div>
+        <div id="uploadCdCard" class="upload-cd-card">
+          <div class="upload-cd-row">
+            <span class="upload-cd-label">COOLDOWN</span>
+            <span id="uploadCdTimer" class="upload-cd-timer">00:00</span>
+          </div>
+          <div class="upload-cd-sub" id="uploadCdSub">Menunggu...</div>
         </div>
       </div>
       <div id="uploadFormGuest">
@@ -1665,6 +2597,74 @@
     </div>
   </div>
 
+  <div class="modal" id="modalEventCenter" onclick="if(event.target==this)this.style.display='none'">
+    <div class="event-center-sheet">
+      <div class="event-center-header">
+        <div class="event-center-title">
+          <i class="fas fa-gamepad"></i>
+          <span>EVENT & QUEST EXEMUSIC</span>
+        </div>
+        <div class="event-center-coins">
+          <div class="event-coins-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="event-coins-body">
+            <div class="event-coins-label">EXECOIN</div>
+            <div class="event-coins-value" id="evCoinBalance">0</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-center-layout">
+        <div class="event-center-main">
+          <div class="event-center-tabs">
+            <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
+            <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
+            <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
+          </div>
+          <div id="evTabDaily" class="event-tab-view active">
+            <div class="event-tab-caption">Reset tiap 24 jam untuk semua akun.</div>
+            <div id="evDailyList" class="event-quest-list"></div>
+          </div>
+          <div id="evTabWeekly" class="event-tab-view">
+            <div class="event-tab-caption">Reset tiap 7 hari. Cocok untuk misi jangka panjang.</div>
+            <div id="evWeeklyList" class="event-quest-list"></div>
+          </div>
+          <div id="evTabShop" class="event-tab-view">
+            <div class="event-tab-caption">Tukar ExeCoin dengan tag eksklusif dan VIP.</div>
+            <div id="evShopList" class="event-quest-list"></div>
+          </div>
+        </div>
+        <div class="event-center-sidepanel">
+          <div class="event-side-card">
+            <div class="event-side-label">Event Status</div>
+            <div id="evTagDropStatusBox" class="event-side-body">
+              <div class="event-side-main" id="evTagDropMain">Tidak ada event tag drop aktif</div>
+              <div class="event-side-sub" id="evTagDropSub">Tunggu admin mengaktifkan event.</div>
+              <div class="event-side-timer" id="evTagDropTimer">--:--</div>
+            </div>
+          </div>
+          <div class="event-side-card">
+            <div class="event-side-label">Tips ExeCoin</div>
+            <ul class="event-side-tips">
+              <li>Upload rutin untuk ambil semua Tugas Harian.</li>
+              <li>Aktif dengerin lagu sambil tab aktif.</li>
+              <li>Pakai Toko ExeCoin untuk beli tag eksklusif.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="eventTagBanner" class="event-banner">
+    <div class="event-banner-icon"><i class="fas fa-bolt"></i></div>
+    <div class="event-banner-body">
+      <div class="event-banner-title" id="eventTagBannerTitle">TAG DROP EVENT</div>
+      <div class="event-banner-sub" id="eventTagBannerSub">Tag spesial lagi drop untuk user online!</div>
+    </div>
+    <div class="event-banner-timer" id="eventTagBannerTimer">--:--</div>
+    <button class="event-banner-close" onclick="closeEventTagBanner()">×</button>
+  </div>
   <div class="modal" id="modalChangeNames" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:18px; color:var(--accent); font-family:'Rajdhani',sans-serif">✏️ UBAH NAMA</h3>
@@ -1764,6 +2764,23 @@
         <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <p style="font-size:13px; color:#888; text-align:center">Video oleh: Hexky</p>
+    </div>
+  </div>
+
+  <div class="modal" id="modalTagSelector" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet tag-selector-sheet">
+      <h3 style="text-align:center; margin-bottom:8px; color:var(--accent); font-family:'Rajdhani',sans-serif; letter-spacing:1px">PILIH TAG</h3>
+      <div class="tag-selector-layout">
+        <div class="tag-selector-col">
+          <div class="tag-section-title">EDIT TAG</div>
+          <div id="tagSelectorCurrent" class="tag-current-text"></div>
+          <div id="tagSelectorChipGrid" class="tag-chip-grid"></div>
+        </div>
+        <div class="tag-selector-col">
+          <div class="tag-section-title">ALL TAG & CARA DAPET</div>
+          <div id="tagSelectorAllInfo" class="tag-meta-list"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1872,10 +2889,23 @@
     let userCache = {};
     let isFirstTimeUser = false;
     let adAllUsers = [], adAllSongs = [];
+    let adminLoaded = false;
+    let adminDrag = { active: false, offsetX: 0, offsetY: 0 };
+    let adminMode = 'normal';
+    let tagDropInterval = null;
+    let currentTagDrop = null;
     let lebaranInterval = null;
     let vipTrialBannerClosed = false;
     let uploadQueueInterval = null;
     let uploadQueueListenerUid = null;
+    let uploadCooldownInterval = null;
+    let isAdminUnlocked = localStorage.getItem('exeAdminUnlocked') === '1';
+    let currentProfileUid = null;
+    let adminFloatInterval = null;
+    let userQuestState = { daily: {}, weekly: {} };
+    let listenDailySeconds = 0;
+    let listenWeeklySeconds = 0;
+    let lastListenTick = 0;
 
     const audio = new Audio();
     audio.volume = savedVol;
@@ -1930,8 +2960,495 @@
       if (u && u.trialvip && u.trialvip.expireAt && now < u.trialvip.expireAt) return 'trial';
       return false;
     }
+    function computeQuestTags(u, folCount, flgCount) {
+      const tags = {};
+      tags.user = true;
+      const vipType = getVipStatus(u);
+      if (vipType) tags.vip = true;
+      if (typeof folCount === 'number') {
+        if (folCount >= 10) tags.newbie = true;
+        if (folCount >= 50) tags.pro = true;
+        if (folCount >= 150) { tags.terkeren = true; tags.tersulit = true; }
+      }
+      return tags;
+    }
+    function syncUserQuestTags(uid, u, folCount, flgCount) {
+      if (!uid || !u) return;
+      const quest = computeQuestTags(u, folCount, flgCount);
+      const existing = u.alltag || {};
+      const merged = {};
+      let changed = false;
+      let newCount = 0;
+      Object.keys(existing).forEach(k => {
+        merged[k] = existing[k];
+      });
+      Object.keys(quest).forEach(k => {
+        if (!merged[k]) {
+          merged[k] = true;
+          changed = true;
+          newCount++;
+        }
+      });
+      if (changed) {
+        db.ref('users/' + uid + '/alltag').set(merged);
+        if (newCount > 0) {
+          updateQuestProgress('weekly', 'weekly_new_tags_2', newCount, uid);
+        }
+      }
+    }
+    function ensureCurrentTagInAlltag(uid, u) {
+      if (!uid || !u) return;
+      const t = (u.tag || '').toLowerCase();
+      if (!t || t === 'none') return;
+      const all = u.alltag || {};
+      if (all[t]) return;
+      db.ref('users/' + uid + '/alltag/' + t).set(true);
+    }
+    function setupTagDropWatcher() {
+      if (tagDropInterval) {
+        clearInterval(tagDropInterval);
+        tagDropInterval = null;
+      }
+      const banner = document.getElementById('eventTagBanner');
+      if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) {
+        if (banner) banner.classList.remove('show');
+        return;
+      }
+      if (banner) {
+        const titleEl = document.getElementById('eventTagBannerTitle');
+        const subEl = document.getElementById('eventTagBannerSub');
+        const timerEl = document.getElementById('eventTagBannerTimer');
+        if (titleEl) titleEl.textContent = 'TAG DROP: ' + String(currentTagDrop.tag || '').toUpperCase();
+        if (subEl) subEl.textContent = currentTagDrop.desc || 'Tag spesial lagi drop untuk user online!';
+        if (timerEl) {
+          if (currentTagDrop.endAt) {
+            const updateBannerTimer = () => {
+              const now = Date.now();
+              const diff = currentTagDrop.endAt - now;
+              if (diff <= 0) {
+                timerEl.textContent = 'EVENT SELESAI';
+                banner.classList.remove('show');
+                return;
+              }
+              const totalSec = Math.floor(diff / 1000);
+              const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+              const s = String(totalSec % 60).padStart(2, '0');
+              timerEl.textContent = m + ':' + s;
+            };
+            updateBannerTimer();
+            setInterval(updateBannerTimer, 1000);
+          } else {
+            timerEl.textContent = 'LIVE';
+          }
+        }
+        banner.classList.add('show');
+      }
+      tagDropInterval = setInterval(() => {
+        if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active) return;
+        if (currentTagDrop.maxWinners && currentTagDrop.obtainedCount >= currentTagDrop.maxWinners) return;
+        if (Math.random() < currentTagDrop.chance) {
+          const tag = String(currentTagDrop.tag).toLowerCase();
+          const all = userData.alltag || {};
+          if (!all[tag]) {
+            const updates = {};
+            updates['users/' + auth.currentUser.uid + '/alltag/' + tag] = true;
+            const countRef = db.ref('settings/tagDrop/obtainedCount');
+            countRef.transaction(cur => {
+              const base = typeof cur === 'number' ? cur : 0;
+              if (currentTagDrop.maxWinners && base >= currentTagDrop.maxWinners) return;
+              return base + 1;
+            }).then(res => {
+              if (!res.committed) return;
+              currentTagDrop.obtainedCount = res.snapshot.val() || 0;
+              db.ref().update(updates).then(() => {
+                showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+                updateQuestProgress('weekly', 'weekly_new_tags_2', 1, auth.currentUser.uid);
+              });
+            });
+          }
+        }
+      }, 30000);
+    }
+    function updateUploadCooldownCard() {
+      const card = document.getElementById('uploadCdCard');
+      const timerEl = document.getElementById('uploadCdTimer');
+      const subEl = document.getElementById('uploadCdSub');
+      if (!card || !timerEl || !subEl || !userData) return;
+      const lastUpload = userData.lastUpload || 0;
+      const now = Date.now();
+      const vipType = getVipStatus(userData);
+      const isAdmin = userData.role === 'admin';
+      const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
+      if (!cooldown) {
+        card.style.display = 'none';
+        return;
+      }
+      const nextAt = lastUpload + cooldown * 60 * 1000;
+      const diffMs = nextAt - now;
+      if (diffMs <= 0) {
+        card.style.display = 'none';
+        return;
+      }
+      card.style.display = 'block';
+      const totalSec = Math.floor(diffMs / 1000);
+      const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const s = String(totalSec % 60).padStart(2, '0');
+      timerEl.textContent = m + ':' + s;
+      if (vipType) subEl.textContent = 'VIP cooldown 15 menit';
+      else subEl.textContent = 'Non-VIP cooldown 30 menit';
+    }
+    function startUploadCooldownWatcher() {
+      if (uploadCooldownInterval) clearInterval(uploadCooldownInterval);
+      updateUploadCooldownCard();
+      uploadCooldownInterval = setInterval(updateUploadCooldownCard, 1000);
+    }
+    function stopUploadCooldownWatcher() {
+      if (uploadCooldownInterval) {
+        clearInterval(uploadCooldownInterval);
+        uploadCooldownInterval = null;
+      }
+      const card = document.getElementById('uploadCdCard');
+      if (card) card.style.display = 'none';
+    }
+    function closeEventTagBanner() {
+      const el = document.getElementById('eventTagBanner');
+      if (el) el.classList.remove('show');
+    }
+    function openEventCenter() {
+      const modal = document.getElementById('modalEventCenter');
+      if (!auth.currentUser || !userData) {
+        msg('Login dulu untuk akses event');
+        return;
+      }
+      if (!modal) return;
+      modal.style.display = 'block';
+      loadUserQuests().then(() => {
+        renderEventCenter();
+      });
+    }
+    function switchEventTab(id, btn) {
+      document.querySelectorAll('.event-tab-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.event-tab-btn').forEach(b => b.classList.remove('active'));
+      const tab = document.getElementById(id === 'daily' ? 'evTabDaily' : id === 'weekly' ? 'evTabWeekly' : 'evTabShop');
+      if (tab) tab.classList.add('active');
+      if (btn) btn.classList.add('active');
+      renderEventCenter();
+    }
+    function applyProfileUrl(push = false) {
+      try {
+        const base = window.location.protocol + '//' + window.location.host + window.location.pathname;
+        let newUrl;
+        if (currentProfileUid) newUrl = base + '?profile_userid=' + encodeURIComponent(currentProfileUid);
+        else newUrl = base + '?id=' + i;
+        if (push) window.history.pushState({ path: newUrl }, '', newUrl);
+        else window.history.replaceState({ path: newUrl }, '', newUrl);
+      } catch (e) {}
+    }
     function fmt(s) { if (isNaN(s)) return '0:00'; let m = Math.floor(s / 60), sec = Math.floor(s % 60); return m + ':' + (sec < 10 ? '0' + sec : sec); }
     function addLog(msg) { db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() }); }
+
+    function renderEventCenter() {
+      if (!auth.currentUser || !userData) return;
+      const coinsEl = document.getElementById('evCoinBalance');
+      if (coinsEl) coinsEl.textContent = String(userData.coins || 0);
+      const dailyEl = document.getElementById('evDailyList');
+      const weeklyEl = document.getElementById('evWeeklyList');
+      const shopEl = document.getElementById('evShopList');
+      if (dailyEl) dailyEl.innerHTML = buildDailyQuestsHtml();
+      if (weeklyEl) weeklyEl.innerHTML = buildWeeklyQuestsHtml();
+      if (shopEl) shopEl.innerHTML = buildShopHtml();
+      updateEventSideFromTagDrop();
+    }
+    function getDailyKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+    function getWeeklyKey() {
+      const d = new Date();
+      const onejan = new Date(d.getFullYear(), 0, 1);
+      const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+      return d.getFullYear() + '-w' + String(week).padStart(2, '0');
+    }
+    function loadUserQuests() {
+      if (!auth.currentUser) return Promise.resolve();
+      return db.ref('userQuests/' + auth.currentUser.uid).once('value').then(snap => {
+        const val = snap.val() || {};
+        userQuestState.daily = val.daily || {};
+        userQuestState.weekly = val.weekly || {};
+        listenDailySeconds = 0;
+        listenWeeklySeconds = 0;
+        lastListenTick = 0;
+      }).catch(() => {
+        userQuestState = { daily: {}, weekly: {} };
+        listenDailySeconds = 0;
+        listenWeeklySeconds = 0;
+        lastListenTick = 0;
+      });
+    }
+   function buildDailyQuestsHtml() {
+    const defs = [
+      { id: 'daily_first_upload', title: 'First Upload', desc: 'Upload 1 music', reward: 5, max: 1, type: 'daily', enabled: true },
+      { id: 'daily_music_producer', title: 'Music Producer', desc: 'Upload 5 music', reward: 10, max: 5, type: 'daily', enabled: true },
+      { id: 'daily_top_listener_1', title: 'Top Listener I', desc: 'Dengarkan musik 30 menit', reward: 5, max: 30, type: 'daily', enabled: true },
+      { id: 'daily_follower_boost', title: 'Follower Boost', desc: 'Dapatkan 5 followers', reward: 5, max: 5, type: 'daily', enabled: true }
+    ];
+      const key = getDailyKey();
+      return defs.map(def => {
+        const st = (userQuestState.daily && userQuestState.daily[def.id]) || {};
+        const samePeriod = st.periodKey === key;
+        const cur = samePeriod ? (st.cur || 0) : 0;
+        const claimed = samePeriod && !!st.claimed;
+        return renderQuestCard({
+          id: def.id,
+          title: def.title,
+          desc: def.desc,
+          reward: def.reward,
+          max: def.max,
+          cur,
+          claimed,
+          type: def.type,
+          enabled: def.enabled
+        });
+      }).join('');
+    }
+  function buildWeeklyQuestsHtml() {
+    const defs = [
+      { id: 'weekly_social_hunter', title: 'Social Hunter', desc: 'Follow 2 url creator', reward: 25, max: 2, type: 'weekly', enabled: true },
+      { id: 'weekly_top_listener_2', title: 'Top Listener II', desc: 'Dengarkan musik 2 jam total', reward: 25, max: 120, type: 'weekly', enabled: true },
+      { id: 'weekly_followers_20', title: 'Rising Followers', desc: 'Dapatkan 20 followers', reward: 50, max: 20, type: 'weekly', enabled: true },
+      { id: 'weekly_followers_50', title: 'Popular Creator', desc: 'Dapatkan 50 followers', reward: 100, max: 50, type: 'weekly', enabled: true },
+      { id: 'weekly_new_tags_2', title: 'Tag Collector', desc: 'Dapatkan 2 tag baru', reward: 50, max: 2, type: 'weekly', enabled: true },
+      { id: 'weekly_active_creator', title: 'Active Creator', desc: 'Upload 10 music', reward: 50, max: 10, type: 'weekly', enabled: true },
+      { id: 'weekly_ultra_uploader', title: 'Ultra Uploader', desc: 'Upload 20 music', reward: 120, max: 20, type: 'weekly', enabled: true }
+    ];
+      const key = getWeeklyKey();
+      return defs.map(def => {
+        const st = (userQuestState.weekly && userQuestState.weekly[def.id]) || {};
+        const samePeriod = st.periodKey === key;
+        const cur = samePeriod ? (st.cur || 0) : 0;
+        const claimed = samePeriod && !!st.claimed;
+        return renderQuestCard({
+          id: def.id,
+          title: def.title,
+          desc: def.desc,
+          reward: def.reward,
+          max: def.max,
+          cur,
+          claimed,
+          type: def.type,
+          enabled: def.enabled
+        });
+      }).join('');
+    }
+    function buildShopHtml() {
+      const tags = [
+        { id: 'shop_tag_gamers', title: 'Tag [GAMERS]', desc: 'Profile dark + aksen neon green', price: 100, badge: 'Tag ExeCoin' },
+        { id: 'shop_tag_legend', title: 'Tag [LEGEND]', desc: 'Nama glow + border emas', price: 500, badge: 'Tag Premium' },
+        { id: 'shop_tag_execurive', title: 'Tag [EXECUrIVE]', desc: 'Boost visibility dan akses VIP', price: 1000, badge: 'Tag Ultra' }
+      ];
+      const vips = [
+        { id: 'shop_vip_3', title: 'VIP 3 Hari', desc: 'Akses VIP sementara', price: 200, badge: 'VIP Bronze' },
+        { id: 'shop_vip_7', title: 'VIP 7 Hari', desc: 'Durasi VIP lebih lama', price: 500, badge: 'VIP Silver' },
+        { id: 'shop_vip_30', title: 'VIP 30 Hari', desc: 'Paket VIP bulanan', price: 1200, badge: 'VIP Gold' }
+      ];
+      const renderItem = it => {
+        const coins = userData.coins || 0;
+        const progressText = coins + '/' + it.price;
+        const pct = Math.max(0, Math.min(1, coins / it.price));
+        const canBuy = coins >= it.price;
+        return '<div class="event-shop-card">' +
+          '<div class="event-shop-main">' +
+            '<div class="event-shop-title-row">' +
+              '<div class="event-shop-title">' + escapeHtml(it.title) + '</div>' +
+              '<div class="event-shop-price"><i class="fas fa-coins"></i>' + it.price + '</div>' +
+            '</div>' +
+            '<div class="event-shop-desc">' + escapeHtml(it.desc) + '</div>' +
+            '<div class="event-shop-progress-wrap">' +
+              '<div class="event-shop-progress-bar"><div class="event-shop-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
+              '<div class="event-shop-progress-text">' + escapeHtml(progressText) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="event-shop-action">' +
+            '<div class="event-shop-badge">' + escapeHtml(it.badge) + '</div>' +
+            '<button class="event-shop-btn" disabled>' + (canBuy ? 'Beli via admin' : 'Coin belum cukup') + '</button>' +
+          '</div>' +
+        '</div>';
+      };
+      let html = '';
+      html += '<div class="event-shop-section">' +
+                '<div class="event-shop-section-title">Tag Eksklusif</div>' +
+                '<div class="event-shop-list">' +
+                  tags.map(renderItem).join('') +
+                '</div>' +
+              '</div>';
+      html += '<div class="event-shop-section">' +
+                '<div class="event-shop-section-title">Paket VIP</div>' +
+                '<div class="event-shop-list">' +
+                  vips.map(renderItem).join('') +
+                '</div>' +
+              '</div>';
+      return html;
+    }
+  function getQuestDef(type, id) {
+    if (type === 'daily') {
+      if (id === 'daily_first_upload') return { id, type, title: 'First Upload', reward: 5, max: 1, enabled: true };
+      if (id === 'daily_music_producer') return { id, type, title: 'Music Producer', reward: 10, max: 5, enabled: true };
+      if (id === 'daily_top_listener_1') return { id, type, title: 'Top Listener I', reward: 5, max: 30, enabled: true };
+      if (id === 'daily_follower_boost') return { id, type, title: 'Follower Boost', reward: 5, max: 5, enabled: true };
+    } else if (type === 'weekly') {
+      if (id === 'weekly_social_hunter') return { id, type, title: 'Social Hunter', reward: 25, max: 2, enabled: true };
+      if (id === 'weekly_top_listener_2') return { id, type, title: 'Top Listener II', reward: 25, max: 120, enabled: true };
+      if (id === 'weekly_followers_20') return { id, type, title: 'Rising Followers', reward: 50, max: 20, enabled: true };
+      if (id === 'weekly_followers_50') return { id, type, title: 'Popular Creator', reward: 100, max: 50, enabled: true };
+      if (id === 'weekly_new_tags_2') return { id, type, title: 'Tag Collector', reward: 50, max: 2, enabled: true };
+      if (id === 'weekly_active_creator') return { id, type, title: 'Active Creator', reward: 50, max: 10, enabled: true };
+      if (id === 'weekly_ultra_uploader') return { id, type, title: 'Ultra Uploader', reward: 120, max: 20, enabled: true };
+    }
+    return null;
+  }
+    function updateQuestProgress(type, id, delta, uidOverride) {
+      if (!auth || !auth.currentUser || !delta) return;
+      const def = getQuestDef(type, id);
+      if (!def || def.enabled === false) return;
+      const uid = uidOverride || auth.currentUser.uid;
+      const periodKey = type === 'daily' ? getDailyKey() : getWeeklyKey();
+      const ref = db.ref('userQuests/' + uid + '/' + type + '/' + id);
+      return ref.transaction(cur => {
+        if (!cur || cur.periodKey !== periodKey) {
+          const curVal = Math.min(delta, def.max);
+          return { periodKey, cur: curVal, claimed: false };
+        }
+        const curVal = cur.cur || 0;
+        const nextVal = Math.min(curVal + delta, def.max);
+        if (nextVal === curVal) return cur;
+        return { ...cur, cur: nextVal };
+      }).then(res => {
+        if (!res.committed) return;
+        if (uid === (auth.currentUser && auth.currentUser.uid)) {
+          if (!userQuestState[type]) userQuestState[type] = {};
+          userQuestState[type][id] = res.snapshot.val() || {};
+        }
+      }).catch(() => {});
+    }
+    function grantCoins(uid, amount) {
+      if (!uid || !amount || amount <= 0) return Promise.resolve();
+      let remaining = amount;
+      const step = () => {
+        if (remaining <= 0) return Promise.resolve();
+        const chunk = remaining > 10 ? 10 : remaining;
+        remaining -= chunk;
+        const ref = db.ref('users/' + uid + '/coins');
+        return ref.transaction(cur => {
+          const base = typeof cur === 'number' ? cur : 0;
+          return base + chunk;
+        }).then(res => {
+          if (!res.committed) {
+            remaining += chunk;
+            return Promise.resolve();
+          }
+          return step();
+        });
+      };
+      return step();
+    }
+    function claimQuest(type, id) {
+      if (!auth || !auth.currentUser || !userData) return msg('Login dulu!');
+      const def = getQuestDef(type, id);
+      if (!def) return;
+      if (def.enabled === false) { showToast('Quest belum aktif'); return; }
+      const uid = auth.currentUser.uid;
+      const periodKey = type === 'daily' ? getDailyKey() : getWeeklyKey();
+      const ref = db.ref('userQuests/' + uid + '/' + type + '/' + id);
+      ref.once('value').then(snap => {
+        const st = snap.val() || {};
+        if (st.periodKey !== periodKey) { showToast('Quest sudah reset'); return; }
+        const cur = st.cur || 0;
+        if (cur < def.max) { showToast('Progress belum penuh'); return; }
+        if (st.claimed) { showToast('Quest sudah diklaim'); return; }
+        return grantCoins(uid, def.reward).then(() => {
+          return ref.update({ claimed: true, claimedAt: Date.now(), periodKey, cur });
+        }).then(() => {
+          return db.ref('users/' + uid + '/coins').once('value');
+        }).then(csnap => {
+          const newCoins = csnap.val() || 0;
+          userData.coins = newCoins;
+          if (!userQuestState[type]) userQuestState[type] = {};
+          userQuestState[type][id] = { periodKey, cur, claimed: true };
+          renderEventCenter();
+          showToast('Kamu mendapatkan ' + def.reward + ' ExeCoin dari quest ' + def.title);
+        });
+      }).catch(() => {
+        showToast('Gagal klaim quest');
+      });
+    }
+    function renderQuestCard(q) {
+      const pct = Math.max(0, Math.min(1, q.max ? (q.cur || 0) / q.max : 0));
+      const progressText = (q.cur || 0) + '/' + q.max;
+      const completed = (q.cur || 0) >= q.max;
+      const claimed = !!q.claimed;
+      const enabled = q.enabled !== false;
+      let badgeText = 'Berjalan';
+      if (!enabled) badgeText = 'Segera hadir';
+      else if (claimed) badgeText = 'Selesai';
+      else if (completed) badgeText = 'Siap diklaim';
+      let btnLabel = 'Progress ' + progressText;
+      let btnAttrs = 'disabled';
+      if (!enabled) {
+        btnLabel = 'Belum tersedia';
+      } else if (claimed) {
+        btnLabel = 'Sudah diklaim';
+      } else if (completed) {
+        btnLabel = 'Klaim ' + q.reward + ' ExeCoin';
+        btnAttrs = 'onclick="claimQuest(\'' + q.type + '\', \'' + q.id + '\')"';
+      }
+      return '<div class="event-quest-card">' +
+        '<div class="event-quest-main">' +
+          '<div class="event-quest-title-row">' +
+            '<div class="event-quest-title">' + escapeHtml(q.title) + '</div>' +
+            '<div class="event-quest-reward"><i class="fas fa-coins"></i>' + q.reward + '</div>' +
+          '</div>' +
+          '<div class="event-quest-desc">' + escapeHtml(q.desc) + '</div>' +
+        '</div>' +
+        '<div class="event-quest-progress-wrap">' +
+          '<div class="event-quest-progress-bar"><div class="event-quest-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
+          '<div class="event-quest-progress-text">' + escapeHtml(progressText) + '</div>' +
+        '</div>' +
+        '<div class="event-quest-action">' +
+          '<div class="event-quest-badge">' + escapeHtml(badgeText) + '</div>' +
+          '<button class="event-quest-btn secondary" ' + btnAttrs + '>' + escapeHtml(btnLabel) + '</button>' +
+        '</div>' +
+      '</div>';
+    }
+    function updateEventSideFromTagDrop() {
+      const mainEl = document.getElementById('evTagDropMain');
+      const subEl = document.getElementById('evTagDropSub');
+      const timerEl = document.getElementById('evTagDropTimer');
+      if (!mainEl || !subEl || !timerEl) return;
+      if (!currentTagDrop || !currentTagDrop.active) {
+        mainEl.textContent = 'Tidak ada event tag drop aktif';
+        subEl.textContent = 'Tunggu admin mengaktifkan event.';
+        timerEl.textContent = '--:--';
+        return;
+      }
+      mainEl.textContent = 'TAG DROP: ' + String(currentTagDrop.tag || '').toUpperCase();
+      subEl.textContent = currentTagDrop.desc || 'Tag spesial lagi drop untuk user online!';
+      if (currentTagDrop.endAt) {
+        const diff = currentTagDrop.endAt - Date.now();
+        if (diff <= 0) {
+          timerEl.textContent = 'EVENT SELESAI';
+        } else {
+          const totalSec = Math.floor(diff / 1000);
+          const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+          const s = String(totalSec % 60).padStart(2, '0');
+          timerEl.textContent = m + ':' + s;
+        }
+      } else {
+        timerEl.textContent = 'LIVE';
+      }
+    }
 
     // ============================================================
     // TOAST
@@ -1958,6 +3475,8 @@
       document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
       stopHearts();
       stopProfileMusic();
+      currentProfileUid = null;
+      applyProfileUrl(true);
     }
 
     // ============================================================
@@ -2036,12 +3555,98 @@
       setTimeout(() => el.classList.remove('active', 'sb-closing'), 400);
     }
 
+    function setupGlobalNotifsWatcher() {
+      let lastKey = null;
+      db.ref('globalNotifications').limitToLast(1).on('child_added', snap => {
+        const val = snap.val();
+        const key = snap.key;
+        if (!val || !key) return;
+        if (lastKey === null) {
+          lastKey = key;
+          mergeAndRenderNotifs([{ ...val, id: 'g_' + key }], 'global');
+          return;
+        }
+        if (key === lastKey) {
+          mergeAndRenderNotifs([{ ...val, id: 'g_' + key }], 'global');
+          return;
+        }
+        lastKey = key;
+        mergeAndRenderNotifs([{ ...val, id: 'g_' + key }], 'global');
+        if (val.type === 'event') {
+          const text = val.text || '';
+          const from = val.fromName || 'Admin';
+          const title = 'EVENT DIMULAI';
+          const msg = text || ('Event baru dimulai oleh ' + from);
+          showBroadcast(title + ' • ' + msg);
+        }
+      });
+    }
+
+    function setupAdminFloatChatWatcher() {
+      const wrap = document.getElementById('adminFloatChat');
+      const nameEl = document.getElementById('adminFloatName');
+      const msgEl = document.getElementById('adminFloatMsg');
+      const timerEl = document.getElementById('adminFloatTimer');
+      if (!wrap || !nameEl || !msgEl || !timerEl) return;
+      db.ref('adminFloatChat/current').on('value', snap => {
+        const val = snap.val();
+        if (adminFloatInterval) {
+          clearInterval(adminFloatInterval);
+          adminFloatInterval = null;
+        }
+        if (!val) {
+          wrap.classList.remove('show');
+          nameEl.textContent = '';
+          msgEl.textContent = '';
+          timerEl.textContent = '';
+          return;
+        }
+        const now = Date.now();
+        const expireAt = val.expireAt || 0;
+        if (expireAt && now >= expireAt) {
+          wrap.classList.remove('show');
+          nameEl.textContent = '';
+          msgEl.textContent = '';
+          timerEl.textContent = '';
+          if (auth.currentUser && userData && (userData.role === 'admin' || userData.role === 'owner')) {
+            db.ref('adminFloatChat/current').remove();
+          }
+          return;
+        }
+        nameEl.textContent = (val.name || 'Admin') + '';
+        msgEl.textContent = val.msg || '';
+        wrap.classList.add('show');
+        function updateTimer() {
+          const now2 = Date.now();
+          const diff = (val.expireAt || 0) - now2;
+          if (diff <= 0) {
+            timerEl.textContent = '0s';
+            wrap.classList.remove('show');
+            clearInterval(adminFloatInterval);
+            adminFloatInterval = null;
+            if (auth.currentUser && userData && (userData.role === 'admin' || userData.role === 'owner')) {
+              db.ref('adminFloatChat/current').remove();
+            }
+            return;
+          }
+          const sec = Math.ceil(diff / 1000);
+          timerEl.textContent = sec + 's';
+        }
+        updateTimer();
+        adminFloatInterval = setInterval(updateTimer, 500);
+      });
+    }
+
     // ============================================================
     // NOTIFICATIONS
     // ============================================================
     function loadNotifs() {
       auth.onAuthStateChanged(u => {
-        if (!u) { mergeAndRenderNotifs([], 'user'); return; }
+        if (!u) {
+          mergeAndRenderNotifs([], 'user');
+          showGuestIntroNotif();
+          return;
+        }
         db.ref('users/' + u.uid + '/notifications').orderByChild('timestamp').limitToLast(80).on('value', snap => {
           const val = snap.val();
           const list = [];
@@ -2115,7 +3720,20 @@
       const panel = document.getElementById('notifPanel'); const btn = document.getElementById('btnNotif');
       if (panel && panel.classList.contains('show') && !panel.contains(e.target) && btn && !btn.contains(e.target)) closeNotifPanel();
     });
+    function showGuestIntroNotif() {
+      if (localStorage.getItem('exeGuestIntroShown') === '1') return;
+      localStorage.setItem('exeGuestIntroShown', '1');
+      const payload = {
+        type: 'system',
+        text: '[bot exemusic] Login dan daftarkan akun kamu ke ExeMusic sekarang!!',
+        fromName: 'bot exemusic',
+        timestamp: Date.now()
+      };
+      mergeAndRenderNotifs([payload], 'global');
+    }
     loadNotifs();
+    setupGlobalNotifsWatcher();
+    setupAdminFloatChatWatcher();
 
     // ============================================================
     // AUTH
@@ -2145,18 +3763,20 @@
           document.getElementById('pFol').innerText = folCount;
           document.getElementById('pFollowing').innerText = flgCount;
           document.getElementById('pTagDisplay').innerHTML = getTagHTML(userData.tag);
+          syncUserQuestTags(u.uid, userData, folCount, flgCount);
+          ensureCurrentTagInAlltag(u.uid, userData);
+          startUploadCooldownWatcher();
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
 
-          // Profile header style
-          const profHeader = document.getElementById('profileHeader');
-          if (profHeader) {
-            profHeader.classList.remove('vip', 'pink-profile');
-            const tagLower = (userData.tag || '').toLowerCase();
-            if (tagLower.includes('velly')) {
-              profHeader.classList.add('pink-profile');
-            }
-          }
+        // Profile header style
+        const profHeader = document.getElementById('profileHeader');
+        if (profHeader) {
+          profHeader.classList.remove('vip', 'pink-profile');
+          // Velly tetap aktifkan pink-profile, tapi background sekarang lebih simpel tanpa animasi berat
+          const tagLower = (userData.tag || '').toLowerCase();
+          if (tagLower.includes('velly')) profHeader.classList.add('pink-profile');
+        }
 
           const pmBtn = document.getElementById('btnProfileMusic');
           const pmRow = document.getElementById('profileMusicRow');
@@ -2189,8 +3809,14 @@
           }
           updateFollowUI();
         });
+        setupTagDropWatcher();
       } else {
         stopUploadQueueWatcher();
+        stopUploadCooldownWatcher();
+        if (tagDropInterval) {
+          clearInterval(tagDropInterval);
+          tagDropInterval = null;
+        }
         document.getElementById('topLoginBtn').textContent = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('btnAdmin').classList.remove('show');
@@ -2306,8 +3932,7 @@
     async function setup(idx, play = true) {
       if (!songs[idx]) return;
       i = idx;
-      const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?id=' + i;
-      window.history.pushState({ path: newUrl }, '', newUrl);
+      applyProfileUrl(true);
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
       const cRef = await db.ref('users/' + songs[i].uid).get();
@@ -2339,6 +3964,16 @@
       document.getElementById('dur').textContent = fmt(audio.duration);
       if (audio.duration > 0) document.getElementById('loadSpinner').classList.remove('show');
       if (Math.floor(audio.currentTime) % 2 === 0) localStorage.setItem('exeLastTime', audio.currentTime);
+      if (auth && auth.currentUser && !audio.paused && document.visibilityState === 'visible') {
+        const now = Date.now();
+        if (!lastListenTick) lastListenTick = now;
+        const diffSec = (now - lastListenTick) / 1000;
+        if (diffSec >= 5) {
+          lastListenTick = now;
+          const addSec = Math.floor(diffSec);
+          addListeningProgress(addSec);
+        }
+      }
     };
     audio.onplay = () => { if (!audio.duration || isNaN(audio.duration)) document.getElementById('loadSpinner').classList.add('show'); };
     audio.onpause = () => { localStorage.setItem('exeLastTime', audio.currentTime); };
@@ -2351,6 +3986,21 @@
       else if (i < songs.length - 1) next();
     };
     function saveLastSong() { localStorage.setItem('exeLastSongIdx', i); }
+    function addListeningProgress(sec) {
+      if (!auth || !auth.currentUser || !sec) return;
+      listenDailySeconds += sec;
+      listenWeeklySeconds += sec;
+      const addedDailyMin = Math.floor(listenDailySeconds / 60);
+      const addedWeeklyMin = Math.floor(listenWeeklySeconds / 60);
+      if (addedDailyMin > 0) {
+        listenDailySeconds -= addedDailyMin * 60;
+        updateQuestProgress('daily', 'daily_top_listener_1', addedDailyMin, auth.currentUser.uid);
+      }
+      if (addedWeeklyMin > 0) {
+        listenWeeklySeconds -= addedWeeklyMin * 60;
+        updateQuestProgress('weekly', 'weekly_top_listener_2', addedWeeklyMin, auth.currentUser.uid);
+      }
+    }
 
     // ============================================================
     // UPLOAD / SAVE + QUEUE
@@ -2385,15 +4035,15 @@
       const listEl = document.getElementById('uploadQueueList');
       const infoEl = document.getElementById('uploadQueueInfo');
       if (!section || !listEl || !infoEl || !userData) return;
-      const vipType = getVipStatus(userData);
-      const limit = userData.role === 'admin' ? 0 : (vipType ? 2 : 1);
+      const limit = getUploadQueueLimit();
       const entries = Object.keys(map || {}).map(id => ({ id, ...(map[id] || {}) }))
         .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0));
+      section.style.display = 'block';
       if (!entries.length) {
-        section.style.display = 'none';
+        infoEl.textContent = 'Belum ada antrian upload';
+        listEl.innerHTML = '<div style="font-size:11px;color:#777;padding:6px 0">Kamu belum punya upload di queue.</div>';
         return;
       }
-      section.style.display = 'block';
       const activeCount = entries.filter(it => it.status !== 'done' && it.status !== 'cancelled').length;
       if (limit) infoEl.textContent = activeCount + '/' + limit + ' slot terpakai';
       else infoEl.textContent = '';
@@ -2442,6 +4092,9 @@
       await db.ref('users/' + uid).update({ lastUpload: Date.now() });
       await itemRef.update({ status: 'done', uploadedAt: Date.now(), songKey });
       await db.ref('users/' + uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload (queue): ' + (cur.title || ''), fromName: userData.username, timestamp: Date.now() });
+      updateQuestProgress('daily', 'daily_first_upload', 1, uid);
+      updateQuestProgress('daily', 'daily_music_producer', 1, uid);
+      updateQuestProgress('weekly', 'weekly_active_creator', 1, uid);
       msg('✅ Upload queue terupload: ' + (cur.title || ''));
     }
     async function editUploadQueueItem(id) {
@@ -2503,14 +4156,17 @@
     }
     function getUploadQueueLimit() {
       if (!userData || userData.role === 'admin') return 0;
-      const vipType = getVipStatus(userData);
-      return vipType ? 2 : 1;
+      return 1;
     }
     async function confirmAndSave() {
       const title = document.getElementById('rLagu').value;
       const url = document.getElementById('rUrl').value;
       if (!title || !url) return msg('Isi semua data!');
       if (!auth.currentUser || !userData) return msg('Login dulu!');
+      if (userData.banUpload) {
+        msg('Akun ini dibanned dari upload');
+        return;
+      }
       const lastUpload = userData.lastUpload || 0;
       const now = Date.now();
       const diff = (now - lastUpload) / 1000 / 60;
@@ -2518,8 +4174,35 @@
       const isAdmin = userData.role === 'admin';
       const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
       if (isAdmin || diff >= cooldown) {
-        Swal.fire({ title: 'Yakin?', text: 'Pelanggaran rules → BANNED PERMANENT!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#00ff88', cancelButtonColor: '#d33', confirmButtonText: 'Saya Bertanggung Jawab', background: '#181828', color: '#fff' })
-          .then(r => { if (r.isConfirmed) saveMusic(title, url); });
+        let cdInterval;
+        Swal.fire({
+          title: 'Yakin?',
+          html: 'Pelanggaran rules → BANNED PERMANENT!<br><span id="uploadConfirmCd" style="font-size:11px;display:block;margin-top:6px;color:#ccc">Tunggu 5 detik sebelum bisa upload...</span>',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#00ff88',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Saya Bertanggung Jawab',
+          background: '#181828',
+          color: '#fff',
+          didOpen: () => {
+            const btn = Swal.getConfirmButton();
+            const label = document.getElementById('uploadConfirmCd');
+            let sec = 5;
+            if (btn) btn.disabled = true;
+            cdInterval = setInterval(() => {
+              sec--;
+              if (label) label.textContent = sec > 0 ? `Tunggu ${sec} detik sebelum bisa upload...` : 'Silakan upload jika sudah yakin.';
+              if (sec <= 0) {
+                if (btn) btn.disabled = false;
+                clearInterval(cdInterval);
+              }
+            }, 1000);
+          },
+          willClose: () => {
+            if (cdInterval) clearInterval(cdInterval);
+          }
+        }).then(r => { if (r.isConfirmed) saveMusic(title, url); });
         return;
       }
       const queueLimit = getUploadQueueLimit();
@@ -2554,8 +4237,12 @@
     function saveMusic(t, u) {
       const newSong = { title: t, url: u, uid: auth.currentUser.uid, by: userData.username, timestamp: Date.now() };
       db.ref('songs').push(newSong).then(() => {
-        db.ref('users/' + auth.currentUser.uid).update({ lastUpload: Date.now() });
-        db.ref('users/' + auth.currentUser.uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload: ' + t, fromName: userData.username, timestamp: Date.now() });
+        const uid = auth.currentUser.uid;
+        db.ref('users/' + uid).update({ lastUpload: Date.now() });
+        db.ref('users/' + uid + '/notifications').push({ type: 'upload', text: userData.username + ' mengupload: ' + t, fromName: userData.username, timestamp: Date.now() });
+        updateQuestProgress('daily', 'daily_first_upload', 1, uid);
+        updateQuestProgress('daily', 'daily_music_producer', 1, uid);
+        updateQuestProgress('weekly', 'weekly_active_creator', 1, uid);
         msg('✅ Berhasil diposting!'); closeModal();
         document.getElementById('rLagu').value = ''; document.getElementById('rUrl').value = '';
       });
@@ -2583,6 +4270,16 @@
           await db.ref('users/' + auth.currentUser.uid).update({ following: [...flArr, targetUid] });
           db.ref('users/' + targetUid + '/notifications').push({ type: 'follow', text: userData.username + ' mulai mengikuti kamu', fromName: userData.username, fromUid: auth.currentUser.uid, timestamp: Date.now() });
           msg('Followed! ✅');
+        }
+        const newFolCount = isF ? fArr.length - 1 : fArr.length + 1;
+        const newFlCount = isF ? flArr.length - 1 : flArr.length + 1;
+        syncUserQuestTags(targetUid, tData || {}, newFolCount, (tData && tData.following) ? (Array.isArray(tData.following) ? tData.following.length : (typeof tData.following === 'object' ? Object.keys(tData.following).length : 0)) : 0);
+        syncUserQuestTags(auth.currentUser.uid, cData || {}, (cData && cData.followers) ? (Array.isArray(cData.followers) ? cData.followers.length : (typeof cData.followers === 'object' ? Object.keys(cData.followers).length : 0)) : 0, newFlCount);
+        if (!isF) {
+          updateQuestProgress('weekly', 'weekly_social_hunter', 1, auth.currentUser.uid);
+          updateQuestProgress('daily', 'daily_follower_boost', 1, targetUid);
+          updateQuestProgress('weekly', 'weekly_followers_20', 1, targetUid);
+          updateQuestProgress('weekly', 'weekly_followers_50', 1, targetUid);
         }
         await updateFollowUI();
       } catch (err) { msg('Error: ' + err.message); }
@@ -2657,6 +4354,7 @@
     // ============================================================
     function openProfile() {
       if (!auth.currentUser) { document.getElementById('modalAuth').style.display = 'block'; return; }
+      currentProfileUid = auth.currentUser.uid;
       const myPosts = songs.filter(s => s.uid === auth.currentUser.uid).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       document.getElementById('myPostList').innerHTML = myPosts.map(s =>
         `<div class="mp-song-item" onclick="setup(${songs.indexOf(s)}); closeModal()"><div class="mp-song-icon"><i class="fas fa-music"></i></div><div class="mp-song-info"><div class="mp-song-title">${escapeHtml(s.title)}</div></div><i class="fas fa-play" style="font-size:10px; color:#444"></i></div>`
@@ -2669,9 +4367,15 @@
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
       if (myTagLower.includes('velly')) startHearts();
       else stopHearts();
+      if (!audio.paused) {
+        audio.pause();
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        document.getElementById('eq').classList.remove('playing');
+      }
       if (userData && userData.profilemusic) playProfileMusic(userData.profilemusic);
       else stopProfileMusic();
       document.getElementById('modalProfile').style.display = 'block';
+      applyProfileUrl(true);
     }
     function switchProfileTab(tab) {
       document.querySelectorAll('.mp-tab').forEach(t => t.classList.remove('active'));
@@ -2707,15 +4411,20 @@
         const isVellyCreator = cTagLower.includes('velly');
         if (isVellyCreator) {
           creatorHeader.classList.add('pink-profile');
-          startHearts();
-        } else {
-          if (creatorVip) creatorHeader.classList.add('vip');
-          stopHearts();
+        } else if (creatorVip) {
+          creatorHeader.classList.add('vip');
         }
       }
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
-      else stopProfileMusic();
+      else {
+        if (!audio.paused) {
+          audio.pause();
+          document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+          document.getElementById('eq').classList.remove('playing');
+        }
+        stopProfileMusic();
+      }
 
       const creatorSongs = songs.filter(x => x.uid === uid).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       document.getElementById('creatorPostList').innerHTML = creatorSongs.map(x =>
@@ -2725,6 +4434,8 @@
       document.getElementById('modalCreator').dataset.creatorUid = uid;
       updateCreatorFollowUI(uid);
       document.getElementById('modalCreator').style.display = 'block';
+      currentProfileUid = uid;
+      applyProfileUrl(true);
     }
 
     async function updateCreatorFollowUI(uid) {
@@ -2755,6 +4466,10 @@
           db.ref('users/' + creatorUid + '/notifications').push({ type: 'follow', text: userData.username + ' mulai mengikuti kamu', fromName: userData.username, fromUid: auth.currentUser.uid, timestamp: Date.now() });
           msg('Followed! ✅');
         }
+        const newFolCount = isF ? fArr.length - 1 : fArr.length + 1;
+        const newFlCount = isF ? flArr.length - 1 : flArr.length + 1;
+        syncUserQuestTags(creatorUid, cData || {}, newFolCount, (cData && cData.following) ? (Array.isArray(cData.following) ? cData.following.length : (typeof cData.following === 'object' ? Object.keys(cData.following).length : 0)) : 0);
+        syncUserQuestTags(auth.currentUser.uid, mData || {}, (mData && mData.followers) ? (Array.isArray(mData.followers) ? mData.followers.length : (typeof mData.followers === 'object' ? Object.keys(mData.followers).length : 0)) : 0, newFlCount);
         await updateCreatorFollowUI(creatorUid);
       } catch (err) { msg('Error: ' + err.message); }
     }
@@ -2776,6 +4491,72 @@
     function closeTutorial() { const o = document.getElementById('tutorialOverlay'); o.style.display = 'none'; const v = document.getElementById('tutorialVideo'); if (v) { const src = v.src; v.src = src; } }
     function sendWA() { window.open('https://wa.me/62895329018240?text=Halo Admin, saya ' + document.getElementById('guestName').value + ' ingin upload: ' + document.getElementById('guestLagu').value); }
     function shareProfile(uid, username) { if (!uid) return; navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?profile_userid=' + uid); showToast('Link profil @' + (username || 'user') + ' disalin'); }
+    function closeProfileModal() {
+      const modal = document.getElementById('modalProfile');
+      if (modal) modal.style.display = 'none';
+      stopHearts();
+      stopProfileMusic();
+      currentProfileUid = null;
+      applyProfileUrl(true);
+    }
+    function closeCreatorModal() {
+      const modal = document.getElementById('modalCreator');
+      if (modal) modal.style.display = 'none';
+      stopHearts();
+      stopProfileMusic();
+      currentProfileUid = null;
+      applyProfileUrl(true);
+    }
+    function openTagSelector() {
+      if (!auth.currentUser || !userData) { msg('Login dulu!'); return; }
+      ensureCurrentTagInAlltag(auth.currentUser.uid, userData);
+      const all = userData.alltag || {};
+      const keys = Object.keys(all).filter(k => all[k]);
+      if (!keys.length) { msg('Belum ada tag yang kebuka'); return; }
+      const modal = document.getElementById('modalTagSelector');
+      const curEl = document.getElementById('tagSelectorCurrent');
+      const grid = document.getElementById('tagSelectorChipGrid');
+      const info = document.getElementById('tagSelectorAllInfo');
+      if (!modal || !curEl || !grid || !info) return;
+      const cur = (userData.tag || 'none').toLowerCase();
+      curEl.innerHTML = cur === 'none' ? 'Tanpa tag aktif' : 'Tag aktif: ' + getTagHTML(cur);
+      const chips = keys.map(k => {
+        const meta = TAG_META[k] || { title: k.toUpperCase() };
+        return `<button class="tag-chip" data-tag="${k}"><span class="user-tag tag-${k}">${meta.title}</span></button>`;
+      }).join('') + `<button class="tag-chip tag-chip-none" data-tag="none">TANPA TAG</button>`;
+      grid.innerHTML = chips;
+      if (!grid.dataset.bound) {
+        grid.dataset.bound = '1';
+        grid.addEventListener('click', function(e) {
+          const btn = e.target.closest('.tag-chip');
+          if (!btn) return;
+          const tag = btn.dataset.tag;
+          const uid = auth.currentUser && auth.currentUser.uid;
+          if (!uid || !userData) return;
+          const updates = {};
+          updates['users/' + uid + '/tag'] = tag === 'none' ? 'none' : tag;
+          if (tag !== 'none') {
+            updates['users/' + uid + '/alltag/' + tag] = true;
+          }
+          db.ref().update(updates).then(() => {
+            document.getElementById('modalTagSelector').style.display = 'none';
+            showToast('Tag diganti');
+          });
+        });
+      }
+      if (!info.dataset.filled) {
+        const rows = Object.keys(TAG_META).map(k => {
+          const m = TAG_META[k];
+          return `<div class="tag-meta-row">
+            <div><span class="user-tag tag-${k}">${m.title}</span></div>
+            <div class="tag-meta-desc">${m.desc}</div>
+          </div>`;
+        }).join('');
+        info.innerHTML = rows;
+        info.dataset.filled = '1';
+      }
+      modal.style.display = 'block';
+    }
 
     // ============================================================
     // NOTIFICATIONS - CLEAR
@@ -2899,16 +4680,48 @@
     let algSecret = '';
     let adMtState = false;
 
-    function openAdminPanel() {
+    async function openAdminPanel() {
+      if (!auth.currentUser || !userData || (userData.role !== 'admin' && userData.role !== 'owner')) {
+        msg('Khusus admin');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const snap = await db.ref('users/' + uid + '/pwadmin').get();
+      let pw = snap.val();
+      if (!pw) {
+        const resSet = await Swal.fire({
+          title: 'Set Admin Password',
+          input: 'password',
+          inputPlaceholder: 'Password admin baru',
+          confirmButtonText: 'Simpan',
+          showCancelButton: true,
+          background: '#0d0d15',
+          color: '#fff'
+        });
+        if (!resSet.value) return;
+        pw = resSet.value;
+        await db.ref('users/' + uid).update({ pwadmin: pw });
+        showToast('Password admin disimpan');
+      } else {
+        const res = await Swal.fire({
+          title: 'Admin Password',
+          input: 'password',
+          inputPlaceholder: 'Masukkan password admin',
+          confirmButtonText: 'Masuk',
+          showCancelButton: true,
+          background: '#0d0d15',
+          color: '#fff'
+        });
+        if (!res.value || res.value !== pw) {
+          msg('Password admin salah');
+          return;
+        }
+      }
       const overlay = document.getElementById('adminPanelOverlay');
-      const gate = document.getElementById('adminLockGate');
       const inner = document.getElementById('adminPanelInner');
       overlay.classList.add('show');
-      gate.classList.remove('unlocked');
-      inner.style.display = 'none';
-      document.getElementById('algCapInput').value = '';
-      document.getElementById('algError').textContent = '';
-      setTimeout(algGenCaptcha, 80);
+      inner.style.display = 'flex';
+      adLoadData();
     }
 
     function algGenCaptcha() {
@@ -2969,37 +4782,81 @@
     }
 
     function algVerify() {
-      const input = document.getElementById('algCapInput').value.toUpperCase().trim();
-      const errEl = document.getElementById('algError');
-
-      if (input !== algSecret) {
-        errEl.textContent = '✗ KODE SALAH — COBA LAGI';
-        document.getElementById('algCapInput').value = '';
-        algGenCaptcha();
-        const inp = document.getElementById('algCapInput');
-        inp.style.animation = 'none'; void inp.offsetWidth;
-        inp.style.animation = 'algShake 0.4s ease';
-        return;
-      }
-
-      // Captcha passed → grant access
-      errEl.style.color = '#00ff88';
-      errEl.textContent = '✓ ACCESS GRANTED';
-      const gate = document.getElementById('adminLockGate');
       const inner = document.getElementById('adminPanelInner');
-      setTimeout(() => {
-        gate.classList.add('unlocked');
-        setTimeout(() => {
-          inner.style.display = 'flex';
-          adLoadData();
-        }, 380);
-      }, 300);
+      if (!inner) return;
+      inner.style.display = 'flex';
+      adLoadData();
     }
 
     function closeAdminPanel() {
-      document.getElementById('adminPanelOverlay').classList.remove('show');
-      document.getElementById('adminPanelInner').style.display = 'none';
-      document.getElementById('adminLockGate').classList.remove('unlocked');
+      const overlay = document.getElementById('adminPanelOverlay');
+      const inner = document.getElementById('adminPanelInner');
+      if (!overlay || !inner) return;
+      overlay.classList.remove('show');
+      inner.style.display = 'none';
+      adminMode = 'normal';
+      inner.classList.remove('admin-full', 'admin-mini');
+      overlay.classList.remove('admin-overlay-mini');
+      inner.style.position = '';
+      inner.style.top = '';
+      inner.style.left = '';
+      inner.style.right = '';
+      inner.style.bottom = '';
+    }
+
+    function startAdminDrag(e) {
+      const panel = document.getElementById('adminPanelInner');
+      if (!panel || adminMode === 'full') return;
+      if (e.target.closest('button')) return;
+      adminDrag.active = true;
+      const rect = panel.getBoundingClientRect();
+      adminDrag.offsetX = e.clientX - rect.left;
+      adminDrag.offsetY = e.clientY - rect.top;
+      document.addEventListener('mousemove', onAdminDrag);
+      document.addEventListener('mouseup', stopAdminDrag);
+    }
+    function onAdminDrag(e) {
+      if (!adminDrag.active) return;
+      const panel = document.getElementById('adminPanelInner');
+      if (!panel) return;
+      panel.style.position = 'fixed';
+      panel.style.top = (e.clientY - adminDrag.offsetY) + 'px';
+      panel.style.left = (e.clientX - adminDrag.offsetX) + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    }
+    function stopAdminDrag() {
+      adminDrag.active = false;
+      document.removeEventListener('mousemove', onAdminDrag);
+      document.removeEventListener('mouseup', stopAdminDrag);
+    }
+    function toggleAdminSize(mode) {
+      const overlay = document.getElementById('adminPanelOverlay');
+      const panel = document.getElementById('adminPanelInner');
+      if (!overlay || !panel) return;
+      if (mode === 'full') {
+        adminMode = adminMode === 'full' ? 'normal' : 'full';
+      } else if (mode === 'mini') {
+        adminMode = adminMode === 'mini' ? 'normal' : 'mini';
+      }
+      panel.classList.remove('admin-full', 'admin-mini');
+      overlay.classList.remove('admin-overlay-mini');
+      if (adminMode === 'full') {
+        panel.classList.add('admin-full');
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      } else if (adminMode === 'mini') {
+        panel.classList.add('admin-mini');
+        overlay.classList.add('admin-overlay-mini');
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      } else {
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      }
     }
 
     function switchAdminView(id, btn) {
@@ -3014,12 +4871,91 @@
       }
     }
 
+    const TAG_META = {
+      user: { title: 'USER', desc: 'Tag default semua user' },
+      newbie: { title: 'NEWBIE', desc: '10+ followers' },
+      pro: { title: 'PRO', desc: '50+ followers' },
+      terkeren: { title: 'TERKEREN', desc: '150+ followers, special' },
+      tersulit: { title: 'TERSULIT', desc: '150+ followers, special' },
+      vip: { title: 'VIP', desc: 'Pernah VIP atau trial' },
+      vvip: { title: 'VVIP', desc: 'Tag spesial sangat langka' },
+      legend: { title: 'LEGEND', desc: 'Creator legend pilihan admin' },
+      mythic: { title: 'MYTHIC', desc: 'Tag event eksklusif' },
+      godlike: { title: 'GODLIKE', desc: 'Performa upload dan followers tinggi' },
+      savage: { title: 'SAVAGE', desc: 'Aktif upload dan support creator lain' },
+      ultra: { title: 'ULTRA', desc: 'Kombinasi event dan pencapaian' },
+      velly: { title: 'VELLY', desc: 'Tag spesial owner' },
+      gamers: { title: 'GAMERS', desc: 'Tag eksklusif bisa dibeli pakai ExeCoin' },
+      execurive: { title: 'EXECURIVE', desc: 'Tag premium ExeCoin, terlihat lebih profesional' }
+    };
+    let adSelectedUserUid = null;
+
+    function initTagDropSelect() {
+      const sel = document.getElementById('adTagDropName');
+      if (!sel || sel.dataset.bound) return;
+      let html = '<option value="">Pilih tag...</option>';
+      Object.keys(TAG_META).forEach(k => {
+        if (k === 'user') return;
+        const m = TAG_META[k];
+        html += `<option value="${k}">${m.title}</option>`;
+      });
+      sel.innerHTML = html;
+      sel.dataset.bound = '1';
+    }
+
+    function initAdminTagUI() {
+      const info = document.getElementById('adAllTagInfo');
+      if (info) {
+        const rows = Object.keys(TAG_META).map(k => {
+          const m = TAG_META[k];
+          return `<div class="admin-tag-meta-row">
+            <div><span class="user-tag tag-${k}">${m.title}</span></div>
+            <div class="admin-tag-meta-desc">${m.desc}</div>
+          </div>`;
+        }).join('');
+        info.innerHTML = rows;
+      }
+      const grid = document.getElementById('adTagChipGrid');
+      if (grid && !grid.dataset.bound) {
+        const chips = Object.keys(TAG_META).map(k => {
+          const m = TAG_META[k];
+          return `<button class="admin-tag-chip" data-tag="${k}"><span class="user-tag tag-${k}">${m.title}</span></button>`;
+        }).join('');
+        grid.innerHTML = chips;
+        grid.dataset.bound = '1';
+        grid.addEventListener('click', function(e) {
+          const btn = e.target.closest('.admin-tag-chip');
+          if (!btn) return;
+          const tag = btn.dataset.tag;
+          if (!adSelectedUserUid) return;
+          adSetUserTag(adSelectedUserUid, tag);
+        });
+      }
+    }
+
+    function adSelectUser(uid) {
+      const u = adAllUsers.find(x => x.uid === uid);
+      const body = document.getElementById('adTagEditor');
+      const empty = document.getElementById('adTagEditorEmpty');
+      if (!u || !body || !empty) return;
+      adSelectedUserUid = uid;
+      empty.style.display = 'none';
+      body.style.display = 'block';
+      const nameEl = document.getElementById('adTagUserName');
+      const curEl = document.getElementById('adTagCurrentDisplay');
+      if (nameEl) nameEl.textContent = '@' + (u.username || uid);
+      if (curEl) curEl.innerHTML = getTagHTML(u.tag);
+    }
+
     function adLoadData() {
+      if (adminLoaded) return;
+      adminLoaded = true;
       db.ref('users').on('value', snap => {
         const data = snap.val() || {};
         adAllUsers = Object.keys(data).map(uid => ({ uid, ...data[uid] }));
         document.getElementById('adCountU').innerText = adAllUsers.length;
         adRenderUsers(adAllUsers);
+        initAdminTagUI();
       });
       db.ref('songs').on('value', snap => {
         const data = snap.val() || {};
@@ -3034,11 +4970,34 @@
         snap.forEach(c => { const l = c.val(); h = `<div class="log-line"><span class="log-time">[${l.time}]</span> ${escapeHtml(l.msg)}</div>` + h; });
         box.innerHTML = h || '<div style="color:#333">No logs</div>';
       });
-      // Settings - load current announcement & maintenance state
-      db.ref('settings').once('value').then(s => {
+      db.ref('settings').on('value', s => {
         const sv = s.val() || {};
         adMtState = sv.mt || false;
         if (sv.announcement) document.getElementById('adBcInput').value = sv.announcement;
+        initTagDropSelect();
+        const td = sv.tagDrop || null;
+        const nameInp = document.getElementById('adTagDropName');
+        const chInp = document.getElementById('adTagDropChance');
+        const durInp = document.getElementById('adTagDropDuration');
+        const maxInp = document.getElementById('adTagDropMax');
+        const statusEl = document.getElementById('adTagDropStatus');
+        if (nameInp && chInp && durInp && maxInp && statusEl) {
+          if (!td) {
+            nameInp.value = '';
+            chInp.value = '0';
+            durInp.value = '1800';
+            maxInp.value = '0';
+            statusEl.textContent = 'Event OFF';
+          } else {
+            nameInp.value = td.tag || '';
+            chInp.value = String(Math.round((td.chance || 0) * 100));
+            durInp.value = String(td.durationSec || 1800);
+            maxInp.value = String(td.maxWinners || 0);
+            statusEl.textContent = td.active ? 'Event aktif: ' + (td.tag || '') : 'Event tersimpan';
+          }
+        }
+        currentTagDrop = td;
+        setupTagDropWatcher();
       });
     }
 
@@ -3052,12 +5011,12 @@
         return `<div class="user-row-admin">
           <div class="ur-top">
             <div style="flex:1">
-              <div class="ur-name">${escapeHtml(u.username || 'Unknown')} ${tagHtml}</div>
+              <div class="ur-name" onclick="adSelectUser('${u.uid}')">${escapeHtml(u.username || 'Unknown')} ${tagHtml}</div>
               <div class="ur-uid">${u.uid}</div>
             </div>
           </div>
           <div class="ur-actions">
-            <button class="admin-btn admin-btn-gold" onclick="adChangeTag('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
+            <button class="admin-btn admin-btn-gold" onclick="adSelectUser('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
             <button class="admin-btn admin-btn-blue" onclick="adOpenUserTools('${u.uid}','${escapeHtml(u.username||'')}')" style="padding:6px 10px;font-size:11px">TOOLS</button>
             <button class="admin-btn admin-btn-red" onclick="adToggleBan('${u.uid}', ${!!u.banned})" style="padding:6px 10px;font-size:11px">${u.banned ? 'UNBAN' : 'BAN'}</button>
           </div>
@@ -3149,6 +5108,28 @@
     }
     function adClearLogs() { db.ref('logs').remove().then(() => showToast('Logs dihapus')); }
 
+    function adSendFloatChat() {
+      if (!auth.currentUser || !userData || (userData.role !== 'admin' && userData.role !== 'owner')) {
+        showToast('Hanya admin/owner yang bisa kirim chat ini');
+        return;
+      }
+      const inp = document.getElementById('adFloatMsg');
+      if (!inp) return;
+      const msg2 = inp.value.trim();
+      if (!msg2) { showToast('Isi pesan dulu!'); return; }
+      const now = Date.now();
+      const data = {
+        name: userData.username || 'Admin',
+        msg: msg2,
+        createdAt: now,
+        expireAt: now + 15000
+      };
+      db.ref('adminFloatChat/current').set(data).then(() => {
+        showToast('Chat admin dikirim');
+        inp.value = '';
+      });
+    }
+
     function adSendNotif() {
       const type = document.getElementById('adNType').value;
       const target = document.getElementById('adNTarget').value.trim();
@@ -3176,11 +5157,72 @@
       }
     }
 
-    function adChangeTag(uid) {
-      const tags = ['user','vvip','sepuh','admin','owner','developer','sultan','wibu','sadboy','hacker','verified','bot','npc','dj','pro','noob','top-global','premium','influencer','legend','mythic','godlike','savage','maniac','ultra','velly'];
-      const opts = {}; tags.forEach(t => opts[t] = t.toUpperCase());
-      Swal.fire({ title: 'Change Tag', input: 'select', inputOptions: opts, background: '#0d0d15', color: '#fff' })
-        .then(r => { if (r.value) { db.ref('users/' + uid).update({ tag: r.value }); addLog('Tag: ' + uid + ' → ' + r.value); showToast('Tag diubah!'); adLoadData(); } });
+    function adSetUserTag(uid, tag) {
+      const updates = {};
+      updates['users/' + uid + '/tag'] = tag || 'none';
+      if (tag && tag !== 'none') {
+        updates['users/' + uid + '/alltag/' + tag] = true;
+      }
+      db.ref().update(updates).then(() => {
+        addLog('Tag: ' + uid + ' → ' + (tag || 'none'));
+        showToast('Tag diubah!');
+      });
+    }
+
+    function adSaveTagDrop() {
+      const nameInp = document.getElementById('adTagDropName');
+      const chInp = document.getElementById('adTagDropChance');
+      const durInp = document.getElementById('adTagDropDuration');
+      const maxInp = document.getElementById('adTagDropMax');
+      if (!nameInp || !chInp || !durInp || !maxInp) return;
+      const tag = nameInp.value.trim().toLowerCase();
+      let chance = parseFloat(chInp.value);
+      if (!tag) {
+        msg('Tag tidak boleh kosong');
+        return;
+      }
+      if (isNaN(chance) || chance <= 0) chance = 0;
+      if (chance > 100) chance = 100;
+      let durationSec = parseInt(durInp.value, 10);
+      if (isNaN(durationSec) || durationSec < 10) durationSec = 1800;
+      let maxWinners = parseInt(maxInp.value, 10);
+      if (isNaN(maxWinners) || maxWinners < 0) maxWinners = 0;
+      const active = chance > 0;
+      const now = Date.now();
+      const endAt = active ? now + durationSec * 1000 : 0;
+      const data = {
+        active,
+        tag,
+        chance: chance / 100,
+        durationSec,
+        maxWinners,
+        desc: 'Event tag drop dimulai oleh admin',
+        startedBy: auth.currentUser ? (userData && userData.username) : 'Admin',
+        startedAt: now,
+        endAt,
+        obtainedCount: 0
+      };
+      db.ref('settings/tagDrop').set(data).then(() => {
+        showToast('Event tag drop diupdate');
+        if (active) {
+          const msg2 = `Event tag drop ${tag.toUpperCase()} has started by ${data.startedBy}`;
+          const payload = { type: 'event', text: msg2, timestamp: now, fromName: data.startedBy };
+          db.ref('globalNotifications').push(payload);
+        }
+      });
+    }
+    function adClearTagDrop() {
+      db.ref('settings/tagDrop').remove().then(() => {
+        const statusEl = document.getElementById('adTagDropStatus');
+        if (statusEl) statusEl.textContent = 'Event OFF';
+        showToast('Event tag drop dimatikan');
+      });
+    }
+    function adPreviewTagDrop() {
+      const chInp = document.getElementById('adTagDropChance');
+      if (!chInp) return;
+      const chance = parseFloat(chInp.value) || 0;
+      msg('Simulasi chance sekitar ' + chance.toFixed(1) + '% per tick untuk user online');
     }
 
     function adOpenUserTools(uid, name) {
@@ -3251,7 +5293,16 @@
             if (String(fol[i]).startsWith('fake_')) { fol.splice(i, 1); rem--; }
           }
         }
-        db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Followers delta ' + delta + ': ' + uid); showToast('Followers diubah ' + (delta > 0 ? '+' : '') + delta); adLoadData(); });
+        db.ref('users/' + uid).update({ followers: fol }).then(() => {
+          addLog('Followers delta ' + delta + ': ' + uid);
+          showToast('Followers diubah ' + (delta > 0 ? '+' : '') + delta);
+          if (delta > 0) {
+            updateQuestProgress('daily', 'daily_follower_boost', delta, uid);
+            updateQuestProgress('weekly', 'weekly_followers_20', delta, uid);
+            updateQuestProgress('weekly', 'weekly_followers_50', delta, uid);
+          }
+          adLoadData();
+        });
       });
     }
 
