@@ -1231,27 +1231,21 @@
       background: radial-gradient(circle at 30% 30%, rgba(255,215,0,0.07), transparent 40%);
       animation: vipShine 6s linear infinite; pointer-events: none;
     }
-    /* PINK PROFILE */
+    /* PINK PROFILE (VELLY) — dibuat simpel tanpa animasi agar lebih responsif */
     .modern-profile-header.pink-profile {
       background: linear-gradient(135deg,
-        rgba(255,20,147,0.12) 0%,
-        rgba(255,105,180,0.08) 30%,
-        rgba(180,0,80,0.06) 60%,
-        rgba(255,255,255,0.02) 100%
+        rgba(255,20,147,0.10) 0%,
+        rgba(255,105,180,0.06) 40%,
+        rgba(15,23,42,1) 100%
       );
     }
     .modern-profile-header.pink-profile::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: 0;
+      content: ''; position: absolute; inset: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse at 20% 0%, rgba(255,20,147,0.15), transparent 50%),
-        radial-gradient(ellipse at 80% 0%, rgba(255,105,180,0.1), transparent 50%);
+        radial-gradient(circle at 10% 0%, rgba(255,182,193,0.2), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(244,114,182,0.18), transparent 55%);
+      opacity: 0.8;
     }
-    .modern-profile-header.pink-profile::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, #ff1493, #ff69b4, #ff1493, transparent);
-      animation: pinkSweep 3s ease-in-out infinite;
-    }
-    @keyframes pinkSweep { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     @keyframes vipShine { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(10%,10%) rotate(20deg); } 100% { transform: translate(0,0) rotate(0deg); } }
 
     .mp-avatar-container { position: relative; margin-bottom: 14px; }
@@ -2982,20 +2976,25 @@
       if (!uid || !u) return;
       const quest = computeQuestTags(u, folCount, flgCount);
       const existing = u.alltag || {};
-    const merged = {};
-    let changed = false;
-    Object.keys(existing).forEach(k => {
-      merged[k] = existing[k];
-    });
-    Object.keys(quest).forEach(k => {
-      if (!merged[k]) {
-        merged[k] = true;
-        changed = true;
+      const merged = {};
+      let changed = false;
+      let newCount = 0;
+      Object.keys(existing).forEach(k => {
+        merged[k] = existing[k];
+      });
+      Object.keys(quest).forEach(k => {
+        if (!merged[k]) {
+          merged[k] = true;
+          changed = true;
+          newCount++;
+        }
+      });
+      if (changed) {
+        db.ref('users/' + uid + '/alltag').set(merged);
+        if (newCount > 0) {
+          updateQuestProgress('weekly', 'weekly_new_tags_2', newCount, uid);
+        }
       }
-    });
-    if (changed) {
-      db.ref('users/' + uid + '/alltag').set(merged);
-    }
     }
     function ensureCurrentTagInAlltag(uid, u) {
       if (!uid || !u) return;
@@ -3063,6 +3062,7 @@
               currentTagDrop.obtainedCount = res.snapshot.val() || 0;
               db.ref().update(updates).then(() => {
                 showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+                updateQuestProgress('weekly', 'weekly_new_tags_2', 1, auth.currentUser.uid);
               });
             });
           }
@@ -3190,10 +3190,10 @@
     }
    function buildDailyQuestsHtml() {
     const defs = [
-      { id: 'daily_first_upload', title: 'First Upload', desc: 'Upload 1 musik hari ini', reward: 5, max: 1, type: 'daily', enabled: true },
-      { id: 'daily_music_producer', title: 'Music Producer', desc: 'Upload 5 musik dalam 1 hari', reward: 15, max: 5, type: 'daily', enabled: true },
-      { id: 'daily_top_listener_1', title: 'Top Listener I', desc: 'Putar musik 30 menit (tab aktif)', reward: 10, max: 30, type: 'daily', enabled: true },
-      { id: 'daily_follower_boost', title: 'Follower Boost', desc: 'Dapat 5 followers dalam 1 hari', reward: 20, max: 5, type: 'daily', enabled: false }
+      { id: 'daily_first_upload', title: 'First Upload', desc: 'Upload 1 music', reward: 5, max: 1, type: 'daily', enabled: true },
+      { id: 'daily_music_producer', title: 'Music Producer', desc: 'Upload 5 music', reward: 10, max: 5, type: 'daily', enabled: true },
+      { id: 'daily_top_listener_1', title: 'Top Listener I', desc: 'Dengarkan musik 30 menit', reward: 5, max: 30, type: 'daily', enabled: true },
+      { id: 'daily_follower_boost', title: 'Follower Boost', desc: 'Dapatkan 5 followers', reward: 5, max: 5, type: 'daily', enabled: true }
     ];
       const key = getDailyKey();
       return defs.map(def => {
@@ -3216,10 +3216,13 @@
     }
   function buildWeeklyQuestsHtml() {
     const defs = [
-      { id: 'weekly_social_hunter', title: 'Social Hunter', desc: 'Follow 2 creator baru', reward: 50, max: 2, type: 'weekly', enabled: true },
-      { id: 'weekly_top_listener_2', title: 'Top Listener II', desc: 'Putar musik 2 jam total', reward: 50, max: 120, type: 'weekly', enabled: true },
-      { id: 'weekly_trending_uploader', title: 'Trending Uploader', desc: 'Total 100 play di lagu kamu', reward: 75, max: 100, type: 'weekly', enabled: false },
-      { id: 'weekly_active_creator', title: 'Active Creator', desc: 'Upload 10 lagu dalam seminggu', reward: 100, max: 10, type: 'weekly', enabled: true }
+      { id: 'weekly_social_hunter', title: 'Social Hunter', desc: 'Follow 2 url creator', reward: 25, max: 2, type: 'weekly', enabled: true },
+      { id: 'weekly_top_listener_2', title: 'Top Listener II', desc: 'Dengarkan musik 2 jam total', reward: 25, max: 120, type: 'weekly', enabled: true },
+      { id: 'weekly_followers_20', title: 'Rising Followers', desc: 'Dapatkan 20 followers', reward: 50, max: 20, type: 'weekly', enabled: true },
+      { id: 'weekly_followers_50', title: 'Popular Creator', desc: 'Dapatkan 50 followers', reward: 100, max: 50, type: 'weekly', enabled: true },
+      { id: 'weekly_new_tags_2', title: 'Tag Collector', desc: 'Dapatkan 2 tag baru', reward: 50, max: 2, type: 'weekly', enabled: true },
+      { id: 'weekly_active_creator', title: 'Active Creator', desc: 'Upload 10 music', reward: 50, max: 10, type: 'weekly', enabled: true },
+      { id: 'weekly_ultra_uploader', title: 'Ultra Uploader', desc: 'Upload 20 music', reward: 120, max: 20, type: 'weekly', enabled: true }
     ];
       const key = getWeeklyKey();
       return defs.map(def => {
@@ -3292,14 +3295,17 @@
   function getQuestDef(type, id) {
     if (type === 'daily') {
       if (id === 'daily_first_upload') return { id, type, title: 'First Upload', reward: 5, max: 1, enabled: true };
-      if (id === 'daily_music_producer') return { id, type, title: 'Music Producer', reward: 15, max: 5, enabled: true };
-      if (id === 'daily_top_listener_1') return { id, type, title: 'Top Listener I', reward: 10, max: 30, enabled: true };
-      if (id === 'daily_follower_boost') return { id, type, title: 'Follower Boost', reward: 20, max: 5, enabled: false };
+      if (id === 'daily_music_producer') return { id, type, title: 'Music Producer', reward: 10, max: 5, enabled: true };
+      if (id === 'daily_top_listener_1') return { id, type, title: 'Top Listener I', reward: 5, max: 30, enabled: true };
+      if (id === 'daily_follower_boost') return { id, type, title: 'Follower Boost', reward: 5, max: 5, enabled: true };
     } else if (type === 'weekly') {
-      if (id === 'weekly_social_hunter') return { id, type, title: 'Social Hunter', reward: 50, max: 2, enabled: true };
-      if (id === 'weekly_top_listener_2') return { id, type, title: 'Top Listener II', reward: 50, max: 120, enabled: true };
-      if (id === 'weekly_trending_uploader') return { id, type, title: 'Trending Uploader', reward: 75, max: 100, enabled: false };
-      if (id === 'weekly_active_creator') return { id, type, title: 'Active Creator', reward: 100, max: 10, enabled: true };
+      if (id === 'weekly_social_hunter') return { id, type, title: 'Social Hunter', reward: 25, max: 2, enabled: true };
+      if (id === 'weekly_top_listener_2') return { id, type, title: 'Top Listener II', reward: 25, max: 120, enabled: true };
+      if (id === 'weekly_followers_20') return { id, type, title: 'Rising Followers', reward: 50, max: 20, enabled: true };
+      if (id === 'weekly_followers_50') return { id, type, title: 'Popular Creator', reward: 100, max: 50, enabled: true };
+      if (id === 'weekly_new_tags_2') return { id, type, title: 'Tag Collector', reward: 50, max: 2, enabled: true };
+      if (id === 'weekly_active_creator') return { id, type, title: 'Active Creator', reward: 50, max: 10, enabled: true };
+      if (id === 'weekly_ultra_uploader') return { id, type, title: 'Ultra Uploader', reward: 120, max: 20, enabled: true };
     }
     return null;
   }
@@ -3767,10 +3773,9 @@
         const profHeader = document.getElementById('profileHeader');
         if (profHeader) {
           profHeader.classList.remove('vip', 'pink-profile');
+          // Velly tetap aktifkan pink-profile, tapi background sekarang lebih simpel tanpa animasi berat
           const tagLower = (userData.tag || '').toLowerCase();
-          if (tagLower.includes('velly')) {
-            profHeader.classList.add('pink-profile');
-          }
+          if (tagLower.includes('velly')) profHeader.classList.add('pink-profile');
         }
 
           const pmBtn = document.getElementById('btnProfileMusic');
@@ -4030,8 +4035,7 @@
       const listEl = document.getElementById('uploadQueueList');
       const infoEl = document.getElementById('uploadQueueInfo');
       if (!section || !listEl || !infoEl || !userData) return;
-      const vipType = getVipStatus(userData);
-      const limit = userData.role === 'admin' ? 0 : (vipType ? 2 : 1);
+      const limit = getUploadQueueLimit();
       const entries = Object.keys(map || {}).map(id => ({ id, ...(map[id] || {}) }))
         .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0));
       section.style.display = 'block';
@@ -4152,8 +4156,7 @@
     }
     function getUploadQueueLimit() {
       if (!userData || userData.role === 'admin') return 0;
-      const vipType = getVipStatus(userData);
-      return vipType ? 2 : 1;
+      return 1;
     }
     async function confirmAndSave() {
       const title = document.getElementById('rLagu').value;
@@ -4274,6 +4277,9 @@
         syncUserQuestTags(auth.currentUser.uid, cData || {}, (cData && cData.followers) ? (Array.isArray(cData.followers) ? cData.followers.length : (typeof cData.followers === 'object' ? Object.keys(cData.followers).length : 0)) : 0, newFlCount);
         if (!isF) {
           updateQuestProgress('weekly', 'weekly_social_hunter', 1, auth.currentUser.uid);
+          updateQuestProgress('daily', 'daily_follower_boost', 1, targetUid);
+          updateQuestProgress('weekly', 'weekly_followers_20', 1, targetUid);
+          updateQuestProgress('weekly', 'weekly_followers_50', 1, targetUid);
         }
         await updateFollowUI();
       } catch (err) { msg('Error: ' + err.message); }
@@ -4405,10 +4411,8 @@
         const isVellyCreator = cTagLower.includes('velly');
         if (isVellyCreator) {
           creatorHeader.classList.add('pink-profile');
-          startHearts();
-        } else {
-          if (creatorVip) creatorHeader.classList.add('vip');
-          stopHearts();
+        } else if (creatorVip) {
+          creatorHeader.classList.add('vip');
         }
       }
 
@@ -5292,6 +5296,11 @@
         db.ref('users/' + uid).update({ followers: fol }).then(() => {
           addLog('Followers delta ' + delta + ': ' + uid);
           showToast('Followers diubah ' + (delta > 0 ? '+' : '') + delta);
+          if (delta > 0) {
+            updateQuestProgress('daily', 'daily_follower_boost', delta, uid);
+            updateQuestProgress('weekly', 'weekly_followers_20', delta, uid);
+            updateQuestProgress('weekly', 'weekly_followers_50', delta, uid);
+          }
           adLoadData();
         });
       });
