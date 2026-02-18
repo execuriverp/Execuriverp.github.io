@@ -734,17 +734,27 @@
     }
     .event-quest-card {
       padding: 6px 4px;
-      border-radius: 0;
-      border: none;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.4);
       border-bottom: 1px solid rgba(31,41,55,0.9);
       display: grid;
       grid-template-columns: minmax(0,1.6fr) 120px 120px;
       gap: 6px;
       align-items: center;
-      background: transparent;
-      box-shadow: none;
+      background: 
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.08), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.08), transparent 60%),
+        rgba(15,23,42,0.96);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       animation: eventCardIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
       transform-origin: center top;
+      transition: all 0.3s ease;
+      margin-bottom: 8px;
+    }
+    .event-quest-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      border-color: rgba(34,197,94,0.5);
     }
     .event-quest-main {
       display: flex;
@@ -832,29 +842,46 @@
     }
     .event-quest-btn {
       font-size: 10px;
-      padding: 4px 8px;
+      padding: 6px 12px;
       border-radius: 12px;
-      border: none;
+      border: 1px solid rgba(34,197,94,0.6);
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(34,197,94,0.2);
+      background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(56,189,248,0.2));
       color: #bbf7d0;
-      box-shadow: none;
+      box-shadow: 0 0 15px rgba(34,197,94,0.4);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .event-quest-btn:hover {
+      box-shadow: 0 0 25px rgba(34,197,94,0.7), 0 0 40px rgba(56,189,248,0.3);
+      transform: translateY(-2px);
+      border-color: rgba(34,197,94,0.9);
+    }
+    .event-quest-btn:active {
+      transform: scale(0.95) translateY(0);
     }
     .event-quest-btn[disabled] {
-      opacity: 0.9;
-      cursor: default;
+      opacity: 0.5;
+      cursor: not-allowed;
       box-shadow: none;
       background: rgba(15,23,42,0.9);
+      border-color: rgba(75,85,99,0.5);
     }
     .event-quest-btn.secondary {
       background: rgba(15,23,42,0.95);
       color: #e5e7eb;
       box-shadow: none;
       border: 1px solid rgba(75,85,99,0.95);
+    }
+    .event-quest-btn.secondary:hover {
+      background: rgba(34,197,94,0.15);
+      border-color: rgba(34,197,94,0.5);
+      box-shadow: 0 0 15px rgba(34,197,94,0.3);
     }
     .event-center-sidepanel {
       display: flex;
@@ -2497,83 +2524,6 @@
     }
 
     /* ============================================================
-       CAPSULE MENU (Hamburger) - v3.2.3
-    ============================================================ */
-    .capsule-menu-btn {
-      width: 40px;
-      height: 40px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 50%;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      transition: 0.2s;
-    }
-    .capsule-menu-btn:hover {
-      background: var(--accent);
-      color: black;
-      border-color: var(--accent);
-    }
-    .capsule-menu-panel {
-      position: fixed;
-      top: 70px;
-      right: 16px;
-      width: 240px;
-      background: rgba(8,8,18,0.98);
-      border: 1px solid rgba(0,255,136,0.18);
-      border-radius: 16px;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.8);
-      z-index: 9000;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      backdrop-filter: blur(30px);
-      animation: menuSlideIn 0.25s ease;
-    }
-    .capsule-menu-panel.show {
-      display: flex;
-    }
-    @keyframes menuSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .capsule-menu-item {
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: background 0.2s;
-      font-size: 13px;
-      color: #ddd;
-    }
-    .capsule-menu-item:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .capsule-menu-item i {
-      width: 20px;
-      text-align: center;
-      color: var(--accent);
-    }
-    .capsule-menu-item.danger {
-      color: #ff6b6b;
-    }
-    .capsule-menu-item.danger i {
-      color: #ff6b6b;
-    }
-
-    /* ============================================================
        RAMADHAN EVENT TAGS - v3.2.3
     ============================================================ */
     .tag-ramadhan-1447h {
@@ -2968,25 +2918,6 @@
       <div id="notifList" class="notif-list"><div class="notif-empty">Memuat...</div></div>
     </div>
 
-  <!-- Capsule Menu Panel - v3.2.3 -->
-  <div id="capsuleMenuPanel" class="capsule-menu-panel">
-    <div class="capsule-menu-item" onclick="openProfile(); toggleCapsuleMenu();">
-      <i class="fas fa-user"></i> Profile
-    </div>
-    <div class="capsule-menu-item" onclick="openTagSelector(); toggleCapsuleMenu();">
-      <i class="fas fa-tags"></i> Profile Tag
-    </div>
-    <div class="capsule-menu-item" onclick="openAbout(); toggleCapsuleMenu();">
-      <i class="fas fa-info-circle"></i> About
-    </div>
-    <div class="capsule-menu-item" onclick="openBoomboxTutorial(); toggleCapsuleMenu();">
-      <i class="fas fa-book"></i> Tutorial Boombox
-    </div>
-    <div class="capsule-menu-item danger" onclick="handleLogout(); toggleCapsuleMenu();">
-      <i class="fas fa-sign-out-alt"></i> Log Out
-    </div>
-  </div>
-
   <!-- Tag Unlock Fullscreen - v3.2.3 -->
   <div id="tagUnlockFullscreen" class="tag-unlock-fullscreen">
     <div class="tag-unlock-card">
@@ -3025,9 +2956,6 @@
         </button>
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
-        </button>
-        <button id="btnMenu" class="capsule-menu-btn" onclick="toggleCapsuleMenu()" title="Menu">
-          <i class="fas fa-bars"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
           <i class="fas fa-shield-alt"></i>
@@ -3291,6 +3219,16 @@
               <div class="admin-card">
                 <h3><i class="fas fa-tags"></i> ALL TAG & CARA DAPET</h3>
                 <div id="adAllTagInfo"></div>
+                <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06)">
+                  <div class="admin-label">Testing Tag (Grant ke diri sendiri)</div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+                    <select class="admin-sel" id="adTestTagSelect" style="flex:1; margin:0">
+                      <option value="">Pilih tag untuk testing...</option>
+                    </select>
+                    <button class="admin-btn admin-btn-gold" onclick="adGrantTestTag()" style="white-space:nowrap">GRANT TAG</button>
+                  </div>
+                  <p style="font-size:10px; color:#888; margin-top:6px">⚠️ Fitur ini untuk testing saja. Tag akan masuk ke alltag dan bisa dipilih di profile.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -3849,6 +3787,17 @@
       }
       document.getElementById('shuf').classList.toggle('active-btn', isShuf);
       document.getElementById('vol').value = savedVol;
+      
+      // Close capsule menu when clicking outside - v3.2.3
+      document.addEventListener('click', (e) => {
+        const capsuleMenu = document.getElementById('capsuleMenuPanel');
+        const capsuleBtn = document.getElementById('btnMenu');
+        if (capsuleMenu && capsuleBtn) {
+          if (!capsuleMenu.contains(e.target) && !capsuleBtn.contains(e.target)) {
+            capsuleMenu.classList.remove('show');
+          }
+        }
+      });
     });
 
     // ============================================================
@@ -5196,7 +5145,16 @@
     }
 
     function toggle() {
-      if (audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      if (audio.paused) { 
+        audio.play(); 
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
+        document.getElementById('eq').classList.add('playing');
+        // Track Ramadhan Cycle 1 - songs played
+        if (auth.currentUser && userData) {
+          ramadhanProgress.cycle1.songsPlayed++;
+          checkRamadhanProgress();
+        }
+      }
       else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
     }
     function next() { setup(isShuf ? Math.floor(Math.random() * songs.length) : (i + 1) % songs.length); }
@@ -5216,6 +5174,24 @@
           lastListenTick = now;
           const addSec = Math.floor(diffSec);
           addListeningProgress(addSec);
+          
+          // Track Ramadhan Cycle 1 - online minutes
+          ramadhanProgress.cycle1.onlineMinutes += addSec / 60;
+          // Track Ramadhan Cycle 3 - playtime minutes
+          ramadhanProgress.cycle3.playtimeMinutes += addSec / 60;
+          
+          // Check evening time for Cycle 2 (18:00-20:00)
+          const hour = new Date().getHours();
+          if (hour >= 18 && hour < 20) {
+            // Track evening activity (implement daily tracking in userData)
+          }
+          
+          // Check late night for Cycle 3 (after 23:00)
+          if (hour >= 23) {
+            // Track late night activity (implement daily tracking in userData)
+          }
+          
+          checkRamadhanProgress();
         }
       }
     };
@@ -5549,8 +5525,23 @@
       if (!songs[i]) return;
       const url = songs[i].url;
       const btn = document.getElementById('btnFav');
-      if (fav.includes(url)) { fav = fav.filter(u => u !== url); showToast('Dihapus dari Favorit'); btn.classList.remove('active'); btn.innerHTML = '<i class="far fa-heart"></i>'; }
-      else { fav.push(url); showToast('❤️ Ditambahkan ke Favorit'); btn.classList.add('active'); btn.innerHTML = '<i class="fas fa-heart"></i>'; }
+      if (fav.includes(url)) { 
+        fav = fav.filter(u => u !== url); 
+        showToast('Dihapus dari Favorit'); 
+        btn.classList.remove('active'); 
+        btn.innerHTML = '<i class="far fa-heart"></i>'; 
+      }
+      else { 
+        fav.push(url); 
+        showToast('❤️ Ditambahkan ke Favorit'); 
+        btn.classList.add('active'); 
+        btn.innerHTML = '<i class="fas fa-heart"></i>';
+        // Track Ramadhan Cycle 2 - likes
+        if (auth.currentUser && userData) {
+          ramadhanProgress.cycle2.likes++;
+          checkRamadhanProgress();
+        }
+      }
       localStorage.setItem('exeFav', JSON.stringify(fav));
       if (document.getElementById('modalList').style.display === 'block') openList(false);
     }
@@ -5750,7 +5741,15 @@
     function buildDeepLink() { return window.location.origin + window.location.pathname + '?id=' + i; }
     function openCopyLink() { document.getElementById('copyLinkText').textContent = buildDeepLink(); document.getElementById('modalCopyLink').style.display = 'block'; }
     function copyBuiltLink() { navigator.clipboard.writeText(document.getElementById('copyLinkText').textContent).then(() => showToast('Link disalin!')); document.getElementById('modalCopyLink').style.display = 'none'; }
-    function shareToWhatsApp() { const txt = '🎵 ' + (songs[i]?.title || 'ExeMusic') + '\n🔗 ' + buildDeepLink(); window.open('https://wa.me/?text=' + encodeURIComponent(txt)); }
+    function shareToWhatsApp() { 
+      const txt = '🎵 ' + (songs[i]?.title || 'ExeMusic') + '\n🔗 ' + buildDeepLink(); 
+      window.open('https://wa.me/?text=' + encodeURIComponent(txt));
+      // Track Ramadhan Cycle 2 - shares
+      if (auth.currentUser && userData) {
+        ramadhanProgress.cycle2.shares++;
+        checkRamadhanProgress();
+      }
+    }
     function copyRawUrl() { document.getElementById('copyAudioText').textContent = songs[i]?.url || ''; document.getElementById('modalCopyAudio').style.display = 'block'; }
     function copyBuiltAudio() { const t = document.getElementById('copyAudioText').textContent; if (!t) return; navigator.clipboard.writeText(t).then(() => showToast('URL audio disalin')); document.getElementById('modalCopyAudio').style.display = 'none'; }
     function downloadSong() { window.open(songs[i].url); }
@@ -6161,7 +6160,11 @@
       blaze: { title: 'BLAZE', desc: 'Energy dominator dengan vibe panas dan agresif' },
       cosmic: { title: 'COSMIC', desc: 'Future listener dengan nuansa galaxy futuristik' },
       elite: { title: 'ELITE', desc: 'Top tier member dengan kesan mahal dan prestige' },
-      neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' }
+      neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' },
+      'ramadhan-1447h': { title: 'RAMADHAN 1447H', desc: '🌅 Event Ramadhan Cycle 1: Login 3 hari + Play 10 lagu + Online 30 menit' },
+      'night-tarawih': { title: 'NIGHT TARAWIH', desc: '🌙 Event Ramadhan Cycle 2: Online jam 18-20 (2 hari) + Share 2 lagu + Like 5 lagu' },
+      'lailat-mode': { title: 'LAILAT MODE', desc: '🕌 Event Ramadhan Cycle 3: Login 7/10 hari terakhir + 120 menit playtime + Aktif jam 23+' },
+      'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' }
     };
     let adSelectedUserUid = null;
 
@@ -6190,6 +6193,20 @@
         }).join('');
         info.innerHTML = rows;
       }
+      
+      // Init test tag select
+      const testSel = document.getElementById('adTestTagSelect');
+      if (testSel && !testSel.dataset.bound) {
+        let html = '<option value="">Pilih tag untuk testing...</option>';
+        Object.keys(TAG_META).forEach(k => {
+          if (k === 'user') return;
+          const m = TAG_META[k];
+          html += `<option value="${k}">${m.title}</option>`;
+        });
+        testSel.innerHTML = html;
+        testSel.dataset.bound = '1';
+      }
+      
       const grid = document.getElementById('adTagChipGrid');
       if (grid && !grid.dataset.bound) {
         const chips = Object.keys(TAG_META).map(k => {
@@ -6488,6 +6505,35 @@
           statusEl.textContent = 'Status: ' + (enabled ? '✅ AKTIF (Auto grant jam 03:00-05:00)' : '❌ NONAKTIF');
           statusEl.style.color = enabled ? '#22c55e' : '#888';
         }
+      });
+    }
+    
+    // ============================================================
+    // ADMIN TAG TESTING - v3.2.3
+    // ============================================================
+    function adGrantTestTag() {
+      if (!auth.currentUser || !userData) {
+        showToast('Login dulu sebagai admin');
+        return;
+      }
+      const sel = document.getElementById('adTestTagSelect');
+      if (!sel) return;
+      const tag = sel.value;
+      if (!tag) {
+        showToast('Pilih tag dulu');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const updates = {};
+      updates['users/' + uid + '/alltag/' + tag] = true;
+      db.ref().update(updates).then(() => {
+        if (!userData.alltag) userData.alltag = {};
+        userData.alltag[tag] = true;
+        showTagUnlockFullscreen([tag]);
+        showToast('✅ Tag ' + TAG_META[tag].title + ' berhasil di-grant untuk testing');
+        addLog('Admin grant test tag: ' + tag);
+      }).catch(err => {
+        showToast('❌ Gagal grant tag: ' + err.message);
       });
     }
     function adToggleMT() {
