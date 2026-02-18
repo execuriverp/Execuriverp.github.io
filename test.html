@@ -169,7 +169,9 @@
     .load-percent {
       font-weight: 700; font-size: 16px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .load-dots {
@@ -3245,7 +3247,7 @@
     <div class="ftt-card">
       <div class="ftt-header">
         <h3>🎉 Selamat Datang di ExeMusic!</h3>
-        <button class="ftt-close" onclick="closeTutorial()">×</button>
+        <button class="ftt-close" onclick="closeFirstTimeTutorial()">×</button>
       </div>
       <div class="ftt-body">
         <div class="ftt-section">
@@ -3277,7 +3279,7 @@
           </div>
         </div>
       </div>
-      <button class="ftt-btn" onclick="closeTutorial()">MENGERTI!</button>
+      <button class="ftt-btn" onclick="closeFirstTimeTutorial()">MENGERTI!</button>
     </div>
   </div>
 
@@ -4264,7 +4266,7 @@
       if (tutorial) tutorial.classList.add('show');
     }
     
-    function closeTutorial() {
+    function closeFirstTimeTutorial() {
       const tutorial = document.getElementById('firstTimeTutorial');
       if (tutorial) tutorial.classList.remove('show');
       localStorage.setItem('exeTutorialSeen', '1');
