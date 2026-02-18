@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.2</title>
+  <title>ExeMusic 3.2.3</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -169,7 +169,9 @@
     .load-percent {
       font-weight: 700; font-size: 16px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .load-dots {
@@ -630,6 +632,9 @@
       box-shadow: 0 0 12px rgba(250,204,21,0.6);
       animation: coinPulse 2.4s ease-in-out infinite;
     }
+    .event-coins-icon.gain {
+      animation: coinGain 0.6s ease-out;
+    }
     .event-coins-body {
       display: flex;
       flex-direction: column;
@@ -651,6 +656,11 @@
     @keyframes coinPulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.06); }
+    }
+    @keyframes coinGain {
+      0% { transform: scale(1); text-shadow: 0 0 8px rgba(245,158,11,0.9); }
+      40% { transform: scale(1.18); text-shadow: 0 0 16px rgba(250,204,21,1); }
+      100% { transform: scale(1); text-shadow: 0 0 8px rgba(245,158,11,0.9); }
     }
     .event-center-layout {
       display: grid;
@@ -682,6 +692,12 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 6px;
+    }
+    .event-tab-view {
+      display: none;
+    }
+    .event-tab-view.active {
+      display: block;
     }
     .event-tab-btn i {
       font-size: 13px;
@@ -726,15 +742,27 @@
     }
     .event-quest-card {
       padding: 6px 4px;
-      border-radius: 0;
-      border: none;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.4);
       border-bottom: 1px solid rgba(31,41,55,0.9);
       display: grid;
       grid-template-columns: minmax(0,1.6fr) 120px 120px;
       gap: 6px;
       align-items: center;
-      background: transparent;
-      box-shadow: none;
+      background: 
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.08), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.08), transparent 60%),
+        rgba(15,23,42,0.96);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      animation: eventCardIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+      transform-origin: center top;
+      transition: all 0.3s ease;
+      margin-bottom: 8px;
+    }
+    .event-quest-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      border-color: rgba(34,197,94,0.5);
     }
     .event-quest-main {
       display: flex;
@@ -759,6 +787,16 @@
       align-items: center;
       gap: 4px;
       white-space: nowrap;
+    }
+    @keyframes eventCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
     .event-quest-reward i {
       font-size: 11px;
@@ -812,29 +850,46 @@
     }
     .event-quest-btn {
       font-size: 10px;
-      padding: 4px 8px;
+      padding: 6px 12px;
       border-radius: 12px;
-      border: none;
+      border: 1px solid rgba(34,197,94,0.6);
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(34,197,94,0.2);
+      background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(56,189,248,0.2));
       color: #bbf7d0;
-      box-shadow: none;
+      box-shadow: 0 0 15px rgba(34,197,94,0.4);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .event-quest-btn:hover {
+      box-shadow: 0 0 25px rgba(34,197,94,0.7), 0 0 40px rgba(56,189,248,0.3);
+      transform: translateY(-2px);
+      border-color: rgba(34,197,94,0.9);
+    }
+    .event-quest-btn:active {
+      transform: scale(0.95) translateY(0);
     }
     .event-quest-btn[disabled] {
-      opacity: 0.9;
-      cursor: default;
+      opacity: 0.5;
+      cursor: not-allowed;
       box-shadow: none;
       background: rgba(15,23,42,0.9);
+      border-color: rgba(75,85,99,0.5);
     }
     .event-quest-btn.secondary {
       background: rgba(15,23,42,0.95);
       color: #e5e7eb;
       box-shadow: none;
       border: 1px solid rgba(75,85,99,0.95);
+    }
+    .event-quest-btn.secondary:hover {
+      background: rgba(34,197,94,0.15);
+      border-color: rgba(34,197,94,0.5);
+      box-shadow: 0 0 15px rgba(34,197,94,0.3);
     }
     .event-center-sidepanel {
       display: flex;
@@ -1657,6 +1712,32 @@
       font-size: 12px;
       font-weight: 700;
       color: #bbf7d0;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .countdown-segment {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 32px;
+    }
+    .countdown-number {
+      font-size: 16px;
+      font-weight: 800;
+      color: #22c55e;
+      text-shadow: 0 0 10px rgba(34,197,94,0.6);
+      animation: countdownPulse 1s ease-in-out infinite;
+    }
+    .countdown-label {
+      font-size: 7px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    @keyframes countdownPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
     .player-badges {
       margin-top: 4px;
@@ -2318,22 +2399,97 @@
     /* ============================================================
        TOAST
     ============================================================ */
-    #toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 99999; pointer-events: none; }
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 99999;
+      pointer-events: none;
+    }
     .toast {
       background: rgba(10,10,18,0.95);
       border: 1px solid rgba(255,255,255,0.08);
       border-left: 3px solid var(--accent);
-      color: #fff; padding: 9px 18px;
-      border-radius: 8px; font-size: 12px;
-      display: flex; align-items: center; gap: 9px;
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.5);
       animation: toastIn 0.3s cubic-bezier(0.68,-0.55,0.27,1.55);
       backdrop-filter: blur(10px);
       white-space: nowrap;
+      pointer-events: auto;
     }
     .toast.hide { animation: toastOut 0.3s forwards; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
+    .toast.toast-success { border-left-color: #22c55e; }
+    .toast.toast-error { border-left-color: #f97316; }
+    .toast.toast-event { border-left-color: #38bdf8; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(-12px) scale(0.96); }
+    }
+
+    .global-event-pill {
+      position: fixed;
+      top: 64px;
+      right: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.6);
+      box-shadow: 0 0 16px rgba(56,189,248,0.5);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #e5f4ff;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .global-event-pill.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .global-event-pill .pill-icon {
+      font-size: 13px;
+    }
+    .global-event-pill .pill-time {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+    .global-event-pill.pulse {
+      animation: pillPulse 5s ease-in-out infinite;
+    }
+    .global-event-pill.urgent {
+      border-color: rgba(248,113,113,0.9);
+      box-shadow: 0 0 20px rgba(248,113,113,0.9);
+      color: #fee2e2;
+    }
+    @keyframes pillPulse {
+      0%, 95% {
+        box-shadow: 0 0 16px rgba(56,189,248,0.5);
+      }
+      97% {
+        box-shadow: 0 0 22px rgba(56,189,248,0.8);
+      }
+      100% {
+        box-shadow: 0 0 16px rgba(56,189,248,0.5);
+      }
+    }
 
     /* Modal messages */
     .modal-msg { text-align: center; font-size: 12px; margin-top: 10px; padding: 9px; border-radius: 8px; display: none; }
@@ -2364,8 +2520,692 @@
     .about-dev-link { color: #00d4ff; font-weight: 700; text-decoration: none; text-shadow: 0 0 10px #00d4ff; }
     .about-dev-link:hover { color: #7df9ff; }
 
+    /* ============================================================
+       GAMING STYLE ENHANCEMENTS - v3.2.3
+    ============================================================ */
+    .event-quest-btn-gaming {
+      background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(56,189,248,0.2)) !important;
+      border: 1px solid rgba(34,197,94,0.6) !important;
+      color: #bbf7d0 !important;
+      box-shadow: 0 0 15px rgba(34,197,94,0.4) !important;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .event-quest-btn-gaming:hover {
+      box-shadow: 0 0 25px rgba(34,197,94,0.7), 0 0 40px rgba(56,189,248,0.3) !important;
+      transform: translateY(-2px) !important;
+      border-color: rgba(34,197,94,0.9) !important;
+    }
+    .event-quest-btn-gaming:active {
+      transform: scale(0.95) translateY(0) !important;
+    }
+    .gaming-card-enhanced {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+      transition: all 0.3s ease !important;
+    }
+    .gaming-card-enhanced:hover {
+      transform: translateY(-3px) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.8) !important;
+      border-color: rgba(34,197,94,0.6) !important;
+    }
+    .event-quest-progress-fill {
+      background: linear-gradient(90deg, #22c55e, #38bdf8, #22c55e) !important;
+      background-size: 200% 100% !important;
+      animation: progressShine 2s linear infinite !important;
+    }
+    @keyframes progressShine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ============================================================
+       RAMADHAN EVENT TAGS - v3.2.3 RESPONSIVE
+    ============================================================ */
+    .tag-ramadhan-1447h {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #000;
+      font-weight: 900;
+      border: 1px solid rgba(245,158,11,0.8);
+      position: relative;
+      padding: 2px 18px 2px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+    .tag-ramadhan-1447h::before,
+    .tag-ramadhan-1447h::after {
+      content: '🎋';
+      position: absolute;
+      font-size: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .tag-ramadhan-1447h::before {
+      left: -8px;
+    }
+    .tag-ramadhan-1447h::after {
+      right: -8px;
+    }
     @media (max-width: 480px) {
-      .app { width: 100%; height: 100vh; border-radius: 0; max-width: none; }
+      .tag-ramadhan-1447h {
+        font-size: 8px;
+        padding: 2px 14px 2px 4px;
+        max-width: 120px;
+      }
+      .tag-ramadhan-1447h::before,
+      .tag-ramadhan-1447h::after {
+        font-size: 8px;
+      }
+    }
+    .tag-night-tarawih {
+      background: linear-gradient(135deg, #064e3b, #059669);
+      color: #d1fae5;
+      border: 1px solid rgba(16,185,129,0.8);
+      box-shadow: 0 0 12px rgba(16,185,129,0.6);
+      animation: tarawihGlow 2s ease-in-out infinite;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+    @keyframes tarawihGlow {
+      0%, 100% {
+        box-shadow: 0 0 12px rgba(16,185,129,0.6);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(16,185,129,0.9), 0 0 30px rgba(16,185,129,0.4);
+      }
+    }
+    @media (max-width: 480px) {
+      .tag-night-tarawih {
+        font-size: 8px;
+        max-width: 120px;
+      }
+    }
+    .tag-lailat-mode {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24);
+      background-size: 200% 100%;
+      color: #000;
+      font-weight: 900;
+      border: 1px solid rgba(245,158,11,0.8);
+      animation: lailatShine 3s linear infinite;
+      box-shadow: 0 0 15px rgba(251,191,36,0.6);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+    @keyframes lailatShine {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+    @media (max-width: 480px) {
+      .tag-lailat-mode {
+        font-size: 8px;
+        max-width: 120px;
+      }
+    }
+
+    /* ============================================================
+       SECRET TAG: EXE-SAHUR - v3.2.3 RESPONSIVE
+    ============================================================ */
+    .tag-exe-sahur {
+      background: linear-gradient(135deg, #1e3a8a, #0ea5e9, #fbbf24);
+      color: #fff;
+      border: 1px solid rgba(251,191,36,0.8);
+      box-shadow: 0 0 15px rgba(251,191,36,0.6);
+      animation: sahurGlow 2s ease-in-out infinite;
+      position: relative;
+      padding-left: 20px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+    .tag-exe-sahur::before {
+      content: '🌙';
+      position: absolute;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      animation: moonFloat 3s ease-in-out infinite;
+    }
+    @keyframes sahurGlow {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(251,191,36,0.6);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(251,191,36,0.9), 0 0 50px rgba(14,165,233,0.4);
+      }
+    }
+    @keyframes moonFloat {
+      0%, 100% {
+        transform: translateY(-50%) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-55%) rotate(10deg);
+      }
+    }
+    @media (max-width: 480px) {
+      .tag-exe-sahur {
+        font-size: 8px;
+        padding-left: 16px;
+        max-width: 120px;
+      }
+      .tag-exe-sahur::before {
+        font-size: 10px;
+      }
+    }
+
+    /* ============================================================
+       TAG UNLOCK FULLSCREEN ANIMATION - v3.2.3
+    ============================================================ */
+    .tag-unlock-fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0,0,0,0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.5s ease;
+      backdrop-filter: blur(10px);
+    }
+    .tag-unlock-fullscreen.show {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .tag-unlock-card {
+      background: linear-gradient(135deg, #020617, #111827);
+      border: 2px solid rgba(34,197,94,0.8);
+      border-radius: 24px;
+      padding: 50px 40px;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(34,197,94,0.6);
+      animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 400px;
+      width: 90%;
+    }
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .tag-unlock-icon-big {
+      font-size: 80px;
+      color: #22c55e;
+      margin-bottom: 20px;
+      animation: iconPulse 1s ease-in-out infinite;
+    }
+    @keyframes iconPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+    .tag-unlock-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #22c55e;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .tag-unlock-subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 30px;
+    }
+    .tag-unlock-tag-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 30px;
+      animation: tagFloat 2s ease-in-out infinite;
+    }
+    @keyframes tagFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    .tag-unlock-close-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      color: #000;
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: 0.2s;
+    }
+    .tag-unlock-close-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,255,136,0.4);
+    }
+
+    /* ============================================================
+       PROFILE MUSIC PLAYER WITH COUNTDOWN RING - v3.2.3
+    ============================================================ */
+    .profile-music-player {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 50px;
+      height: 50px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .profile-music-player.active {
+      display: flex;
+    }
+    .pmp-ring-container {
+      position: relative;
+      width: 50px;
+      height: 50px;
+    }
+    .pmp-ring-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+    .pmp-ring-progress {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #ff3333;
+      border-right-color: #ff3333;
+      transform: rotate(-90deg);
+      transition: border-color 0.3s ease;
+    }
+    .pmp-ring-progress.warning {
+      border-top-color: #ffcc00;
+      border-right-color: #ffcc00;
+      animation: pmpPulse 1s ease-in-out infinite;
+    }
+    .pmp-ring-progress.critical {
+      border-top-color: #ff0050;
+      border-right-color: #ff0050;
+      animation: pmpFlash 0.5s ease-in-out infinite;
+    }
+    @keyframes pmpPulse {
+      0%, 100% { transform: rotate(-90deg) scale(1); }
+      50% { transform: rotate(-90deg) scale(1.05); }
+    }
+    @keyframes pmpFlash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .pmp-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .pmp-icon:hover {
+      transform: scale(1.1);
+    }
+    .pmp-timer {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ff3333;
+      font-weight: 700;
+      white-space: nowrap;
+      text-shadow: 0 0 8px rgba(255,51,51,0.6);
+    }
+    @media (max-width: 480px) {
+      .profile-music-player {
+        width: 42px;
+        height: 42px;
+        top: 10px;
+        right: 10px;
+      }
+      .pmp-ring-container {
+        width: 42px;
+        height: 42px;
+      }
+      .pmp-icon {
+        font-size: 18px;
+      }
+    }
+
+    /* ============================================================
+       KETUPAT PARTICLES FOR RAMADHAN TAGS - v3.2.3
+    ============================================================ */
+    .ketupat-container {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99990;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      display: none;
+    }
+    .ketupat-container.active {
+      display: block;
+    }
+    .ketupat-particle {
+      position: absolute;
+      bottom: -30px;
+      font-size: 16px;
+      animation: floatKetupat linear infinite;
+      opacity: 0;
+    }
+    @keyframes floatKetupat {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* ============================================================
+       RAMADHAN PROFILE THEME - v3.2.3
+    ============================================================ */
+    .modern-profile-header.ramadhan-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(251,191,36,0.18), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(34,197,94,0.16), transparent 55%),
+        linear-gradient(180deg, #111827, #020617);
+    }
+    .modern-profile-header.ramadhan-profile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(251,191,36,0.2), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(34,197,94,0.18), transparent 55%);
+      opacity: 0.8;
+    }
+
+    /* ============================================================
+       FIRST TIME TUTORIAL - v3.2.3
+    ============================================================ */
+    .first-time-tutorial {
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      background: rgba(0,0,0,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .first-time-tutorial.show {
+      display: flex;
+    }
+    .ftt-card {
+      background: linear-gradient(180deg, #111827, #020617);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+      animation: fttSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes fttSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .ftt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .ftt-header h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #22c55e;
+      margin: 0;
+    }
+    .ftt-close {
+      background: rgba(255,255,255,0.05);
+      border: none;
+      color: #9ca3af;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .ftt-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: #e5e7eb;
+    }
+    .ftt-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .ftt-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .ftt-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .ftt-content h4 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #e5e7eb;
+      margin: 0 0 4px 0;
+    }
+    .ftt-content p {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .ftt-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .ftt-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(34,197,94,0.4);
+    }
+
+    .mp-tag-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .mp-tag-showcase-title {
+      width: 100%;
+      text-align: center;
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .mp-tag-item {
+      animation: tagFadeIn 0.3s ease;
+    }
+    @keyframes tagFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ============================================================
+       ADMIN RAMADHAN CONTROL - v3.2.3
+    ============================================================ */
+    .admin-ramadhan-section {
+      background: rgba(251,191,36,0.05);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .admin-ramadhan-cycle {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-left: 3px solid #fbbf24;
+    }
+    .admin-ramadhan-cycle h4 {
+      font-size: 13px;
+      color: #fbbf24;
+      margin-bottom: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1px;
+    }
+    .admin-ramadhan-req {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+      padding-left: 12px;
+    }
+    .admin-ramadhan-req::before {
+      content: '•';
+      color: #22c55e;
+      margin-right: 6px;
+    }
+
+    .about-dev-link:hover { color: #7df9ff; }
+
+    /* ============================================================
+       RESPONSIVE FIX - v3.2.3 UPDATED
+    ============================================================ */
+    @media (max-width: 480px) {
+      .app { 
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+        padding: 16px !important;
+      }
+      .event-center-sheet {
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        margin: 16px auto !important;
+        padding: 14px !important;
+      }
+      .event-quest-card,
+      .event-shop-card {
+        grid-template-columns: 1fr !important;
+        padding: 12px !important;
+      }
+      .capsule-menu-panel {
+        width: calc(100vw - 32px) !important;
+        right: 16px !important;
+      }
+      body {
+        overflow-x: hidden !important;
+      }
+      * {
+        max-width: 100vw !important;
+      }
+    }
+    @media (min-width: 481px) and (max-width: 768px) {
+      .app {
+        max-width: 420px !important;
+        width: 95% !important;
+      }
+    }
+    @media (min-width: 769px) {
+      .app {
+        max-width: 400px !important;
+        width: 95% !important;
+      }
     }
   </style>
 </head>
@@ -2384,7 +3224,7 @@
       </div>
     </div>
     <div class="load-title">ExeMusic</div>
-    <div class="load-subtitle">v3.2 · Premium Audio</div>
+    <div class="load-subtitle">v3.2.3 · Premium Audio</div>
     <div class="load-bar-wrap">
       <div class="load-bar-track">
         <div class="load-bar-fill" id="loadBarFill"></div>
@@ -2402,8 +3242,52 @@
     </div>
   </div>
 
+  <!-- FIRST TIME TUTORIAL -->
+  <div id="firstTimeTutorial" class="first-time-tutorial">
+    <div class="ftt-card">
+      <div class="ftt-header">
+        <h3>🎉 Selamat Datang di ExeMusic!</h3>
+        <button class="ftt-close" onclick="closeFirstTimeTutorial()">×</button>
+      </div>
+      <div class="ftt-body">
+        <div class="ftt-section">
+          <div class="ftt-icon">🔗</div>
+          <div class="ftt-content">
+            <h4>Copy URL Audio</h4>
+            <p>Tombol <i class="fas fa-link"></i> untuk copy link MP3 langsung</p>
+          </div>
+        </div>
+        <div class="ftt-section">
+          <div class="ftt-icon">📤</div>
+          <div class="ftt-content">
+            <h4>Share Link</h4>
+            <p>Tombol <i class="fas fa-share-alt"></i> untuk share lagu ke teman</p>
+          </div>
+        </div>
+        <div class="ftt-section">
+          <div class="ftt-icon">⬇️</div>
+          <div class="ftt-content">
+            <h4>Download</h4>
+            <p>Tombol <i class="fas fa-download"></i> untuk download lagu</p>
+          </div>
+        </div>
+        <div class="ftt-section">
+          <div class="ftt-icon">➕</div>
+          <div class="ftt-content">
+            <h4>Upload Lagu</h4>
+            <p>Tombol <i class="fas fa-plus-circle"></i> untuk upload lagu baru</p>
+          </div>
+        </div>
+      </div>
+      <button class="ftt-btn" onclick="closeFirstTimeTutorial()">MENGERTI!</button>
+    </div>
+  </div>
+
   <!-- FLOATING HEARTS (for velly) -->
   <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- KETUPAT PARTICLES (for ramadhan tags) -->
+  <div class="ketupat-container" id="ketupatContainer"></div>
 
   <!-- BROADCAST -->
   <div id="sysBroadcast" class="sys-broadcast">
@@ -2442,6 +3326,19 @@
       </div>
       <div id="notifList" class="notif-list"><div class="notif-empty">Memuat...</div></div>
     </div>
+
+  <!-- Tag Unlock Fullscreen - v3.2.3 -->
+  <div id="tagUnlockFullscreen" class="tag-unlock-fullscreen">
+    <div class="tag-unlock-card">
+      <div class="tag-unlock-icon-big">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <div class="tag-unlock-title">TAG UNLOCKED!</div>
+      <div class="tag-unlock-subtitle">Kamu berhasil membuka tag baru</div>
+      <div class="tag-unlock-tag-display" id="tagUnlockFullscreenTags"></div>
+      <button class="tag-unlock-close-btn" onclick="closeTagUnlockFullscreen()">AWESOME!</button>
+    </div>
+  </div>
 
   <!-- MAIN APP -->
   <div class="app">
@@ -2492,14 +3389,14 @@
           <i class="fas fa-crown"></i>
           <div class="vip-trial-info">
             <div class="vt-label">VIP TRIAL AKTIF</div>
-            <div class="vt-timer" id="vipTrialTimer">--d --h --m</div>
+            <div class="vt-timer" id="vipTrialTimer">--:--:--</div>
           </div>
           <button class="vip-trial-close" onclick="closeVipTrialBanner()">×</button>
         </div>
         <div class="event-countdown" id="lebaranCountdown">
           <div class="ec-main">
             <div class="ec-label">Countdown Lebaran</div>
-            <div class="ec-time" id="lebaranTimer">--d --h --m</div>
+            <div class="ec-time" id="lebaranTimer">--:--:--</div>
           </div>
           <div class="ec-badge">Idulfitri</div>
           <button class="ec-close" onclick="closeLebaranCountdown()">×</button>
@@ -2658,6 +3555,55 @@
               <button class="admin-btn admin-btn-red" onclick="adClearLebaran()">CLEAR</button>
             </div>
           </div>
+          <div class="admin-card admin-ramadhan-section">
+            <h3><i class="fas fa-moon-crescent"></i> RAMADHAN EVENT CONTROL</h3>
+            <p style="font-size:11px; color:#9ca3af; margin-bottom:12px">Kelola event Ramadhan dengan 3 cycle quest. User yang menyelesaikan quest akan mendapat tag eksklusif.</p>
+            
+            <div class="admin-ramadhan-cycle">
+              <h4>🌅 CYCLE 1 - Awal Ramadhan</h4>
+              <div class="admin-ramadhan-req">Login 3 hari berturut</div>
+              <div class="admin-ramadhan-req">Play 10 lagu total</div>
+              <div class="admin-ramadhan-req">Online minimal 30 menit akumulasi</div>
+              <div style="margin-top:8px; font-size:10px; color:#fbbf24">Reward: Tag RAMADHAN 1447H (clean gold)</div>
+            </div>
+            
+            <div class="admin-ramadhan-cycle">
+              <h4>🌙 CYCLE 2 - Mid Ramadhan</h4>
+              <div class="admin-ramadhan-req">Online jam 18:00-20:00 minimal 2 hari</div>
+              <div class="admin-ramadhan-req">Share 2 lagu</div>
+              <div class="admin-ramadhan-req">Like 5 lagu</div>
+              <div style="margin-top:8px; font-size:10px; color:#10b981">Reward: Tag NIGHT TARAWIH (soft green glow)</div>
+            </div>
+            
+            <div class="admin-ramadhan-cycle">
+              <h4>🕌 CYCLE 3 - 10 Hari Terakhir</h4>
+              <div class="admin-ramadhan-req">Login 7 hari dalam 10 hari terakhir</div>
+              <div class="admin-ramadhan-req">Total playtime 120 menit</div>
+              <div class="admin-ramadhan-req">Aktif minimal 1 hari di atas jam 23:00</div>
+              <div style="margin-top:8px; font-size:10px; color:#fbbf24">Reward: Tag LAILAT MODE (animated gold shine)</div>
+            </div>
+            
+            <div style="margin-top:12px">
+              <div class="admin-label">Tanggal Mulai Ramadhan</div>
+              <input class="admin-inp" id="adRamadhanStart" type="date">
+              <div class="admin-label">Tanggal Selesai Ramadhan</div>
+              <input class="admin-inp" id="adRamadhanEnd" type="date">
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+                <button class="admin-btn admin-btn-gold" onclick="adSaveRamadhanEvent()">AKTIFKAN EVENT</button>
+                <button class="admin-btn admin-btn-red" onclick="adClearRamadhanEvent()">NONAKTIFKAN</button>
+                <button class="admin-btn admin-btn-blue" onclick="adViewRamadhanProgress()">LIHAT PROGRESS</button>
+              </div>
+            </div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="fas fa-moon"></i> SECRET TAG: EXE-SAHUR</h3>
+            <p style="font-size:11px; color:#888; margin-bottom:8px">Tag rahasia yang otomatis diberikan ke user yang upload lagu jam 03:00-05:00 (waktu sahur).</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+              <button class="admin-btn admin-btn-gold" onclick="adEnableSahurTag()">ENABLE AUTO</button>
+              <button class="admin-btn admin-btn-red" onclick="adDisableSahurTag()">DISABLE AUTO</button>
+            </div>
+            <div id="adSahurStatus" style="font-size:11px; color:#888; margin-top:8px">Status: Checking...</div>
+          </div>
         </div>
 
         <!-- USERS -->
@@ -2682,6 +3628,16 @@
               <div class="admin-card">
                 <h3><i class="fas fa-tags"></i> ALL TAG & CARA DAPET</h3>
                 <div id="adAllTagInfo"></div>
+                <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06)">
+                  <div class="admin-label">Testing Tag (Grant ke diri sendiri)</div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+                    <select class="admin-sel" id="adTestTagSelect" style="flex:1; margin:0">
+                      <option value="">Pilih tag untuk testing...</option>
+                    </select>
+                    <button class="admin-btn admin-btn-gold" onclick="adGrantTestTag()" style="white-space:nowrap">GRANT TAG</button>
+                  </div>
+                  <p style="font-size:10px; color:#888; margin-top:6px">⚠️ Fitur ini untuk testing saja. Tag akan masuk ke alltag dan bisa dipilih di profile.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -2779,6 +3735,20 @@
   <div class="modal" id="modalProfile" onclick="if(event.target==this)closeProfileModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header" id="profileHeader">
+        <!-- Profile Music Player -->
+        <div class="profile-music-player" id="profileMusicPlayer">
+          <div class="pmp-ring-container">
+            <div class="pmp-ring-bg"></div>
+            <svg class="pmp-ring-progress" id="pmpRingSvg" width="50" height="50" style="position:absolute;inset:0">
+              <circle cx="25" cy="25" r="22" fill="none" stroke="#ff3333" stroke-width="3" 
+                      stroke-dasharray="138.23" stroke-dashoffset="0" 
+                      transform="rotate(-90 25 25)" id="pmpCircle"/>
+            </svg>
+            <div class="pmp-icon" onclick="toggleProfileMusic()">🎵</div>
+          </div>
+          <div class="pmp-timer" id="pmpTimer">0:00</div>
+        </div>
+        
         <div class="mp-avatar-container">
           <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
@@ -2871,13 +3841,17 @@
   </div>
 
   <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet"><div id="songContainer"></div></div>
+    <div class="sheet">
+      <input type="text" id="searchSongInput" class="inp-dark" placeholder="🔍 Cari lagu..." 
+             oninput="filterSongList(this.value)" style="margin-bottom:12px; width: 100%;">
+      <div id="songContainer"></div>
+    </div>
   </div>
 
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>🎵 ExeMusic 3.2</h3>
+        <h3>🎵 ExeMusic 3.2.3</h3>
         <p>Platform musik untuk para creator url berbagi dan menikmati musik berkualitas tinggi.</p>
         <p><b>Fitur Platform</b></p>
         <ul class="about-features">
@@ -2925,6 +3899,7 @@
           <div class="event-center-tabs">
             <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
             <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
+            <button class="event-tab-btn" data-tab="ramadhan" onclick="switchEventTab('ramadhan', this)"><i class="fas fa-moon"></i> Event Ramadhan</button>
             <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
           </div>
           <div id="evTabDaily" class="event-tab-view active">
@@ -2934,6 +3909,71 @@
           <div id="evTabWeekly" class="event-tab-view">
             <div class="event-tab-caption">Reset tiap 7 hari. Cocok untuk misi jangka panjang.</div>
             <div id="evWeeklyList" class="event-quest-list"></div>
+          </div>
+          <div id="evTabRamadhan" class="event-tab-view">
+            <div class="event-tab-caption">🌙 Event spesial Ramadhan dengan 3 cycle quest. Selesaikan untuk dapat tag eksklusif!</div>
+            <div id="evRamadhanList" class="event-quest-list">
+              <!-- Cycle 1 -->
+              <div class="event-quest-card gaming-card-enhanced">
+                <div class="event-quest-main">
+                  <div class="event-quest-title-row">
+                    <div class="event-quest-title">🌅 Cycle 1 - Awal Ramadhan</div>
+                    <div class="event-quest-reward"><i class="fas fa-trophy"></i> RAMADHAN 1447H</div>
+                  </div>
+                  <div class="event-quest-desc">Login 3 hari berturut • Play 10 lagu • Online 30 menit</div>
+                  <div class="event-quest-progress-wrap">
+                    <div class="event-quest-progress-bar">
+                      <div class="event-quest-progress-fill" id="ramCycle1Progress" style="transform:scaleX(0)"></div>
+                    </div>
+                    <div class="event-quest-progress-text" id="ramCycle1Text">0%</div>
+                  </div>
+                </div>
+                <div class="event-quest-action">
+                  <div class="event-quest-badge" id="ramCycle1Badge">LOCKED</div>
+                  <button class="event-quest-btn event-quest-btn-gaming" id="ramCycle1Btn" disabled>CLAIM</button>
+                </div>
+              </div>
+              <!-- Cycle 2 -->
+              <div class="event-quest-card gaming-card-enhanced">
+                <div class="event-quest-main">
+                  <div class="event-quest-title-row">
+                    <div class="event-quest-title">🌙 Cycle 2 - Mid Ramadhan</div>
+                    <div class="event-quest-reward"><i class="fas fa-trophy"></i> NIGHT TARAWIH</div>
+                  </div>
+                  <div class="event-quest-desc">Online jam 18-20 (2 hari) • Share 2 lagu • Like 5 lagu</div>
+                  <div class="event-quest-progress-wrap">
+                    <div class="event-quest-progress-bar">
+                      <div class="event-quest-progress-fill" id="ramCycle2Progress" style="transform:scaleX(0)"></div>
+                    </div>
+                    <div class="event-quest-progress-text" id="ramCycle2Text">0%</div>
+                  </div>
+                </div>
+                <div class="event-quest-action">
+                  <div class="event-quest-badge" id="ramCycle2Badge">LOCKED</div>
+                  <button class="event-quest-btn event-quest-btn-gaming" id="ramCycle2Btn" disabled>CLAIM</button>
+                </div>
+              </div>
+              <!-- Cycle 3 -->
+              <div class="event-quest-card gaming-card-enhanced">
+                <div class="event-quest-main">
+                  <div class="event-quest-title-row">
+                    <div class="event-quest-title">🕌 Cycle 3 - 10 Hari Terakhir</div>
+                    <div class="event-quest-reward"><i class="fas fa-trophy"></i> LAILAT MODE</div>
+                  </div>
+                  <div class="event-quest-desc">Login 7/10 hari terakhir • 120 menit playtime • Aktif jam 23+</div>
+                  <div class="event-quest-progress-wrap">
+                    <div class="event-quest-progress-bar">
+                      <div class="event-quest-progress-fill" id="ramCycle3Progress" style="transform:scaleX(0)"></div>
+                    </div>
+                    <div class="event-quest-progress-text" id="ramCycle3Text">0%</div>
+                  </div>
+                </div>
+                <div class="event-quest-action">
+                  <div class="event-quest-badge" id="ramCycle3Badge">LOCKED</div>
+                  <button class="event-quest-btn event-quest-btn-gaming" id="ramCycle3Btn" disabled>CLAIM</button>
+                </div>
+              </div>
+            </div>
           </div>
           <div id="evTabShop" class="event-tab-view">
             <div class="event-tab-caption">Tukar ExeCoin dengan tag eksklusif dan VIP.</div>
@@ -3060,6 +4100,10 @@
     </div>
   </div>
 
+  <div id="globalEventPill" class="global-event-pill">
+    <span class="pill-icon">🎁</span>
+    <span class="pill-time" id="globalEventPillTime">--:--</span>
+  </div>
   <div id="toast-container"></div>
 
   <div class="tutorial-overlay" id="tutorialOverlay">
@@ -3151,6 +4195,11 @@
 
     let heartsInterval = null;
     let heartsMode = 'love';
+    let ketupatInterval = null;
+    let profileMusicInterval = null;
+    let profileMusicDuration = 0;
+    let profileMusicElapsed = 0;
+    
     function createHeart() {
       const c = document.getElementById('heartsContainer');
       if (!c) return;
@@ -3181,6 +4230,116 @@
       if (c) c.classList.remove('active');
       if (heartsInterval) { clearInterval(heartsInterval); heartsInterval = null; }
     }
+    
+    function createKetupat() {
+      const c = document.getElementById('ketupatContainer');
+      if (!c) return;
+      const k = document.createElement('div');
+      k.className = 'ketupat-particle';
+      const ketupatEmojis = ['🎋','🌾','🍃','✨','⭐'];
+      k.textContent = ketupatEmojis[Math.floor(Math.random() * ketupatEmojis.length)];
+      k.style.left = Math.random() * 100 + 'vw';
+      k.style.fontSize = (12 + Math.random() * 18) + 'px';
+      k.style.animationDuration = (5 + Math.random() * 5) + 's';
+      k.style.animationDelay = (Math.random() * 1) + 's';
+      c.appendChild(k);
+      setTimeout(() => k.remove(), 11000);
+    }
+    function startKetupat() {
+      const c = document.getElementById('ketupatContainer');
+      if (!c) return;
+      c.classList.add('active');
+      if (ketupatInterval) return;
+      ketupatInterval = setInterval(createKetupat, 700);
+    }
+    function stopKetupat() {
+      const c = document.getElementById('ketupatContainer');
+      if (c) c.classList.remove('active');
+      if (ketupatInterval) { clearInterval(ketupatInterval); ketupatInterval = null; }
+    }
+    
+    // ============================================================
+    // FIRST TIME TUTORIAL - v3.2.3
+    // ============================================================
+    function showFirstTimeTutorial() {
+      const tutorial = document.getElementById('firstTimeTutorial');
+      if (tutorial) tutorial.classList.add('show');
+    }
+    
+    function closeFirstTimeTutorial() {
+      const tutorial = document.getElementById('firstTimeTutorial');
+      if (tutorial) tutorial.classList.remove('show');
+      localStorage.setItem('exeTutorialSeen', '1');
+    }
+    
+    function startProfileMusicCountdown(duration) {
+      profileMusicDuration = duration;
+      profileMusicElapsed = 0;
+      const player = document.getElementById('profileMusicPlayer');
+      if (player) player.classList.add('active');
+      
+      if (profileMusicInterval) clearInterval(profileMusicInterval);
+      profileMusicInterval = setInterval(() => {
+        profileMusicElapsed++;
+        const remaining = profileMusicDuration - profileMusicElapsed;
+        const pct = (profileMusicElapsed / profileMusicDuration) * 100;
+        
+        // Update timer
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        const timerEl = document.getElementById('pmpTimer');
+        if (timerEl) timerEl.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+        
+        // Update ring
+        const circle = document.getElementById('pmpCircle');
+        const circumference = 138.23;
+        const offset = circumference * (1 - (pct / 100));
+        if (circle) {
+          circle.setAttribute('stroke-dashoffset', offset);
+          // Change color based on remaining time
+          if (remaining <= 3) {
+            circle.setAttribute('stroke', '#ff0050');
+            circle.parentElement.classList.add('critical');
+          } else if (remaining <= 10) {
+            circle.setAttribute('stroke', '#ffcc00');
+            circle.parentElement.classList.add('warning');
+            circle.parentElement.classList.remove('critical');
+          } else {
+            circle.setAttribute('stroke', '#ff3333');
+            circle.parentElement.classList.remove('warning', 'critical');
+          }
+        }
+        
+        if (remaining <= 0) {
+          stopProfileMusicCountdown();
+        }
+      }, 1000);
+    }
+    
+    function stopProfileMusicCountdown() {
+      if (profileMusicInterval) {
+        clearInterval(profileMusicInterval);
+        profileMusicInterval = null;
+      }
+      const player = document.getElementById('profileMusicPlayer');
+      if (player) player.classList.remove('active');
+      if (profileAudio) {
+        profileAudio.pause();
+        profileAudio.currentTime = 0;
+      }
+    }
+    
+    function toggleProfileMusic() {
+      if (profileAudio && !profileAudio.paused) {
+        stopProfileMusicCountdown();
+      } else if (profileAudio && profileAudio.src) {
+        profileAudio.play();
+        // Get duration and start countdown
+        profileAudio.addEventListener('loadedmetadata', () => {
+          startProfileMusicCountdown(Math.floor(profileAudio.duration));
+        }, { once: true });
+      }
+    }
 
     // ============================================================
     // STATE
@@ -3204,6 +4363,7 @@
     let tagDropInterval = null;
     let tagDropBannerInterval = null;
     let currentTagDrop = null;
+    let lastTagDropToastKey = null;
     let lebaranInterval = null;
     let globalCountdownInterval = null;
     let tagUnlockTimeout = null;
@@ -3235,6 +4395,17 @@
       }
       document.getElementById('shuf').classList.toggle('active-btn', isShuf);
       document.getElementById('vol').value = savedVol;
+      
+      // Close capsule menu when clicking outside - v3.2.3
+      document.addEventListener('click', (e) => {
+        const capsuleMenu = document.getElementById('capsuleMenuPanel');
+        const capsuleBtn = document.getElementById('btnMenu');
+        if (capsuleMenu && capsuleBtn) {
+          if (!capsuleMenu.contains(e.target) && !capsuleBtn.contains(e.target)) {
+            capsuleMenu.classList.remove('show');
+          }
+        }
+      });
     });
 
     // ============================================================
@@ -3413,44 +4584,51 @@
         tagDropBannerInterval = null;
       }
       const banner = document.getElementById('eventTagBanner');
+      const pill = document.getElementById('globalEventPill');
+      const pillTime = document.getElementById('globalEventPillTime');
       if (!auth.currentUser || !userData || !currentTagDrop || !currentTagDrop.active || !currentTagDrop.tag || !currentTagDrop.chance) {
         if (banner) banner.classList.remove('show');
+        if (pill) {
+          pill.classList.remove('show', 'urgent', 'pulse');
+        }
+        if (pillTime) pillTime.textContent = '--:--';
         updateEventSideFromTagDrop();
         return;
       }
-      if (banner) {
-        const titleEl = document.getElementById('eventTagBannerTitle');
-        const subEl = document.getElementById('eventTagBannerSub');
-        const timerEl = document.getElementById('eventTagBannerTimer');
-        if (titleEl) titleEl.textContent = 'TAG DROP: ' + String(currentTagDrop.tag || '').toUpperCase();
-        if (subEl) subEl.textContent = currentTagDrop.desc || 'Tag spesial lagi drop untuk user online!';
-        if (timerEl) {
-          if (currentTagDrop.endAt) {
-            const updateBannerTimer = () => {
-              const now = Date.now();
-              const diff = currentTagDrop.endAt - now;
-              if (diff <= 0) {
-                timerEl.textContent = 'EVENT SELESAI';
-                banner.classList.remove('show');
-                if (tagDropBannerInterval) {
-                  clearInterval(tagDropBannerInterval);
-                  tagDropBannerInterval = null;
-                }
-                updateEventSideFromTagDrop();
-                return;
-              }
-              const totalSec = Math.floor(diff / 1000);
-              const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
-              const s = String(totalSec % 60).padStart(2, '0');
-              timerEl.textContent = m + ':' + s;
-            };
-            updateBannerTimer();
-            tagDropBannerInterval = setInterval(updateBannerTimer, 1000);
-          } else {
-            timerEl.textContent = 'LIVE';
+      if (banner) banner.classList.remove('show');
+      const eventKey = String(currentTagDrop.tag || '') + '|' + String(currentTagDrop.endAt || 0);
+      if (eventKey && lastTagDropToastKey !== eventKey) {
+        lastTagDropToastKey = eventKey;
+        showToast('🎁 Tag Drop Event has started!', 'event');
+        const chancePct = Math.round((currentTagDrop.chance || 0) * 100);
+        const tagName = String(currentTagDrop.tag || '').toUpperCase();
+        const winnersText = currentTagDrop.maxWinners ? `only ${currentTagDrop.maxWinners} winners` : 'unlimited winners';
+        showToast(`tag drop: ${chancePct}% chance, tag: ${tagName}, ${winnersText}`, 'event');
+      }
+      if (pill && pillTime) {
+        const updatePill = () => {
+          const now = Date.now();
+          const diff = currentTagDrop.endAt ? currentTagDrop.endAt - now : 0;
+          if (!currentTagDrop.endAt || diff <= 0) {
+            pill.classList.remove('show', 'urgent', 'pulse');
+            pillTime.textContent = '0:00';
+            if (tagDropBannerInterval) {
+              clearInterval(tagDropBannerInterval);
+              tagDropBannerInterval = null;
+            }
+            updateEventSideFromTagDrop();
+            return;
           }
-        }
-        banner.classList.add('show');
+          const totalSec = Math.floor(diff / 1000);
+          const m = Math.floor(totalSec / 60);
+          const s = totalSec % 60;
+          pillTime.textContent = `${m}:${String(s).padStart(2, '0')}`;
+          pill.classList.add('show', 'pulse');
+          if (totalSec <= 10) pill.classList.add('urgent');
+          else pill.classList.remove('urgent');
+        };
+        updatePill();
+        tagDropBannerInterval = setInterval(updatePill, 1000);
       }
       updateEventSideFromTagDrop();
       tagDropInterval = setInterval(() => {
@@ -3471,7 +4649,7 @@
               if (!res.committed) return;
               currentTagDrop.obtainedCount = res.snapshot.val() || 0;
               db.ref().update(updates).then(() => {
-                showToast('Kamu mendapatkan tag ' + tag.toUpperCase());
+                showToast('🎉 You won the ' + tag.toUpperCase() + ' tag!', 'success');
                 updateQuestProgress('weekly', 'weekly_new_tags_2', 1, auth.currentUser.uid);
                 showTagUnlockBanner([tag]);
                 const payload = {
@@ -3547,9 +4725,18 @@
     function switchEventTab(id, btn) {
       document.querySelectorAll('.event-tab-view').forEach(v => v.classList.remove('active'));
       document.querySelectorAll('.event-tab-btn').forEach(b => b.classList.remove('active'));
-      const tab = document.getElementById(id === 'daily' ? 'evTabDaily' : id === 'weekly' ? 'evTabWeekly' : 'evTabShop');
+      const tabMap = {
+        'daily': 'evTabDaily',
+        'weekly': 'evTabWeekly',
+        'ramadhan': 'evTabRamadhan',
+        'shop': 'evTabShop'
+      };
+      const tab = document.getElementById(tabMap[id] || 'evTabDaily');
       if (tab) tab.classList.add('active');
       if (btn) btn.classList.add('active');
+      if (id === 'ramadhan') {
+        updateRamadhanProgress();
+      }
       renderEventCenter();
     }
     function applyProfileUrl(push = false) {
@@ -3744,6 +4931,23 @@
         const curVal = cur.cur || 0;
         const nextVal = Math.min(curVal + delta, def.max);
         if (nextVal === curVal) return cur;
+        
+        // Check if quest just completed
+        if (curVal < def.max && nextVal >= def.max) {
+          // Quest completed! Show toast
+          const questNames = {
+            'daily_first_upload': 'First Upload',
+            'daily_music_producer': 'Music Producer',
+            'daily_listener': 'Active Listener',
+            'weekly_active_creator': 'Active Creator',
+            'weekly_social_butterfly': 'Social Butterfly',
+            'weekly_music_explorer': 'Music Explorer'
+          };
+          const name = questNames[id] || id;
+          const typeLabel = type === 'daily' ? 'Harian' : 'Mingguan';
+          showToast(`[Misi ${typeLabel}] ${name} Selesai! 🎉`, 'success');
+        }
+        
         return { ...cur, cur: nextVal };
       }).then(res => {
         if (!res.committed) return;
@@ -3798,6 +5002,11 @@
           if (!userQuestState[type]) userQuestState[type] = {};
           userQuestState[type][id] = { periodKey, cur, claimed: true };
           renderEventCenter();
+          const iconEl = document.querySelector('.event-coins-icon');
+          if (iconEl) {
+            iconEl.classList.add('gain');
+            setTimeout(() => iconEl.classList.remove('gain'), 600);
+          }
           showToast('Kamu mendapatkan ' + def.reward + ' ExeCoin dari quest ' + def.title);
         });
       }).catch(() => {
@@ -3876,15 +5085,24 @@
     function showToast(text, type = 'info') {
       const container = document.getElementById('toast-container');
       if (!container) return;
+      if (container.children.length >= 3) {
+        container.removeChild(container.firstElementChild);
+      }
       const el = document.createElement('div');
       el.className = 'toast';
       let icon = 'fa-info-circle';
-      if (text.includes('Playing')) icon = 'fa-music';
-      else if (text.includes('Favorit') || text.includes('heart') || text.includes('❤')) icon = 'fa-heart';
-      else if (text.includes('Shuffle') || text.includes('🔀')) icon = 'fa-random';
-      else if (text.includes('Repeat') || text.includes('🔁')) icon = 'fa-redo';
-      else if (text.includes('✅') || text.includes('berhasil')) icon = 'fa-check-circle';
-      else if (text.includes('Error') || text.includes('❌')) icon = 'fa-exclamation-triangle';
+      if (type === 'success') icon = 'fa-check-circle';
+      else if (type === 'error') icon = 'fa-exclamation-triangle';
+      else if (type === 'event') icon = 'fa-bolt';
+      else {
+        if (text.includes('Playing')) icon = 'fa-music';
+        else if (text.includes('Favorit') || text.includes('heart') || text.includes('❤')) icon = 'fa-heart';
+        else if (text.includes('Shuffle') || text.includes('🔀')) icon = 'fa-random';
+        else if (text.includes('Repeat') || text.includes('🔁')) icon = 'fa-redo';
+        else if (text.includes('✅') || text.includes('berhasil')) icon = 'fa-check-circle';
+        else if (text.includes('Error') || text.includes('❌')) icon = 'fa-exclamation-triangle';
+      }
+      el.classList.add('toast-' + type);
       el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
       container.appendChild(el);
       setTimeout(() => el.classList.add('hide'), 2500);
@@ -3897,6 +5115,237 @@
       stopProfileMusic();
       currentProfileUid = null;
       applyProfileUrl(true);
+    }
+
+    // ============================================================
+    // CAPSULE MENU - v3.2.3
+    // ============================================================
+    function toggleCapsuleMenu() {
+      const panel = document.getElementById('capsuleMenuPanel');
+      if (!panel) return;
+      panel.classList.toggle('show');
+    }
+    function handleLogout() {
+      if (!auth.currentUser) return;
+      if (confirm('Yakin ingin logout?')) {
+        auth.signOut().then(() => {
+          localStorage.clear();
+          location.reload();
+        });
+      }
+    }
+
+    // ============================================================
+    // TAG UNLOCK FULLSCREEN - v3.2.3
+    // ============================================================
+    function showTagUnlockFullscreen(tags) {
+      const wrap = document.getElementById('tagUnlockFullscreen');
+      const listEl = document.getElementById('tagUnlockFullscreenTags');
+      if (!wrap || !listEl) return;
+      listEl.innerHTML = '';
+      let hasRamadhanTag = false;
+      (tags || []).forEach(raw => {
+        const t = String(raw || '').toLowerCase();
+        if (!t) return;
+        const span = document.createElement('span');
+        span.className = 'user-tag tag-' + t;
+        span.textContent = t.toUpperCase();
+        listEl.appendChild(span);
+        // Check if ramadhan tag
+        if (t.includes('ramadhan') || t.includes('tarawih') || t.includes('lailat')) {
+          hasRamadhanTag = true;
+        }
+      });
+      wrap.classList.add('show');
+      // Start ketupat if ramadhan tag
+      if (hasRamadhanTag) {
+        startKetupat();
+        setTimeout(() => stopKetupat(), 8000);
+      }
+    }
+    function closeTagUnlockFullscreen() {
+      const wrap = document.getElementById('tagUnlockFullscreen');
+      if (wrap) wrap.classList.remove('show');
+    }
+
+    // ============================================================
+    // RAMADHAN EVENT SYSTEM - v3.2.3
+    // ============================================================
+    let ramadhanProgress = {
+      cycle1: { loginDays: 0, songsPlayed: 0, onlineMinutes: 0, completed: false },
+      cycle2: { eveningDays: 0, shares: 0, likes: 0, completed: false },
+      cycle3: { loginDays: 0, playtimeMinutes: 0, lateNightDays: 0, completed: false }
+    };
+    
+    function checkRamadhanProgress() {
+      if (!auth.currentUser || !userData) return;
+      const uid = auth.currentUser.uid;
+      
+      // Cycle 1 - Awal Ramadhan
+      if (!ramadhanProgress.cycle1.completed) {
+        if (ramadhanProgress.cycle1.loginDays >= 3 && 
+            ramadhanProgress.cycle1.songsPlayed >= 10 && 
+            ramadhanProgress.cycle1.onlineMinutes >= 30) {
+          grantRamadhanTag(uid, 'ramadhan-1447h');
+          ramadhanProgress.cycle1.completed = true;
+        }
+      }
+      
+      // Cycle 2 - Mid Ramadhan
+      if (!ramadhanProgress.cycle2.completed) {
+        if (ramadhanProgress.cycle2.eveningDays >= 2 && 
+            ramadhanProgress.cycle2.shares >= 2 && 
+            ramadhanProgress.cycle2.likes >= 5) {
+          grantRamadhanTag(uid, 'night-tarawih');
+          ramadhanProgress.cycle2.completed = true;
+        }
+      }
+      
+      // Cycle 3 - 10 Hari Terakhir
+      if (!ramadhanProgress.cycle3.completed) {
+        if (ramadhanProgress.cycle3.loginDays >= 7 && 
+            ramadhanProgress.cycle3.playtimeMinutes >= 120 && 
+            ramadhanProgress.cycle3.lateNightDays >= 1) {
+          grantRamadhanTag(uid, 'lailat-mode');
+          ramadhanProgress.cycle3.completed = true;
+        }
+      }
+    }
+    
+    function grantRamadhanTag(uid, tagName) {
+      const updates = {};
+      updates['users/' + uid + '/alltag/' + tagName] = true;
+      db.ref().update(updates).then(() => {
+        showTagUnlockFullscreen([tagName]);
+        showToast('🎉 Kamu mendapat tag ' + tagName.toUpperCase() + '!');
+      });
+    }
+    
+    function checkSahurTime() {
+      const now = new Date();
+      const hour = now.getHours();
+      // Jam 03:00 - 05:00
+      if (hour >= 3 && hour < 5) {
+        return true;
+      }
+      return false;
+    }
+    
+    function grantSahurTag(uid) {
+      if (!uid) return;
+      const updates = {};
+      updates['users/' + uid + '/alltag/exe-sahur'] = true;
+      db.ref().update(updates).then(() => {
+        showTagUnlockFullscreen(['exe-sahur']);
+        showToast('🌙 SECRET TAG! Exe-Sahur unlocked!');
+      });
+    }
+    
+    function updateRamadhanProgress() {
+      if (!auth.currentUser || !userData) return;
+      
+      // Update Cycle 1
+      const c1Total = 43; // 3 + 10 + 30
+      const c1Current = (ramadhanProgress.cycle1.loginDays || 0) + 
+                        (ramadhanProgress.cycle1.songsPlayed || 0) + 
+                        (ramadhanProgress.cycle1.onlineMinutes || 0);
+      const c1Pct = Math.min(100, Math.round((c1Current / c1Total) * 100));
+      
+      const c1Fill = document.getElementById('ramCycle1Progress');
+      const c1Text = document.getElementById('ramCycle1Text');
+      const c1Badge = document.getElementById('ramCycle1Badge');
+      const c1Btn = document.getElementById('ramCycle1Btn');
+      
+      if (c1Fill) c1Fill.style.transform = `scaleX(${c1Pct / 100})`;
+      if (c1Text) c1Text.textContent = c1Pct + '%';
+      if (ramadhanProgress.cycle1.completed) {
+        if (c1Badge) c1Badge.textContent = 'COMPLETED';
+        if (c1Btn) {
+          c1Btn.textContent = 'CLAIMED';
+          c1Btn.disabled = true;
+        }
+      } else if (c1Pct >= 100) {
+        if (c1Badge) c1Badge.textContent = 'READY';
+        if (c1Btn) {
+          c1Btn.textContent = 'CLAIM';
+          c1Btn.disabled = false;
+          c1Btn.onclick = () => claimRamadhanCycle(1);
+        }
+      }
+      
+      // Update Cycle 2
+      const c2Total = 9; // 2 + 2 + 5
+      const c2Current = (ramadhanProgress.cycle2.eveningDays || 0) + 
+                        (ramadhanProgress.cycle2.shares || 0) + 
+                        (ramadhanProgress.cycle2.likes || 0);
+      const c2Pct = Math.min(100, Math.round((c2Current / c2Total) * 100));
+      
+      const c2Fill = document.getElementById('ramCycle2Progress');
+      const c2Text = document.getElementById('ramCycle2Text');
+      const c2Badge = document.getElementById('ramCycle2Badge');
+      const c2Btn = document.getElementById('ramCycle2Btn');
+      
+      if (c2Fill) c2Fill.style.transform = `scaleX(${c2Pct / 100})`;
+      if (c2Text) c2Text.textContent = c2Pct + '%';
+      if (ramadhanProgress.cycle2.completed) {
+        if (c2Badge) c2Badge.textContent = 'COMPLETED';
+        if (c2Btn) {
+          c2Btn.textContent = 'CLAIMED';
+          c2Btn.disabled = true;
+        }
+      } else if (c2Pct >= 100) {
+        if (c2Badge) c2Badge.textContent = 'READY';
+        if (c2Btn) {
+          c2Btn.textContent = 'CLAIM';
+          c2Btn.disabled = false;
+          c2Btn.onclick = () => claimRamadhanCycle(2);
+        }
+      }
+      
+      // Update Cycle 3
+      const c3Total = 128; // 7 + 120 + 1
+      const c3Current = (ramadhanProgress.cycle3.loginDays || 0) + 
+                        (ramadhanProgress.cycle3.playtimeMinutes || 0) + 
+                        (ramadhanProgress.cycle3.lateNightDays || 0);
+      const c3Pct = Math.min(100, Math.round((c3Current / c3Total) * 100));
+      
+      const c3Fill = document.getElementById('ramCycle3Progress');
+      const c3Text = document.getElementById('ramCycle3Text');
+      const c3Badge = document.getElementById('ramCycle3Badge');
+      const c3Btn = document.getElementById('ramCycle3Btn');
+      
+      if (c3Fill) c3Fill.style.transform = `scaleX(${c3Pct / 100})`;
+      if (c3Text) c3Text.textContent = c3Pct + '%';
+      if (ramadhanProgress.cycle3.completed) {
+        if (c3Badge) c3Badge.textContent = 'COMPLETED';
+        if (c3Btn) {
+          c3Btn.textContent = 'CLAIMED';
+          c3Btn.disabled = true;
+        }
+      } else if (c3Pct >= 100) {
+        if (c3Badge) c3Badge.textContent = 'READY';
+        if (c3Btn) {
+          c3Btn.textContent = 'CLAIM';
+          c3Btn.disabled = false;
+          c3Btn.onclick = () => claimRamadhanCycle(3);
+        }
+      }
+    }
+    
+    function claimRamadhanCycle(cycle) {
+      if (!auth.currentUser) return;
+      const uid = auth.currentUser.uid;
+      const tagMap = {
+        1: 'ramadhan-1447h',
+        2: 'night-tarawih',
+        3: 'lailat-mode'
+      };
+      const tag = tagMap[cycle];
+      if (!tag) return;
+      
+      grantRamadhanTag(uid, tag);
+      ramadhanProgress['cycle' + cycle].completed = true;
+      updateRamadhanProgress();
     }
 
     // ============================================================
@@ -4267,6 +5716,14 @@
         stopHearts();
       }
       dismissLoader();
+      
+      // Check if first time user - show tutorial
+      if (u) {
+        const seen = localStorage.getItem('exeTutorialSeen');
+        if (!seen) {
+          setTimeout(() => showFirstTimeTutorial(), 2000);
+        }
+      }
     });
 
     // ============================================================
@@ -4282,14 +5739,36 @@
         const now = Date.now();
         const diff = expireAt - now;
         if (diff <= 0) { banner.classList.remove('show'); return; }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        timerEl.innerHTML = `
+          <span class="countdown-segment">
+            <span class="countdown-number">${days}</span>
+            <span class="countdown-label">Hari</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${hours.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Jam</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${minutes.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Menit</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${seconds.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Detik</span>
+          </span>
+        `;
         banner.classList.add('show');
       }
       update();
-      setInterval(update, 60000);
+      setInterval(update, 1000);
     }
 
     function closeVipTrialBanner() {
@@ -4313,7 +5792,7 @@
         const now = Date.now();
         const diff = targetTs - now;
         if (diff <= 0) {
-          timerEl.textContent = 'Selamat Idulfitri! 🌙';
+          timerEl.innerHTML = '<span style="color:#ffd700">🎉 SELAMAT IDULFITRI! �</span>';
           wrap.classList.add('celebrate');
           if (lebaranInterval) {
             clearInterval(lebaranInterval);
@@ -4321,14 +5800,36 @@
           }
           return;
         }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        timerEl.innerHTML = `
+          <span class="countdown-segment">
+            <span class="countdown-number">${days}</span>
+            <span class="countdown-label">Hari</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${hours.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Jam</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${minutes.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Menit</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${seconds.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Detik</span>
+          </span>
+        `;
         wrap.classList.add('show');
       }
       updateLebaran();
-      lebaranInterval = setInterval(updateLebaran, 60000);
+      lebaranInterval = setInterval(updateLebaran, 1000);
     }
 
     function setupGlobalCountdown(cfg) {
@@ -4358,10 +5859,32 @@
           }
           return;
         }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        timerEl.textContent = `${d}h ${h}j ${m}m lagi`;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        timerEl.innerHTML = `
+          <span class="countdown-segment">
+            <span class="countdown-number">${days}</span>
+            <span class="countdown-label">Hari</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${hours.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Jam</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${minutes.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Menit</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${seconds.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Detik</span>
+          </span>
+        `;
         wrap.classList.add('show');
       };
       update();
@@ -4438,7 +5961,16 @@
     }
 
     function toggle() {
-      if (audio.paused) { audio.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; document.getElementById('eq').classList.add('playing'); }
+      if (audio.paused) { 
+        audio.play(); 
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; 
+        document.getElementById('eq').classList.add('playing');
+        // Track Ramadhan Cycle 1 - songs played
+        if (auth.currentUser && userData) {
+          ramadhanProgress.cycle1.songsPlayed++;
+          checkRamadhanProgress();
+        }
+      }
       else { audio.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; document.getElementById('eq').classList.remove('playing'); }
     }
     function next() { setup(isShuf ? Math.floor(Math.random() * songs.length) : (i + 1) % songs.length); }
@@ -4458,6 +5990,24 @@
           lastListenTick = now;
           const addSec = Math.floor(diffSec);
           addListeningProgress(addSec);
+          
+          // Track Ramadhan Cycle 1 - online minutes
+          ramadhanProgress.cycle1.onlineMinutes += addSec / 60;
+          // Track Ramadhan Cycle 3 - playtime minutes
+          ramadhanProgress.cycle3.playtimeMinutes += addSec / 60;
+          
+          // Check evening time for Cycle 2 (18:00-20:00)
+          const hour = new Date().getHours();
+          if (hour >= 18 && hour < 20) {
+            // Track evening activity (implement daily tracking in userData)
+          }
+          
+          // Check late night for Cycle 3 (after 23:00)
+          if (hour >= 23) {
+            // Track late night activity (implement daily tracking in userData)
+          }
+          
+          checkRamadhanProgress();
         }
       }
     };
@@ -4729,6 +6279,14 @@
         updateQuestProgress('daily', 'daily_first_upload', 1, uid);
         updateQuestProgress('daily', 'daily_music_producer', 1, uid);
         updateQuestProgress('weekly', 'weekly_active_creator', 1, uid);
+        
+        // Check Sahur Time - v3.2.3
+        db.ref('settings/sahurTagEnabled').once('value', snap => {
+          if (snap.val() === true && checkSahurTime()) {
+            grantSahurTag(uid);
+          }
+        });
+        
         msg('✅ Berhasil diposting!'); closeModal();
         document.getElementById('rLagu').value = ''; document.getElementById('rUrl').value = '';
       });
@@ -4783,8 +6341,23 @@
       if (!songs[i]) return;
       const url = songs[i].url;
       const btn = document.getElementById('btnFav');
-      if (fav.includes(url)) { fav = fav.filter(u => u !== url); showToast('Dihapus dari Favorit'); btn.classList.remove('active'); btn.innerHTML = '<i class="far fa-heart"></i>'; }
-      else { fav.push(url); showToast('❤️ Ditambahkan ke Favorit'); btn.classList.add('active'); btn.innerHTML = '<i class="fas fa-heart"></i>'; }
+      if (fav.includes(url)) { 
+        fav = fav.filter(u => u !== url); 
+        showToast('Dihapus dari Favorit'); 
+        btn.classList.remove('active'); 
+        btn.innerHTML = '<i class="far fa-heart"></i>'; 
+      }
+      else { 
+        fav.push(url); 
+        showToast('❤️ Ditambahkan ke Favorit'); 
+        btn.classList.add('active'); 
+        btn.innerHTML = '<i class="fas fa-heart"></i>';
+        // Track Ramadhan Cycle 2 - likes
+        if (auth.currentUser && userData) {
+          ramadhanProgress.cycle2.likes++;
+          checkRamadhanProgress();
+        }
+      }
       localStorage.setItem('exeFav', JSON.stringify(fav));
       if (document.getElementById('modalList').style.display === 'block') openList(false);
     }
@@ -4825,7 +6398,22 @@
       </div>`).join('');
       c.innerHTML = html;
       document.getElementById('modalList').style.display = 'block';
+      // Clear search input when opening list
+      const searchInput = document.getElementById('searchSongInput');
+      if (searchInput) searchInput.value = '';
     }
+    
+    function filterSongList(query) {
+      const container = document.getElementById('songContainer');
+      if (!container) return;
+      const items = container.querySelectorAll('.song-item');
+      const q = query.toLowerCase();
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+    
     function toggleFav(u, e) {
       e.stopPropagation();
       if (fav.includes(u)) { fav = fav.filter(x => x !== u); showToast('Dihapus dari Favorit'); }
@@ -4984,7 +6572,15 @@
     function buildDeepLink() { return window.location.origin + window.location.pathname + '?id=' + i; }
     function openCopyLink() { document.getElementById('copyLinkText').textContent = buildDeepLink(); document.getElementById('modalCopyLink').style.display = 'block'; }
     function copyBuiltLink() { navigator.clipboard.writeText(document.getElementById('copyLinkText').textContent).then(() => showToast('Link disalin!')); document.getElementById('modalCopyLink').style.display = 'none'; }
-    function shareToWhatsApp() { const txt = '🎵 ' + (songs[i]?.title || 'ExeMusic') + '\n🔗 ' + buildDeepLink(); window.open('https://wa.me/?text=' + encodeURIComponent(txt)); }
+    function shareToWhatsApp() { 
+      const txt = '🎵 ' + (songs[i]?.title || 'ExeMusic') + '\n🔗 ' + buildDeepLink(); 
+      window.open('https://wa.me/?text=' + encodeURIComponent(txt));
+      // Track Ramadhan Cycle 2 - shares
+      if (auth.currentUser && userData) {
+        ramadhanProgress.cycle2.shares++;
+        checkRamadhanProgress();
+      }
+    }
     function copyRawUrl() { document.getElementById('copyAudioText').textContent = songs[i]?.url || ''; document.getElementById('modalCopyAudio').style.display = 'block'; }
     function copyBuiltAudio() { const t = document.getElementById('copyAudioText').textContent; if (!t) return; navigator.clipboard.writeText(t).then(() => showToast('URL audio disalin')); document.getElementById('modalCopyAudio').style.display = 'none'; }
     function downloadSong() { window.open(songs[i].url); }
@@ -5395,7 +6991,11 @@
       blaze: { title: 'BLAZE', desc: 'Energy dominator dengan vibe panas dan agresif' },
       cosmic: { title: 'COSMIC', desc: 'Future listener dengan nuansa galaxy futuristik' },
       elite: { title: 'ELITE', desc: 'Top tier member dengan kesan mahal dan prestige' },
-      neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' }
+      neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' },
+      'ramadhan-1447h': { title: 'RAMADHAN 1447H', desc: '🌅 Event Ramadhan Cycle 1: Login 3 hari + Play 10 lagu + Online 30 menit' },
+      'night-tarawih': { title: 'NIGHT TARAWIH', desc: '🌙 Event Ramadhan Cycle 2: Online jam 18-20 (2 hari) + Share 2 lagu + Like 5 lagu' },
+      'lailat-mode': { title: 'LAILAT MODE', desc: '🕌 Event Ramadhan Cycle 3: Login 7/10 hari terakhir + 120 menit playtime + Aktif jam 23+' },
+      'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' }
     };
     let adSelectedUserUid = null;
 
@@ -5424,6 +7024,20 @@
         }).join('');
         info.innerHTML = rows;
       }
+      
+      // Init test tag select
+      const testSel = document.getElementById('adTestTagSelect');
+      if (testSel && !testSel.dataset.bound) {
+        let html = '<option value="">Pilih tag untuk testing...</option>';
+        Object.keys(TAG_META).forEach(k => {
+          if (k === 'user') return;
+          const m = TAG_META[k];
+          html += `<option value="${k}">${m.title}</option>`;
+        });
+        testSel.innerHTML = html;
+        testSel.dataset.bound = '1';
+      }
+      
       const grid = document.getElementById('adTagChipGrid');
       if (grid && !grid.dataset.bound) {
         const chips = Object.keys(TAG_META).map(k => {
@@ -5657,6 +7271,100 @@
         const lc = document.getElementById('lebaranCountdown');
         if (lc) lc.classList.remove('show', 'celebrate');
         if (lebaranInterval) { clearInterval(lebaranInterval); lebaranInterval = null; }
+      });
+    }
+
+    // ============================================================
+    // ADMIN RAMADHAN EVENT - v3.2.3
+    // ============================================================
+    function adSaveRamadhanEvent() {
+      const startDate = document.getElementById('adRamadhanStart').value;
+      const endDate = document.getElementById('adRamadhanEnd').value;
+      if (!startDate || !endDate) {
+        showToast('Isi tanggal mulai dan selesai');
+        return;
+      }
+      const startTs = new Date(startDate).getTime();
+      const endTs = new Date(endDate).getTime();
+      if (isNaN(startTs) || isNaN(endTs)) {
+        showToast('Tanggal tidak valid');
+        return;
+      }
+      db.ref('settings/ramadhanEvent').set({
+        enabled: true,
+        startTs: startTs,
+        endTs: endTs
+      }).then(() => {
+        addLog('Ramadhan Event Enabled: ' + startDate + ' - ' + endDate);
+        showToast('✅ Event Ramadhan diaktifkan');
+      });
+    }
+    
+    function adClearRamadhanEvent() {
+      db.ref('settings/ramadhanEvent').remove().then(() => {
+        addLog('Ramadhan Event Disabled');
+        showToast('Event Ramadhan dinonaktifkan');
+      });
+    }
+    
+    function adViewRamadhanProgress() {
+      showToast('Fitur monitoring progress akan segera hadir');
+      // TODO: Implementasi view progress semua user
+    }
+    
+    function adEnableSahurTag() {
+      db.ref('settings/sahurTagEnabled').set(true).then(() => {
+        addLog('Sahur Tag Auto Enabled');
+        showToast('✅ Auto Sahur Tag diaktifkan');
+        updateSahurStatus();
+      });
+    }
+    
+    function adDisableSahurTag() {
+      db.ref('settings/sahurTagEnabled').set(false).then(() => {
+        addLog('Sahur Tag Auto Disabled');
+        showToast('Auto Sahur Tag dinonaktifkan');
+        updateSahurStatus();
+      });
+    }
+    
+    function updateSahurStatus() {
+      db.ref('settings/sahurTagEnabled').once('value', snap => {
+        const enabled = snap.val() === true;
+        const statusEl = document.getElementById('adSahurStatus');
+        if (statusEl) {
+          statusEl.textContent = 'Status: ' + (enabled ? '✅ AKTIF (Auto grant jam 03:00-05:00)' : '❌ NONAKTIF');
+          statusEl.style.color = enabled ? '#22c55e' : '#888';
+        }
+      });
+    }
+    
+    // ============================================================
+    // ADMIN TAG TESTING - v3.2.3
+    // ============================================================
+    function adGrantTestTag() {
+      if (!auth.currentUser || !userData) {
+        showToast('Login dulu sebagai admin');
+        return;
+      }
+      const sel = document.getElementById('adTestTagSelect');
+      if (!sel) return;
+      const tag = sel.value;
+      if (!tag) {
+        showToast('Pilih tag dulu');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const updates = {};
+      updates['users/' + uid + '/alltag/' + tag] = true;
+      db.ref().update(updates).then(() => {
+        if (!userData.alltag) userData.alltag = {};
+        userData.alltag[tag] = true;
+        showTagUnlockFullscreen([tag]);
+        showToast('✅ Tag ' + TAG_META[tag].title + ' berhasil di-grant untuk testing');
+        addLog('Admin grant test tag: ' + tag);
+      }).catch(err => {
+        showToast('❌ Gagal grant tag: ' + err.message);
       });
     }
     function adToggleMT() {
