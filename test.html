@@ -1710,6 +1710,32 @@
       font-size: 12px;
       font-weight: 700;
       color: #bbf7d0;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .countdown-segment {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 32px;
+    }
+    .countdown-number {
+      font-size: 16px;
+      font-weight: 800;
+      color: #22c55e;
+      text-shadow: 0 0 10px rgba(34,197,94,0.6);
+      animation: countdownPulse 1s ease-in-out infinite;
+    }
+    .countdown-label {
+      font-size: 7px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    @keyframes countdownPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
     .player-badges {
       margin-top: 4px;
@@ -2785,8 +2811,283 @@
     }
 
     /* ============================================================
-       PROFILE TAG SHOWCASE - v3.2.3
+       PROFILE MUSIC PLAYER WITH COUNTDOWN RING - v3.2.3
     ============================================================ */
+    .profile-music-player {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 50px;
+      height: 50px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .profile-music-player.active {
+      display: flex;
+    }
+    .pmp-ring-container {
+      position: relative;
+      width: 50px;
+      height: 50px;
+    }
+    .pmp-ring-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+    .pmp-ring-progress {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #ff3333;
+      border-right-color: #ff3333;
+      transform: rotate(-90deg);
+      transition: border-color 0.3s ease;
+    }
+    .pmp-ring-progress.warning {
+      border-top-color: #ffcc00;
+      border-right-color: #ffcc00;
+      animation: pmpPulse 1s ease-in-out infinite;
+    }
+    .pmp-ring-progress.critical {
+      border-top-color: #ff0050;
+      border-right-color: #ff0050;
+      animation: pmpFlash 0.5s ease-in-out infinite;
+    }
+    @keyframes pmpPulse {
+      0%, 100% { transform: rotate(-90deg) scale(1); }
+      50% { transform: rotate(-90deg) scale(1.05); }
+    }
+    @keyframes pmpFlash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .pmp-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .pmp-icon:hover {
+      transform: scale(1.1);
+    }
+    .pmp-timer {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ff3333;
+      font-weight: 700;
+      white-space: nowrap;
+      text-shadow: 0 0 8px rgba(255,51,51,0.6);
+    }
+    @media (max-width: 480px) {
+      .profile-music-player {
+        width: 42px;
+        height: 42px;
+        top: 10px;
+        right: 10px;
+      }
+      .pmp-ring-container {
+        width: 42px;
+        height: 42px;
+      }
+      .pmp-icon {
+        font-size: 18px;
+      }
+    }
+
+    /* ============================================================
+       KETUPAT PARTICLES FOR RAMADHAN TAGS - v3.2.3
+    ============================================================ */
+    .ketupat-container {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99990;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      display: none;
+    }
+    .ketupat-container.active {
+      display: block;
+    }
+    .ketupat-particle {
+      position: absolute;
+      bottom: -30px;
+      font-size: 16px;
+      animation: floatKetupat linear infinite;
+      opacity: 0;
+    }
+    @keyframes floatKetupat {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* ============================================================
+       RAMADHAN PROFILE THEME - v3.2.3
+    ============================================================ */
+    .modern-profile-header.ramadhan-profile {
+      background:
+        radial-gradient(circle at 0 0, rgba(251,191,36,0.18), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(34,197,94,0.16), transparent 55%),
+        linear-gradient(180deg, #111827, #020617);
+    }
+    .modern-profile-header.ramadhan-profile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(251,191,36,0.2), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(34,197,94,0.18), transparent 55%);
+      opacity: 0.8;
+    }
+
+    /* ============================================================
+       FIRST TIME TUTORIAL - v3.2.3
+    ============================================================ */
+    .first-time-tutorial {
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      background: rgba(0,0,0,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .first-time-tutorial.show {
+      display: flex;
+    }
+    .ftt-card {
+      background: linear-gradient(180deg, #111827, #020617);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+      animation: fttSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes fttSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .ftt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .ftt-header h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #22c55e;
+      margin: 0;
+    }
+    .ftt-close {
+      background: rgba(255,255,255,0.05);
+      border: none;
+      color: #9ca3af;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .ftt-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: #e5e7eb;
+    }
+    .ftt-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .ftt-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .ftt-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .ftt-content h4 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #e5e7eb;
+      margin: 0 0 4px 0;
+    }
+    .ftt-content p {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .ftt-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .ftt-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(34,197,94,0.4);
+    }
+
     .mp-tag-showcase {
       display: flex;
       flex-wrap: wrap;
@@ -2939,8 +3240,52 @@
     </div>
   </div>
 
+  <!-- FIRST TIME TUTORIAL -->
+  <div id="firstTimeTutorial" class="first-time-tutorial">
+    <div class="ftt-card">
+      <div class="ftt-header">
+        <h3>🎉 Selamat Datang di ExeMusic!</h3>
+        <button class="ftt-close" onclick="closeTutorial()">×</button>
+      </div>
+      <div class="ftt-body">
+        <div class="ftt-section">
+          <div class="ftt-icon">🔗</div>
+          <div class="ftt-content">
+            <h4>Copy URL Audio</h4>
+            <p>Tombol <i class="fas fa-link"></i> untuk copy link MP3 langsung</p>
+          </div>
+        </div>
+        <div class="ftt-section">
+          <div class="ftt-icon">📤</div>
+          <div class="ftt-content">
+            <h4>Share Link</h4>
+            <p>Tombol <i class="fas fa-share-alt"></i> untuk share lagu ke teman</p>
+          </div>
+        </div>
+        <div class="ftt-section">
+          <div class="ftt-icon">⬇️</div>
+          <div class="ftt-content">
+            <h4>Download</h4>
+            <p>Tombol <i class="fas fa-download"></i> untuk download lagu</p>
+          </div>
+        </div>
+        <div class="ftt-section">
+          <div class="ftt-icon">➕</div>
+          <div class="ftt-content">
+            <h4>Upload Lagu</h4>
+            <p>Tombol <i class="fas fa-plus-circle"></i> untuk upload lagu baru</p>
+          </div>
+        </div>
+      </div>
+      <button class="ftt-btn" onclick="closeTutorial()">MENGERTI!</button>
+    </div>
+  </div>
+
   <!-- FLOATING HEARTS (for velly) -->
   <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- KETUPAT PARTICLES (for ramadhan tags) -->
+  <div class="ketupat-container" id="ketupatContainer"></div>
 
   <!-- BROADCAST -->
   <div id="sysBroadcast" class="sys-broadcast">
@@ -3388,6 +3733,20 @@
   <div class="modal" id="modalProfile" onclick="if(event.target==this)closeProfileModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header" id="profileHeader">
+        <!-- Profile Music Player -->
+        <div class="profile-music-player" id="profileMusicPlayer">
+          <div class="pmp-ring-container">
+            <div class="pmp-ring-bg"></div>
+            <svg class="pmp-ring-progress" id="pmpRingSvg" width="50" height="50" style="position:absolute;inset:0">
+              <circle cx="25" cy="25" r="22" fill="none" stroke="#ff3333" stroke-width="3" 
+                      stroke-dasharray="138.23" stroke-dashoffset="0" 
+                      transform="rotate(-90 25 25)" id="pmpCircle"/>
+            </svg>
+            <div class="pmp-icon" onclick="toggleProfileMusic()">🎵</div>
+          </div>
+          <div class="pmp-timer" id="pmpTimer">0:00</div>
+        </div>
+        
         <div class="mp-avatar-container">
           <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
@@ -3480,7 +3839,11 @@
   </div>
 
   <div class="modal" id="modalList" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet"><div id="songContainer"></div></div>
+    <div class="sheet">
+      <input type="text" id="searchSongInput" class="inp-dark" placeholder="🔍 Cari lagu..." 
+             oninput="filterSongList(this.value)" style="margin-bottom:12px; width: 100%;">
+      <div id="songContainer"></div>
+    </div>
   </div>
 
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
@@ -3830,6 +4193,11 @@
 
     let heartsInterval = null;
     let heartsMode = 'love';
+    let ketupatInterval = null;
+    let profileMusicInterval = null;
+    let profileMusicDuration = 0;
+    let profileMusicElapsed = 0;
+    
     function createHeart() {
       const c = document.getElementById('heartsContainer');
       if (!c) return;
@@ -3859,6 +4227,116 @@
       const c = document.getElementById('heartsContainer');
       if (c) c.classList.remove('active');
       if (heartsInterval) { clearInterval(heartsInterval); heartsInterval = null; }
+    }
+    
+    function createKetupat() {
+      const c = document.getElementById('ketupatContainer');
+      if (!c) return;
+      const k = document.createElement('div');
+      k.className = 'ketupat-particle';
+      const ketupatEmojis = ['🎋','🌾','🍃','✨','⭐'];
+      k.textContent = ketupatEmojis[Math.floor(Math.random() * ketupatEmojis.length)];
+      k.style.left = Math.random() * 100 + 'vw';
+      k.style.fontSize = (12 + Math.random() * 18) + 'px';
+      k.style.animationDuration = (5 + Math.random() * 5) + 's';
+      k.style.animationDelay = (Math.random() * 1) + 's';
+      c.appendChild(k);
+      setTimeout(() => k.remove(), 11000);
+    }
+    function startKetupat() {
+      const c = document.getElementById('ketupatContainer');
+      if (!c) return;
+      c.classList.add('active');
+      if (ketupatInterval) return;
+      ketupatInterval = setInterval(createKetupat, 700);
+    }
+    function stopKetupat() {
+      const c = document.getElementById('ketupatContainer');
+      if (c) c.classList.remove('active');
+      if (ketupatInterval) { clearInterval(ketupatInterval); ketupatInterval = null; }
+    }
+    
+    // ============================================================
+    // FIRST TIME TUTORIAL - v3.2.3
+    // ============================================================
+    function showFirstTimeTutorial() {
+      const tutorial = document.getElementById('firstTimeTutorial');
+      if (tutorial) tutorial.classList.add('show');
+    }
+    
+    function closeTutorial() {
+      const tutorial = document.getElementById('firstTimeTutorial');
+      if (tutorial) tutorial.classList.remove('show');
+      localStorage.setItem('exeTutorialSeen', '1');
+    }
+    
+    function startProfileMusicCountdown(duration) {
+      profileMusicDuration = duration;
+      profileMusicElapsed = 0;
+      const player = document.getElementById('profileMusicPlayer');
+      if (player) player.classList.add('active');
+      
+      if (profileMusicInterval) clearInterval(profileMusicInterval);
+      profileMusicInterval = setInterval(() => {
+        profileMusicElapsed++;
+        const remaining = profileMusicDuration - profileMusicElapsed;
+        const pct = (profileMusicElapsed / profileMusicDuration) * 100;
+        
+        // Update timer
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        const timerEl = document.getElementById('pmpTimer');
+        if (timerEl) timerEl.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+        
+        // Update ring
+        const circle = document.getElementById('pmpCircle');
+        const circumference = 138.23;
+        const offset = circumference * (1 - (pct / 100));
+        if (circle) {
+          circle.setAttribute('stroke-dashoffset', offset);
+          // Change color based on remaining time
+          if (remaining <= 3) {
+            circle.setAttribute('stroke', '#ff0050');
+            circle.parentElement.classList.add('critical');
+          } else if (remaining <= 10) {
+            circle.setAttribute('stroke', '#ffcc00');
+            circle.parentElement.classList.add('warning');
+            circle.parentElement.classList.remove('critical');
+          } else {
+            circle.setAttribute('stroke', '#ff3333');
+            circle.parentElement.classList.remove('warning', 'critical');
+          }
+        }
+        
+        if (remaining <= 0) {
+          stopProfileMusicCountdown();
+        }
+      }, 1000);
+    }
+    
+    function stopProfileMusicCountdown() {
+      if (profileMusicInterval) {
+        clearInterval(profileMusicInterval);
+        profileMusicInterval = null;
+      }
+      const player = document.getElementById('profileMusicPlayer');
+      if (player) player.classList.remove('active');
+      if (profileAudio) {
+        profileAudio.pause();
+        profileAudio.currentTime = 0;
+      }
+    }
+    
+    function toggleProfileMusic() {
+      if (profileAudio && !profileAudio.paused) {
+        stopProfileMusicCountdown();
+      } else if (profileAudio && profileAudio.src) {
+        profileAudio.play();
+        // Get duration and start countdown
+        profileAudio.addEventListener('loadedmetadata', () => {
+          startProfileMusicCountdown(Math.floor(profileAudio.duration));
+        }, { once: true });
+      }
     }
 
     // ============================================================
@@ -4451,6 +4929,23 @@
         const curVal = cur.cur || 0;
         const nextVal = Math.min(curVal + delta, def.max);
         if (nextVal === curVal) return cur;
+        
+        // Check if quest just completed
+        if (curVal < def.max && nextVal >= def.max) {
+          // Quest completed! Show toast
+          const questNames = {
+            'daily_first_upload': 'First Upload',
+            'daily_music_producer': 'Music Producer',
+            'daily_listener': 'Active Listener',
+            'weekly_active_creator': 'Active Creator',
+            'weekly_social_butterfly': 'Social Butterfly',
+            'weekly_music_explorer': 'Music Explorer'
+          };
+          const name = questNames[id] || id;
+          const typeLabel = type === 'daily' ? 'Harian' : 'Mingguan';
+          showToast(`[Misi ${typeLabel}] ${name} Selesai! 🎉`, 'success');
+        }
+        
         return { ...cur, cur: nextVal };
       }).then(res => {
         if (!res.committed) return;
@@ -4646,6 +5141,7 @@
       const listEl = document.getElementById('tagUnlockFullscreenTags');
       if (!wrap || !listEl) return;
       listEl.innerHTML = '';
+      let hasRamadhanTag = false;
       (tags || []).forEach(raw => {
         const t = String(raw || '').toLowerCase();
         if (!t) return;
@@ -4653,8 +5149,17 @@
         span.className = 'user-tag tag-' + t;
         span.textContent = t.toUpperCase();
         listEl.appendChild(span);
+        // Check if ramadhan tag
+        if (t.includes('ramadhan') || t.includes('tarawih') || t.includes('lailat')) {
+          hasRamadhanTag = true;
+        }
       });
       wrap.classList.add('show');
+      // Start ketupat if ramadhan tag
+      if (hasRamadhanTag) {
+        startKetupat();
+        setTimeout(() => stopKetupat(), 8000);
+      }
     }
     function closeTagUnlockFullscreen() {
       const wrap = document.getElementById('tagUnlockFullscreen');
@@ -5209,6 +5714,14 @@
         stopHearts();
       }
       dismissLoader();
+      
+      // Check if first time user - show tutorial
+      if (u) {
+        const seen = localStorage.getItem('exeTutorialSeen');
+        if (!seen) {
+          setTimeout(() => showFirstTimeTutorial(), 2000);
+        }
+      }
     });
 
     // ============================================================
@@ -5224,17 +5737,36 @@
         const now = Date.now();
         const diff = expireAt - now;
         if (diff <= 0) { banner.classList.remove('show'); return; }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const ds = String(d).padStart(2, '0');
-        const hs = String(h).padStart(2, '0');
-        const ms = String(m).padStart(2, '0');
-        timerEl.textContent = `${ds}:${hs}:${ms}`;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        timerEl.innerHTML = `
+          <span class="countdown-segment">
+            <span class="countdown-number">${days}</span>
+            <span class="countdown-label">Hari</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${hours.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Jam</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${minutes.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Menit</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${seconds.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Detik</span>
+          </span>
+        `;
         banner.classList.add('show');
       }
       update();
-      setInterval(update, 60000);
+      setInterval(update, 1000);
     }
 
     function closeVipTrialBanner() {
@@ -5258,7 +5790,7 @@
         const now = Date.now();
         const diff = targetTs - now;
         if (diff <= 0) {
-          timerEl.textContent = 'Selamat Idulfitri! 🌙';
+          timerEl.innerHTML = '<span style="color:#ffd700">🎉 SELAMAT IDULFITRI! �</span>';
           wrap.classList.add('celebrate');
           if (lebaranInterval) {
             clearInterval(lebaranInterval);
@@ -5266,17 +5798,36 @@
           }
           return;
         }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const ds = String(d).padStart(2, '0');
-        const hs = String(h).padStart(2, '0');
-        const ms = String(m).padStart(2, '0');
-        timerEl.textContent = `${ds}:${hs}:${ms}`;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        timerEl.innerHTML = `
+          <span class="countdown-segment">
+            <span class="countdown-number">${days}</span>
+            <span class="countdown-label">Hari</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${hours.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Jam</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${minutes.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Menit</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${seconds.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Detik</span>
+          </span>
+        `;
         wrap.classList.add('show');
       }
       updateLebaran();
-      lebaranInterval = setInterval(updateLebaran, 60000);
+      lebaranInterval = setInterval(updateLebaran, 1000);
     }
 
     function setupGlobalCountdown(cfg) {
@@ -5306,13 +5857,32 @@
           }
           return;
         }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const ds = String(d).padStart(2, '0');
-        const hs = String(h).padStart(2, '0');
-        const ms = String(m).padStart(2, '0');
-        timerEl.textContent = `${ds}:${hs}:${ms}`;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        timerEl.innerHTML = `
+          <span class="countdown-segment">
+            <span class="countdown-number">${days}</span>
+            <span class="countdown-label">Hari</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${hours.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Jam</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${minutes.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Menit</span>
+          </span>
+          <span style="color:#6b7280">:</span>
+          <span class="countdown-segment">
+            <span class="countdown-number">${seconds.toString().padStart(2,'0')}</span>
+            <span class="countdown-label">Detik</span>
+          </span>
+        `;
         wrap.classList.add('show');
       };
       update();
@@ -5826,7 +6396,22 @@
       </div>`).join('');
       c.innerHTML = html;
       document.getElementById('modalList').style.display = 'block';
+      // Clear search input when opening list
+      const searchInput = document.getElementById('searchSongInput');
+      if (searchInput) searchInput.value = '';
     }
+    
+    function filterSongList(query) {
+      const container = document.getElementById('songContainer');
+      if (!container) return;
+      const items = container.querySelectorAll('.song-item');
+      const q = query.toLowerCase();
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+    
     function toggleFav(u, e) {
       e.stopPropagation();
       if (fav.includes(u)) { fav = fav.filter(x => x !== u); showToast('Dihapus dari Favorit'); }
