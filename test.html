@@ -236,39 +236,30 @@
       right: -4px;
       transform: rotate(10deg);
     }
-    @keyframes vellyPulse {
-      0%, 100% { box-shadow: 0 0 12px rgba(255,20,147,0.6), inset 0 0 8px rgba(255,255,255,0.2); }
-      50% { box-shadow: 0 0 22px rgba(255,20,147,0.9), 0 0 40px rgba(255,105,180,0.4), inset 0 0 12px rgba(255,255,255,0.3); }
-    }
+      async function sendCreatorFloatChat() {
+            const msgText = document.getElementById('cpFloatMsg').value.trim();
+            if (!msgText) {
+              showToast('Tulis pesan dulu!');
+              return;
+            }
 
-    /* floating hearts around velly tag */
-    .hearts-container {
-      position: fixed; pointer-events: none; z-index: 99990;
-      width: 100vw; height: 100vh; top: 0; left: 0;
-      overflow: hidden;
-      display: none;
-    }
-    .hearts-container.active { display: block; }
-    
-    .heart-particle {
-      position: absolute;
-      bottom: -30px;
-      font-size: 14px;
-      animation: floatHeart linear infinite;
-      opacity: 0;
-    }
-    @keyframes floatHeart {
-      0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
-      10% { opacity: 1; }
-      80% { opacity: 0.8; }
-      100% { transform: translateY(-100vh) rotate(360deg) scale(1.2); opacity: 0; }
-    }
+            try {
+              const now = Date.now();
+              // Send to adminFloatChat/current (same format as admin panel)
+              await db.ref('adminFloatChat/current').set({
+                name: userData.username,
+                msg: msgText,
+                createdAt: now,
+                expireAt: now + 30000 // 30 seconds
+              });
 
-    /* ============================================================
-       BROADCAST SYSTEM
-    ============================================================ */
-    .sys-broadcast {
-        position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+              showToast('✅ Float chat terkirim!', 'success');
+              document.getElementById('cpFloatMsg').value = '';
+            } catch (error) {
+              showToast('Gagal kirim float chat');
+              console.error(error);
+            }
+          }: translateX(-50%);
         width: 90%; max-width: 400px;
         background: rgba(15,15,20,0.97);
         border-left: 4px solid var(--accent);
@@ -311,6 +302,157 @@
     .tag-unlock-banner.show {
       display: flex;
       animation: notifPanelIn 0.25s ease;
+    }
+
+    /* ============================================================
+       EVENT BANNER - v3.2.3
+    ============================================================ */
+    .event-banner-global {
+      position: fixed;
+      bottom: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2700;
+      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95));
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 12px 16px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 40px rgba(236,72,153,0.8), 0 14px 35px rgba(0,0,0,0.7);
+      font-size: 12px;
+      color: #fff;
+      min-width: 320px;
+      max-width: 90vw;
+    }
+    .event-banner-global.show {
+      display: flex;
+      animation: eventBannerIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes eventBannerIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, 20px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+      }
+    }
+    .event-banner-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      animation: eventIconPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes eventIconPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255,255,255,0.3);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(255,255,255,0.6);
+      }
+    }
+    .event-banner-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .event-banner-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1px;
+    }
+    .event-banner-desc {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+    .event-banner-timer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .event-banner-time {
+      font-size: 16px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .event-banner-label {
+      font-size: 9px;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .event-banner-close {
+      border: none;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .event-banner-close:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(90deg);
+    }
+    .event-banner-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .event-banner-btn {
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .event-banner-btn:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-1px);
+    }
+    @media (max-width: 480px) {
+      .event-banner-global {
+        bottom: 70px;
+        padding: 10px 12px;
+        min-width: auto;
+      }
+      .event-banner-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+      .event-banner-title {
+        font-size: 11px;
+      }
+      .event-banner-desc {
+        font-size: 10px;
+      }
     }
     .tag-unlock-icon {
       width: 30px;
@@ -3932,6 +4074,22 @@
       <div id="tagUnlockTags" class="tag-unlock-tags"></div>
     </div>
     <button class="tag-unlock-close" onclick="closeTagUnlockBanner()"><i class="fas fa-times"></i></button>
+  </div>
+
+  <!-- EVENT BANNER -->
+  <div id="eventBannerGlobal" class="event-banner-global">
+    <div class="event-banner-icon" id="eventBannerIcon">
+      <i class="fas fa-gift"></i>
+    </div>
+    <div class="event-banner-main">
+      <div class="event-banner-title" id="eventBannerTitle">EVENT ACTIVE</div>
+      <div class="event-banner-desc" id="eventBannerDesc">Event description</div>
+    </div>
+    <div class="event-banner-timer" id="eventBannerTimer" style="display:none">
+      <div class="event-banner-time" id="eventBannerTime">00:00</div>
+      <div class="event-banner-label">Remaining</div>
+    </div>
+    <button class="event-banner-close" onclick="closeEventBanner()">×</button>
   </div>
 
   <!-- MAINTENANCE / BANNED -->
