@@ -236,30 +236,39 @@
       right: -4px;
       transform: rotate(10deg);
     }
-      async function sendCreatorFloatChat() {
-            const msgText = document.getElementById('cpFloatMsg').value.trim();
-            if (!msgText) {
-              showToast('Tulis pesan dulu!');
-              return;
-            }
+    @keyframes vellyPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(255,20,147,0.6), inset 0 0 8px rgba(255,255,255,0.2); }
+      50% { box-shadow: 0 0 22px rgba(255,20,147,0.9), 0 0 40px rgba(255,105,180,0.4), inset 0 0 12px rgba(255,255,255,0.3); }
+    }
 
-            try {
-              const now = Date.now();
-              // Send to adminFloatChat/current (same format as admin panel)
-              await db.ref('adminFloatChat/current').set({
-                name: userData.username,
-                msg: msgText,
-                createdAt: now,
-                expireAt: now + 30000 // 30 seconds
-              });
+    /* floating hearts around velly tag */
+    .hearts-container {
+      position: fixed; pointer-events: none; z-index: 99990;
+      width: 100vw; height: 100vh; top: 0; left: 0;
+      overflow: hidden;
+      display: none;
+    }
+    .hearts-container.active { display: block; }
+    
+    .heart-particle {
+      position: absolute;
+      bottom: -30px;
+      font-size: 14px;
+      animation: floatHeart linear infinite;
+      opacity: 0;
+    }
+    @keyframes floatHeart {
+      0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
+      10% { opacity: 1; }
+      80% { opacity: 0.8; }
+      100% { transform: translateY(-100vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
 
-              showToast('✅ Float chat terkirim!', 'success');
-              document.getElementById('cpFloatMsg').value = '';
-            } catch (error) {
-              showToast('Gagal kirim float chat');
-              console.error(error);
-            }
-          }: translateX(-50%);
+    /* ============================================================
+       BROADCAST SYSTEM
+    ============================================================ */
+    .sys-broadcast {
+        position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 400px;
         background: rgba(15,15,20,0.97);
         border-left: 4px solid var(--accent);
