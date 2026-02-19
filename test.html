@@ -4749,31 +4749,13 @@
       </div>
       
       <div class="creator-content">
-        <!-- Stats Section -->
-        <div class="creator-section">
-          <div class="creator-section-title">
-            <i class="fas fa-chart-line"></i>
-            Live Stats
-          </div>
-          <div class="creator-stats-grid">
-            <div class="creator-stat-box">
-              <div class="creator-stat-value" id="cpTotalUsers">0</div>
-              <div class="creator-stat-label">Total Users</div>
-            </div>
-            <div class="creator-stat-box">
-              <div class="creator-stat-value" id="cpTotalSongs">0</div>
-              <div class="creator-stat-label">Total Songs</div>
-            </div>
-          </div>
-        </div>
-
         <!-- Broadcast Message -->
         <div class="creator-section">
           <div class="creator-section-title">
             <i class="fas fa-bullhorn"></i>
             Broadcast Message
           </div>
-          <div class="creator-label">Pesan akan muncul di semua user</div>
+          <div class="creator-label">Pesan akan muncul di semua user sebagai notifikasi</div>
           <textarea class="creator-textarea" id="cpBroadcastMsg" placeholder="Tulis pesan broadcast..."></textarea>
           <button class="creator-btn creator-btn-primary" onclick="sendCreatorBroadcast()">
             <i class="fas fa-paper-plane"></i> Kirim Broadcast
@@ -4786,7 +4768,7 @@
             <i class="fas fa-comment-dots"></i>
             Admin Float Chat
           </div>
-          <div class="creator-label">Chat mengambang di atas untuk semua user</div>
+          <div class="creator-label">Chat mengambang di atas untuk semua user (max 100 karakter)</div>
           <input class="creator-input" id="cpFloatMsg" placeholder="Pesan float chat..." maxlength="100">
           <button class="creator-btn creator-btn-secondary" onclick="sendCreatorFloatChat()">
             <i class="fas fa-comments"></i> Kirim Float Chat
@@ -5750,18 +5732,17 @@
     function openCreatorPanel() {
       const overlay = document.getElementById('creatorPanelOverlay');
       if (!auth.currentUser || !userData) {
-        msg('Login dulu untuk akses creator panel');
+        showToast('Login dulu untuk akses creator panel');
         return;
       }
       
       // Check if user has admpanel permission
       if (!userData.admpanel) {
-        msg('Kamu tidak punya akses ke Creator Panel');
+        showToast('Kamu tidak punya akses ke Creator Panel');
         return;
       }
       
       if (overlay) overlay.classList.add('show');
-      loadCreatorStats();
     }
 
     function closeCreatorPanel() {
@@ -5769,38 +5750,23 @@
       if (overlay) overlay.classList.remove('show');
     }
 
-    async function loadCreatorStats() {
-      try {
-        // Get total users
-        const usersSnap = await db.ref('users').once('value');
-        const totalUsers = usersSnap.numChildren();
-        document.getElementById('cpTotalUsers').textContent = totalUsers;
-        
-        // Get total songs
-        const songsSnap = await db.ref('songs').once('value');
-        const totalSongs = songsSnap.numChildren();
-        document.getElementById('cpTotalSongs').textContent = totalSongs;
-      } catch (error) {
-        console.error('Error loading creator stats:', error);
-      }
-    }
-
     async function sendCreatorBroadcast() {
-      const msg = document.getElementById('cpBroadcastMsg').value.trim();
-      if (!msg) {
+      const msgText = document.getElementById('cpBroadcastMsg').value.trim();
+      if (!msgText) {
         showToast('Tulis pesan dulu!');
         return;
       }
       
       try {
+        // Send to broadcast collection (same as admin panel)
         await db.ref('broadcast').set({
-          message: msg,
+          message: msgText,
           from: userData.username,
           timestamp: Date.now(),
           type: 'creator'
         });
         
-        showToast('✅ Broadcast terkirim!', 'success');
+        showToast('✅ Broadcast terkirim ke semua user!', 'success');
         document.getElementById('cpBroadcastMsg').value = '';
       } catch (error) {
         showToast('Gagal kirim broadcast');
@@ -5809,17 +5775,19 @@
     }
 
     async function sendCreatorFloatChat() {
-      const msg = document.getElementById('cpFloatMsg').value.trim();
-      if (!msg) {
+      const msgText = document.getElementById('cpFloatMsg').value.trim();
+      if (!msgText) {
         showToast('Tulis pesan dulu!');
         return;
       }
       
       try {
+        // Send to adminFloatChat collection (same as admin panel)
         await db.ref('adminFloatChat').set({
-          message: msg,
+          message: msgText,
           from: userData.username,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          duration: 30000 // 30 seconds
         });
         
         showToast('✅ Float chat terkirim!', 'success');
@@ -5832,17 +5800,36 @@
 
     async function spawnRainCoins() {
       try {
-        await db.ref('globalNotifications').push({
-          type: 'event',
+        // Create notification for all users
+        const notifData = {
+          type: 'system',
           title: '💰 RAIN COINS EVENT!',
-          message: 'Semua user dapat 50 ExeCoin gratis! Buruan claim!',
+          message: `${userData.username} spawned Rain Coins! Semua user dapat 50 ExeCoin gratis!`,
           timestamp: Date.now(),
-          from: userData.username,
-          eventType: 'rain_coins',
-          reward: 50
+          icon: 'coins'
+        };
+        
+        await db.ref('globalNotifications').push(notifData);
+        
+        // Give 50 execoin to all users
+        const usersSnap = await db.ref('users').once('value');
+        const updates = {};
+        
+        usersSnap.forEach(snap => {
+          const uid = snap.key;
+          const currentExecoin = snap.val().execoin || 0;
+          updates[`users/${uid}/execoin`] = currentExecoin + 50;
+          updates[`users/${uid}/notifications/${Date.now()}_${uid}`] = {
+            type: 'system',
+            text: '💰 Rain Coins Event! Kamu dapat 50 ExeCoin gratis!',
+            fromName: 'CREATOR',
+            timestamp: Date.now()
+          };
         });
         
-        showToast('🎉 Rain Coins event spawned!', 'success');
+        await db.ref().update(updates);
+        
+        showToast('🎉 Rain Coins event spawned! Semua user dapat 50 ExeCoin!', 'success');
       } catch (error) {
         showToast('Gagal spawn event');
         console.error(error);
@@ -5851,17 +5838,26 @@
 
     async function spawnBonusExecoin() {
       try {
-        await db.ref('globalNotifications').push({
-          type: 'event',
-          title: '💎 BONUS EXECOIN!',
-          message: 'Upload lagu sekarang dapat 2x ExeCoin!',
+        const notifData = {
+          type: 'system',
+          title: '💎 BONUS EXECOIN EVENT!',
+          message: `${userData.username} activated Bonus ExeCoin! Upload lagu sekarang dapat 2x ExeCoin!`,
           timestamp: Date.now(),
-          from: userData.username,
-          eventType: 'bonus_execoin',
-          multiplier: 2
+          icon: 'gem'
+        };
+        
+        await db.ref('globalNotifications').push(notifData);
+        
+        // Set bonus multiplier in settings
+        await db.ref('settings/bonusExecoin').set({
+          active: true,
+          multiplier: 2,
+          startTime: Date.now(),
+          duration: 3600000, // 1 hour
+          createdBy: userData.username
         });
         
-        showToast('🎉 Bonus ExeCoin event spawned!', 'success');
+        showToast('🎉 Bonus ExeCoin event spawned! Upload dapat 2x ExeCoin selama 1 jam!', 'success');
       } catch (error) {
         showToast('Gagal spawn event');
         console.error(error);
@@ -5870,17 +5866,26 @@
 
     async function spawnDoubleXP() {
       try {
-        await db.ref('globalNotifications').push({
-          type: 'event',
+        const notifData = {
+          type: 'system',
           title: '🔥 DOUBLE XP EVENT!',
-          message: 'Semua quest memberikan 2x reward selama 1 jam!',
+          message: `${userData.username} activated Double XP! Semua quest memberikan 2x reward selama 1 jam!`,
           timestamp: Date.now(),
-          from: userData.username,
-          eventType: 'double_xp',
-          duration: 3600000 // 1 hour
+          icon: 'fire'
+        };
+        
+        await db.ref('globalNotifications').push(notifData);
+        
+        // Set double XP in settings
+        await db.ref('settings/doubleXP').set({
+          active: true,
+          multiplier: 2,
+          startTime: Date.now(),
+          duration: 3600000, // 1 hour
+          createdBy: userData.username
         });
         
-        showToast('🎉 Double XP event spawned!', 'success');
+        showToast('🎉 Double XP event spawned! Quest dapat 2x reward selama 1 jam!', 'success');
       } catch (error) {
         showToast('Gagal spawn event');
         console.error(error);
@@ -5889,18 +5894,49 @@
 
     async function spawnLuckyDraw() {
       try {
-        await db.ref('globalNotifications').push({
-          type: 'event',
-          title: '🎲 LUCKY DRAW!',
-          message: '10 user beruntung akan dapat 500 ExeCoin! Cek notifikasi kamu!',
-          timestamp: Date.now(),
-          from: userData.username,
-          eventType: 'lucky_draw',
-          winners: 10,
-          prize: 500
+        const usersSnap = await db.ref('users').once('value');
+        const allUsers = [];
+        
+        usersSnap.forEach(snap => {
+          allUsers.push({
+            uid: snap.key,
+            username: snap.val().username,
+            execoin: snap.val().execoin || 0
+          });
         });
         
-        showToast('🎉 Lucky Draw event spawned!', 'success');
+        // Shuffle and pick 10 random winners
+        const shuffled = allUsers.sort(() => 0.5 - Math.random());
+        const winners = shuffled.slice(0, 10);
+        
+        const updates = {};
+        const winnerNames = [];
+        
+        winners.forEach(winner => {
+          updates[`users/${winner.uid}/execoin`] = winner.execoin + 500;
+          updates[`users/${winner.uid}/notifications/${Date.now()}_${winner.uid}`] = {
+            type: 'system',
+            text: '🎲 SELAMAT! Kamu menang Lucky Draw dan dapat 500 ExeCoin!',
+            fromName: 'CREATOR',
+            timestamp: Date.now()
+          };
+          winnerNames.push(winner.username);
+        });
+        
+        await db.ref().update(updates);
+        
+        // Send global notification
+        const notifData = {
+          type: 'system',
+          title: '🎲 LUCKY DRAW EVENT!',
+          message: `${userData.username} spawned Lucky Draw! 10 user beruntung dapat 500 ExeCoin! Winners: ${winnerNames.slice(0, 3).join(', ')}...`,
+          timestamp: Date.now(),
+          icon: 'dice'
+        };
+        
+        await db.ref('globalNotifications').push(notifData);
+        
+        showToast(`🎉 Lucky Draw spawned! 10 winners: ${winnerNames.slice(0, 3).join(', ')}...`, 'success');
       } catch (error) {
         showToast('Gagal spawn event');
         console.error(error);
