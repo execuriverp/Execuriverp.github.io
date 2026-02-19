@@ -1093,6 +1093,327 @@
     }
 
     /* ============================================================
+       LEADERBOARD SYSTEM - v3.2.3
+    ============================================================ */
+    .leaderboard-sheet {
+      margin: 40px auto;
+      max-width: 900px;
+      width: calc(100% - 32px);
+      padding: 18px 20px;
+      background: linear-gradient(180deg, #0f172a, #020617);
+      border-radius: 20px;
+      border: 1px solid rgba(251,191,36,0.7);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    .leaderboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(251,191,36,0.35);
+    }
+    .leaderboard-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1.1px;
+      font-size: 15px;
+      color: #fbbf24;
+      text-transform: uppercase;
+    }
+    .leaderboard-title i {
+      padding: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, rgba(250,204,21,0.3), transparent),
+                  linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #0b1120;
+      box-shadow: 0 0 18px rgba(251,191,36,0.7);
+    }
+    .leaderboard-refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.4);
+      color: #fbbf24;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .leaderboard-refresh i {
+      font-size: 11px;
+      animation: refreshSpin 2s linear infinite;
+    }
+    @keyframes refreshSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .leaderboard-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .leaderboard-tab-btn {
+      border-radius: 18px;
+      border: 1px solid rgba(251,191,36,0.5);
+      background: radial-gradient(circle at 0 0, rgba(251,191,36,0.12), transparent 60%),
+                  rgba(15,23,42,0.98);
+      color: #9ca3af;
+      font-size: 11px;
+      padding: 7px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      outline: none;
+      transition: 0.18s;
+      font-weight: 600;
+    }
+    .leaderboard-tab-btn i {
+      font-size: 13px;
+    }
+    .leaderboard-tab-btn.active {
+      background: linear-gradient(135deg, rgba(251,191,36,0.3), rgba(245,158,11,0.3));
+      border-color: rgba(251,191,36,0.9);
+      color: #fbbf24;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.9), 0 0 20px rgba(251,191,36,0.5);
+    }
+    .leaderboard-tab-view {
+      display: none;
+    }
+    .leaderboard-tab-view.active {
+      display: block;
+    }
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .leaderboard-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 0 0, rgba(251,191,36,0.08), transparent 60%),
+                  rgba(15,23,42,0.97);
+      border: 1px solid rgba(148,163,184,0.4);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      animation: leaderboardItemIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .leaderboard-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      border-color: rgba(251,191,36,0.6);
+    }
+    @keyframes leaderboardItemIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .leaderboard-item.rank-1 {
+      background: radial-gradient(circle at 0 0, rgba(255,215,0,0.25), transparent 60%),
+                  radial-gradient(circle at 100% 100%, rgba(255,193,7,0.2), transparent 60%),
+                  rgba(15,23,42,0.97);
+      border: 2px solid rgba(255,215,0,0.8);
+      box-shadow: 0 0 30px rgba(255,215,0,0.4), inset 0 0 20px rgba(255,215,0,0.05);
+    }
+    .leaderboard-item.rank-2 {
+      background: radial-gradient(circle at 0 0, rgba(192,192,192,0.25), transparent 60%),
+                  radial-gradient(circle at 100% 100%, rgba(148,163,184,0.2), transparent 60%),
+                  rgba(15,23,42,0.97);
+      border: 2px solid rgba(192,192,192,0.7);
+      box-shadow: 0 0 25px rgba(192,192,192,0.3), inset 0 0 15px rgba(192,192,192,0.05);
+    }
+    .leaderboard-item.rank-3 {
+      background: radial-gradient(circle at 0 0, rgba(205,127,50,0.25), transparent 60%),
+                  radial-gradient(circle at 100% 100%, rgba(180,100,30,0.2), transparent 60%),
+                  rgba(15,23,42,0.97);
+      border: 2px solid rgba(205,127,50,0.7);
+      box-shadow: 0 0 25px rgba(205,127,50,0.3), inset 0 0 15px rgba(205,127,50,0.05);
+    }
+    .leaderboard-rank {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .leaderboard-item.rank-1 .leaderboard-rank {
+      animation: goldPulse 2s ease-in-out infinite;
+    }
+    .leaderboard-item.rank-2 .leaderboard-rank {
+      animation: silverPulse 2s ease-in-out infinite;
+    }
+    .leaderboard-item.rank-3 .leaderboard-rank {
+      animation: bronzePulse 2s ease-in-out infinite;
+    }
+    @keyframes goldPulse {
+      0%, 100% { 
+        filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+        transform: scale(1);
+      }
+      50% { 
+        filter: drop-shadow(0 0 20px rgba(255,215,0,1));
+        transform: scale(1.1);
+      }
+    }
+    @keyframes silverPulse {
+      0%, 100% { 
+        filter: drop-shadow(0 0 8px rgba(192,192,192,0.6));
+        transform: scale(1);
+      }
+      50% { 
+        filter: drop-shadow(0 0 18px rgba(192,192,192,0.9));
+        transform: scale(1.08);
+      }
+    }
+    @keyframes bronzePulse {
+      0%, 100% { 
+        filter: drop-shadow(0 0 8px rgba(205,127,50,0.6));
+        transform: scale(1);
+      }
+      50% { 
+        filter: drop-shadow(0 0 18px rgba(205,127,50,0.9));
+        transform: scale(1.08);
+      }
+    }
+    .leaderboard-rank-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(148,163,184,0.2);
+      border: 1px solid rgba(148,163,184,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #94a3b8;
+      font-family: 'Rajdhani', sans-serif;
+    }
+    .leaderboard-user {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .leaderboard-username {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .leaderboard-item.rank-1 .leaderboard-username {
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255,215,0,0.6);
+    }
+    .leaderboard-item.rank-2 .leaderboard-username {
+      color: #c0c0c0;
+      text-shadow: 0 0 10px rgba(192,192,192,0.6);
+    }
+    .leaderboard-item.rank-3 .leaderboard-username {
+      color: #cd7f32;
+      text-shadow: 0 0 10px rgba(205,127,50,0.6);
+    }
+    .leaderboard-stats {
+      font-size: 10px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .leaderboard-value {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .leaderboard-value-number {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fbbf24;
+      font-family: 'Rajdhani', sans-serif;
+      text-shadow: 0 0 10px rgba(251,191,36,0.4);
+    }
+    .leaderboard-item.rank-1 .leaderboard-value-number {
+      color: #ffd700;
+      text-shadow: 0 0 15px rgba(255,215,0,0.8);
+    }
+    .leaderboard-item.rank-2 .leaderboard-value-number {
+      color: #c0c0c0;
+      text-shadow: 0 0 15px rgba(192,192,192,0.8);
+    }
+    .leaderboard-item.rank-3 .leaderboard-value-number {
+      color: #cd7f32;
+      text-shadow: 0 0 15px rgba(205,127,50,0.8);
+    }
+    .leaderboard-value-label {
+      font-size: 9px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .leaderboard-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+    }
+    @media (max-width: 640px) {
+      .leaderboard-sheet {
+        margin: 20px auto;
+        width: calc(100% - 20px);
+        padding: 14px 12px;
+      }
+      .leaderboard-item {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+      .leaderboard-rank {
+        width: 40px;
+        height: 40px;
+        font-size: 26px;
+      }
+      .leaderboard-rank-number {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+      .leaderboard-username {
+        font-size: 12px;
+      }
+      .leaderboard-value-number {
+        font-size: 16px;
+      }
+    }
+
+    /* ============================================================
        COVER BOX
     ============================================================ */
     .cover-box {
@@ -3901,6 +4222,7 @@
             <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
             <button class="event-tab-btn" data-tab="ramadhan" onclick="switchEventTab('ramadhan', this)"><i class="fas fa-moon"></i> Event Ramadhan</button>
             <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
+            <button class="event-tab-btn" data-tab="leaderboard" onclick="openLeaderboard()"><i class="fas fa-trophy"></i> Leaderboard</button>
           </div>
           <div id="evTabDaily" class="event-tab-view active">
             <div class="event-tab-caption">Reset tiap 24 jam untuk semua akun.</div>
@@ -4105,6 +4427,77 @@
     <span class="pill-time" id="globalEventPillTime">--:--</span>
   </div>
   <div id="toast-container"></div>
+
+  <!-- LEADERBOARD MODAL -->
+  <div class="modal" id="modalLeaderboard" onclick="if(event.target==this)this.style.display='none'">
+    <div class="leaderboard-sheet">
+      <div class="leaderboard-header">
+        <div class="leaderboard-title">
+          <i class="fas fa-trophy"></i>
+          <span>LEADERBOARD TOP 5</span>
+        </div>
+        <div class="leaderboard-refresh">
+          <i class="fas fa-sync-alt"></i>
+          <span id="lbRefreshTimer">60s</span>
+        </div>
+      </div>
+      
+      <div class="leaderboard-tabs">
+        <button class="leaderboard-tab-btn active" onclick="switchLeaderboardTab('followers', this)">
+          <i class="fas fa-users"></i> Followers
+        </button>
+        <button class="leaderboard-tab-btn" onclick="switchLeaderboardTab('tags', this)">
+          <i class="fas fa-tags"></i> Tags
+        </button>
+        <button class="leaderboard-tab-btn" onclick="switchLeaderboardTab('uploads', this)">
+          <i class="fas fa-music"></i> Uploads
+        </button>
+        <button class="leaderboard-tab-btn" onclick="switchLeaderboardTab('execoin', this)">
+          <i class="fas fa-coins"></i> ExeCoin
+        </button>
+      </div>
+
+      <!-- Followers Tab -->
+      <div id="lbTabFollowers" class="leaderboard-tab-view active">
+        <div class="leaderboard-list" id="lbFollowersList">
+          <div class="leaderboard-empty">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;color:#fbbf24;margin-bottom:10px"></i>
+            <div>Memuat data...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags Tab -->
+      <div id="lbTabTags" class="leaderboard-tab-view">
+        <div class="leaderboard-list" id="lbTagsList">
+          <div class="leaderboard-empty">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;color:#fbbf24;margin-bottom:10px"></i>
+            <div>Memuat data...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Uploads Tab -->
+      <div id="lbTabUploads" class="leaderboard-tab-view">
+        <div class="leaderboard-list" id="lbUploadsList">
+          <div class="leaderboard-empty">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;color:#fbbf24;margin-bottom:10px"></i>
+            <div>Memuat data...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ExeCoin Tab -->
+      <div id="lbTabExecoin" class="leaderboard-tab-view">
+        <div class="leaderboard-list" id="lbExecoinList">
+          <div class="leaderboard-empty">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;color:#fbbf24;margin-bottom:10px"></i>
+            <div>Memuat data...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="tutorial-overlay" id="tutorialOverlay">
     <div class="tutorial-card">
@@ -4739,6 +5132,186 @@
       }
       renderEventCenter();
     }
+
+    // ============================================================
+    // LEADERBOARD SYSTEM - v3.2.3
+    // ============================================================
+    let leaderboardRefreshInterval = null;
+    let leaderboardRefreshCountdown = 60;
+
+    function openLeaderboard() {
+      const eventModal = document.getElementById('modalEventCenter');
+      const lbModal = document.getElementById('modalLeaderboard');
+      
+      if (!auth.currentUser || !userData) {
+        msg('Login dulu untuk akses leaderboard');
+        return;
+      }
+      
+      // Close event center, open leaderboard
+      if (eventModal) eventModal.style.display = 'none';
+      if (lbModal) lbModal.style.display = 'block';
+      
+      // Load leaderboard data
+      loadLeaderboardData();
+      
+      // Start refresh timer
+      startLeaderboardRefresh();
+    }
+
+    function switchLeaderboardTab(category, btn) {
+      document.querySelectorAll('.leaderboard-tab-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.leaderboard-tab-btn').forEach(b => b.classList.remove('active'));
+      
+      const tabMap = {
+        'followers': 'lbTabFollowers',
+        'tags': 'lbTabTags',
+        'uploads': 'lbTabUploads',
+        'execoin': 'lbTabExecoin'
+      };
+      
+      const tab = document.getElementById(tabMap[category]);
+      if (tab) tab.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function startLeaderboardRefresh() {
+      // Clear existing interval
+      if (leaderboardRefreshInterval) {
+        clearInterval(leaderboardRefreshInterval);
+      }
+      
+      leaderboardRefreshCountdown = 60;
+      const timerEl = document.getElementById('lbRefreshTimer');
+      
+      leaderboardRefreshInterval = setInterval(() => {
+        leaderboardRefreshCountdown--;
+        if (timerEl) timerEl.textContent = leaderboardRefreshCountdown + 's';
+        
+        if (leaderboardRefreshCountdown <= 0) {
+          leaderboardRefreshCountdown = 60;
+          loadLeaderboardData();
+        }
+      }, 1000);
+    }
+
+    async function loadLeaderboardData() {
+      try {
+        const usersSnapshot = await db.ref('users').once('value');
+        const users = [];
+        
+        usersSnapshot.forEach(snap => {
+          const data = snap.val();
+          if (!data || !data.username) return;
+          
+          const followersCount = data.followers 
+            ? (Array.isArray(data.followers) ? data.followers.length : Object.keys(data.followers).length)
+            : 0;
+          
+          const tagsCount = data.alltag 
+            ? (Array.isArray(data.alltag) ? data.alltag.length : Object.keys(data.alltag).length)
+            : 0;
+          
+          const uploadsCount = data.uploads || 0;
+          const execoin = data.execoin || 0;
+          
+          users.push({
+            uid: snap.key,
+            username: data.username,
+            tag: data.tag || 'user',
+            followers: followersCount,
+            tags: tagsCount,
+            uploads: uploadsCount,
+            execoin: execoin
+          });
+        });
+        
+        // Render each category
+        renderLeaderboardCategory('followers', users, 'lbFollowersList');
+        renderLeaderboardCategory('tags', users, 'lbTagsList');
+        renderLeaderboardCategory('uploads', users, 'lbUploadsList');
+        renderLeaderboardCategory('execoin', users, 'lbExecoinList');
+        
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
+      }
+    }
+
+    function renderLeaderboardCategory(category, users, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      // Sort users by category
+      const sorted = users.sort((a, b) => b[category] - a[category]).slice(0, 5);
+      
+      if (sorted.length === 0 || sorted[0][category] === 0) {
+        container.innerHTML = `
+          <div class="leaderboard-empty">
+            <i class="fas fa-trophy" style="font-size:32px;color:#6b7280;margin-bottom:10px;opacity:0.3"></i>
+            <div>Belum ada data untuk kategori ini</div>
+          </div>
+        `;
+        return;
+      }
+      
+      const medals = ['🥇', '🥈', '🥉'];
+      const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+      
+      const labels = {
+        followers: 'Followers',
+        tags: 'Tags',
+        uploads: 'Uploads',
+        execoin: 'ExeCoin'
+      };
+      
+      let html = '';
+      sorted.forEach((user, index) => {
+        const rank = index + 1;
+        const rankClass = index < 3 ? rankClasses[index] : '';
+        const medal = index < 3 ? medals[index] : '';
+        const isCurrentUser = auth.currentUser && user.uid === auth.currentUser.uid;
+        
+        html += `
+          <div class="leaderboard-item ${rankClass}" style="animation-delay: ${index * 0.1}s">
+            <div class="leaderboard-rank">
+              ${medal || `<div class="leaderboard-rank-number">${rank}</div>`}
+            </div>
+            <div class="leaderboard-user">
+              <div class="leaderboard-username">
+                ${user.username}
+                ${isCurrentUser ? '<i class="fas fa-star" style="color:#fbbf24;font-size:10px"></i>' : ''}
+                <span class="user-tag tag-${user.tag}">${user.tag.toUpperCase()}</span>
+              </div>
+              <div class="leaderboard-stats">
+                <span>Rank #${rank}</span>
+                ${isCurrentUser ? '<span style="color:#fbbf24">• You</span>' : ''}
+              </div>
+            </div>
+            <div class="leaderboard-value">
+              <div class="leaderboard-value-number">${user[category].toLocaleString()}</div>
+              <div class="leaderboard-value-label">${labels[category]}</div>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // Close leaderboard when modal closes
+    document.addEventListener('DOMContentLoaded', () => {
+      const lbModal = document.getElementById('modalLeaderboard');
+      if (lbModal) {
+        lbModal.addEventListener('click', (e) => {
+          if (e.target === lbModal) {
+            if (leaderboardRefreshInterval) {
+              clearInterval(leaderboardRefreshInterval);
+              leaderboardRefreshInterval = null;
+            }
+          }
+        });
+      }
+    });
     function applyProfileUrl(push = false) {
       try {
         const base = window.location.protocol + '//' + window.location.host + window.location.pathname;
