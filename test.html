@@ -4938,7 +4938,7 @@
   </div>
   <div id="toast-container"></div>
 
-  <!-- CREATOR PANEL V2 -->
+  <!-- CREATOR PANEL (Simplified) -->
   <div class="creator-panel-overlay" id="creatorPanelOverlay">
     <div class="creator-panel">
       <div class="creator-header">
@@ -4950,72 +4950,21 @@
       </div>
       
       <div class="creator-content">
-        <!-- Broadcast Message -->
-        <div class="creator-section">
-          <div class="creator-section-title">
-            <i class="fas fa-bullhorn"></i>
-            Broadcast Message
-          </div>
-          <div class="creator-label">Pesan akan muncul di semua user sebagai notifikasi</div>
-          <textarea class="creator-textarea" id="cpBroadcastMsg" placeholder="Tulis pesan broadcast..."></textarea>
-          <button class="creator-btn creator-btn-primary" onclick="sendCreatorBroadcast()">
-            <i class="fas fa-paper-plane"></i> Kirim Broadcast
-          </button>
-        </div>
-
-        <!-- Float Chat -->
+        <!-- Float Chat Only -->
         <div class="creator-section">
           <div class="creator-section-title">
             <i class="fas fa-comment-dots"></i>
-            Admin Float Chat
+            Admin Float Chat (15s, global)
           </div>
           <div class="creator-label">Chat mengambang di atas untuk semua user (max 100 karakter)</div>
           <input class="creator-input" id="cpFloatMsg" placeholder="Pesan float chat..." maxlength="100">
           <button class="creator-btn creator-btn-secondary" onclick="sendCreatorFloatChat()">
-            <i class="fas fa-comments"></i> Kirim Float Chat
+            <i class="fas fa-comments"></i> SEND CHAT
           </button>
         </div>
-
-        <!-- Spawn Events -->
-        <div class="creator-section">
-          <div class="creator-section-title">
-            <i class="fas fa-gift"></i>
-            Spawn Events
-          </div>
-          <div class="creator-label">Trigger event spesial untuk semua user</div>
-          <div class="creator-event-grid">
-            <button class="creator-event-btn" onclick="spawnRainCoins()">
-              <i class="fas fa-coins"></i>
-              <span>Rain Coins</span>
-            </button>
-            <button class="creator-event-btn" onclick="spawnBonusExecoin()">
-              <i class="fas fa-gem"></i>
-              <span>Bonus ExeCoin</span>
-            </button>
-            <button class="creator-event-btn" onclick="spawnDoubleXP()">
-              <i class="fas fa-fire"></i>
-              <span>Double XP</span>
-            </button>
-            <button class="creator-event-btn" onclick="spawnLuckyDraw()">
-              <i class="fas fa-dice"></i>
-              <span>Lucky Draw</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Give Rewards -->
-        <div class="creator-section">
-          <div class="creator-section-title">
-            <i class="fas fa-award"></i>
-            Give Rewards
-          </div>
-          <div class="creator-label">Username</div>
-          <input class="creator-input" id="cpRewardUsername" placeholder="Masukkan username...">
-          <div class="creator-label">Jumlah ExeCoin</div>
-          <input class="creator-input" id="cpRewardAmount" type="number" placeholder="100" value="100">
-          <button class="creator-btn creator-btn-success" onclick="giveCreatorReward()">
-            <i class="fas fa-gift"></i> Berikan Reward
-          </button>
+        
+        <div style="padding: 20px; text-align: center; color: #666; font-size: 12px;">
+          <i class="fas fa-info-circle"></i> Fitur ini untuk senang-senang saja, bukan untuk jadi admin
         </div>
       </div>
     </div>
