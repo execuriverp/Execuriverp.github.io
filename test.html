@@ -2325,11 +2325,12 @@
     border: 1px solid rgba(129,140,248,0.6);
   }
   .tag-elite {
+    position: relative;
     background: linear-gradient(135deg, #111827, #000000);
     color: #fef3c7;
     border-radius: 999px;
     border: 1px solid rgba(253,224,71,0.85);
-    padding: 2px 10px 2px 8px;
+    padding: 2px 10px 2px 16px;
   }
   .tag-elite::before {
     content: '👑';
@@ -2339,8 +2340,41 @@
     transform: translateY(-50%);
     font-size: 10px;
   }
-  .tag-elite {
-    padding-left: 16px;
+  .tag-content-creator {
+    position: relative;
+    background: 
+      radial-gradient(circle at 0 0, rgba(236,72,153,0.4), transparent 60%),
+      radial-gradient(circle at 100% 100%, rgba(168,85,247,0.4), transparent 60%),
+      linear-gradient(135deg, #ec4899, #a855f7, #ec4899);
+    color: #fff;
+    border-radius: 999px;
+    border: 1px solid rgba(236,72,153,0.8);
+    box-shadow: 0 0 15px rgba(236,72,153,0.6), 0 0 25px rgba(168,85,247,0.3);
+    padding: 2px 10px 2px 18px;
+    font-weight: 900;
+    animation: contentCreatorPulse 2s ease-in-out infinite;
+  }
+  .tag-content-creator::before {
+    content: '🎬';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    animation: creatorIconSpin 3s linear infinite;
+  }
+  @keyframes contentCreatorPulse {
+    0%, 100% { 
+      box-shadow: 0 0 12px rgba(236,72,153,0.5), 0 0 20px rgba(168,85,247,0.2);
+    }
+    50% { 
+      box-shadow: 0 0 20px rgba(236,72,153,0.8), 0 0 35px rgba(168,85,247,0.5);
+    }
+  }
+  @keyframes creatorIconSpin {
+    0%, 100% { transform: translateY(-50%) rotate(0deg); }
+    25% { transform: translateY(-50%) rotate(-10deg); }
+    75% { transform: translateY(-50%) rotate(10deg); }
   }
   .tag-neon {
     background: linear-gradient(135deg, #020617, #111827);
@@ -5792,7 +5826,7 @@
           const uploadsCount = uploadCounts[uid] || 0;
           
           // Get execoin
-          const execoin = data.execoin || 0;
+          const execoin = data.coins || 0;
           
           users.push({
             uid: uid,
@@ -5876,6 +5910,89 @@
       });
       
       container.innerHTML = html;
+    }
+
+    // ============================================================
+    // PROFILE RANKING BADGE - v3.2.3
+    // ============================================================
+    async function updateProfileRankingBadge(uid) {
+      const profHeader = document.getElementById('profileHeader');
+      if (!profHeader || !uid) return;
+      
+      // Remove existing badge
+      const existingBadge = profHeader.querySelector('.mp-ranking-badge');
+      if (existingBadge) existingBadge.remove();
+      
+      try {
+        // Get all users data
+        const usersSnapshot = await db.ref('users').once('value');
+        
+        // Get all songs to count uploads per user
+        const songsSnapshot = await db.ref('songs').once('value');
+        const uploadCounts = {};
+        
+        songsSnapshot.forEach(snap => {
+          const song = snap.val();
+          if (song && song.uid) {
+            uploadCounts[song.uid] = (uploadCounts[song.uid] || 0) + 1;
+          }
+        });
+        
+        const allUsers = [];
+        
+        usersSnapshot.forEach(snap => {
+          const u = snap.val();
+          if (!u) return;
+          const followers = u.followers ? Object.keys(u.followers).length : 0;
+          const tags = u.alltag ? Object.keys(u.alltag).length : 0;
+          const uploads = uploadCounts[snap.key] || 0;
+          const execoin = u.coins || 0;
+          allUsers.push({
+            uid: snap.key,
+            username: u.username || 'User',
+            followers,
+            tags,
+            uploads,
+            execoin
+          });
+        });
+        
+        // Check ranking in each category
+        const categories = ['followers', 'tags', 'uploads', 'execoin'];
+        let bestRank = null;
+        let bestCategory = null;
+        
+        categories.forEach(cat => {
+          const sorted = allUsers.sort((a, b) => b[cat] - a[cat]);
+          const rank = sorted.findIndex(u => u.uid === uid) + 1;
+          if (rank > 0 && rank <= 5) {
+            if (!bestRank || rank < bestRank) {
+              bestRank = rank;
+              bestCategory = cat;
+            }
+          }
+        });
+        
+        // If user is in top 5, show badge
+        if (bestRank && bestCategory) {
+          const categoryLabels = {
+            followers: 'Followers',
+            tags: 'Tags',
+            uploads: 'Uploads',
+            execoin: 'ExeCoin'
+          };
+          
+          const badge = document.createElement('div');
+          badge.className = `mp-ranking-badge rank-${bestRank}`;
+          badge.innerHTML = `
+            <span class="mp-ranking-icon">🔥</span>
+            <span class="mp-ranking-text">#${bestRank} ${categoryLabels[bestCategory]}</span>
+          `;
+          profHeader.appendChild(badge);
+        }
+      } catch (err) {
+        console.error('Error loading ranking badge:', err);
+      }
     }
 
     // Close leaderboard when modal closes
