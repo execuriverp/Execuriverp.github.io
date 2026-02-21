@@ -675,12 +675,28 @@
     #btnAdmin.show { display: flex; }
 
     #topLoginBtn {
-      background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,212,255,0.05));
-      border: 1px solid rgba(0,255,136,0.2);
-      color: var(--accent); padding: 8px 15px; border-radius: 20px; font-size: 11px; cursor: pointer;
-      font-weight: 700; transition: 0.2s; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px;
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, rgba(0,255,136,0.12), rgba(0,212,255,0.08));
+      border: 1px solid rgba(0,255,136,0.25);
+      border-radius: 50%;
+      color: var(--accent);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: 0.2s;
+      position: relative;
+      overflow: hidden;
     }
-    #topLoginBtn:hover { background: var(--accent); color: black; border-color: var(--accent); }
+    #topLoginBtn:hover {
+      background: linear-gradient(135deg, rgba(0,255,136,0.25), rgba(0,212,255,0.15));
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(0,255,136,0.3);
+      transform: scale(1.05);
+    }
+    #topLoginBtn.logged-in {
+      border-color: rgba(0,255,136,0.4);
+      box-shadow: 0 0 10px rgba(0,255,136,0.15);
+    }
 
     /* ============================================================
        NOTIF PANEL
@@ -2110,9 +2126,10 @@
     ============================================================ */
     .modern-profile-header {
       display: flex; flex-direction: column; align-items: center;
-      padding: 28px 20px 18px;
-      background: linear-gradient(to bottom, rgba(0,255,136,0.04), transparent);
+      padding: 32px 24px 20px;
+      background: linear-gradient(180deg, rgba(0,255,136,0.06), rgba(0,212,255,0.02), transparent);
       position: relative;
+      gap: 2px;
     }
     .modern-profile-header.vip {
       background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,152,0,0.06), rgba(255,255,255,0.02));
@@ -2190,33 +2207,104 @@
     }
     @keyframes vipShine { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(10%,10%) rotate(20deg); } 100% { transform: translate(0,0) rotate(0deg); } }
 
-    .mp-avatar-container { position: relative; margin-bottom: 14px; }
-    .mp-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); box-shadow: 0 8px 25px rgba(0,255,136,0.2); }
-    .modern-profile-header.vip .mp-avatar { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.12), 0 8px 25px rgba(255,215,0,0.2); }
-    .mp-edit-badge { position: absolute; bottom: 0; right: 0; background: #1a1a2e; color: #fff; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 11px; }
-    .mp-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; justify-content: center; }
-    .mp-name { font-size: 18px; font-weight: 800; color: #fff; font-family: 'Rajdhani', sans-serif; }
-    .mp-handle { font-size: 11px; color: #666; margin-bottom: 10px; }
-    .mp-stats { display: flex; gap: 28px; margin-bottom: 18px; }
-    .mp-stat-item { text-align: center; cursor: pointer; }
-    .mp-stat-val { display: block; font-size: 16px; font-weight: 800; color: #fff; font-family: 'Rajdhani', sans-serif; }
-    .mp-stat-label { font-size: 10px; color: #666; letter-spacing: 0.5px; }
-    .mp-actions { display: flex; gap: 7px; width: 100%; margin-bottom: 14px; flex-wrap: nowrap; overflow-x: auto; padding: 5px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); justify-content: center; }
-    .mp-btn { flex: 0 0 auto; padding: 8px 11px; border-radius: 6px; border: none; font-weight: 700; font-size: 11px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
+    .mp-avatar-container { position: relative; margin-bottom: 16px; }
+    .mp-avatar {
+      width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 0 4px rgba(0,255,136,0.08), 0 8px 30px rgba(0,255,136,0.15);
+      transition: 0.3s;
+    }
+    .mp-avatar:hover { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(0,255,136,0.15), 0 12px 35px rgba(0,255,136,0.25); }
+    .modern-profile-header.vip .mp-avatar { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255,215,0,0.1), 0 8px 30px rgba(255,215,0,0.2); }
+    .mp-edit-badge {
+      position: absolute; bottom: 2px; right: 2px;
+      background: linear-gradient(135deg, #1a1a2e, #0f172a);
+      color: var(--accent); width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid rgba(0,255,136,0.3); cursor: pointer; font-size: 11px;
+      transition: 0.2s;
+    }
+    .mp-edit-badge:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+    .mp-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; justify-content: center; }
+    .mp-name { font-size: 20px; font-weight: 800; color: #fff; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
+    .mp-handle { font-size: 11px; color: #888; margin-bottom: 12px; letter-spacing: 0.3px; }
+    .mp-stats {
+      display: flex; gap: 0; margin-bottom: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .mp-stat-item {
+      text-align: center; cursor: pointer; flex: 1;
+      padding: 12px 16px;
+      transition: 0.2s;
+      position: relative;
+    }
+    .mp-stat-item:not(:last-child)::after {
+      content: ''; position: absolute; right: 0; top: 20%; height: 60%;
+      width: 1px; background: rgba(255,255,255,0.06);
+    }
+    .mp-stat-item:hover { background: rgba(0,255,136,0.04); }
+    .mp-stat-val { display: block; font-size: 18px; font-weight: 800; color: #fff; font-family: 'Rajdhani', sans-serif; line-height: 1.2; }
+    .mp-stat-label { font-size: 9px; color: #888; letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
+    .mp-actions {
+      display: flex; gap: 6px; width: 100%; margin-bottom: 16px;
+      flex-wrap: nowrap; overflow-x: auto;
+      padding: 6px 8px; border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      justify-content: center;
+    }
+    .mp-actions::-webkit-scrollbar { height: 0; }
+    .mp-btn {
+      flex: 0 0 auto; padding: 8px 12px; border-radius: 8px; border: none;
+      font-weight: 700; font-size: 11px; cursor: pointer; transition: 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px;
+    }
+    .mp-btn:hover { transform: translateY(-1px); }
     .mp-btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
-    .mp-btn-sec { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+    .mp-btn-sec { background: rgba(255,255,255,0.06); color: #ddd; border: 1px solid rgba(255,255,255,0.08); }
+    .mp-btn-sec:hover { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.15); }
     .mp-btn-pink { background: linear-gradient(135deg, #ff1493, #ff69b4); color: #fff; }
-    .mp-tabs { display: flex; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
-    .mp-tab { flex: 1; padding: 12px; text-align: center; color: #555; cursor: pointer; font-size: 11px; font-weight: 700; position: relative; transition: 0.2s; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
-    .mp-tab.active { color: var(--accent); }
-    .mp-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
-    .mp-list { display: flex; flex-direction: column; gap: 6px; padding: 0 12px 18px; max-height: 280px; overflow-y: auto; }
-    .mp-song-item { display: flex; align-items: center; gap: 10px; padding: 9px; border-radius: 10px; background: rgba(255,255,255,0.02); cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-    .mp-song-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(0,255,136,0.1); }
-    .mp-song-icon { width: 30px; height: 30px; border-radius: 6px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--accent); }
+    .mp-tabs {
+      display: flex; width: 100%;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 0;
+      background: rgba(255,255,255,0.02);
+    }
+    .mp-tab {
+      flex: 1; padding: 14px 12px; text-align: center; color: #666;
+      cursor: pointer; font-size: 11px; font-weight: 700;
+      position: relative; transition: 0.2s;
+      font-family: 'Rajdhani', sans-serif; letter-spacing: 1.2px;
+    }
+    .mp-tab:hover { color: #999; background: rgba(255,255,255,0.02); }
+    .mp-tab.active { color: var(--accent); background: rgba(0,255,136,0.03); }
+    .mp-tab.active::after {
+      content: ''; position: absolute; bottom: 0; left: 15%; width: 70%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 2px;
+    }
+    .mp-list { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px 18px; max-height: 280px; overflow-y: auto; }
+    .mp-list::-webkit-scrollbar { width: 3px; }
+    .mp-list::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.2); border-radius: 10px; }
+    .mp-song-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 10px; background: rgba(255,255,255,0.02);
+      cursor: pointer; border: 1px solid transparent; transition: 0.2s;
+    }
+    .mp-song-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(0,255,136,0.1); transform: translateX(2px); }
+    .mp-song-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0,255,136,0.08), rgba(0,212,255,0.05));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--accent); flex-shrink: 0;
+    }
     .mp-song-info { flex: 1; min-width: 0; }
-    .mp-song-title { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .mp-song-artist { font-size: 10px; color: #555; }
+    .mp-song-title { font-size: 12px; font-weight: 700; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mp-song-artist { font-size: 10px; color: #666; margin-top: 1px; }
 
     /* ============================================================
        SONG LIST
@@ -4188,7 +4276,7 @@
         <button id="btnCreatorPanel" onclick="openCreatorPanel()" title="Creator Panel">
           <i class="fas fa-star"></i>
         </button>
-        <button id="topLoginBtn" onclick="openProfile()">Login</button>
+        <button id="topLoginBtn" onclick="openProfile()" title="Profile">👤</button>
       </div>
     </div>
 
@@ -4578,7 +4666,7 @@
           <span id="pBadge"></span>
         </div>
         <span id="pEmail" class="mp-handle">user@email.com</span>
-        <div id="pTagDisplay" style="margin-bottom:10px"></div>
+        <div id="pTagDisplay" style="margin-bottom:8px"></div>
         <div class="mp-stats">
           <div class="mp-stat-item"><span id="pFol" class="mp-stat-val">0</span><span class="mp-stat-label">Followers</span></div>
           <div class="mp-stat-item"><span id="pFollowing" class="mp-stat-val">0</span><span class="mp-stat-label">Following</span></div>
@@ -4589,17 +4677,17 @@
           <button class="mp-btn mp-btn-sec" onclick="openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
-          <button class="mp-btn" style="background:var(--danger); color:#fff" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
+          <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
         <div id="profileMusicRow" style="width:100%; padding:0 18px 8px; display:none">
-          <input id="profileMusicUrl" class="inp-dark" placeholder="Link MP3 khusus profil">
-          <button class="btn-act" style="margin-top:8px; width:100%" onclick="saveProfileMusic()">SIMPAN MUSIC PROFIL</button>
+          <input id="profileMusicUrl" class="inp-dark" placeholder="Link MP3 khusus profil" style="border-radius:8px">
+          <button class="btn-act" style="margin-top:8px; width:100%; border-radius:8px" onclick="saveProfileMusic()">SIMPAN MUSIC PROFIL</button>
         </div>
-        <div style="font-size:11px; color:#666; margin-top:6px" id="pVipStatus">Status: NONVIP</div>
+        <div style="font-size:10px; color:#555; margin-top:4px; padding:4px 12px; background:rgba(255,255,255,0.02); border-radius:6px; border:1px solid rgba(255,255,255,0.04)" id="pVipStatus">Status: NONVIP</div>
       </div>
       <div class="mp-tabs">
-        <div class="mp-tab active" onclick="switchProfileTab('posts')" id="tabPosts">MY UPLOADS</div>
-        <div class="mp-tab" onclick="switchProfileTab('likes')" id="tabLikes">FAVORITES</div>
+        <div class="mp-tab active" onclick="switchProfileTab('posts')" id="tabPosts"><i class="fas fa-music" style="margin-right:4px"></i> MY UPLOADS</div>
+        <div class="mp-tab" onclick="switchProfileTab('likes')" id="tabLikes"><i class="fas fa-heart" style="margin-right:4px"></i> FAVORITES</div>
       </div>
       <div id="myPostList" class="mp-list"></div>
       <div id="myLikeList" class="mp-list" style="display:none"></div>
@@ -5284,6 +5372,8 @@
     let adminLoaded = false;
     let adminDrag = { active: false, offsetX: 0, offsetY: 0 };
     let adminMode = 'normal';
+    let creatorDrag = { active: false, offsetX: 0, offsetY: 0 };
+    let creatorMode = 'normal';
     let tagDropInterval = null;
     let tagDropBannerInterval = null;
     let currentTagDrop = null;
@@ -5953,23 +6043,119 @@
     // ============================================================
     function openCreatorPanel() {
       const overlay = document.getElementById('creatorPanelOverlay');
+      const inner = document.getElementById('creatorPanelInner');
       if (!auth.currentUser || !userData) {
         showToast('Login dulu untuk akses creator panel');
         return;
       }
-      
-      // Check if user has admpanel permission
       if (!userData.admpanel) {
         showToast('Kamu tidak punya akses ke Creator Panel');
         return;
       }
-      
-      if (overlay) overlay.classList.add('show');
+      if (overlay) {
+        overlay.classList.add('show');
+        if (inner) { inner.style.display = 'flex'; }
+      }
     }
 
     function closeCreatorPanel() {
       const overlay = document.getElementById('creatorPanelOverlay');
-      if (overlay) overlay.classList.remove('show');
+      const inner = document.getElementById('creatorPanelInner');
+      if (!overlay || !inner) return;
+      overlay.classList.remove('show');
+      inner.style.display = 'none';
+      creatorMode = 'normal';
+      inner.classList.remove('creator-full', 'creator-mini');
+      overlay.classList.remove('creator-overlay-mini');
+      inner.style.position = '';
+      inner.style.top = '';
+      inner.style.left = '';
+      inner.style.right = '';
+      inner.style.bottom = '';
+    }
+
+    function startCreatorDrag(e) {
+      const panel = document.getElementById('creatorPanelInner');
+      if (!panel || creatorMode === 'full') return;
+      if (e.target.closest('button')) return;
+      creatorDrag.active = true;
+      const rect = panel.getBoundingClientRect();
+      creatorDrag.offsetX = e.clientX - rect.left;
+      creatorDrag.offsetY = e.clientY - rect.top;
+      document.addEventListener('mousemove', onCreatorDrag);
+      document.addEventListener('mouseup', stopCreatorDrag);
+    }
+    function startCreatorDragTouch(e) {
+      const panel = document.getElementById('creatorPanelInner');
+      if (!panel || creatorMode === 'full') return;
+      if (e.target.closest('button')) return;
+      const touch = e.touches[0];
+      creatorDrag.active = true;
+      const rect = panel.getBoundingClientRect();
+      creatorDrag.offsetX = touch.clientX - rect.left;
+      creatorDrag.offsetY = touch.clientY - rect.top;
+      document.addEventListener('touchmove', onCreatorDragTouch, { passive: false });
+      document.addEventListener('touchend', stopCreatorDragTouch);
+    }
+    function onCreatorDrag(e) {
+      if (!creatorDrag.active) return;
+      const panel = document.getElementById('creatorPanelInner');
+      if (!panel) return;
+      panel.style.position = 'fixed';
+      panel.style.top = (e.clientY - creatorDrag.offsetY) + 'px';
+      panel.style.left = (e.clientX - creatorDrag.offsetX) + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    }
+    function onCreatorDragTouch(e) {
+      if (!creatorDrag.active) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const panel = document.getElementById('creatorPanelInner');
+      if (!panel) return;
+      panel.style.position = 'fixed';
+      panel.style.top = (touch.clientY - creatorDrag.offsetY) + 'px';
+      panel.style.left = (touch.clientX - creatorDrag.offsetX) + 'px';
+      panel.style.right = 'auto';
+      panel.style.bottom = 'auto';
+    }
+    function stopCreatorDrag() {
+      creatorDrag.active = false;
+      document.removeEventListener('mousemove', onCreatorDrag);
+      document.removeEventListener('mouseup', stopCreatorDrag);
+    }
+    function stopCreatorDragTouch() {
+      creatorDrag.active = false;
+      document.removeEventListener('touchmove', onCreatorDragTouch);
+      document.removeEventListener('touchend', stopCreatorDragTouch);
+    }
+    function toggleCreatorSize(mode) {
+      const overlay = document.getElementById('creatorPanelOverlay');
+      const panel = document.getElementById('creatorPanelInner');
+      if (!overlay || !panel) return;
+      if (mode === 'full') {
+        creatorMode = creatorMode === 'full' ? 'normal' : 'full';
+      } else if (mode === 'mini') {
+        creatorMode = creatorMode === 'mini' ? 'normal' : 'mini';
+      }
+      panel.classList.remove('creator-full', 'creator-mini');
+      overlay.classList.remove('creator-overlay-mini');
+      if (creatorMode === 'full') {
+        panel.classList.add('creator-full');
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      } else if (creatorMode === 'mini') {
+        panel.classList.add('creator-mini');
+        overlay.classList.add('creator-overlay-mini');
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      } else {
+        panel.style.position = '';
+        panel.style.top = '';
+        panel.style.left = '';
+      }
     }
 
     async function sendCreatorBroadcast() {
@@ -7112,7 +7298,9 @@
           const vipType = getVipStatus(userData);
           const vipActive = !!vipType;
 
-          document.getElementById('topLoginBtn').textContent = userData.username;
+          document.getElementById('topLoginBtn').innerHTML = '👤';
+          document.getElementById('topLoginBtn').classList.add('logged-in');
+          document.getElementById('topLoginBtn').title = userData.username;
 
           // Crown
           document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700;font-size:13px;margin-left:5px"></i>' : '');
@@ -7201,7 +7389,9 @@
           clearInterval(tagDropBannerInterval);
           tagDropBannerInterval = null;
         }
-        document.getElementById('topLoginBtn').textContent = 'Login';
+        document.getElementById('topLoginBtn').innerHTML = '👤';
+        document.getElementById('topLoginBtn').classList.remove('logged-in');
+        document.getElementById('topLoginBtn').title = 'Login';
         document.getElementById('btnFollow').style.display = 'none';
         document.getElementById('btnAdmin').classList.remove('show');
         document.getElementById('btnCreatorPanel').classList.remove('show');
@@ -9140,4 +9330,3 @@
   </script>
 </body>
 </html>
-
