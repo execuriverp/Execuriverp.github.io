@@ -267,6 +267,56 @@
     }
 
     /* ============================================================
+       RAMADHAN THEME - KETUPAT EFFECTS
+    ============================================================ */
+    .ramadan-active::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(4px 4px at 10% 20%, rgba(255,215,0,0.4) 50%, transparent 50%),
+        radial-gradient(4px 4px at 90% 30%, rgba(0,255,136,0.3) 50%, transparent 50%),
+        radial-gradient(5px 5px at 25% 60%, rgba(255,215,0,0.35) 50%, transparent 50%),
+        radial-gradient(4px 4px at 75% 70%, rgba(0,255,136,0.3) 50%, transparent 50%),
+        radial-gradient(4px 4px at 50% 85%, rgba(255,215,0,0.4) 50%, transparent 50%),
+        radial-gradient(3px 3px at 15% 45%, rgba(0,255,136,0.25) 50%, transparent 50%),
+        radial-gradient(3px 3px at 85% 55%, rgba(255,215,0,0.25) 50%, transparent 50%);
+      pointer-events: none;
+      z-index: 99991;
+      animation: ketupatFloat 8s ease-in-out infinite;
+    }
+    @keyframes ketupatFloat {
+      0%, 100% { opacity: 0.6; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-5px); }
+    }
+    .ramadan-active .header {
+      border-bottom: 2px solid rgba(255,215,0,0.4) !important;
+      box-shadow: 0 4px 20px rgba(255,215,0,0.15) !important;
+    }
+    .ramadan-active .cover-box {
+      border: 2px solid rgba(255,215,0,0.3) !important;
+      box-shadow: 0 0 30px rgba(255,215,0,0.2), 0 10px 40px rgba(0,0,0,0.5) !important;
+    }
+    .ramadan-active .controls {
+      background: linear-gradient(180deg, rgba(255,215,0,0.08), rgba(0,255,136,0.05), rgba(15,23,42,0.95)) !important;
+      border-top: 1px solid rgba(255,215,0,0.2) !important;
+    }
+    .ramadan-ketupat {
+      position: fixed;
+      font-size: 20px;
+      animation: ramadanKetupatFall linear infinite;
+      pointer-events: none;
+      z-index: 99992;
+      opacity: 0;
+    }
+    @keyframes ramadanKetupatFall {
+      0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.9; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ============================================================
        BROADCAST SYSTEM
     ============================================================ */
     .sys-broadcast {
@@ -2832,6 +2882,8 @@
       transition: 0.16s;
     }
     .admin-header-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    #btnRamadanTheme { transition: 0.3s; }
+    #btnRamadanTheme:hover { background: rgba(255,215,0,0.2) !important; color: #ffd700 !important; }
     .admin-panel.admin-full {
       width: 100%;
       max-width: none;
@@ -4390,6 +4442,7 @@
         <button class="admin-nav-btn" onclick="switchAdminView('songs', this)"><i class="fas fa-music"></i> SONGS</button>
         <button class="admin-nav-btn" onclick="switchAdminView('notif', this)"><i class="fas fa-paper-plane"></i> NOTIF</button>
         <button class="admin-nav-btn" onclick="switchAdminView('visual', this)"><i class="fas fa-palette"></i> VISUAL</button>
+        <button class="admin-nav-btn" onclick="switchAdminView('theme', this)"><i class="fas fa-moon"></i> THEME</button>
         <button class="admin-nav-btn" onclick="switchAdminView('logs', this)"><i class="fas fa-terminal"></i> LOGS</button>
       </div>
       <div class="admin-content">
@@ -4620,6 +4673,18 @@
               <button class="admin-btn admin-btn-gold" onclick="adStartDisco()">START DISCO</button>
               <button class="admin-btn admin-btn-red" onclick="adStopDisco()">STOP</button>
             </div>
+          </div>
+        <!-- THEME -->
+ </div>
+
+               <div id="adv-theme" class="admin-view">
+          <div class="admin-card">
+            <h3><i class="fas fa-moon"></i> RAMADHAN THEME</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <span style="color:#ccc;font-size:12px">Ketupat & Ornamen Ramadan</span>
+              <button class="admin-btn" id="ramadanToggleBtn" onclick="toggleRamadanTheme()" style="min-width:70px">OFF</button>
+            </div>
+            <p style="font-size:10px;color:#666;margin-bottom:8px">Aktifkan tema Ramadan dengan efek ketupat warna hijau-emas</p>
           </div>
         </div>
 
@@ -9309,6 +9374,57 @@
       addLog('Disco stop');
       showToast('Disco OFF');
     }
+
+    // RAMADHAN THEME
+    let ramadanActive = false;
+    let ramadanInterval = null;
+    function toggleRamadanTheme() {
+      ramadanActive = !ramadanActive;
+      const btn = document.getElementById('ramadanToggleBtn');
+      const headerBtn = document.getElementById('btnRamadanTheme');
+      
+      if (ramadanActive) {
+        // ON - Apply Ramadan theme
+        if (btn) { btn.textContent = 'ON'; btn.style.background = 'linear-gradient(135deg,#ffd700,#00ff88)'; btn.style.color = '#000'; }
+        if (headerBtn) { headerBtn.style.background = 'linear-gradient(135deg,rgba(255,215,0,0.3),rgba(0,255,136,0.2))'; headerBtn.style.borderColor = '#ffd700'; headerBtn.style.color = '#ffd700'; }
+        document.body.classList.add('ramadan-active');
+        // Start ketupat falling animation
+        if (ketupatInterval) clearInterval(ketupatInterval);
+        ketupatInterval = setInterval(createKetupat, 2000);
+        showToast('🕌 Ramadan Theme ON!');
+        addLog('Ramadan theme activated');
+      } else {
+        // OFF - Remove Ramadan theme
+        if (btn) { btn.textContent = 'OFF'; btn.style.background = ''; btn.style.color = ''; }
+        if (headerBtn) { headerBtn.style.background = ''; headerBtn.style.borderColor = ''; headerBtn.style.color = ''; }
+        document.body.classList.remove('ramadan-active');
+        // Stop ketupat animation
+        if (ketupatInterval) { clearInterval(ketupatInterval); ketupatInterval = null; }
+        document.querySelectorAll('.ramadan-ketupat').forEach(k => k.remove());
+        showToast('Ramadan Theme OFF');
+        addLog('Ramadan theme deactivated');
+      }
+      db.ref('settings').update({ ramadanTheme: ramadanActive });
+    }
+    function createKetupat() {
+      if (!ramadanActive) return;
+      const ketupat = document.createElement('div');
+      ketupat.className = 'ramadan-ketupat';
+      ketupat.textContent = '🔺';
+      ketupat.style.left = Math.random() * 90 + 5 + '%';
+      ketupat.style.animationDuration = (5 + Math.random() * 5) + 's';
+      ketupat.style.color = Math.random() > 0.5 ? '#ffd700' : '#00ff88';
+      ketupat.style.textShadow = `0 0 10px ${ketupat.style.color}`;
+      document.body.appendChild(ketupat);
+      setTimeout(() => ketupat.remove(), 10000);
+    }
+    function applyRamadanTheme() {
+      if (ramadanActive && !document.body.classList.contains('ramadan-active')) {
+        document.body.classList.add('ramadan-active');
+        ketupatInterval = setInterval(createKetupat, 2000);
+      }
+    }
+
     function applyDiscoMode(variant, color) {
       const c = color || '#00ff88';
       if (discoInterval) { clearInterval(discoInterval); discoInterval = null; }
@@ -9343,4 +9459,3 @@
   </script>
 </body>
 </html>
-
