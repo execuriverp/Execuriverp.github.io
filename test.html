@@ -2780,6 +2780,7 @@
       justify-content: flex-end;
       padding: 70px 16px 16px;
       pointer-events: none;
+      background: rgba(0,0,0,0.6);
     }
     .admin-panel-overlay.show { display: flex; pointer-events: auto; }
 
@@ -2789,14 +2790,11 @@
       max-height: 90vh;
       display: flex;
       flex-direction: column;
-      background:
-        radial-gradient(circle at 0 0, rgba(56,189,248,0.16), transparent 55%),
-        radial-gradient(circle at 100% 0, rgba(251,191,36,0.18), transparent 55%),
-        linear-gradient(180deg, #020617, #020617, #020617);
-      border-radius: 18px;
+      background: linear-gradient(180deg, #0a0a14, #0a0a14);
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.9);
-      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,193,7,0.2);
     }
 
     .admin-header {
@@ -2856,9 +2854,16 @@
     .admin-nav {
       display: flex; padding: 12px 15px 0;
       gap: 6px; flex-shrink: 0;
-      overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.06);
+      overflow-x: auto;
+      overflow-y: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,193,7,0.3) transparent;
     }
-    .admin-nav::-webkit-scrollbar { display: none; }
+    .admin-nav::-webkit-scrollbar { height: 3px; }
+    .admin-nav::-webkit-scrollbar-track { background: transparent; }
+    .admin-nav::-webkit-scrollbar-thumb { background: rgba(255,193,7,0.3); border-radius: 10px; }
     .admin-nav-btn {
       flex: 0 0 auto; padding: 8px 14px;
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
@@ -4373,6 +4378,7 @@
           <i class="fas fa-shield-alt"></i> ADMIN PANEL
         </div>
         <div class="admin-header-tools">
+          <button class="admin-header-btn" id="btnRamadanTheme" onclick="toggleRamadanTheme()" title="Ramadan Theme"><i class="fas fa-moon"></i></button>
           <button class="admin-header-btn" onclick="toggleAdminSize('mini')" title="Minimize"><i class="fas fa-minus"></i></button>
           <button class="admin-header-btn" onclick="toggleAdminSize('full')" title="Full"><i class="fas fa-expand"></i></button>
           <button class="admin-header-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
@@ -9337,3 +9343,4 @@
   </script>
 </body>
 </html>
+
