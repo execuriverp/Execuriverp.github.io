@@ -6017,13 +6017,18 @@
       }
       
       try {
-        // Send to adminFloatChat collection (same as admin panel)
-        await db.ref('adminFloatChat').set({
-          message: msgText,
-          from: userData.username,
-          timestamp: Date.now(),
-          duration: 30000 // 30 seconds
-        });
+        const now = Date.now();
+        const data = {
+          name: userData.username || 'Creator',
+          msg: msgText,
+          createdAt: now,
+          expireAt: now + 15000 // 15 seconds for creator panel
+        };
+        
+        console.log('Creator Panel sending:', data);
+        
+        // Send to adminFloatChat/current (same path as admin panel)
+        await db.ref('adminFloatChat/current').set(data);
         
         showToast('✅ Float chat terkirim!', 'success');
         document.getElementById('cpFloatMsg').value = '';
