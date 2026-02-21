@@ -2251,12 +2251,19 @@
     .mp-actions {
       display: flex; gap: 6px; width: 100%; margin-bottom: 16px;
       flex-wrap: nowrap; overflow-x: auto;
-      padding: 6px 8px; border-radius: 12px;
+      padding: 8px 10px; border-radius: 12px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
-      justify-content: center;
+      justify-content: flex-start;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,255,136,0.2) transparent;
     }
-    .mp-actions::-webkit-scrollbar { height: 0; }
+    .mp-actions::-webkit-scrollbar { height: 3px; }
+    .mp-actions::-webkit-scrollbar-track { background: transparent; }
+    .mp-actions::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.2); border-radius: 10px; }
+    .mp-actions::-webkit-scrollbar-thumb:hover { background: rgba(0,255,136,0.4); }
     .mp-btn {
       flex: 0 0 auto; padding: 8px 12px; border-radius: 8px; border: none;
       font-weight: 700; font-size: 11px; cursor: pointer; transition: 0.2s;
