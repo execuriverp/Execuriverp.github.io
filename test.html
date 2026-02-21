@@ -1567,87 +1567,87 @@
     }
 
     /* ============================================================
-       CREATOR PANEL V2 - v3.2.3
+       CREATOR PANEL V2 - v3.2.3 (Side Panel - Draggable)
     ============================================================ */
     .creator-panel-overlay {
       position: fixed;
       inset: 0;
       z-index: 5500;
       display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(10px);
-      padding: 20px;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 70px 16px 16px;
+      pointer-events: none;
     }
     .creator-panel-overlay.show {
       display: flex;
+      pointer-events: auto;
     }
     .creator-panel {
-      width: 100%;
-      max-width: 500px;
+      width: 360px;
+      max-width: 400px;
       max-height: 90vh;
-      background: linear-gradient(180deg, #1e293b, #0f172a);
-      border-radius: 20px;
-      border: 2px solid rgba(236,72,153,0.6);
-      box-shadow: 0 0 40px rgba(236,72,153,0.4), 0 20px 60px rgba(0,0,0,0.8);
       display: flex;
       flex-direction: column;
+      background:
+        radial-gradient(circle at 0 0, rgba(236,72,153,0.12), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(168,85,247,0.10), transparent 55%),
+        linear-gradient(180deg, #0f172a, #0f172a);
+      border-radius: 16px;
       overflow: hidden;
-      animation: creatorPanelIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-    }
-    @keyframes creatorPanelIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9) translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      box-shadow: 0 16px 50px rgba(0,0,0,0.85);
+      border: 1px solid rgba(236,72,153,0.35);
     }
     .creator-header {
-      background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.15));
-      border-bottom: 1px solid rgba(236,72,153,0.3);
-      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(168,85,247,0.08));
+      border-bottom: 1px solid rgba(236,72,153,0.2);
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
+      cursor: grab;
     }
+    .creator-header:active { cursor: grabbing; }
     .creator-header-title {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-family: 'Rajdhani', sans-serif;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
       letter-spacing: 2px;
       color: #ec4899;
-      text-shadow: 0 0 15px rgba(236,72,153,0.6);
+      text-shadow: 0 0 12px rgba(236,72,153,0.5);
     }
     .creator-header-title i {
-      font-size: 22px;
-      animation: creatorIconPulse 2s ease-in-out infinite;
+      font-size: 18px;
     }
-    @keyframes creatorIconPulse {
-      0%, 100% {
-        transform: scale(1);
-        filter: drop-shadow(0 0 8px rgba(236,72,153,0.6));
-      }
-      50% {
-        transform: scale(1.1);
-        filter: drop-shadow(0 0 16px rgba(236,72,153,1));
-      }
+    .creator-header-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .creator-header-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #ccc;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      transition: 0.16s;
+    }
+    .creator-header-btn:hover { background: rgba(236,72,153,0.2); color: #ec4899; }
     .creator-header-close {
       background: rgba(239,68,68,0.15);
       border: 1px solid rgba(239,68,68,0.3);
       color: #ef4444;
-      width: 36px;
-      height: 36px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1656,35 +1656,28 @@
     .creator-header-close:hover {
       background: #ef4444;
       color: #fff;
-      transform: rotate(90deg);
     }
     .creator-content {
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
-    }
-    .creator-content::-webkit-scrollbar {
-      width: 4px;
-    }
-    .creator-content::-webkit-scrollbar-thumb {
-      background: rgba(236,72,153,0.4);
-      border-radius: 10px;
-    }
-    .creator-section {
-      background: radial-gradient(circle at 0 0, rgba(236,72,153,0.08), transparent 60%),
-                  rgba(15,23,42,0.97);
-      border: 1px solid rgba(236,72,153,0.3);
-      border-radius: 14px;
       padding: 16px;
-      margin-bottom: 16px;
+    }
+    .creator-content::-webkit-scrollbar { width: 3px; }
+    .creator-content::-webkit-scrollbar-thumb { background: rgba(236,72,153,0.3); border-radius: 10px; }
+    .creator-section {
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(236,72,153,0.2);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
     }
     .creator-section-title {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       color: #ec4899;
       letter-spacing: 1.5px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1692,49 +1685,49 @@
     }
     .creator-section-title i {
       color: #ec4899;
-      text-shadow: 0 0 8px rgba(236,72,153,0.6);
+      text-shadow: 0 0 6px rgba(236,72,153,0.5);
     }
     .creator-input {
       width: 100%;
-      padding: 12px 14px;
-      background: rgba(0,0,0,0.4);
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.35);
       color: white;
-      border: 1px solid rgba(236,72,153,0.3);
-      border-radius: 10px;
+      border: 1px solid rgba(236,72,153,0.25);
+      border-radius: 8px;
       font-size: 12px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-family: 'JetBrains Mono', monospace;
       transition: border-color 0.2s;
     }
     .creator-input:focus {
       border-color: #ec4899;
-      box-shadow: 0 0 0 2px rgba(236,72,153,0.2);
+      box-shadow: 0 0 0 2px rgba(236,72,153,0.15);
     }
     .creator-textarea {
       width: 100%;
-      padding: 12px 14px;
-      background: rgba(0,0,0,0.4);
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.35);
       color: white;
-      border: 1px solid rgba(236,72,153,0.3);
-      border-radius: 10px;
+      border: 1px solid rgba(236,72,153,0.25);
+      border-radius: 8px;
       font-size: 12px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-family: 'JetBrains Mono', monospace;
       resize: vertical;
-      min-height: 80px;
+      min-height: 60px;
       transition: border-color 0.2s;
     }
     .creator-textarea:focus {
       border-color: #ec4899;
-      box-shadow: 0 0 0 2px rgba(236,72,153,0.2);
+      box-shadow: 0 0 0 2px rgba(236,72,153,0.15);
     }
     .creator-btn {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       font-family: 'Rajdhani', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 1px;
       cursor: pointer;
@@ -1744,67 +1737,54 @@
     .creator-btn-primary {
       background: linear-gradient(135deg, #ec4899, #a855f7);
       color: #fff;
-      box-shadow: 0 4px 15px rgba(236,72,153,0.4);
     }
-    .creator-btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(236,72,153,0.6);
-    }
+    .creator-btn-primary:hover { opacity: 0.9; }
     .creator-btn-secondary {
       background: linear-gradient(135deg, #3b82f6, #06b6d4);
       color: #fff;
-      box-shadow: 0 4px 15px rgba(59,130,246,0.4);
     }
-    .creator-btn-secondary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(59,130,246,0.6);
-    }
+    .creator-btn-secondary:hover { opacity: 0.9; }
     .creator-btn-success {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #fff;
-      box-shadow: 0 4px 15px rgba(16,185,129,0.4);
     }
-    .creator-btn-success:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16,185,129,0.6);
-    }
+    .creator-btn-success:hover { opacity: 0.9; }
     .creator-stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
     .creator-stat-box {
-      background: rgba(0,0,0,0.3);
-      border-radius: 10px;
-      padding: 12px;
-      border: 1px solid rgba(236,72,153,0.2);
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid rgba(236,72,153,0.15);
       text-align: center;
     }
     .creator-stat-value {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 800;
       font-family: 'Rajdhani', sans-serif;
       color: #ec4899;
-      text-shadow: 0 0 10px rgba(236,72,153,0.4);
     }
     .creator-stat-label {
-      font-size: 10px;
+      font-size: 9px;
       color: #9ca3af;
       letter-spacing: 1px;
-      margin-top: 4px;
+      margin-top: 2px;
       text-transform: uppercase;
     }
     .creator-event-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
     }
     .creator-event-btn {
-      padding: 10px 12px;
-      border: 1px solid rgba(236,72,153,0.3);
-      border-radius: 10px;
-      background: rgba(236,72,153,0.1);
+      padding: 8px 10px;
+      border: 1px solid rgba(236,72,153,0.25);
+      border-radius: 8px;
+      background: rgba(236,72,153,0.08);
       color: #ec4899;
       font-size: 11px;
       font-weight: 700;
@@ -1813,17 +1793,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
     .creator-event-btn:hover {
-      background: rgba(236,72,153,0.2);
+      background: rgba(236,72,153,0.15);
       border-color: #ec4899;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(236,72,153,0.3);
     }
-    .creator-event-btn i {
-      font-size: 20px;
-    }
+    .creator-event-btn i { font-size: 18px; }
     .creator-label {
       font-size: 10px;
       color: #9ca3af;
@@ -1831,17 +1807,31 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
+    /* Creator Panel - Minimize mode */
+    .creator-panel.creator-mini {
+      width: 220px;
+      max-width: 240px;
+    }
+    .creator-panel.creator-mini .creator-content { display: none; }
+    .creator-overlay-mini {
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 0 16px 16px;
+    }
+    /* Creator Panel - Full mode */
+    .creator-panel.creator-full {
+      width: 100%;
+      max-width: none;
+      max-height: 100vh;
+    }
     @media (max-width: 640px) {
       .creator-panel {
+        width: 100%;
         max-width: 100%;
         border-radius: 0;
       }
-      .creator-stats-grid {
-        grid-template-columns: 1fr;
-      }
-      .creator-event-grid {
-        grid-template-columns: 1fr;
-      }
+      .creator-stats-grid { grid-template-columns: 1fr; }
+      .creator-event-grid { grid-template-columns: 1fr; }
     }
 
     #btnCreatorPanel {
@@ -4940,33 +4930,30 @@
   </div>
   <div id="toast-container"></div>
 
-  <!-- CREATOR PANEL (Simplified) -->
+  <!-- CREATOR PANEL (Side Panel - Draggable) -->
   <div class="creator-panel-overlay" id="creatorPanelOverlay">
-    <div class="creator-panel">
-      <div class="creator-header">
+    <div class="creator-panel" id="creatorPanelInner" style="display:none; flex:1; flex-direction:column">
+      <div class="creator-header" onmousedown="startCreatorDrag(event)" ontouchstart="startCreatorDragTouch(event)">
         <div class="creator-header-title">
-          <i class="fas fa-star"></i>
-          <span>CREATOR PANEL</span>
+          <i class="fas fa-star"></i> CREATOR
         </div>
-        <button class="creator-header-close" onclick="closeCreatorPanel()">×</button>
+        <div class="creator-header-tools">
+          <button class="creator-header-btn" onclick="toggleCreatorSize('mini')" title="Minimize"><i class="fas fa-minus"></i></button>
+          <button class="creator-header-btn" onclick="toggleCreatorSize('full')" title="Full"><i class="fas fa-expand"></i></button>
+          <button class="creator-header-close" onclick="closeCreatorPanel()"><i class="fas fa-times"></i></button>
+        </div>
       </div>
       
       <div class="creator-content">
-        <!-- Float Chat Only -->
         <div class="creator-section">
           <div class="creator-section-title">
-            <i class="fas fa-comment-dots"></i>
-            Admin Float Chat (15s, global)
+            <i class="fas fa-comment-dots"></i> FLOAT CHAT
           </div>
-          <div class="creator-label">Chat mengambang di atas untuk semua user (max 100 karakter)</div>
+          <div class="creator-label">Chat global (max 100 karakter)</div>
           <input class="creator-input" id="cpFloatMsg" placeholder="Pesan float chat..." maxlength="100">
           <button class="creator-btn creator-btn-secondary" onclick="sendCreatorFloatChat()">
             <i class="fas fa-comments"></i> SEND CHAT
           </button>
-        </div>
-        
-        <div style="padding: 20px; text-align: center; color: #666; font-size: 12px;">
-          <i class="fas fa-info-circle"></i> Fitur ini untuk senang-senang saja, bukan untuk jadi admin
         </div>
       </div>
     </div>
@@ -9153,3 +9140,4 @@
   </script>
 </body>
 </html>
+
