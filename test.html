@@ -293,6 +293,17 @@
       box-shadow: 0 0 35px rgba(0,255,136,0.7), 0 0 70px rgba(255,215,0,0.4) !important;
     }
     .ramadan-active .play-btn i { color: #000 !important; text-shadow: none !important; }
+    .ramadan-active .app {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .ramadan-active .cover-box,
+    .ramadan-active .song-info,
+    .ramadan-active .controls {
+      display: none !important;
+    }
 
     /* ============================================================
        BROADCAST SYSTEM
@@ -4228,16 +4239,24 @@
     .story-image-wrapper {
       position: relative;
       border-radius: 16px;
-      overflow: hidden;
+      overflow: auto;
       margin-bottom: 20px;
       border: 2px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
       cursor: zoom-in;
       transition: all 0.3s ease;
+      max-height: 70vh;
     }
     .story-image-wrapper:hover {
       border-color: rgba(0, 255, 136, 0.3);
       box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
+    }
+    .story-image-wrapper.zoomed {
+      cursor: grab;
+      overflow: auto;
+    }
+    .story-image-wrapper.zoomed:active {
+      cursor: grabbing;
     }
     .story-image {
       width: 100%;
@@ -4247,8 +4266,12 @@
       transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .story-image.zoomed {
-      transform: scale(1.5);
-      cursor: zoom-out;
+      transform: scale(2);
+      cursor: grab;
+      transform-origin: top left;
+    }
+    .story-image.zoomed:active {
+      cursor: grabbing;
     }
     .story-text {
       background: rgba(255, 255, 255, 0.03);
@@ -4269,6 +4292,96 @@
       font-size: 11px;
       color: #6b7280;
       font-style: italic;
+    }
+    
+    /* Thank You Animation */
+    #thankYouOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: rgba(0, 0, 0, 0.98);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: thankYouFadeIn 0.5s ease;
+    }
+    #thankYouOverlay.show {
+      display: flex;
+    }
+    @keyframes thankYouFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .thank-you-text {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: thankYouScale 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      line-height: 1.4;
+    }
+    @keyframes thankYouScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.3) rotate(-5deg);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1) rotate(2deg);
+      }
+      70% {
+        transform: scale(0.95) rotate(-1deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+    .thank-you-sparkles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: sparkleFloat 2s ease-out forwards;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    @keyframes sparkleFloat {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-200px) scale(0);
+      }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .thank-you-text {
+        font-size: 32px;
+        letter-spacing: 2px;
+        padding: 0 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .thank-you-text {
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
     }
     
     /* Mobile Responsive */
@@ -4312,6 +4425,14 @@
           <img src="ssrplastexecurive.png" alt="Execurive RP" class="story-image" id="storyImage">
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- THANK YOU OVERLAY -->
+  <div id="thankYouOverlay">
+    <div class="thank-you-sparkles" id="sparklesContainer"></div>
+    <div class="thank-you-text">
+      Terimakasih<br>Execurive
     </div>
   </div>
 
@@ -5386,14 +5507,52 @@
         popup.style.animation = 'storyFadeIn 0.3s ease reverse';
         setTimeout(() => {
           popup.classList.add('hidden');
+          // Show thank you animation
+          showThankYouAnimation();
         }, 300);
+      }
+    }
+
+    function showThankYouAnimation() {
+      const overlay = document.getElementById('thankYouOverlay');
+      const sparklesContainer = document.getElementById('sparklesContainer');
+      
+      if (overlay) {
+        overlay.classList.add('show');
+        
+        // Create sparkles
+        if (sparklesContainer) {
+          for (let i = 0; i < 30; i++) {
+            setTimeout(() => {
+              const sparkle = document.createElement('div');
+              sparkle.className = 'sparkle';
+              sparkle.style.left = Math.random() * 100 + '%';
+              sparkle.style.top = 50 + Math.random() * 20 + '%';
+              sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+              sparklesContainer.appendChild(sparkle);
+              
+              setTimeout(() => sparkle.remove(), 2500);
+            }, i * 50);
+          }
+        }
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+          overlay.style.animation = 'thankYouFadeIn 0.5s ease reverse';
+          setTimeout(() => {
+            overlay.classList.remove('show');
+            overlay.style.animation = '';
+          }, 500);
+        }, 3000);
       }
     }
 
     function toggleImageZoom() {
       const img = document.getElementById('storyImage');
-      if (img) {
+      const wrapper = img?.parentElement;
+      if (img && wrapper) {
         img.classList.toggle('zoomed');
+        wrapper.classList.toggle('zoomed');
       }
     }
 
