@@ -1,620 +1,160 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Execurive Roleplay | Blue City SA-MP</title>
-<link rel="icon" type="image/png" href="favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExeMusic - Server Offline</title>
+  <link rel="icon" type="image/png" href="exemusicicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --bg:#020617;
-  --panel:#0f172a;
-  --border:#1e293b;
-  --blue:#38bdf8;
-  --purple:#6366f1;
-  --green:#22c55e;
-  --gold:#facc15;
-  --red:#ef4444;
-  --text:#e5e7eb;
-  --muted:#94a3b8;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* RESET */
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    radial-gradient(900px 300px at top, rgba(56,189,248,.18), transparent),
-    radial-gradient(700px 250px at bottom, rgba(99,102,241,.14), transparent),
-    var(--bg);
-  color:var(--text);
-}
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: linear-gradient(135deg, #0a0a0f 0%, #050508 50%, #0a0a0f 100%);
+      color: #ffffff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-/* ===== NAVBAR ===== */
-.nav{
-  position:sticky;
-  top:0;
-  z-index:999;
-  background:rgba(2,6,23,.8);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
-}
-.nav-inner{
-  max-width:1200px;
-  margin:auto;
-  padding:14px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.nav-left{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-.logo{
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 0 18px rgba(56,189,248,.4);
-}
-.logo img{width:100%;height:100%}
-.nav-title{
-  font-weight:900;
-  letter-spacing:2px;
-  font-size:14px;
-  background:linear-gradient(90deg,var(--blue),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.nav-right{
-  display:flex;
-  gap:10px;
-}
-.nav-right a{
-  padding:10px 16px;
-  border-radius:12px;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:1.3px;
-  text-decoration:none;
-  color:var(--muted);
-}
-.nav-right a.active{
-  background:linear-gradient(135deg,var(--blue),var(--purple));
-  color:#020617;
-}
+    /* ============================================================
+       OFFLINE OVERLAY
+    ============================================================ */
+    #offlineOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: linear-gradient(135deg, #0a0a0f 0%, #050508 50%, #0a0a0f 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: overlayFadeIn 0.8s ease;
+    }
+    @keyframes overlayFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .offline-content {
+      text-align: center;
+      padding: 40px 20px;
+      max-width: 600px;
+    }
+    .offline-icon {
+      font-size: 80px;
+      color: #ff3333;
+      margin-bottom: 30px;
+      animation: offlineIconPulse 2s ease-in-out infinite;
+    }
+    @keyframes offlineIconPulse {
+      0%, 100% { 
+        transform: scale(1);
+        text-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+      }
+      50% { 
+        transform: scale(1.1);
+        text-shadow: 0 0 40px rgba(255, 51, 51, 0.8), 0 0 60px rgba(255, 51, 51, 0.4);
+      }
+    }
+    .offline-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 42px;
+      font-weight: 900;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ff3333, #ff6666);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+    @keyframes titleGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 51, 51, 0.3)); }
+      50% { filter: drop-shadow(0 0 25px rgba(255, 51, 51, 0.6)); }
+    }
+    .offline-message {
+      font-size: 24px;
+      color: #94a3b8;
+      margin-bottom: 40px;
+      font-weight: 600;
+    }
+    .offline-signature {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      color: #00ff88;
+      font-weight: 700;
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+      letter-spacing: 1px;
+    }
+    .offline-decoration {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 51, 51, 0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .offline-decoration:nth-child(1) {
+      top: -100px;
+      left: -100px;
+      animation: decorFloat1 8s ease-in-out infinite;
+    }
+    .offline-decoration:nth-child(2) {
+      bottom: -100px;
+      right: -100px;
+      animation: decorFloat2 10s ease-in-out infinite;
+    }
+    @keyframes decorFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, 30px) scale(1.2); }
+    }
+    @keyframes decorFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-30px, -30px) scale(1.2); }
+    }
 
-/* ===== NEW EXEMUSIC PROMO BAR ===== */
-.exemusic-bar {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(99, 102, 241, 0.1));
-  border-bottom: 1px solid var(--border);
-  padding: 8px 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  overflow: hidden;
-  position: relative;
-}
-.exemusic-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  animation: slideIn 0.8s ease-out;
-}
-@keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-.music-icon {
-  width: 24px;
-  height: 24px;
-  background: var(--purple);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
-  animation: pulse-music 2s infinite;
-}
-@keyframes pulse-music { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
-.music-text {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-}
-.music-text span {
-  color: var(--purple);
-  text-transform: uppercase;
-  font-size: 10px;
-  margin-right: 5px;
-  border: 1px solid var(--purple);
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-.btn-listen {
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid var(--purple);
-  color: var(--purple);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 900;
-  transition: 0.3s;
-}
-.exemusic-content:hover .btn-listen {
-  background: var(--purple);
-  color: white;
-}
-
-/* ===== CONTENT ===== */
-.wrapper{max-width:1150px;margin:34px auto;padding:18px}
-
-.header{
-  background:linear-gradient(160deg,#020617,#0b1224);
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:48px 22px;
-  text-align:center;
-}
-.title{
-  font-size:38px;
-  font-weight:900;
-  letter-spacing:2px;
-  background:linear-gradient(90deg,var(--blue),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.subtitle{
-  margin-top:8px;
-  font-size:20px;
-  font-weight:700;
-  color:var(--blue);
-}
-.tagline{margin-top:12px;color:var(--muted)}
-
-.section{margin-top:64px}
-.section h3{
-  font-size:17px;
-  margin-bottom:20px;
-  padding-left:14px;
-  border-left:4px solid var(--blue);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:20px;
-}
-
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:22px;
-  transition:.3s;
-}
-.card:hover{
-  transform:translateY(-4px);
-  border-color:var(--blue);
-  box-shadow:0 16px 34px rgba(56,189,248,.25);
-}
-.label{font-size:12px;color:var(--muted);margin-bottom:6px}
-.value{font-size:17px;font-weight:900;color:var(--blue)}
-
-.status{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:900;
-  color:var(--green);
-}
-.pulse{
-  width:12px;height:12px;
-  border-radius:50%;
-  background:var(--green);
-  animation:pulse 1.6s infinite;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}
-  70%{box-shadow:0 0 0 14px rgba(34,197,94,0)}
-}
-
-.copy-btn{
-  margin-top:14px;
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--blue);
-  background:linear-gradient(90deg,var(--blue),var(--purple));
-  font-weight:900;
-  font-size:12px;
-  cursor:pointer;
-}
-.copy-btn.copied{
-  background:var(--green);
-  border-color:var(--green);
-}
-
-.starter ul{list-style:none;line-height:2}
-.starter li::before{
-  content:"▹";
-  color:var(--blue);
-  margin-right:10px;
-}
-
-.link{
-  display:block;
-  padding:20px;
-  border-radius:18px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  text-decoration:none;
-  transition:.3s;
-}
-.link:hover{
-  border-color:var(--blue);
-  box-shadow:0 14px 26px rgba(56,189,248,.25);
-}
-.link strong{color:var(--blue)}
-.link span{font-size:12px;color:var(--muted)}
-
-.footer{
-  margin-top:80px;
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-}
-
-/* ===== LOADING ===== */
-.loading{
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.85);
-  backdrop-filter:blur(12px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-.loading-box{
-  background:#020617;
-  padding:36px 44px;
-  border-radius:24px;
-  text-align:center;
-}
-.spinner{
-  width:54px;height:54px;
-  border:6px solid rgba(56,189,248,.2);
-  border-top:6px solid var(--blue);
-  border-radius:50%;
-  margin:0 auto 18px;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ===== EVENT POPUP MODAL STYLES ===== */
-.modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(2,6,23,0.9); z-index: 2000;
-  display: none; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-}
-.modal-content {
-  background: var(--panel); border: 1px solid var(--border);
-  padding: 30px; border-radius: 24px; text-align: center;
-  position: relative; width: 90%; max-width: 450px;
-  box-shadow: 0 0 50px rgba(34, 197, 94, 0.15);
-  animation: fadeIn 0.3s ease;
-}
-.modal-close {
-  position: absolute; top: 15px; right: 20px;
-  font-size: 24px; color: var(--muted); cursor: pointer;
-  transition: .2s;
-}
-.modal-close:hover { color: var(--text); }
-
-/* Bagian Timer */
-.eid-title {
-  font-size: 18px; font-weight: 900; color: var(--green);
-  letter-spacing: 1px; margin-bottom: 20px;
-}
-.timer-grid {
-  display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;
-}
-.timer-item {
-  background: rgba(255,255,255,0.03); padding: 10px;
-  border-radius: 12px; min-width: 60px; border: 1px solid rgba(255,255,255,0.05);
-}
-.t-num { font-size: 20px; font-weight: 900; color: var(--text); display: block; }
-.t-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-
-/* Bagian Special Offer Box (Style Diperbaiki) */
-.special-offer-box {
-  margin-top: 25px;
-  padding: 20px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(250, 204, 21, 0.05), rgba(15, 23, 42, 0.8));
-  border: 1px solid rgba(250, 204, 21, 0.4); /* Gold Border */
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-}
-.offer-header {
-  font-size: 13px;
-  font-weight: 900;
-  color: var(--gold);
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.badge-now {
-  background: var(--red);
-  color: #fff;
-  font-size: 9px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  animation: blink 1.2s infinite;
-}
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-
-.offer-list {
-  list-style: none;
-  margin-bottom: 12px;
-}
-.offer-list li {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-}
-.offer-list li::before {
-  content: "🎁";
-  margin-right: 10px;
-  font-size: 12px;
-}
-
-.offer-note {
-  font-size: 10px;
-  color: var(--muted);
-  font-style: italic;
-  line-height: 1.4;
-  border-top: 1px dashed rgba(255,255,255,0.1);
-  padding-top: 10px;
-}
-.offer-note strong { color: var(--red); font-weight: 800; }
-
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-/* ===== MOBILE OPTIMIZATION ===== */
-@media(max-width:768px){
-  .nav-inner{padding:12px 14px}
-  .logo{width:36px;height:36px}
-  .nav-title{font-size:13px}
-  .nav-right a{
-    padding:8px 12px;
-    font-size:10px;
-  }
-
-  .title{font-size:30px}
-  .subtitle{font-size:17px}
-  .wrapper{margin:26px auto;padding:14px}
-
-  .grid{gap:16px}
-  .card{padding:18px}
-  .copy-btn{padding:11px;font-size:11px}
-  
-  .exemusic-bar { gap: 8px; }
-  .music-text { font-size: 10px; }
-}
-</style>
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .offline-icon {
+        font-size: 60px;
+      }
+      .offline-title {
+        font-size: 32px;
+      }
+      .offline-message {
+        font-size: 18px;
+      }
+      .offline-signature {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="nav">
-  <div class="nav-inner">
-    <div class="nav-left">
-      <div class="logo"><img src="favicon.png"></div>
-      <div class="nav-title">EXECURIVE</div>
-    </div>
-    <div class="nav-right">
-      <a href="index.html" class="active">HOME</a>
-      <a href="listtopup.html">LIST TOPUP</a>
-    </div>
-  </div>
-</div>
-
-<div class="exemusic-bar">
-  <a href="https://execuriverp.github.io/exemusic" target="_blank" class="exemusic-content">
-    <div class="music-icon">♫</div>
-    <div class="music-text"><span>LIVE</span> Execurive Music Streaming - Dengarkan Musik Sekarang!</div>
-    <div class="btn-listen">OPEN</div>
-  </a>
-</div>
-
-<div class="wrapper">
-
-<div class="header">
-  <div class="title">EXECURIVE ROLEPLAY</div>
-  <div class="subtitle">BLUE CITY • SA-MP SERVER</div>
-  <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
-</div>
-
-<div class="section">
-<h3>SERVER INFORMATION</h3>
-<div class="grid">
-  <div class="card">
-    <div class="label">IP Baru</div>
-    <div class="value" id="ip">82.25.36.26:7008</div>
-    <button class="copy-btn" onclick="copyIP(this)">COPY IP</button>
-  </div>
-  <div class="card">
-    <div class="label">Server Status</div>
-    <div class="status"><div class="pulse"></div>ONLINE</div>
-  </div>
-  <div class="card">
-    <div class="label">Access System</div>
-    <div class="value">WHITELIST</div>
-  </div>
-   
-  <div class="card" onclick="openEidModal()" style="cursor: pointer;">
-    <div class="label">ExeEvent</div>
-    <div class="value">2026 EVENT</div>
-    <div class="status" style="margin-top:5px; font-size:11px; color:var(--muted);">
-       <span style="color:var(--green)">●</span> Click to Open
+  <!-- OFFLINE OVERLAY -->
+  <div id="offlineOverlay">
+    <div class="offline-decoration"></div>
+    <div class="offline-decoration"></div>
+    <div class="offline-content">
+      <div class="offline-icon">
+        <i class="fas fa-power-off"></i>
+      </div>
+      <div class="offline-title">Server Sudah Offline</div>
+      <div class="offline-message">Thanks For Support</div>
+      <div class="offline-signature">by Hexky</div>
     </div>
   </div>
-  </div>
-</div>
-
-<div class="section">
-<h3>STARTER PACKAGE</h3>
-<div class="card starter">
-<ul>
-  <li>Starting Cash 100.000.000</li>
-  <li>Level Boost +4</li>
-  <li>Food & Drink x10</li>
-  <li>Roulette Spin x3</li>
-  <li>Vehicle (Sultan)</li>
-</ul>
-</div>
-</div>
-
-<div class="section">
-<h3>OFFICIAL CONNECTIONS</h3>
-<div class="grid">
-  <a class="link" href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H" target="_blank">
-    <strong>Announcement Channel</strong>
-    <span>Official Info & Updates</span>
-  </a>
-  <a class="link" href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho" target="_blank">
-    <strong>Main Community</strong>
-    <span>Join Players & Chat</span>
-  </a>
-  <a class="link" href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc" target="_blank">
-    <strong>Goodside Faction</strong>
-    <span>Government & Law Enforcement</span>
-  </a>
-  <a class="link" href="https://chat.whatsapp.com/LfUW71S6w8M6QbTAsO5skZ" target="_blank">
-    <strong>Badside Faction</strong>
-    <span>Criminal & Underground Roleplay</span>
-  </a>
-</div>
-</div>
-
-<div class="footer">© Execurive Roleplay — Blue City Roleplay Experience</div>
-</div>
-
-<div class="loading" id="loading">
-  <div class="loading-box">
-    <div class="spinner"></div>
-    <div id="loading-text">Copying...</div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="eidModal">
-  <div class="modal-content">
-    <span class="modal-close" onclick="closeEidModal()">&times;</span>
-    
-    <div class="eid-title">MENUJU IDUL FITRI 1447 H</div>
-    <div class="timer-grid">
-      <div class="timer-item">
-        <span class="t-num" id="d-val">00</span>
-        <span class="t-label">Hari</span>
-      </div>
-      <div class="timer-item">
-        <span class="t-num" id="h-val">00</span>
-        <span class="t-label">Jam</span>
-      </div>
-      <div class="timer-item">
-        <span class="t-num" id="m-val">00</span>
-        <span class="t-label">Menit</span>
-      </div>
-      <div class="timer-item">
-        <span class="t-num" id="s-val">00</span>
-        <span class="t-label">Detik</span>
-      </div>
-    </div>
-    
-    <div style="font-size:11px; color:var(--muted); margin-bottom:20px;">
-      <span style="color:var(--green); font-weight:bold;">Mohon Maaf Lahir dan Batin</span>
-    </div>
-
-    <div class="special-offer-box">
-      <div class="offer-header">
-        EVENT STARTERPACK <span class="badge-now">NOW!</span>
-      </div>
-      <ul class="offer-list">
-        <li>Rumah Gratis (1x Claim)</li>
-        <li>Mobil Import Turismo</li>
-      </ul>
-      <div class="offer-note">
-        <strong>NOTE :</strong> Khusus warga baru. Tidak berlaku bagi yang sudah ambil starterpack biasa.
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script>
-function copyIP(btn){
-  document.getElementById("loading").style.display="flex";
-  setTimeout(()=>{
-    navigator.clipboard.writeText(document.getElementById("ip").innerText);
-    document.getElementById("loading").style.display="none";
-    btn.classList.add("copied");
-    btn.innerText="COPIED!";
-    setTimeout(()=>{
-      btn.classList.remove("copied");
-      btn.innerText="COPY IP";
-    },2000);
-  },400);
-}
-
-// ===== EID MODAL LOGIC =====
-function openEidModal() {
-    document.getElementById('eidModal').style.display = 'flex';
-}
-function closeEidModal() {
-    document.getElementById('eidModal').style.display = 'none';
-}
-
-// Close when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('eidModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-// ===== COUNTDOWN LOGIC =====
-// Atur Tanggal Idul Fitri di bawah ini (Format: Month Day, Year Time)
-const eidDate = new Date("March 20, 2026 00:00:00").getTime(); 
-
-const timer = setInterval(function() {
-    const now = new Date().getTime();
-    const distance = eidDate - now;
-
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("d-val").innerText = days < 10 ? "0" + days : days;
-    document.getElementById("h-val").innerText = hours < 10 ? "0" + hours : hours;
-    document.getElementById("m-val").innerText = minutes < 10 ? "0" + minutes : minutes;
-    document.getElementById("s-val").innerText = seconds < 10 ? "0" + seconds : seconds;
-}, 1000);
-</script>
 
 </body>
 </html>
