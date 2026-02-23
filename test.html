@@ -270,52 +270,7 @@
        RAMADHAN THEME - KETUPAT & LEBARAN EFFECTS
     ============================================================ */
     body.ramadan-active {
-      background: url('ramadhan.png') center/cover no-repeat fixed, 
-                  linear-gradient(180deg, #030308 0%, #06060f 50%, #030308 100%);
-    }
-    .ramadan-active::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: 
-        radial-gradient(14px 14px at 5% 12%, rgba(0,255,136,0.55) 50%, transparent 50%),
-        radial-gradient(12px 12px at 18% 28%, rgba(255,215,0,0.55) 50%, transparent 50%),
-        radial-gradient(16px 16px at 30% 8%, rgba(0,255,136,0.5) 50%, transparent 50%),
-        radial-gradient(10px 10px at 42% 22%, rgba(255,215,0,0.5) 50%, transparent 50%),
-        radial-gradient(14px 14px at 55% 15%, rgba(0,255,136,0.55) 50%, transparent 50%),
-        radial-gradient(12px 12px at 68% 25%, rgba(255,215,0,0.5) 50%, transparent 50%),
-        radial-gradient(16px 16px at 80% 10%, rgba(0,255,136,0.5) 50%, transparent 50%),
-        radial-gradient(10px 10px at 92% 18%, rgba(255,215,0,0.55) 50%, transparent 50%),
-        radial-gradient(14px 14px at 8% 45%, rgba(255,215,0,0.5) 50%, transparent 50%),
-        radial-gradient(12px 12px at 22% 58%, rgba(0,255,136,0.5) 50%, transparent 50%),
-        radial-gradient(16px 16px at 38% 48%, rgba(255,215,0,0.55) 50%, transparent 50%),
-        radial-gradient(10px 10px at 52% 62%, rgba(0,255,136,0.5) 50%, transparent 50%),
-        radial-gradient(14px 14px at 65% 52%, rgba(255,215,0,0.5) 50%, transparent 50%),
-        radial-gradient(12px 12px at 78% 65%, rgba(0,255,136,0.55) 50%, transparent 50%),
-        radial-gradient(14px 14px at 90% 48%, rgba(255,215,0,0.5) 50%, transparent 50%),
-        radial-gradient(12px 12px at 15% 78%, rgba(0,255,136,0.5) 50%, transparent 50%),
-        radial-gradient(16px 16px at 35% 72%, rgba(255,215,0,0.55) 50%, transparent 50%),
-        radial-gradient(10px 10px at 55% 85%, rgba(0,255,136,0.5) 50%, transparent 50%),
-        radial-gradient(14px 14px at 75% 75%, rgba(255,215,0,0.5) 50%, transparent 50%),
-        radial-gradient(12px 12px at 95% 82%, rgba(0,255,136,0.55) 50%, transparent 50%);
-      pointer-events: none;
-      z-index: 99991;
-      animation: ketupatFloat 6s ease-in-out infinite;
-    }
-    @keyframes ketupatFloat {
-      0%, 100% { opacity: 0.75; }
-      50% { opacity: 1; }
-    }
-    .ramadan-active::after {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: 
-        radial-gradient(circle at 15% 85%, rgba(0,255,136,0.1) 0%, transparent 35%),
-        radial-gradient(circle at 85% 15%, rgba(255,215,0,0.1) 0%, transparent 35%),
-        radial-gradient(circle at 50% 50%, rgba(0,255,136,0.05) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 99990;
+      background: url('ramadhan.png') center/cover no-repeat fixed !important;
     }
     .ramadan-active .header {
       border-bottom: 4px solid rgba(0,255,136,0.7) !important;
@@ -338,36 +293,6 @@
       box-shadow: 0 0 35px rgba(0,255,136,0.7), 0 0 70px rgba(255,215,0,0.4) !important;
     }
     .ramadan-active .play-btn i { color: #000 !important; text-shadow: none !important; }
-    .ramadan-ketupat {
-      position: fixed;
-      font-size: 38px;
-      animation: ramadanKetupatFall linear infinite;
-      pointer-events: none;
-      z-index: 99992;
-      opacity: 0;
-      filter: drop-shadow(0 0 10px currentColor);
-    }
-    @keyframes ramadanKetupatFall {
-      0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
-      10% { opacity: 0.95; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-    }
-    .ramadan-masjad {
-      position: fixed;
-      font-size: 32px;
-      animation: ramadanMasjadFall linear infinite;
-      pointer-events: none;
-      z-index: 99992;
-      opacity: 0;
-      filter: drop-shadow(0 0 12px rgba(255,215,0,0.8));
-    }
-    @keyframes ramadanMasjadFall {
-      0% { transform: translateY(-120px) rotate(-8deg); opacity: 0; }
-      10% { opacity: 0.9; }
-      90% { opacity: 0.7; }
-      100% { transform: translateY(110vh) rotate(8deg); opacity: 0; }
-    }
 
     /* ============================================================
        BROADCAST SYSTEM
@@ -4307,26 +4232,23 @@
       margin-bottom: 20px;
       border: 2px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      cursor: zoom-in;
+      transition: all 0.3s ease;
+    }
+    .story-image-wrapper:hover {
+      border-color: rgba(0, 255, 136, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
     }
     .story-image {
       width: 100%;
       height: auto;
       display: block;
       border-radius: 14px;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .story-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #000;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(0, 255, 136, 0.5);
+    .story-image.zoomed {
+      transform: scale(1.5);
+      cursor: zoom-out;
     }
     .story-text {
       background: rgba(255, 255, 255, 0.03);
@@ -4379,16 +4301,15 @@
 <body>
 
   <!-- STORY POPUP - EXECURIVE ORIGIN -->
-  <div id="storyPopup">
+  <div id="storyPopup" class="hidden">
     <div class="story-container">
       <div class="story-header">
         <div class="story-title">🎵 ExeMusic Origin</div>
         <button class="story-close" onclick="closeStoryPopup()">×</button>
       </div>
       <div class="story-body">
-        <div class="story-image-wrapper">
-          <div class="story-badge"></div>
-          <img src="ssrplastexecurive.png" alt="" class="story-image">
+        <div class="story-image-wrapper" onclick="toggleImageZoom()">
+          <img src="ssrplastexecurive.png" alt="Execurive RP" class="story-image" id="storyImage">
         </div>
       </div>
     </div>
@@ -5469,10 +5390,17 @@
       }
     }
 
-    // Show story popup on page load
-    window.addEventListener('DOMContentLoaded', () => {
+    function toggleImageZoom() {
+      const img = document.getElementById('storyImage');
+      if (img) {
+        img.classList.toggle('zoomed');
+      }
+    }
+
+    function showStoryPopup() {
       const popup = document.getElementById('storyPopup');
       if (popup) {
+        popup.classList.remove('hidden');
         // Auto close after 15 seconds if user doesn't close manually
         setTimeout(() => {
           if (!popup.classList.contains('hidden')) {
@@ -5480,7 +5408,7 @@
           }
         }, 15000);
       }
-    });
+    }
 
     const firebaseConfig = {
       apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
@@ -5534,7 +5462,11 @@
         const screen = document.getElementById('gameLoadScreen');
         if (screen) {
           screen.classList.add('fade-out');
-          setTimeout(() => { screen.style.display = 'none'; }, 800);
+          setTimeout(() => { 
+            screen.style.display = 'none';
+            // Show story popup after loading completes
+            showStoryPopup();
+          }, 800);
         }
       }, 400);
     }
@@ -7363,6 +7295,24 @@
     db.ref('settings').on('value', s => {
       const val = s.val();
       if (!val) return;
+      
+      // Load Ramadhan Theme globally
+      if (val.ramadanTheme === true) {
+        ramadanActive = true;
+        document.body.classList.add('ramadan-active');
+        const btn = document.getElementById('ramadanToggleBtn');
+        const headerBtn = document.getElementById('btnRamadanTheme');
+        if (btn) { btn.textContent = 'ON'; btn.style.background = 'linear-gradient(135deg,#ffd700,#00ff88)'; btn.style.color = '#000'; }
+        if (headerBtn) { headerBtn.style.background = 'linear-gradient(135deg,rgba(255,215,0,0.3),rgba(0,255,136,0.2))'; headerBtn.style.borderColor = '#ffd700'; headerBtn.style.color = '#ffd700'; }
+      } else {
+        ramadanActive = false;
+        document.body.classList.remove('ramadan-active');
+        const btn = document.getElementById('ramadanToggleBtn');
+        const headerBtn = document.getElementById('btnRamadanTheme');
+        if (btn) { btn.textContent = 'OFF'; btn.style.background = ''; btn.style.color = ''; }
+        if (headerBtn) { headerBtn.style.background = ''; headerBtn.style.borderColor = ''; headerBtn.style.color = ''; }
+      }
+      
       if (val.accentColor && typeof val.accentColor === 'string') {
         document.documentElement.style.setProperty('--accent', val.accentColor);
       } else {
@@ -9634,20 +9584,16 @@
 
     // RAMADHAN THEME
     let ramadanActive = false;
-    let ramadanInterval = null;
     function toggleRamadanTheme() {
       ramadanActive = !ramadanActive;
       const btn = document.getElementById('ramadanToggleBtn');
       const headerBtn = document.getElementById('btnRamadanTheme');
       
       if (ramadanActive) {
-        // ON - Apply Ramadan theme
+        // ON - Apply Ramadan theme globally
         if (btn) { btn.textContent = 'ON'; btn.style.background = 'linear-gradient(135deg,#ffd700,#00ff88)'; btn.style.color = '#000'; }
         if (headerBtn) { headerBtn.style.background = 'linear-gradient(135deg,rgba(255,215,0,0.3),rgba(0,255,136,0.2))'; headerBtn.style.borderColor = '#ffd700'; headerBtn.style.color = '#ffd700'; }
         document.body.classList.add('ramadan-active');
-        // Start ketupat falling animation
-        if (ketupatInterval) clearInterval(ketupatInterval);
-        ketupatInterval = setInterval(createKetupat, 2000);
         showToast('🕌 Ramadan Theme ON!');
         addLog('Ramadan theme activated');
       } else {
@@ -9655,42 +9601,16 @@
         if (btn) { btn.textContent = 'OFF'; btn.style.background = ''; btn.style.color = ''; }
         if (headerBtn) { headerBtn.style.background = ''; headerBtn.style.borderColor = ''; headerBtn.style.color = ''; }
         document.body.classList.remove('ramadan-active');
-        // Stop ketupat animation
-        if (ketupatInterval) { clearInterval(ketupatInterval); ketupatInterval = null; }
-        document.querySelectorAll('.ramadan-ketupat').forEach(k => k.remove());
         showToast('Ramadan Theme OFF');
         addLog('Ramadan theme deactivated');
       }
+      // Save to Firebase for global theme
       db.ref('settings').update({ ramadanTheme: ramadanActive });
     }
-    function createKetupat() {
-      if (!ramadanActive) return;
-      // Create ketupat
-      const ketupat = document.createElement('div');
-      ketupat.className = 'ramadan-ketupat';
-      ketupat.textContent = '🔺';
-      ketupat.style.left = Math.random() * 92 + 4 + '%';
-      ketupat.style.animationDuration = (6 + Math.random() * 4) + 's';
-      ketupat.style.color = Math.random() > 0.5 ? '#ffd700' : '#00ff88';
-      ketupat.style.textShadow = `0 0 15px ${ketupat.style.color}`;
-      document.body.appendChild(ketupat);
-      setTimeout(() => ketupat.remove(), 12000);
-      
-      // Create mosque icon
-      if (Math.random() > 0.6) {
-        const masjad = document.createElement('div');
-        masjad.className = 'ramadan-masjad';
-        masjad.textContent = '🕌';
-        masjad.style.left = Math.random() * 90 + 5 + '%';
-        masjad.style.animationDuration = (8 + Math.random() * 4) + 's';
-        document.body.appendChild(masjad);
-        setTimeout(() => masjad.remove(), 14000);
-      }
-    }
+    
     function applyRamadanTheme() {
       if (ramadanActive && !document.body.classList.contains('ramadan-active')) {
         document.body.classList.add('ramadan-active');
-        ketupatInterval = setInterval(createKetupat, 2000);
       }
     }
 
