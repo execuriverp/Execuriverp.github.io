@@ -270,40 +270,74 @@
        RAMADHAN THEME - KETUPAT & LEBARAN EFFECTS
     ============================================================ */
     body.ramadan-active {
-      background: url('bg ramadhan.png') center/cover no-repeat fixed !important;
+      background: #000 url('bg ramadhan.png') center/cover no-repeat fixed !important;
     }
-    .ramadan-active .header {
-      border-bottom: 4px solid rgba(0,255,136,0.7) !important;
-      box-shadow: 0 8px 40px rgba(0,255,136,0.3), 0 0 30px rgba(255,215,0,0.2) !important;
-      background: linear-gradient(180deg, rgba(0,255,136,0.12), rgba(0,0,0,0.4)) !important;
-    }
-    .ramadan-active .header-right button {
-      border-color: rgba(0,255,136,0.4) !important;
-    }
-    .ramadan-active .cover-box {
-      border: 4px solid rgba(0,255,136,0.6) !important;
-      box-shadow: 0 0 60px rgba(0,255,136,0.4), 0 0 100px rgba(255,215,0,0.2), 0 10px 50px rgba(0,0,0,0.5) !important;
-    }
-    .ramadan-active .controls {
-      background: linear-gradient(180deg, rgba(0,255,136,0.15), rgba(255,215,0,0.08), rgba(15,23,42,0.98)) !important;
-      border-top: 3px solid rgba(0,255,136,0.5) !important;
-    }
-    .ramadan-active .play-btn {
-      background: linear-gradient(135deg, #00ff88, #00dd66, #ffd700) !important;
-      box-shadow: 0 0 35px rgba(0,255,136,0.7), 0 0 70px rgba(255,215,0,0.4) !important;
-    }
-    .ramadan-active .play-btn i { color: #000 !important; text-shadow: none !important; }
     .ramadan-active .app {
-      background: transparent !important;
-      backdrop-filter: none !important;
-      border: none !important;
-      box-shadow: none !important;
+      background: rgba(0, 0, 0, 0.3) !important;
+      backdrop-filter: blur(5px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     }
     .ramadan-active .cover-box,
     .ramadan-active .song-info,
     .ramadan-active .controls {
-      opacity: 0 !important;
+      opacity: 0.3 !important;
       pointer-events: none !important;
+    }
+    
+    /* Ramadan Decorations */
+    .ramadan-decoration {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99990;
+      font-size: 40px;
+      opacity: 0;
+    }
+    .ramadan-moon {
+      animation: moonFloat 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+    }
+    @keyframes moonFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.9;
+      }
+      50% {
+        transform: translateY(-20px) rotate(5deg);
+        opacity: 1;
+      }
+    }
+    .ramadan-mosque {
+      animation: mosqueGlow 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.6));
+    }
+    @keyframes mosqueGlow {
+      0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.6));
+      }
+      50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.9));
+      }
+    }
+    .ramadan-ketupat {
+      animation: ketupatSpin 6s linear infinite;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+    }
+    @keyframes ketupatSpin {
+      0% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: rotate(180deg) scale(1.1);
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(360deg) scale(1);
+        opacity: 0.85;
+      }
     }
 
     /* ============================================================
@@ -9744,6 +9778,8 @@
 
     // RAMADHAN THEME
     let ramadanActive = false;
+    let ramadanDecorations = [];
+    
     function toggleRamadanTheme() {
       ramadanActive = !ramadanActive;
       const btn = document.getElementById('ramadanToggleBtn');
@@ -9754,6 +9790,7 @@
         if (btn) { btn.textContent = 'ON'; btn.style.background = 'linear-gradient(135deg,#ffd700,#00ff88)'; btn.style.color = '#000'; }
         if (headerBtn) { headerBtn.style.background = 'linear-gradient(135deg,rgba(255,215,0,0.3),rgba(0,255,136,0.2))'; headerBtn.style.borderColor = '#ffd700'; headerBtn.style.color = '#ffd700'; }
         document.body.classList.add('ramadan-active');
+        createRamadanDecorations();
         showToast('🕌 Ramadan Theme ON!');
         addLog('Ramadan theme activated');
       } else {
@@ -9761,6 +9798,7 @@
         if (btn) { btn.textContent = 'OFF'; btn.style.background = ''; btn.style.color = ''; }
         if (headerBtn) { headerBtn.style.background = ''; headerBtn.style.borderColor = ''; headerBtn.style.color = ''; }
         document.body.classList.remove('ramadan-active');
+        removeRamadanDecorations();
         showToast('Ramadan Theme OFF');
         addLog('Ramadan theme deactivated');
       }
@@ -9768,9 +9806,61 @@
       db.ref('settings').update({ ramadanTheme: ramadanActive });
     }
     
+    function createRamadanDecorations() {
+      // Remove existing decorations
+      removeRamadanDecorations();
+      
+      // Create moon (top left)
+      const moon = document.createElement('div');
+      moon.className = 'ramadan-decoration ramadan-moon';
+      moon.textContent = '🌙';
+      moon.style.top = '10%';
+      moon.style.left = '10%';
+      moon.style.opacity = '1';
+      document.body.appendChild(moon);
+      ramadanDecorations.push(moon);
+      
+      // Create mosque (bottom left)
+      const mosque = document.createElement('div');
+      mosque.className = 'ramadan-decoration ramadan-mosque';
+      mosque.textContent = '🕌';
+      mosque.style.bottom = '15%';
+      mosque.style.left = '8%';
+      mosque.style.opacity = '1';
+      document.body.appendChild(mosque);
+      ramadanDecorations.push(mosque);
+      
+      // Create ketupat (top right)
+      const ketupat1 = document.createElement('div');
+      ketupat1.className = 'ramadan-decoration ramadan-ketupat';
+      ketupat1.textContent = '🎋';
+      ketupat1.style.top = '15%';
+      ketupat1.style.right = '12%';
+      ketupat1.style.opacity = '1';
+      document.body.appendChild(ketupat1);
+      ramadanDecorations.push(ketupat1);
+      
+      // Create ketupat (bottom right)
+      const ketupat2 = document.createElement('div');
+      ketupat2.className = 'ramadan-decoration ramadan-ketupat';
+      ketupat2.textContent = '🎋';
+      ketupat2.style.bottom = '20%';
+      ketupat2.style.right = '15%';
+      ketupat2.style.opacity = '1';
+      ketupat2.style.animationDelay = '3s';
+      document.body.appendChild(ketupat2);
+      ramadanDecorations.push(ketupat2);
+    }
+    
+    function removeRamadanDecorations() {
+      ramadanDecorations.forEach(el => el.remove());
+      ramadanDecorations = [];
+    }
+    
     function applyRamadanTheme() {
       if (ramadanActive && !document.body.classList.contains('ramadan-active')) {
         document.body.classList.add('ramadan-active');
+        createRamadanDecorations();
       }
     }
 
