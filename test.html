@@ -61,6 +61,13 @@
       pointer-events: none;
       z-index: -2;
     }
+    body.heart-theme-active::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: -3;
+    }
     
     /* Heart Theme - Transparent Cards */
     body.heart-theme-active .sheet,
@@ -70,13 +77,13 @@
     body.heart-theme-active .event-center-card,
     body.heart-theme-active .leaderboard-card,
     body.heart-theme-active .admin-panel {
-      background: rgba(10, 10, 20, 0.85) !important;
+      background: rgba(10, 10, 20, 0.7) !important;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(236, 72, 153, 0.2);
     }
     
     body.heart-theme-active .sheet {
-      background: linear-gradient(180deg, rgba(20, 10, 20, 0.9), rgba(10, 5, 15, 0.95)) !important;
+      background: linear-gradient(180deg, rgba(20, 10, 20, 0.8), rgba(10, 5, 15, 0.85)) !important;
     }
 
     /* ============================================================
