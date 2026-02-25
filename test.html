@@ -2290,6 +2290,73 @@
     }
     .mp-avatar:hover { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(0,255,136,0.15), 0 12px 35px rgba(0,255,136,0.25); }
     .modern-profile-header.vip .mp-avatar { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255,215,0,0.1), 0 8px 30px rgba(255,215,0,0.2); }
+    
+    /* Admin Badge */
+    .mp-admin-badge {
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      border: 3px solid #0d0d15;
+      z-index: 10;
+      animation: adminBadgePulse 2s ease-in-out infinite;
+    }
+    .mp-admin-badge.admin {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(239,68,68,0.6), 0 0 30px rgba(239,68,68,0.3);
+    }
+    .mp-admin-badge.creator {
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(168,85,247,0.6), 0 0 30px rgba(168,85,247,0.3);
+    }
+    .mp-admin-badge.admin-creator {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444);
+      color: #000;
+      box-shadow: 0 0 20px rgba(251,191,36,0.6), 0 0 40px rgba(245,158,11,0.3);
+    }
+    @keyframes adminBadgePulse {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.1); }
+    }
+    
+    /* Admin Avatar Border */
+    .mp-avatar-container.has-admin .mp-avatar {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239,68,68,0.15), 0 0 25px rgba(239,68,68,0.3), 0 8px 30px rgba(0,0,0,0.3);
+      animation: adminBorderGlow 3s ease-in-out infinite;
+    }
+    .mp-avatar-container.has-creator .mp-avatar {
+      border-color: #a855f7;
+      box-shadow: 0 0 0 4px rgba(168,85,247,0.15), 0 0 25px rgba(168,85,247,0.3), 0 8px 30px rgba(0,0,0,0.3);
+      animation: creatorBorderGlow 3s ease-in-out infinite;
+    }
+    .mp-avatar-container.has-admin-creator .mp-avatar {
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 4px rgba(251,191,36,0.2), 0 0 30px rgba(251,191,36,0.4), 0 0 50px rgba(245,158,11,0.2), 0 8px 30px rgba(0,0,0,0.3);
+      animation: adminCreatorBorderGlow 2s ease-in-out infinite;
+    }
+    @keyframes adminBorderGlow {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(239,68,68,0.15), 0 0 25px rgba(239,68,68,0.3), 0 8px 30px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(239,68,68,0.2), 0 0 35px rgba(239,68,68,0.5), 0 0 60px rgba(239,68,68,0.2), 0 8px 30px rgba(0,0,0,0.3); }
+    }
+    @keyframes creatorBorderGlow {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(168,85,247,0.15), 0 0 25px rgba(168,85,247,0.3), 0 8px 30px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(168,85,247,0.2), 0 0 35px rgba(168,85,247,0.5), 0 0 60px rgba(168,85,247,0.2), 0 8px 30px rgba(0,0,0,0.3); }
+    }
+    @keyframes adminCreatorBorderGlow {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(251,191,36,0.2), 0 0 30px rgba(251,191,36,0.4), 0 0 50px rgba(245,158,11,0.2), 0 8px 30px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(251,191,36,0.3), 0 0 45px rgba(251,191,36,0.6), 0 0 70px rgba(245,158,11,0.3), 0 8px 30px rgba(0,0,0,0.3); }
+    }
+    
     .mp-edit-badge {
       position: absolute; bottom: 2px; right: 2px;
       background: linear-gradient(135deg, #1a1a2e, #0f172a);
@@ -5251,9 +5318,10 @@
           <div class="pmp-timer" id="pmpTimer">0:00</div>
         </div>
         
-        <div class="mp-avatar-container">
+        <div class="mp-avatar-container" id="pAvatarContainer">
           <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
+          <div id="pAdminBadge" class="mp-admin-badge" style="display:none"></div>
         </div>
         <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
         <div class="mp-name-row">
@@ -5292,7 +5360,7 @@
   <div class="modal" id="modalCreator" onclick="if(event.target==this)closeCreatorModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
-        <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
+        <div class="mp-avatar-container" id="vAvatarContainer"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"><div id="vAdminBadge" class="mp-admin-badge" style="display:none"></div></div>
         <div class="mp-name-row"><span id="vName" class="mp-name">@creator</span></div>
         <div id="vTagDisplay" style="margin-bottom:10px; display:flex; gap:5px; justify-content:center"></div>
         <div class="mp-stats">
@@ -6103,6 +6171,39 @@
       const t = tag.toLowerCase();
       return `<span class="user-tag tag-${t}">${tag.toUpperCase()}</span>`;
     }
+    
+    // Admin/Creator Badge System
+    function updateAdminBadge(prefix, role, admpanel) {
+      const container = document.getElementById(prefix + 'AvatarContainer');
+      const badge = document.getElementById(prefix + 'AdminBadge');
+      if (!container || !badge) return;
+      
+      const isAdmin = role === 'admin';
+      const isCreator = admpanel === true;
+      
+      container.classList.remove('has-admin', 'has-creator', 'has-admin-creator');
+      badge.classList.remove('admin', 'creator', 'admin-creator');
+      
+      if (isAdmin && isCreator) {
+        container.classList.add('has-admin-creator');
+        badge.classList.add('admin-creator');
+        badge.innerHTML = '<i class="fas fa-crown"></i>';
+        badge.style.display = 'flex';
+      } else if (isAdmin) {
+        container.classList.add('has-admin');
+        badge.classList.add('admin');
+        badge.innerHTML = '<i class="fas fa-shield-alt"></i>';
+        badge.style.display = 'flex';
+      } else if (isCreator) {
+        container.classList.add('has-creator');
+        badge.classList.add('creator');
+        badge.innerHTML = '<i class="fas fa-star"></i>';
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    
     function buyShopItem(id) {
       if (!auth.currentUser || !userData) {
         msg('Login dulu untuk tukar ExeCoin');
@@ -8103,6 +8204,9 @@
           startUploadCooldownWatcher();
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
+          
+          // Update Admin/Creator Badge
+          updateAdminBadge('p', userData.role, userData.admpanel);
 
         const profHeader = document.getElementById('profileHeader');
         if (profHeader) {
@@ -8944,6 +9048,9 @@
       document.getElementById('vFol').innerText = fcr;
       document.getElementById('vFollowing').innerText = flgr;
       document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
+      
+      // Update Admin/Creator Badge for viewer
+      updateAdminBadge('v', cData?.role, cData?.admpanel);
 
       const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
       if (creatorHeader) {
