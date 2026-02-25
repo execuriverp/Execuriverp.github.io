@@ -9619,14 +9619,18 @@
       box.innerHTML = users.map(u => {
         const folCount = Array.isArray(u.followers) ? u.followers.length : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers).length : u.followers || 0);
         const tagHtml = getTagHTML(u.tag);
+        const fakeTarget = u.fakeFollowerTarget || 0;
+        const fakeAdded = u.fakeFollowerAdded || 0;
+        const fakeStatus = fakeTarget > 0 ? `<span style="color:#22c55e;font-size:10px;margin-left:8px"><i class="fas fa-robot"></i> ${fakeAdded}/${fakeTarget}</span>` : '';
         return `<div class="user-row-admin">
           <div class="ur-top">
             <div style="flex:1">
-              <div class="ur-name" onclick="adSelectUser('${u.uid}')">${escapeHtml(u.username || 'Unknown')} ${tagHtml}</div>
+              <div class="ur-name" onclick="adSelectUser('${u.uid}')">${escapeHtml(u.username || 'Unknown')} ${tagHtml} ${fakeStatus}</div>
               <div class="ur-uid">${u.uid}</div>
             </div>
           </div>
           <div class="ur-actions">
+            <button class="admin-btn admin-btn-green" onclick="adSetFakeFollowerTarget('${u.uid}')" style="padding:6px 10px;font-size:10px" title="Set Fake Follower Target"><i class="fas fa-robot"></i></button>
             <button class="admin-btn admin-btn-gold" onclick="adSelectUser('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
             <button class="admin-btn admin-btn-blue" onclick="adOpenUserTools('${u.uid}','${escapeHtml(u.username||'')}')" style="padding:6px 10px;font-size:11px">TOOLS</button>
             <button class="admin-btn admin-btn-red" onclick="adToggleBan('${u.uid}', ${!!u.banned})" style="padding:6px 10px;font-size:11px">${u.banned ? 'UNBAN' : 'BAN'}</button>
@@ -10049,9 +10053,107 @@
         const u = s.val() || {};
         let fol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
         fol = fol.filter(f => !String(f).startsWith('fake_'));
-        db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
+        db.ref('users/' + uid).update({ followers: fol, fakeFollowerTarget: null, fakeFollowerAdded: null }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
       });
     }
+    
+    // ============================================================
+    // FAKE FOLLOWER AUTO-GROW SYSTEM
+    // ============================================================
+    let fakeFollowerInterval = null;
+    
+    function adSetFakeFollowerTarget(uid) {
+      Swal.fire({
+        title: 'Set Fake Follower Target',
+        html: `<p style="color:#aaa;font-size:12px;margin-bottom:15px">Masukkan jumlah fake followers yang ingin ditambahkan secara bertahap</p>
+               <input type="number" id="fakeTargetNum" class="swal2-input" placeholder="Contoh: 5" min="1" max="100">
+               <p style="color:#666;font-size:11px;margin-top:10px">Akan menambah 1-2 follower setiap beberapa jam</p>`,
+        background: '#0d0d15',
+        color: '#fff',
+        confirmButtonText: 'Set Target',
+        confirmButtonColor: '#22c55e',
+        cancelButtonText: 'Batal',
+        showCancelButton: true,
+        preConfirm: () => {
+          const num = document.getElementById('fakeTargetNum').value;
+          return parseInt(num) || null;
+        }
+      }).then(r => {
+        if (r.isConfirmed && r.value) {
+          const target = parseInt(r.value);
+          db.ref('users/' + uid).update({ 
+            fakeFollowerTarget: target,
+            fakeFollowerAdded: 0
+          }).then(() => {
+            addLog('Fake follower target set: ' + uid + ' = ' + target);
+            showToast(`✅ Target: ${target} fake followers`);
+            adLoadData();
+          });
+        }
+      });
+    }
+    
+    function adCancelFakeTarget(uid) {
+      db.ref('users/' + uid).update({ fakeFollowerTarget: null, fakeFollowerAdded: null }).then(() => {
+        addLog('Fake follower target cancelled: ' + uid);
+        showToast('Target fake follower dibatalkan');
+        adLoadData();
+      });
+    }
+    
+    // Generate fake follower name
+    function generateFakeFollower() {
+      const names = ['User', 'Musik', 'Lagu', 'Exe', 'Music', 'Song', 'Artist', 'Creator', 'Fans', 'Listener', 'Melody', 'Beat', 'Tune', 'Rhythm', 'Vibe', 'Groove', 'Sound', 'Audio', 'Track', 'Play'];
+      const suffix = Math.floor(Math.random() * 9000) + 1000;
+      return 'fake_' + names[Math.floor(Math.random() * names.length)] + suffix;
+    }
+    
+    // Process fake follower targets (runs periodically)
+    function processFakeFollowerTargets() {
+      db.ref('users').once('value').then(snap => {
+        const users = snap.val() || {};
+        Object.keys(users).forEach(uid => {
+          const u = users[uid];
+          const target = u.fakeFollowerTarget;
+          const added = u.fakeFollowerAdded || 0;
+          
+          if (target && added < target) {
+            // Add 1-2 fake followers
+            const toAdd = Math.floor(Math.random() * 2) + 1; // 1 or 2
+            const actuallyAdd = Math.min(toAdd, target - added);
+            
+            let currentFol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
+            
+            // Add new fake followers
+            for (let i = 0; i < actuallyAdd; i++) {
+              currentFol.push(generateFakeFollower());
+            }
+            
+            db.ref('users/' + uid).update({
+              followers: currentFol,
+              fakeFollowerAdded: added + actuallyAdd
+            }).then(() => {
+              console.log(`Added ${actuallyAdd} fake followers to ${uid}. Progress: ${added + actuallyAdd}/${target}`);
+            });
+          }
+        });
+      });
+    }
+    
+    // Start fake follower scheduler (check every 3 hours)
+    function startFakeFollowerScheduler() {
+      if (fakeFollowerInterval) clearInterval(fakeFollowerInterval);
+      // Check every 3 hours (10800000 ms)
+      fakeFollowerInterval = setInterval(processFakeFollowerTargets, 10800000);
+      // Also run once on startup (delayed by 10 seconds)
+      setTimeout(processFakeFollowerTargets, 10000);
+    }
+    
+    // Initialize on page load
+    window.addEventListener('load', () => {
+      // Start fake follower scheduler
+      setTimeout(startFakeFollowerScheduler, 5000);
+    });
 
     function adResetCD(uid) { db.ref('users/' + uid + '/lastUpload').remove().then(() => { addLog('Reset CD: ' + uid); showToast('Cooldown direset!'); }); }
     function adToggleBan(uid, status) { db.ref('users/' + uid).update({ banned: !status }).then(() => { addLog((status ? 'Unban' : 'Ban') + ': ' + uid); showToast((status ? 'Unbanned' : 'Banned') + '!'); adLoadData(); }); }
