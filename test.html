@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ExeMusic 3.2.3</title>
-  <link rel="icon" type="image/png" href="exemusicicon.png">
+  <link rel="icon" type="image/png" href="exemusic.png">
   
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -3633,52 +3633,6 @@
       background: linear-gradient(135deg, #1e3a8a, #0ea5e9, #fbbf24);
       color: #fff;
       border: 1px solid rgba(251,191,36,0.8);
-      box-shadow: 0 0 15px rgba(251,191,36,0.6);
-      animation: sahurGlow 2s ease-in-out infinite;
-      position: relative;
-      padding-left: 20px;
-      font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 150px;
-    }
-    .tag-exe-sahur::before {
-      content: '🌙';
-      position: absolute;
-      left: 2px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 12px;
-      animation: moonFloat 3s ease-in-out infinite;
-    }
-    @keyframes sahurGlow {
-      0%, 100% {
-        box-shadow: 0 0 15px rgba(251,191,36,0.6);
-      }
-      50% {
-        box-shadow: 0 0 30px rgba(251,191,36,0.9), 0 0 50px rgba(14,165,233,0.4);
-      }
-    }
-    @keyframes moonFloat {
-      0%, 100% {
-        transform: translateY(-50%) rotate(0deg);
-      }
-      50% {
-        transform: translateY(-55%) rotate(10deg);
-      }
-    }
-    @media (max-width: 480px) {
-      .tag-exe-sahur {
-        font-size: 8px;
-        padding-left: 16px;
-        max-width: 120px;
-      }
-      .tag-exe-sahur::before {
-        font-size: 10px;
-      }
-    }
-
     /* ============================================================
        TAG UNLOCK FULLSCREEN ANIMATION - v3.2.3
     ============================================================ */
@@ -3686,13 +3640,12 @@
       position: fixed;
       inset: 0;
       z-index: 99999;
-      background: rgba(0,0,0,0.95);
+      background: rgba(0, 0, 0, 0.98);
       display: none;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       animation: fadeIn 0.5s ease;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
     }
     .tag-unlock-fullscreen.show {
       display: flex;
@@ -3702,6 +3655,140 @@
         opacity: 0;
       }
       to {
+        opacity: 1;
+      }
+    }
+    .tag-unlock-card {
+      position: relative;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      padding: 20px;
+    }
+    .tag-unlock-close {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 51, 51, 0.1);
+      border: 2px solid rgba(255, 51, 51, 0.3);
+      color: #ff6666;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 700;
+      z-index: 10;
+    }
+    .tag-unlock-close:hover {
+      background: rgba(255, 51, 51, 0.2);
+      border-color: #ff3333;
+      color: #ff3333;
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+    }
+    .tag-unlock-sparkles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .tag-sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: sparkleFloat 2s ease-out forwards;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .tag-unlock-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: tagUnlockScale 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+    }
+    @keyframes tagUnlockScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.3) rotate(-5deg);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1) rotate(2deg);
+      }
+      70% {
+        transform: scale(0.95) rotate(-1deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+    .tag-unlock-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      animation: tagsSlideUp 0.8s ease 0.3s backwards;
+    }
+    @keyframes tagsSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .tag-unlock-tags .user-tag {
+      font-size: 16px;
+      padding: 10px 20px;
+      animation: tagBounce 0.6s ease forwards;
+    }
+    @keyframes tagBounce {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.15);
+      }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .tag-unlock-title {
+        font-size: 40px;
+        letter-spacing: 2px;
+      }
+      .tag-unlock-close {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .tag-unlock-title {
+        font-size: 32px;
+        letter-spacing: 1px;
+      }
+      .tag-unlock-tags .user-tag {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
         opacity: 1;
       }
     }
@@ -4360,18 +4447,15 @@
       text-transform: uppercase;
       letter-spacing: 3px;
       line-height: 1.4;
-    }
-    @keyframes thankYouScale {
-      0% {
-        opacity: 0;
-        transform: scale(0.3) rotate(-5deg);
-      }
-      50% {
-        opacity: 1;
-        transform: scale(1.1) rotate(2deg);
-      }
-      70% {
-        transform: scale(0.95) rotate(-1deg);
+  <!-- Tag Unlock Fullscreen - v3.2.3 -->
+  <div id="tagUnlockFullscreen" class="tag-unlock-fullscreen">
+    <div class="tag-unlock-card">
+      <button class="tag-unlock-close" onclick="closeTagUnlockFullscreen()">×</button>
+      <div class="tag-unlock-sparkles" id="tagSparklesContainer"></div>
+      <div class="tag-unlock-title">Tag Unlocked!</div>
+      <div class="tag-unlock-tags" id="tagUnlockFullscreenTags"></div>
+    </div>
+  </div>transform: scale(0.95) rotate(-1deg);
       }
       100% {
         opacity: 1;
@@ -4602,19 +4686,6 @@
       </div>
       <div id="notifList" class="notif-list"><div class="notif-empty">Memuat...</div></div>
     </div>
-
-  <!-- Tag Unlock Fullscreen - v3.2.3 -->
-  <div id="tagUnlockFullscreen" class="tag-unlock-fullscreen">
-    <div class="tag-unlock-card">
-      <div class="tag-unlock-icon-big">
-        <i class="fas fa-trophy"></i>
-      </div>
-      <div class="tag-unlock-title">TAG UNLOCKED!</div>
-      <div class="tag-unlock-subtitle">Kamu berhasil membuka tag baru</div>
-      <div class="tag-unlock-tag-display" id="tagUnlockFullscreenTags"></div>
-      <button class="tag-unlock-close-btn" onclick="closeTagUnlockFullscreen()">AWESOME!</button>
-    </div>
-  </div>
 
   <!-- MAIN APP -->
   <div class="app">
@@ -5312,19 +5383,7 @@
   <div class="modal" id="modalChangeNames" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:18px; color:var(--accent); font-family:'Rajdhani',sans-serif">✏️ UBAH NAMA</h3>
-      <input id="cnPass" type="password" class="inp-dark" placeholder="Password Saat Ini">
-      <input id="cnNewName" class="inp-dark" placeholder="Nama Pengguna Baru">
-      <button onclick="handleChangeName()" class="btn-act">UBAH NAMA</button>
-      <div id="cnMsg" class="modal-msg"></div>
-    </div>
-  </div>
-
-  <div class="modal" id="modalChangePass" onclick="if(event.target==this)this.style.display='none'">
-    <div class="sheet">
-      <h3 style="text-align:center; margin-bottom:18px; color:var(--accent); font-family:'Rajdhani',sans-serif">🔐 UBAH PASSWORD</h3>
-      <input id="cpOldPass" type="password" class="inp-dark" placeholder="Password Lama">
-      <input id="cpNewPass" type="password" class="inp-dark" placeholder="Password Baru (Min. 6)">
-      <input id="cpConfirm" type="password" class="inp-dark" placeholder="Konfirmasi Password Baru">
+      <input id="cnPass" type="password" class="inp-dark" placeholder="Password Saat Ini"> <input id="cpConfirm" type="password" class="inp-dark" placeholder="Konfirmasi Password Baru">
       <button onclick="handleChangePassword()" class="btn-act">UBAH PASSWORD</button>
       <div id="cpMsg" class="modal-msg"></div>
     </div>
@@ -6994,32 +7053,7 @@
         { id: 'shop_vip_7', title: 'VIP 7 Hari', desc: 'Durasi VIP lebih lama', price: 500, badge: 'VIP Silver' },
         { id: 'shop_vip_30', title: 'VIP 30 Hari', desc: 'Paket VIP bulanan', price: 1200, badge: 'VIP Gold' }
       ];
-      const renderItem = it => {
-        const coins = userData.coins || 0;
-        const progressText = coins + '/' + it.price;
-        const pct = Math.max(0, Math.min(1, coins / it.price));
-        const canBuy = coins >= it.price;
-        const btnAttrs = canBuy ? ('onclick="buyShopItem(\'' + it.id + '\')"') : 'disabled';
-        const btnLabel = canBuy ? 'Tukar sekarang' : 'Coin belum cukup';
-        return '<div class="event-shop-card">' +
-          '<div class="event-shop-main">' +
-            '<div class="event-shop-title-row">' +
-              '<div class="event-shop-title">' + escapeHtml(it.title) + '</div>' +
-              '<div class="event-shop-price"><i class="fas fa-coins"></i>' + it.price + '</div>' +
-            '</div>' +
-            '<div class="event-shop-desc">' + escapeHtml(it.desc) + '</div>' +
-            '<div class="event-shop-progress-wrap">' +
-              '<div class="event-shop-progress-bar"><div class="event-shop-progress-fill" style="transform:scaleX(' + pct + ')"></div></div>' +
-              '<div class="event-shop-progress-text">' + escapeHtml(progressText) + '</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="event-shop-action">' +
-            '<div class="event-shop-badge">' + escapeHtml(it.badge) + '</div>' +
-            '<button class="event-shop-btn" ' + btnAttrs + '>' + escapeHtml(btnLabel) + '</button>' +
-          '</div>' +
-        '</div>';
-      };
-      let html = '';
+      const renderItem = it => { let html = '';
       html += '<div class="event-shop-section">' +
                 '<div class="event-shop-section-title">Tag Eksklusif</div>' +
                 '<div class="event-shop-list">' +
