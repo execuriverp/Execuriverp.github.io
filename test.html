@@ -4192,6 +4192,55 @@
     }
 
     /* ============================================================
+       HEART CANVAS EFFECT FOR VALENTINE/LOVE TAGS - v3.2.3
+    ============================================================ */
+    .heart-canvas-container {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99990;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      display: none;
+      background: rgba(0,0,0,0.15);
+    }
+    .heart-canvas-container.active {
+      display: block;
+    }
+    #heartCanvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .heart-particle {
+      position: absolute;
+      bottom: -30px;
+      font-size: 18px;
+      animation: floatHeart linear infinite;
+      opacity: 0;
+    }
+    @keyframes floatHeart {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(20deg) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* ============================================================
        RAMADHAN PROFILE THEME - v3.2.3
     ============================================================ */
     .modern-profile-header.ramadhan-profile {
@@ -4209,6 +4258,27 @@
         radial-gradient(circle at 10% 0%, rgba(251,191,36,0.2), transparent 55%),
         radial-gradient(circle at 90% 0%, rgba(34,197,94,0.18), transparent 55%);
       opacity: 0.8;
+    }
+
+    /* ============================================================
+       HEART/VALENTINE PROFILE THEME - v3.2.3
+    ============================================================ */
+    .modern-profile-header.heart-profile {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(236,72,153,0.2), transparent 60%),
+        radial-gradient(circle at 0% 100%, rgba(168,85,247,0.15), transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(244,63,94,0.15), transparent 50%),
+        linear-gradient(180deg, #1a0a15, #0f0510);
+    }
+    .modern-profile-header.heart-profile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(236,72,153,0.25), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(168,85,247,0.2), transparent 50%);
+      opacity: 0.9;
     }
 
     /* ============================================================
@@ -4812,6 +4882,11 @@
 
   <!-- KETUPAT PARTICLES (for ramadhan tags) -->
   <div class="ketupat-container" id="ketupatContainer"></div>
+  
+  <!-- HEART CANVAS EFFECT (for love/valentine tags) -->
+  <div class="heart-canvas-container" id="heartCanvasContainer">
+    <canvas id="heartCanvas"></canvas>
+  </div>
 
   <!-- BROADCAST -->
   <div id="sysBroadcast" class="sys-broadcast">
@@ -5238,6 +5313,9 @@
               <button class="admin-btn" style="background:linear-gradient(135deg,#ff1493,#ff69b4);color:#fff" onclick="adSetAccent('#ff1493')">PINK</button>
               <button class="admin-btn" style="background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000" onclick="adSetAccent('#ffd700')">GOLD</button>
               <button class="admin-btn" style="background:linear-gradient(135deg,#bf00ff,#6600cc);color:#fff" onclick="adSetAccent('#bf00ff')">PURPLE</button>
+            </div>
+            <div style="display:flex; gap:8px; margin-bottom:10px">
+              <button class="admin-btn" style="background:linear-gradient(135deg,#ff0050,#ff69b4);color:#fff;flex:1" onclick="toggleHeartTheme()"><i class="fas fa-heart"></i> TOGGLE HEART THEME</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center">
               <input class="admin-inp" id="adCustomColor" placeholder="#00ff88" style="margin:0;flex:1">
@@ -6006,6 +6084,152 @@
       const c = document.getElementById('ketupatContainer');
       if (c) c.classList.remove('active');
       if (ketupatInterval) { clearInterval(ketupatInterval); ketupatInterval = null; }
+    }
+    
+    // ============================================================
+    // HEART CANVAS EFFECT - v3.2.3
+    // ============================================================
+    let heartInterval = null;
+    let heartAnimationId = null;
+    
+    function initHeartCanvas() {
+      var canvas = document.getElementById('heartCanvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var width = canvas.width = window.innerWidth;
+      var height = canvas.height = window.innerHeight;
+      
+      var heartPosition = function (rad) {
+        return [Math.pow(Math.sin(rad), 3), -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];
+      };
+      var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
+        return [dx + pos[0] * sx, dy + pos[1] * sy];
+      };
+      
+      var pointsOrigin = [];
+      var i;
+      var dr = 0.1;
+      for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210, 13, 0, 0));
+      for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 150, 9, 0, 0));
+      for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5, 0, 0));
+      var heartPointsCount = pointsOrigin.length;
+      
+      var targetPoints = [];
+      var pulse = function (kx, ky) {
+        for (i = 0; i < pointsOrigin.length; i++) {
+          targetPoints[i] = [];
+          targetPoints[i][0] = kx * pointsOrigin[i][0] + width / 2;
+          targetPoints[i][1] = ky * pointsOrigin[i][1] + height / 2;
+        }
+      };
+      
+      var e = [];
+      for (i = 0; i < heartPointsCount; i++) {
+        var x = Math.random() * width;
+        var y = Math.random() * height;
+        e[i] = {
+          vx: 0, vy: 0, R: 2, speed: Math.random() + 5,
+          q: ~~(Math.random() * heartPointsCount),
+          D: 2 * (i % 2) - 1,
+          force: 0.2 * Math.random() + 0.7,
+          f: "hsla(0," + ~~(40 * Math.random() + 60) + "%," + ~~(60 * Math.random() + 20) + "%,.3)",
+          trace: []
+        };
+        for (var k = 0; k < 50; k++) e[i].trace[k] = {x: x, y: y};
+      }
+      
+      var config = { traceK: 0.4, timeDelta: 0.01 };
+      var time = 0;
+      
+      var loop = function () {
+        var n = -Math.cos(time);
+        pulse((1 + n) * .5, (1 + n) * .5);
+        time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
+        ctx.fillStyle = "rgba(0,0,0,.1)";
+        ctx.fillRect(0, 0, width, height);
+        
+        for (i = e.length; i--;) {
+          var u = e[i];
+          var q = targetPoints[u.q];
+          var dx = u.trace[0].x - q[0];
+          var dy = u.trace[0].y - q[1];
+          var length = Math.sqrt(dx * dx + dy * dy);
+          
+          if (10 > length) {
+            if (0.95 < Math.random()) u.q = ~~(Math.random() * heartPointsCount);
+            else {
+              if (0.99 < Math.random()) u.D *= -1;
+              u.q += u.D;
+              u.q %= heartPointsCount;
+              if (0 > u.q) u.q += heartPointsCount;
+            }
+          }
+          u.vx += -dx / length * u.speed;
+          u.vy += -dy / length * u.speed;
+          u.trace[0].x += u.vx;
+          u.trace[0].y += u.vy;
+          u.vx *= u.force;
+          u.vy *= u.force;
+          
+          for (k = 0; k < u.trace.length - 1;) {
+            var T = u.trace[k];
+            var N = u.trace[++k];
+            N.x -= config.traceK * (N.x - T.x);
+            N.y -= config.traceK * (N.y - T.y);
+          }
+          ctx.fillStyle = u.f;
+          for (k = 0; k < u.trace.length; k++) {
+            ctx.fillRect(u.trace[k].x, u.trace[k].y, 1, 1);
+          }
+        }
+        
+        heartAnimationId = window.requestAnimationFrame(loop, canvas);
+      };
+      loop();
+    }
+    
+    function startHeartEffect() {
+      const c = document.getElementById('heartCanvasContainer');
+      if (!c) return;
+      c.classList.add('active');
+      if (!heartAnimationId) {
+        initHeartCanvas();
+      }
+    }
+    
+    function stopHeartEffect() {
+      const c = document.getElementById('heartCanvasContainer');
+      if (c) c.classList.remove('active');
+      if (heartAnimationId) {
+        window.cancelAnimationFrame(heartAnimationId);
+        heartAnimationId = null;
+      }
+    }
+    
+    // Toggle Heart Theme (Admin)
+    function toggleHeartTheme() {
+      const current = document.body.classList.contains('heart-theme-active');
+      if (current) {
+        document.body.classList.remove('heart-theme-active');
+        stopHeartEffect();
+        db.ref('settings').update({ heartTheme: false });
+        showToast('Heart Theme dinonaktifkan');
+      } else {
+        document.body.classList.add('heart-theme-active');
+        startHeartEffect();
+        db.ref('settings').update({ heartTheme: true });
+        showToast('Heart Theme diaktifkan! 💕');
+      }
+    }
+    
+    // Check and apply heart theme on load
+    function checkHeartTheme() {
+      db.ref('settings/heartTheme').once('value', snap => {
+        if (snap.val() === true) {
+          document.body.classList.add('heart-theme-active');
+          startHeartEffect();
+        }
+      });
     }
     
     // ============================================================
@@ -7646,6 +7870,9 @@
         'tersulit': { title: 'Tersulit', bg: 'linear-gradient(135deg, #ff0050, #ff8c00)', color: '#fff', border: '1px solid rgba(248,113,113,0.8)', shadow: '0 0 12px rgba(255,92,92,0.7)' },
         'ramadhan-1447h': { title: 'Ramadhan 1447H', bg: 'linear-gradient(135deg, #fbbf24, #f59e0b)', color: '#000', border: '1px solid rgba(245,158,11,0.8)', shadow: '0 0 15px rgba(251,191,36,0.6)' },
         'night-tarawih': { title: 'Night Tarawih', bg: 'linear-gradient(135deg, #064e3b, #059669)', color: '#d1fae5', border: '1px solid rgba(16,185,129,0.8)', shadow: '0 0 20px rgba(16,185,129,0.7)' },
+        'valentine': { title: 'Valentine', bg: 'linear-gradient(135deg, #ff1493, #ff69b4)', color: '#fff', border: '1px solid rgba(255,105,180,0.8)', shadow: '0 0 20px rgba(255,20,147,0.6)' },
+        'love-story': { title: 'Love Story', bg: 'linear-gradient(135deg, #ec4899, #f43f5e)', color: '#fff', border: '1px solid rgba(236,72,153,0.8)', shadow: '0 0 15px rgba(236,72,153,0.6)' },
+        'heartbreaker': { title: 'Heartbreaker', bg: 'linear-gradient(135deg, #1f2937, #111827)', color: '#f43f5e', border: '1px solid rgba(244,63,94,0.8)', shadow: '0 0 12px rgba(244,63,94,0.5)' },
         'exe-sahur': { title: 'Exe Sahur', bg: 'linear-gradient(135deg, #1e3a5f, #0f172a)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.8)', shadow: '0 0 15px rgba(56,189,248,0.6)' },
         'content-creator': { title: 'Content Creator', bg: 'linear-gradient(135deg, #ec4899, #a855f7, #ec4899)', color: '#fff', border: '1px solid rgba(236,72,153,0.8)', shadow: '0 0 20px rgba(236,72,153,0.6)' }
       };
@@ -9568,6 +9795,9 @@
       neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' },
       'ramadhan-1447h': { title: 'RAMADHAN 1447H', desc: '🌅 Event Ramadhan Cycle 1: Login 3 hari + Play 10 lagu + Online 30 menit' },
       'night-tarawih': { title: 'NIGHT TARAWIH', desc: '🌙 Event Ramadhan Cycle 2: Online jam 18-20 (2 hari) + Share 2 lagu + Like 5 lagu' },
+      'valentine': { title: 'VALENTINE', desc: '💕 Event Valentine: Dapatkan tag cinta spesial' },
+      'love-story': { title: 'LOVE STORY', desc: '💖 Untuk yang mengalami story cinta indah' },
+      'heartbreaker': { title: 'HEARTBREAKER', desc: '💔 Tapi tetep semangat! Tag motivasi' },
       'lailat-mode': { title: 'LAILAT MODE', desc: '🕌 Event Ramadhan Cycle 3: Login 7/10 hari terakhir + 120 menit playtime + Aktif jam 23+' },
       'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' }
     };
@@ -10260,6 +10490,8 @@
     window.addEventListener('load', () => {
       // Start fake follower scheduler
       setTimeout(startFakeFollowerScheduler, 5000);
+      // Check heart theme
+      setTimeout(checkHeartTheme, 3000);
     });
 
     function adResetCD(uid) { db.ref('users/' + uid + '/lastUpload').remove().then(() => { addLog('Reset CD: ' + uid); showToast('Cooldown direset!'); }); }
