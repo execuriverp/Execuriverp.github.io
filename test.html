@@ -4197,14 +4197,14 @@
     .heart-canvas-container {
       position: fixed;
       pointer-events: none;
-      z-index: 99990;
+      z-index: -1;
       width: 100vw;
       height: 100vh;
       top: 0;
       left: 0;
       overflow: hidden;
       display: none;
-      background: rgba(0,0,0,0.15);
+      background: transparent;
     }
     .heart-canvas-container.active {
       display: block;
@@ -4215,6 +4215,7 @@
       top: 0;
       width: 100%;
       height: 100%;
+      background: transparent !important;
     }
     .heart-particle {
       position: absolute;
@@ -6099,6 +6100,9 @@
       var width = canvas.width = window.innerWidth;
       var height = canvas.height = window.innerHeight;
       
+      // Make canvas background transparent
+      ctx.clearRect(0, 0, width, height);
+      
       var heartPosition = function (rad) {
         return [Math.pow(Math.sin(rad), 3), -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];
       };
@@ -6145,8 +6149,8 @@
         var n = -Math.cos(time);
         pulse((1 + n) * .5, (1 + n) * .5);
         time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
-        ctx.fillStyle = "rgba(0,0,0,.1)";
-        ctx.fillRect(0, 0, width, height);
+        // Use very subtle fade for trail effect on transparent bg
+        ctx.clearRect(0, 0, width, height);
         
         for (i = e.length; i--;) {
           var u = e[i];
