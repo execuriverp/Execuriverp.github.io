@@ -4945,6 +4945,12 @@
             </div>
             <div id="adSahurStatus" style="font-size:11px; color:#888; margin-top:8px">Status: Checking...</div>
           </div>
+          <div class="admin-card">
+            <h3><i class="fas fa-robot"></i> FAKE FOLLOWER BOT</h3>
+            <p style="font-size:11px; color:#888; margin-bottom:8px">Kelola bot fake follower yang berjalan otomatis.</p>
+            <button class="admin-btn admin-btn-blue" onclick="adViewFakeBots()">LIHAT AKTIF</button>
+            <div id="adFakeBotStatus" style="font-size:11px; color:#888; margin-top:8px"></div>
+          </div>
         </div>
 
         <!-- USERS -->
@@ -9598,6 +9604,42 @@
       });
     }
     
+    function adViewFakeBots() {
+      db.ref('users').orderByChild('fakeBot/active').equalTo(true).once('value').then(snap => {
+        const bots = [];
+        snap.forEach(s => {
+          const u = s.val();
+          const bot = u.fakeBot;
+          if (bot && bot.active) {
+            bots.push({ uid: s.key, username: u.username, bot });
+          }
+        });
+        
+        if (bots.length === 0) {
+          document.getElementById('adFakeBotStatus').textContent = 'Tidak ada bot aktif';
+          return;
+        }
+        
+        let html = '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">';
+        bots.forEach(b => {
+          const elapsed = Date.now() - b.bot.startedAt;
+          const hoursElapsed = elapsed / (1000 * 60 * 60);
+          const progress = Math.min(100, Math.round((hoursElapsed / b.bot.hours) * 100));
+          const added = b.bot.addedSoFar || 0;
+          html += `<div style="background:rgba(0,0,0,0.3);padding:8px;border-radius:6px">
+            <div style="font-weight:700;color:#fff">@${b.username}</div>
+            <div style="font-size:11px;color:#888">Target: +${b.bot.targetAdd}/${b.bot.hours}jam | Added: ${added}</div>
+            <div style="background:#333;height:6px;border-radius:3px;margin-top:4px">
+              <div style="background:#7b1fa2;height:100%;border-radius:3px;width:${progress}%"></div>
+            </div>
+            <div style="font-size:10px;color:#666;margin-top:2px">${progress}% selesai</div>
+          </div>`;
+        });
+        html += '</div>';
+        document.getElementById('adFakeBotStatus').innerHTML = html;
+      });
+    }
+    
     // ============================================================
     // ADMIN TAG TESTING - v3.2.3
     // ============================================================
@@ -9778,6 +9820,16 @@
               <button class="swal2-confirm swal2-styled" style="background:#c62828;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',-5)">-5</button>
               <button class="swal2-confirm swal2-styled" style="background:#555;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adClearFake('${uid}')">CLEAR FAKE</button>
             </div>
+            <div style="margin-top:10px">
+              <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">FAKE FOLLOWER BOT</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="swal2-confirm swal2-styled" style="background:#7b1fa2;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adStartFakeBot('${uid}', 5, 24)">+5/24JAM</button>
+                <button class="swal2-confirm swal2-styled" style="background:#7b1fa2;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adStartFakeBot('${uid}', 10, 24)">+10/24JAM</button>
+                <button class="swal2-confirm swal2-styled" style="background:#7b1fa2;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adStartFakeBot('${uid}', 20, 24)">+20/24JAM</button>
+                <button class="swal2-confirm swal2-styled" style="background:#c62828;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adStopFakeBot('${uid}')">STOP BOT</button>
+              </div>
+              <div id="fakeBotProgress_${uid}" style="margin-top:8px;font-size:11px;color:#888"></div>
+            </div>
           </div>
           <div>
             <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">LAINNYA</div>
@@ -9844,6 +9896,101 @@
         db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
       });
     }
+    
+    // Fake Follower Bot System
+    let fakeBotIntervals = {};
+    
+    function adStartFakeBot(uid, targetAdd, hours) {
+      // Store bot config in database
+      db.ref('users/' + uid + '/fakeBot').set({
+        targetAdd: targetAdd,
+        hours: hours,
+        startedAt: Date.now(),
+        addedSoFar: 0,
+        active: true
+      }).then(() => {
+        addLog('Fake bot started: ' + uid + ' +' + targetAdd + '/' + hours + 'jam');
+        showToast('Bot dimulai: +' + targetAdd + ' followers dalam ' + hours + ' jam');
+        startFakeBotForUser(uid);
+      });
+    }
+    
+    function adStopFakeBot(uid) {
+      db.ref('users/' + uid + '/fakeBot').update({ active: false }).then(() => {
+        if (fakeBotIntervals[uid]) {
+          clearInterval(fakeBotIntervals[uid]);
+          delete fakeBotIntervals[uid];
+        }
+        addLog('Fake bot stopped: ' + uid);
+        showToast('Bot dihentikan');
+      });
+    }
+    
+    function startFakeBotForUser(uid) {
+      if (fakeBotIntervals[uid]) {
+        clearInterval(fakeBotIntervals[uid]);
+      }
+      
+      // Add fake followers every 3-5 hours randomly
+      fakeBotIntervals[uid] = setInterval(async () => {
+        const snap = await db.ref('users/' + uid + '/fakeBot').get();
+        const bot = snap.val();
+        
+        if (!bot || !bot.active) {
+          clearInterval(fakeBotIntervals[uid]);
+          delete fakeBotIntervals[uid];
+          return;
+        }
+        
+        const elapsed = Date.now() - bot.startedAt;
+        const hoursElapsed = elapsed / (1000 * 60 * 60);
+        
+        // Calculate how many should have been added by now
+        const expectedAdd = Math.floor((bot.targetAdd / bot.hours) * hoursElapsed);
+        const toAddNow = expectedAdd - (bot.addedSoFar || 0);
+        
+        if (toAddNow > 0) {
+          // Add fake followers
+          await db.ref('users/' + uid).once('value').then(s => {
+            const u = s.val() || {};
+            let fol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
+            
+            for (let i = 0; i < toAddNow; i++) {
+              fol.push('fake_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9));
+            }
+            
+            return db.ref('users/' + uid).update({ followers: fol });
+          });
+          
+          // Update progress
+          await db.ref('users/' + uid + '/fakeBot').update({ addedSoFar: expectedAdd });
+          
+          addLog('Fake bot added ' + toAddNow + ' followers to ' + uid);
+        }
+        
+        // Check if completed
+        if (expectedAdd >= bot.targetAdd) {
+          clearInterval(fakeBotIntervals[uid]);
+          delete fakeBotIntervals[uid];
+          await db.ref('users/' + uid + '/fakeBot').update({ active: false, completed: true });
+          showToast('Bot selesai! +' + bot.targetAdd + ' followers');
+        }
+      }, 3 * 60 * 60 * 1000); // Check every 3 hours
+    }
+    
+    // Initialize fake bots on page load
+    function initFakeBots() {
+      db.ref('users').orderByChild('fakeBot/active').equalTo(true).on('child_added', snap => {
+        const uid = snap.key;
+        const bot = snap.val().fakeBot;
+        if (bot && bot.active) {
+          startFakeBotForUser(uid);
+        }
+      });
+    }
+    
+    // Call init on load
+    setTimeout(initFakeBots, 5000);
 
     function adResetCD(uid) { db.ref('users/' + uid + '/lastUpload').remove().then(() => { addLog('Reset CD: ' + uid); showToast('Cooldown direset!'); }); }
     function adToggleBan(uid, status) { db.ref('users/' + uid).update({ banned: !status }).then(() => { addLog((status ? 'Unban' : 'Ban') + ': ' + uid); showToast((status ? 'Unbanned' : 'Banned') + '!'); adLoadData(); }); }
