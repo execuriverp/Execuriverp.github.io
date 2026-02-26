@@ -6283,23 +6283,67 @@
         document.body.classList.remove('heart-theme-active');
         stopHeartEffect();
         db.ref('settings').update({ heartTheme: false });
+        localStorage.setItem('exeHeartTheme', 'false');
         showToast('Heart Theme dinonaktifkan');
       } else {
         document.body.classList.add('heart-theme-active');
         startHeartEffect();
         db.ref('settings').update({ heartTheme: true });
+        localStorage.setItem('exeHeartTheme', 'true');
         showToast('Heart Theme diaktifkan! 💕');
       }
     }
     
+    // ============================================================
+    // INITIALIZE - Force disable heart theme by default
+    // ============================================================
+    document.body.classList.remove('heart-theme-active');
+    if (typeof stopHeartEffect === 'function') stopHeartEffect();
+    
     // Check and apply heart theme on load
     function checkHeartTheme() {
-      db.ref('settings/heartTheme').once('value', snap => {
-        if (snap.val() === true) {
+      // First, always remove heart theme to ensure clean state
+      document.body.classList.remove('heart-theme-active');
+      const heartCanvasContainer = document.getElementById('heartCanvasContainer');
+      if (heartCanvasContainer) heartCanvasContainer.classList.remove('active');
+      const heartsContainer = document.getElementById('heartsContainer');
+      if (heartsContainer) heartsContainer.classList.remove('active');
+      
+      // Check localStorage - user preference takes priority
+      const localHeartTheme = localStorage.getItem('exeHeartTheme');
+      if (localHeartTheme !== null) {
+        if (localHeartTheme === 'true') {
           document.body.classList.add('heart-theme-active');
           startHeartEffect();
+        } else {
+          document.body.classList.remove('heart-theme-active');
+          stopHeartEffect();
+        }
+        return;
+      }
+      
+      // If no local preference, check Firebase (default to OFF)
+      db.ref('settings/heartTheme').once('value', snap => {
+        const val = snap.val();
+        if (val === true) {
+          document.body.classList.add('heart-theme-active');
+          startHeartEffect();
+          localStorage.setItem('exeHeartTheme', 'true');
+        } else {
+          document.body.classList.remove('heart-theme-active');
+          stopHeartEffect();
+          localStorage.setItem('exeHeartTheme', 'false');
         }
       });
+    }
+    
+    // Force disable heart theme (for users)
+    function disableHeartTheme() {
+      document.body.classList.remove('heart-theme-active');
+      stopHeartEffect();
+      stopHearts();
+      localStorage.setItem('exeHeartTheme', 'false');
+      showToast('Heart Theme dinonaktifkan');
     }
     
     // ============================================================
