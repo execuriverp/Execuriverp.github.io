@@ -45,72 +45,6 @@
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
     }
-    
-    /* Heart Theme - Transparent Background */
-    body.heart-theme-active {
-      background: transparent !important;
-    }
-    body.heart-theme-active::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(236,72,153,0.08) 0%, transparent 50%),
-        radial-gradient(circle at 70% 70%, rgba(168,85,247,0.06) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(244,63,94,0.04) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: -2;
-    }
-    body.heart-theme-active::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: transparent;
-      z-index: -3;
-    }
-    
-    /* Heart Theme - Transparent Cards */
-    body.heart-theme-active .sheet,
-    body.heart-theme-active .modal > .sheet,
-    body.heart-theme-active .card,
-    body.heart-theme-active .modern-profile-header,
-    body.heart-theme-active .event-center-card,
-    body.heart-theme-active .leaderboard-card,
-    body.heart-theme-active .admin-panel {
-      background: transparent !important;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(236, 72, 153, 0.15);
-      box-shadow: none;
-    }
-    
-    body.heart-theme-active .sheet {
-      background: transparent !important;
-    }
-    
-    /* Heart Theme - Modal Transparent */
-    body.heart-theme-active .modal {
-      background: rgba(0, 0, 0, 0.15) !important;
-      backdrop-filter: blur(3px);
-    }
-    
-    /* Heart Theme - All Containers Transparent */
-    body.heart-theme-active #app,
-    body.heart-theme-active .app-container,
-    body.heart-theme-active .main-content,
-    body.heart-theme-active .content-area,
-    body.heart-theme-active .player-section,
-    body.heart-theme-active .playlist-section,
-    body.heart-theme-active .sidebar,
-    body.heart-theme-active .header-section {
-      background: transparent !important;
-    }
-    
-    /* Heart Theme - Player Controls Transparent */
-    body.heart-theme-active .player-controls,
-    body.heart-theme-active .now-playing,
-    body.heart-theme-active .progress-container {
-      background: transparent !important;
-    }
 
     /* ============================================================
        LOADING SCREEN - GAME STYLE
@@ -2114,6 +2048,43 @@
     .footer button:hover { opacity: 0.8; }
     .active-btn { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
 
+    /* SPOTIFY POPUP */
+    .spotify-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); animation: fadeIn 0.2s ease; }
+    .spotify-popup-overlay.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .spotify-card { position: relative; width: 280px; background: #191414; border-radius: 12px; padding: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(29,185,84,0.15); animation: spotifySlideIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
+    @keyframes spotifySlideIn { from { transform: scale(0.9) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+    .spotify-card-close { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #888; font-size: 18px; cursor: pointer; padding: 4px; z-index: 10; }
+    .spotify-card-close:hover { color: #fff; }
+    .spotify-top { position: relative; display: flex; gap: 12px; margin-bottom: 10px; }
+    .spotify-pfp { width: 50px; height: 50px; background: linear-gradient(135deg, #333, #222); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+    .spotify-pfp img { width: 100%; height: 100%; object-fit: cover; }
+    .spotify-pfp .eq-icon { display: flex; gap: 2px; align-items: flex-end; height: 20px; }
+    .spotify-pfp .eq-icon span { width: 3px; background: #1db954; border-radius: 2px; }
+    .spotify-pfp.playing .eq-icon span { animation: spotifyWave 0.6s infinite ease-in-out; }
+    .spotify-pfp .eq-icon span:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .spotify-pfp .eq-icon span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+    .spotify-pfp .eq-icon span:nth-child(3) { height: 10px; animation-delay: 0.1s; }
+    .spotify-pfp .eq-icon span:nth-child(4) { height: 16px; animation-delay: 0.2s; }
+    @keyframes spotifyWave { 0%, 100% { height: 4px; } 50% { height: 18px; } }
+    .spotify-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .spotify-title-1 { color: #fff; font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Rajdhani', sans-serif; }
+    .spotify-title-2 { color: #b3b3b3; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .spotify-controls { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 12px 0; }
+    .spotify-controls svg { cursor: pointer; transition: 0.15s; fill: #fff; width: 20px; height: 20px; }
+    .spotify-controls svg:hover { fill: #1db954; transform: scale(1.1); }
+    .spotify-controls .spotify-play-btn { width: 40px; height: 40px; background: #1db954; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(29,185,84,0.4); }
+    .spotify-controls .spotify-play-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(29,185,84,0.5); }
+    .spotify-controls .spotify-play-btn svg { fill: #000; width: 18px; height: 18px; }
+    .spotify-time { width: 94%; background: #404040; height: 4px; border-radius: 2px; position: relative; margin: 0 auto 8px; overflow: hidden; }
+    .spotify-elapsed { width: 42%; background: #1db954; height: 100%; border-radius: 2px; transition: width 0.3s linear; }
+    .spotify-timetext { display: flex; justify-content: space-between; font-size: 10px; color: #b3b3b3; font-family: 'JetBrains Mono', monospace; padding: 0 8px; }
+    .spotify-volume { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .spotify-volume svg { width: 16px; height: 16px; fill: #b3b3b3; }
+    .spotify-volume-bar { width: 80px; height: 4px; background: #404040; border-radius: 2px; position: relative; }
+    .spotify-volume-level { width: 70%; background: #1db954; height: 100%; border-radius: 2px; }
+    .spotify-volume-circle { width: 10px; height: 10px; background: #fff; border-radius: 50%; position: absolute; left: 60%; top: 50%; transform: translate(-50%, -50%); }
+
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; backdrop-filter: blur(8px); }
     .sheet {
       position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%);
@@ -2356,73 +2327,6 @@
     }
     .mp-avatar:hover { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(0,255,136,0.15), 0 12px 35px rgba(0,255,136,0.25); }
     .modern-profile-header.vip .mp-avatar { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255,215,0,0.1), 0 8px 30px rgba(255,215,0,0.2); }
-    
-    /* Admin Badge */
-    .mp-admin-badge {
-      position: absolute;
-      bottom: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      border: 3px solid #0d0d15;
-      z-index: 10;
-      animation: adminBadgePulse 2s ease-in-out infinite;
-    }
-    .mp-admin-badge.admin {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: #fff;
-      box-shadow: 0 0 15px rgba(239,68,68,0.6), 0 0 30px rgba(239,68,68,0.3);
-    }
-    .mp-admin-badge.creator {
-      background: linear-gradient(135deg, #a855f7, #7c3aed);
-      color: #fff;
-      box-shadow: 0 0 15px rgba(168,85,247,0.6), 0 0 30px rgba(168,85,247,0.3);
-    }
-    .mp-admin-badge.admin-creator {
-      background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444);
-      color: #000;
-      box-shadow: 0 0 20px rgba(251,191,36,0.6), 0 0 40px rgba(245,158,11,0.3);
-    }
-    @keyframes adminBadgePulse {
-      0%, 100% { transform: translateX(-50%) scale(1); }
-      50% { transform: translateX(-50%) scale(1.1); }
-    }
-    
-    /* Admin Avatar Border */
-    .mp-avatar-container.has-admin .mp-avatar {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 4px rgba(239,68,68,0.15), 0 0 25px rgba(239,68,68,0.3), 0 8px 30px rgba(0,0,0,0.3);
-      animation: adminBorderGlow 3s ease-in-out infinite;
-    }
-    .mp-avatar-container.has-creator .mp-avatar {
-      border-color: #a855f7;
-      box-shadow: 0 0 0 4px rgba(168,85,247,0.15), 0 0 25px rgba(168,85,247,0.3), 0 8px 30px rgba(0,0,0,0.3);
-      animation: creatorBorderGlow 3s ease-in-out infinite;
-    }
-    .mp-avatar-container.has-admin-creator .mp-avatar {
-      border-color: #fbbf24;
-      box-shadow: 0 0 0 4px rgba(251,191,36,0.2), 0 0 30px rgba(251,191,36,0.4), 0 0 50px rgba(245,158,11,0.2), 0 8px 30px rgba(0,0,0,0.3);
-      animation: adminCreatorBorderGlow 2s ease-in-out infinite;
-    }
-    @keyframes adminBorderGlow {
-      0%, 100% { box-shadow: 0 0 0 4px rgba(239,68,68,0.15), 0 0 25px rgba(239,68,68,0.3), 0 8px 30px rgba(0,0,0,0.3); }
-      50% { box-shadow: 0 0 0 6px rgba(239,68,68,0.2), 0 0 35px rgba(239,68,68,0.5), 0 0 60px rgba(239,68,68,0.2), 0 8px 30px rgba(0,0,0,0.3); }
-    }
-    @keyframes creatorBorderGlow {
-      0%, 100% { box-shadow: 0 0 0 4px rgba(168,85,247,0.15), 0 0 25px rgba(168,85,247,0.3), 0 8px 30px rgba(0,0,0,0.3); }
-      50% { box-shadow: 0 0 0 6px rgba(168,85,247,0.2), 0 0 35px rgba(168,85,247,0.5), 0 0 60px rgba(168,85,247,0.2), 0 8px 30px rgba(0,0,0,0.3); }
-    }
-    @keyframes adminCreatorBorderGlow {
-      0%, 100% { box-shadow: 0 0 0 4px rgba(251,191,36,0.2), 0 0 30px rgba(251,191,36,0.4), 0 0 50px rgba(245,158,11,0.2), 0 8px 30px rgba(0,0,0,0.3); }
-      50% { box-shadow: 0 0 0 6px rgba(251,191,36,0.3), 0 0 45px rgba(251,191,36,0.6), 0 0 70px rgba(245,158,11,0.3), 0 8px 30px rgba(0,0,0,0.3); }
-    }
-    
     .mp-edit-badge {
       position: absolute; bottom: 2px; right: 2px;
       background: linear-gradient(135deg, #1a1a2e, #0f172a);
@@ -3813,309 +3717,112 @@
     }
 
     /* ============================================================
-       TAG UNLOCK FULLSCREEN ANIMATION - v3.2.3 (VIDEO STYLE)
+       TAG UNLOCK FULLSCREEN ANIMATION - v3.2.3
     ============================================================ */
     .tag-unlock-fullscreen {
       position: fixed;
       inset: 0;
       z-index: 99999;
+      background: rgba(0,0,0,0.95);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      animation: fadeIn 0.5s ease;
+      backdrop-filter: blur(10px);
     }
     .tag-unlock-fullscreen.show {
       display: flex;
     }
-    
-    /* Dynamic Background */
-    .tag-unlock-bg {
-      position: absolute;
-      inset: 0;
-      background: 
-        radial-gradient(ellipse at 20% 20%, rgba(34,197,94,0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(0,212,255,0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.1) 0%, transparent 70%),
-        linear-gradient(180deg, #030308 0%, #0a0a18 50%, #030308 100%);
-      animation: bgPulse 3s ease-in-out infinite;
-    }
-    @keyframes bgPulse {
-      0%, 100% { opacity: 0.8; filter: brightness(1); }
-      50% { opacity: 1; filter: brightness(1.2); }
-    }
-    
-    /* Grid Lines */
-    .tag-unlock-grid {
-      position: absolute;
-      inset: 0;
-      background-image: 
-        linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: gridMove 20s linear infinite;
-    }
-    @keyframes gridMove {
-      0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-      100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
-    }
-    
-    /* Particle Effects */
-    .tag-unlock-particles {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
-    .tag-unlock-particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      animation: particleFloat 3s ease-in-out infinite;
-    }
-    @keyframes particleFloat {
-      0%, 100% { 
-        transform: translateY(100vh) scale(0); 
-        opacity: 0; 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { 
-        transform: translateY(-100px) scale(1); 
-        opacity: 0; 
+      to {
+        opacity: 1;
       }
     }
-    
-    /* Main Card */
     .tag-unlock-card {
-      position: relative;
-      background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
-      border: 2px solid rgba(34,197,94,0.6);
-      border-radius: 32px;
+      background: linear-gradient(135deg, #020617, #111827);
+      border: 2px solid rgba(34,197,94,0.8);
+      border-radius: 24px;
       padding: 50px 40px;
       text-align: center;
-      box-shadow: 
-        0 0 80px rgba(34,197,94,0.4),
-        0 0 120px rgba(0,212,255,0.2),
-        inset 0 0 60px rgba(34,197,94,0.05);
-      animation: cardEnter 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      max-width: 480px;
+      box-shadow: 0 0 60px rgba(34,197,94,0.6);
+      animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 400px;
       width: 90%;
-      z-index: 10;
-      overflow: hidden;
     }
-    .tag-unlock-card::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 32px;
-      padding: 2px;
-      background: linear-gradient(135deg, #22c55e, #0ea5e9, #a855f7, #22c55e);
-      background-size: 300% 300%;
-      animation: borderGlow 3s ease infinite;
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      z-index: -1;
-    }
-    @keyframes borderGlow {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    @keyframes cardEnter {
-      0% {
+    @keyframes scaleIn {
+      from {
         opacity: 0;
-        transform: scale(0.5) translateY(50px);
+        transform: scale(0.8);
       }
-      60% {
-        transform: scale(1.05) translateY(-10px);
-      }
-      100% {
+      to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: scale(1);
       }
     }
-    
-    /* Glow Rings */
-    .tag-unlock-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 2px solid rgba(34,197,94,0.5);
-      animation: ringExpand 2s ease-out forwards;
-    }
-    .tag-unlock-ring:nth-child(1) { width: 100px; height: 100px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 0s; }
-    .tag-unlock-ring:nth-child(2) { width: 180px; height: 180px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 0.3s; }
-    .tag-unlock-ring:nth-child(3) { width: 260px; height: 260px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 0.6s; }
-    @keyframes ringExpand {
-      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
-    }
-    
     .tag-unlock-icon-big {
       font-size: 80px;
       color: #22c55e;
       margin-bottom: 20px;
-      animation: iconBounce 1s ease-in-out infinite;
-      position: relative;
-      z-index: 2;
+      animation: iconPulse 1s ease-in-out infinite;
     }
-    .tag-unlock-icon-big::after {
-      content: '';
-      position: absolute;
-      inset: -20px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(34,197,94,0.3) 0%, transparent 70%);
-      animation: iconGlow 2s ease-in-out infinite;
-      z-index: -1;
-    }
-    @keyframes iconBounce {
-      0%, 100% { transform: scale(1) translateY(0); }
-      50% { transform: scale(1.1) translateY(-10px); }
-    }
-    @keyframes iconGlow {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.3); opacity: 1; }
+    @keyframes iconPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
     }
     .tag-unlock-title {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 32px;
-      font-weight: 900;
-      background: linear-gradient(135deg, #22c55e, #0ea5e9, #a855f7);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 8px;
-      letter-spacing: 3px;
+      font-size: 28px;
+      font-weight: 800;
+      color: #22c55e;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      animation: titleShine 3s ease infinite;
-    }
-    @keyframes titleShine {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
     }
     .tag-unlock-subtitle {
       font-size: 14px;
       color: #9ca3af;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
-    
-    /* Tag Display */
     .tag-unlock-tag-display {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      animation: tagSlideIn 0.6s ease 0.3s both;
-    }
-    @keyframes tagSlideIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .tag-unlock-tag-display .user-tag {
-      font-size: 16px;
-      padding: 8px 20px;
-      animation: tagPop 0.5s ease 0.5s both, tagFloat 2s ease-in-out 1s infinite;
-    }
-    @keyframes tagPop {
-      0% { transform: scale(0); }
-      60% { transform: scale(1.2); }
-      100% { transform: scale(1); }
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 30px;
+      animation: tagFloat 2s ease-in-out infinite;
     }
     @keyframes tagFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
     }
-    
-    /* CSS Code Display */
-    .tag-unlock-css-section {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(34,197,94,0.3);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 25px;
-      text-align: left;
-      animation: cssSlideIn 0.6s ease 0.6s both;
-    }
-    @keyframes cssSlideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    .tag-unlock-css-title {
-      font-size: 10px;
-      color: #22c55e;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .tag-unlock-css-title i {
-      font-size: 12px;
-    }
-    .tag-unlock-css-code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: #a5f3fc;
-      background: rgba(34,197,94,0.1);
-      padding: 12px;
-      border-radius: 8px;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      line-height: 1.6;
-      border-left: 3px solid #22c55e;
-    }
-    .tag-unlock-css-code .css-prop {
-      color: #f472b6;
-    }
-    .tag-unlock-css-code .css-value {
-      color: #a5f3fc;
-    }
-    .tag-unlock-css-code .css-selector {
-      color: #fbbf24;
-    }
-    
     .tag-unlock-close-btn {
-      background: linear-gradient(135deg, #22c55e, #10b981);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
       border: none;
       color: #000;
-      padding: 14px 40px;
-      border-radius: 16px;
-      font-weight: 900;
-      font-size: 16px;
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
       cursor: pointer;
       font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 20px rgba(34,197,94,0.4);
-      animation: btnPulse 2s ease-in-out infinite;
-    }
-    @keyframes btnPulse {
-      0%, 100% { box-shadow: 0 4px 20px rgba(34,197,94,0.4); }
-      50% { box-shadow: 0 8px 30px rgba(34,197,94,0.6); }
+      transition: 0.2s;
     }
     .tag-unlock-close-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 12px 40px rgba(34,197,94,0.6);
-    }
-    .tag-unlock-close-btn:active {
-      transform: translateY(0) scale(0.98);
-    }
-    
-    /* Confetti */
-    .tag-unlock-confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      animation: confettiFall 3s ease-out forwards;
-    }
-    @keyframes confettiFall {
-      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,255,136,0.4);
     }
 
     /* ============================================================
@@ -4258,56 +3965,6 @@
     }
 
     /* ============================================================
-       HEART CANVAS EFFECT FOR VALENTINE/LOVE TAGS - v3.2.3
-    ============================================================ */
-    .heart-canvas-container {
-      position: fixed;
-      pointer-events: none;
-      z-index: -1;
-      width: 100vw;
-      height: 100vh;
-      top: 0;
-      left: 0;
-      overflow: hidden;
-      display: none;
-      background: transparent;
-    }
-    .heart-canvas-container.active {
-      display: block;
-    }
-    #heartCanvas {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: transparent !important;
-    }
-    .heart-particle {
-      position: absolute;
-      bottom: -30px;
-      font-size: 18px;
-      animation: floatHeart linear infinite;
-      opacity: 0;
-    }
-    @keyframes floatHeart {
-      0% {
-        transform: translateY(0) rotate(0deg) scale(0.5);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translateY(-100vh) rotate(20deg) scale(1);
-        opacity: 0;
-      }
-    }
-
-    /* ============================================================
        RAMADHAN PROFILE THEME - v3.2.3
     ============================================================ */
     .modern-profile-header.ramadhan-profile {
@@ -4325,27 +3982,6 @@
         radial-gradient(circle at 10% 0%, rgba(251,191,36,0.2), transparent 55%),
         radial-gradient(circle at 90% 0%, rgba(34,197,94,0.18), transparent 55%);
       opacity: 0.8;
-    }
-
-    /* ============================================================
-       HEART/VALENTINE PROFILE THEME - v3.2.3
-    ============================================================ */
-    .modern-profile-header.heart-profile {
-      background:
-        radial-gradient(circle at 50% 0%, rgba(236,72,153,0.2), transparent 60%),
-        radial-gradient(circle at 0% 100%, rgba(168,85,247,0.15), transparent 50%),
-        radial-gradient(circle at 100% 100%, rgba(244,63,94,0.15), transparent 50%),
-        linear-gradient(180deg, #1a0a15, #0f0510);
-    }
-    .modern-profile-header.heart-profile::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(236,72,153,0.25), transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(168,85,247,0.2), transparent 50%);
-      opacity: 0.9;
     }
 
     /* ============================================================
@@ -4949,11 +4585,6 @@
 
   <!-- KETUPAT PARTICLES (for ramadhan tags) -->
   <div class="ketupat-container" id="ketupatContainer"></div>
-  
-  <!-- HEART CANVAS EFFECT (for love/valentine tags) -->
-  <div class="heart-canvas-container" id="heartCanvasContainer">
-    <canvas id="heartCanvas"></canvas>
-  </div>
 
   <!-- BROADCAST -->
   <div id="sysBroadcast" class="sys-broadcast">
@@ -5009,28 +4640,16 @@
       <div id="notifList" class="notif-list"><div class="notif-empty">Memuat...</div></div>
     </div>
 
-  <!-- Tag Unlock Fullscreen - v3.2.3 (Video Style) -->
+  <!-- Tag Unlock Fullscreen - v3.2.3 -->
   <div id="tagUnlockFullscreen" class="tag-unlock-fullscreen">
-    <div class="tag-unlock-bg"></div>
-    <div class="tag-unlock-grid"></div>
-    <div class="tag-unlock-particles" id="tagUnlockParticles"></div>
-    <div class="tag-unlock-ring"></div>
-    <div class="tag-unlock-ring"></div>
-    <div class="tag-unlock-ring"></div>
     <div class="tag-unlock-card">
       <div class="tag-unlock-icon-big">
         <i class="fas fa-trophy"></i>
       </div>
       <div class="tag-unlock-title">TAG UNLOCKED!</div>
-      <div class="tag-unlock-subtitle">🎉 Selamat! Kamu berhasil membuka tag baru</div>
+      <div class="tag-unlock-subtitle">Kamu berhasil membuka tag baru</div>
       <div class="tag-unlock-tag-display" id="tagUnlockFullscreenTags"></div>
-      <div class="tag-unlock-css-section" id="tagUnlockCssSection" style="display: none;">
-        <div class="tag-unlock-css-title"><i class="fas fa-code"></i> Tag CSS</div>
-        <pre class="tag-unlock-css-code" id="tagUnlockCssCode"></pre>
-      </div>
-      <button class="tag-unlock-close-btn" onclick="closeTagUnlockFullscreen()">
-        <i class="fas fa-check"></i> Awesome!
-      </button>
+      <button class="tag-unlock-close-btn" onclick="closeTagUnlockFullscreen()">AWESOME!</button>
     </div>
   </div>
 
@@ -5145,6 +4764,7 @@
       <button onclick="openList(false)"><i class="fas fa-list-ul"></i></button>
       <button onclick="openList(true)"><i class="fas fa-heart"></i></button>
       <button id="rep" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+      <button onclick="openSpotifyPopup()" title="Spotify Card"><i class="fab fa-spotify"></i></button>
     </div>
   </div>
 
@@ -5381,9 +5001,6 @@
               <button class="admin-btn" style="background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000" onclick="adSetAccent('#ffd700')">GOLD</button>
               <button class="admin-btn" style="background:linear-gradient(135deg,#bf00ff,#6600cc);color:#fff" onclick="adSetAccent('#bf00ff')">PURPLE</button>
             </div>
-            <div style="display:flex; gap:8px; margin-bottom:10px">
-              <button class="admin-btn" style="background:linear-gradient(135deg,#ff0050,#ff69b4);color:#fff;flex:1" onclick="toggleHeartTheme()"><i class="fas fa-heart"></i> TOGGLE HEART THEME</button>
-            </div>
             <div style="display:flex;gap:8px;align-items:center">
               <input class="admin-inp" id="adCustomColor" placeholder="#00ff88" style="margin:0;flex:1">
               <button class="admin-btn admin-btn-gold" onclick="adSetAccent(document.getElementById('adCustomColor').value)">APPLY</button>
@@ -5463,10 +5080,9 @@
           <div class="pmp-timer" id="pmpTimer">0:00</div>
         </div>
         
-        <div class="mp-avatar-container" id="pAvatarContainer">
+        <div class="mp-avatar-container">
           <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
-          <div id="pAdminBadge" class="mp-admin-badge" style="display:none"></div>
         </div>
         <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
         <div class="mp-name-row">
@@ -5505,7 +5121,7 @@
   <div class="modal" id="modalCreator" onclick="if(event.target==this)closeCreatorModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
-        <div class="mp-avatar-container" id="vAvatarContainer"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"><div id="vAdminBadge" class="mp-admin-badge" style="display:none"></div></div>
+        <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
         <div class="mp-name-row"><span id="vName" class="mp-name">@creator</span></div>
         <div id="vTagDisplay" style="margin-bottom:10px; display:flex; gap:5px; justify-content:center"></div>
         <div class="mp-stats">
@@ -6154,199 +5770,6 @@
     }
     
     // ============================================================
-    // HEART CANVAS EFFECT - v3.2.3
-    // ============================================================
-    let heartInterval = null;
-    let heartAnimationId = null;
-    
-    function initHeartCanvas() {
-      var canvas = document.getElementById('heartCanvas');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var width = canvas.width = window.innerWidth;
-      var height = canvas.height = window.innerHeight;
-      
-      // Make canvas background transparent
-      ctx.clearRect(0, 0, width, height);
-      
-      var heartPosition = function (rad) {
-        return [Math.pow(Math.sin(rad), 3), -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];
-      };
-      var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
-        return [dx + pos[0] * sx, dy + pos[1] * sy];
-      };
-      
-      var pointsOrigin = [];
-      var i;
-      var dr = 0.1;
-      for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210, 13, 0, 0));
-      for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 150, 9, 0, 0));
-      for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5, 0, 0));
-      var heartPointsCount = pointsOrigin.length;
-      
-      var targetPoints = [];
-      var pulse = function (kx, ky) {
-        for (i = 0; i < pointsOrigin.length; i++) {
-          targetPoints[i] = [];
-          targetPoints[i][0] = kx * pointsOrigin[i][0] + width / 2;
-          targetPoints[i][1] = ky * pointsOrigin[i][1] + height / 2;
-        }
-      };
-      
-      var e = [];
-      for (i = 0; i < heartPointsCount; i++) {
-        var x = Math.random() * width;
-        var y = Math.random() * height;
-        e[i] = {
-          vx: 0, vy: 0, R: 2, speed: Math.random() + 5,
-          q: ~~(Math.random() * heartPointsCount),
-          D: 2 * (i % 2) - 1,
-          force: 0.2 * Math.random() + 0.7,
-          f: "hsla(0," + ~~(40 * Math.random() + 60) + "%," + ~~(60 * Math.random() + 20) + "%,.3)",
-          trace: []
-        };
-        for (var k = 0; k < 50; k++) e[i].trace[k] = {x: x, y: y};
-      }
-      
-      var config = { traceK: 0.4, timeDelta: 0.01 };
-      var time = 0;
-      
-      var loop = function () {
-        var n = -Math.cos(time);
-        pulse((1 + n) * .5, (1 + n) * .5);
-        time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
-        // Use very subtle fade for trail effect on transparent bg
-        ctx.clearRect(0, 0, width, height);
-        
-        for (i = e.length; i--;) {
-          var u = e[i];
-          var q = targetPoints[u.q];
-          var dx = u.trace[0].x - q[0];
-          var dy = u.trace[0].y - q[1];
-          var length = Math.sqrt(dx * dx + dy * dy);
-          
-          if (10 > length) {
-            if (0.95 < Math.random()) u.q = ~~(Math.random() * heartPointsCount);
-            else {
-              if (0.99 < Math.random()) u.D *= -1;
-              u.q += u.D;
-              u.q %= heartPointsCount;
-              if (0 > u.q) u.q += heartPointsCount;
-            }
-          }
-          u.vx += -dx / length * u.speed;
-          u.vy += -dy / length * u.speed;
-          u.trace[0].x += u.vx;
-          u.trace[0].y += u.vy;
-          u.vx *= u.force;
-          u.vy *= u.force;
-          
-          for (k = 0; k < u.trace.length - 1;) {
-            var T = u.trace[k];
-            var N = u.trace[++k];
-            N.x -= config.traceK * (N.x - T.x);
-            N.y -= config.traceK * (N.y - T.y);
-          }
-          ctx.fillStyle = u.f;
-          for (k = 0; k < u.trace.length; k++) {
-            ctx.fillRect(u.trace[k].x, u.trace[k].y, 1, 1);
-          }
-        }
-        
-        heartAnimationId = window.requestAnimationFrame(loop, canvas);
-      };
-      loop();
-    }
-    
-    function startHeartEffect() {
-      const c = document.getElementById('heartCanvasContainer');
-      if (!c) return;
-      c.classList.add('active');
-      if (!heartAnimationId) {
-        initHeartCanvas();
-      }
-    }
-    
-    function stopHeartEffect() {
-      const c = document.getElementById('heartCanvasContainer');
-      if (c) c.classList.remove('active');
-      if (heartAnimationId) {
-        window.cancelAnimationFrame(heartAnimationId);
-        heartAnimationId = null;
-      }
-    }
-    
-    // Toggle Heart Theme (Admin)
-    function toggleHeartTheme() {
-      const current = document.body.classList.contains('heart-theme-active');
-      if (current) {
-        document.body.classList.remove('heart-theme-active');
-        stopHeartEffect();
-        db.ref('settings').update({ heartTheme: false });
-        localStorage.setItem('exeHeartTheme', 'false');
-        showToast('Heart Theme dinonaktifkan');
-      } else {
-        document.body.classList.add('heart-theme-active');
-        startHeartEffect();
-        db.ref('settings').update({ heartTheme: true });
-        localStorage.setItem('exeHeartTheme', 'true');
-        showToast('Heart Theme diaktifkan! 💕');
-      }
-    }
-    
-    // ============================================================
-    // INITIALIZE - Force disable heart theme by default
-    // ============================================================
-    document.body.classList.remove('heart-theme-active');
-    if (typeof stopHeartEffect === 'function') stopHeartEffect();
-    
-    // Check and apply heart theme on load
-    function checkHeartTheme() {
-      // First, always remove heart theme to ensure clean state
-      document.body.classList.remove('heart-theme-active');
-      const heartCanvasContainer = document.getElementById('heartCanvasContainer');
-      if (heartCanvasContainer) heartCanvasContainer.classList.remove('active');
-      const heartsContainer = document.getElementById('heartsContainer');
-      if (heartsContainer) heartsContainer.classList.remove('active');
-      
-      // Check localStorage - user preference takes priority
-      const localHeartTheme = localStorage.getItem('exeHeartTheme');
-      if (localHeartTheme !== null) {
-        if (localHeartTheme === 'true') {
-          document.body.classList.add('heart-theme-active');
-          startHeartEffect();
-        } else {
-          document.body.classList.remove('heart-theme-active');
-          stopHeartEffect();
-        }
-        return;
-      }
-      
-      // If no local preference, check Firebase (default to OFF)
-      db.ref('settings/heartTheme').once('value', snap => {
-        const val = snap.val();
-        if (val === true) {
-          document.body.classList.add('heart-theme-active');
-          startHeartEffect();
-          localStorage.setItem('exeHeartTheme', 'true');
-        } else {
-          document.body.classList.remove('heart-theme-active');
-          stopHeartEffect();
-          localStorage.setItem('exeHeartTheme', 'false');
-        }
-      });
-    }
-    
-    // Force disable heart theme (for users)
-    function disableHeartTheme() {
-      document.body.classList.remove('heart-theme-active');
-      stopHeartEffect();
-      stopHearts();
-      localStorage.setItem('exeHeartTheme', 'false');
-      showToast('Heart Theme dinonaktifkan');
-    }
-    
-    // ============================================================
     // FIRST TIME TUTORIAL - v3.2.3
     // ============================================================
     function showFirstTimeTutorial() {
@@ -6509,39 +5932,6 @@
       const t = tag.toLowerCase();
       return `<span class="user-tag tag-${t}">${tag.toUpperCase()}</span>`;
     }
-    
-    // Admin/Creator Badge System
-    function updateAdminBadge(prefix, role, admpanel) {
-      const container = document.getElementById(prefix + 'AvatarContainer');
-      const badge = document.getElementById(prefix + 'AdminBadge');
-      if (!container || !badge) return;
-      
-      const isAdmin = role === 'admin';
-      const isCreator = admpanel === true;
-      
-      container.classList.remove('has-admin', 'has-creator', 'has-admin-creator');
-      badge.classList.remove('admin', 'creator', 'admin-creator');
-      
-      if (isAdmin && isCreator) {
-        container.classList.add('has-admin-creator');
-        badge.classList.add('admin-creator');
-        badge.innerHTML = '<i class="fas fa-crown"></i>';
-        badge.style.display = 'flex';
-      } else if (isAdmin) {
-        container.classList.add('has-admin');
-        badge.classList.add('admin');
-        badge.innerHTML = '<i class="fas fa-shield-alt"></i>';
-        badge.style.display = 'flex';
-      } else if (isCreator) {
-        container.classList.add('has-creator');
-        badge.classList.add('creator');
-        badge.innerHTML = '<i class="fas fa-star"></i>';
-        badge.style.display = 'flex';
-      } else {
-        badge.style.display = 'none';
-      }
-    }
-    
     function buyShopItem(id) {
       if (!auth.currentUser || !userData) {
         msg('Login dulu untuk tukar ExeCoin');
@@ -7919,19 +7309,14 @@
     }
 
     // ============================================================
-    // TAG UNLOCK FULLSCREEN - v3.2.3 (VIDEO STYLE)
+    // TAG UNLOCK FULLSCREEN - v3.2.3
     // ============================================================
     function showTagUnlockFullscreen(tags) {
       const wrap = document.getElementById('tagUnlockFullscreen');
       const listEl = document.getElementById('tagUnlockFullscreenTags');
-      const cssSection = document.getElementById('tagUnlockCssSection');
-      const cssCode = document.getElementById('tagUnlockCssCode');
-      const particlesEl = document.getElementById('tagUnlockParticles');
       if (!wrap || !listEl) return;
       listEl.innerHTML = '';
-      cssCode.innerHTML = '';
       let hasRamadhanTag = false;
-      let tagCssData = {};
       (tags || []).forEach(raw => {
         const t = String(raw || '').toLowerCase();
         if (!t) return;
@@ -7939,25 +7324,11 @@
         span.className = 'user-tag tag-' + t;
         span.textContent = t.toUpperCase();
         listEl.appendChild(span);
-        // Get CSS for this tag
-        tagCssData = getTagCss(t);
         // Check if ramadhan tag
         if (t.includes('ramadhan') || t.includes('tarawih') || t.includes('lailat')) {
           hasRamadhanTag = true;
         }
       });
-      // Show CSS code
-      if (tagCssData && tagCssData.css) {
-        cssSection.style.display = 'block';
-        const formattedCss = formatCssForDisplay(tagCssData);
-        cssCode.innerHTML = formattedCss;
-      } else {
-        cssSection.style.display = 'none';
-      }
-      // Create particles
-      createTagUnlockParticles(particlesEl);
-      // Create confetti
-      createTagConfetti(wrap);
       wrap.classList.add('show');
       // Start ketupat if ramadhan tag
       if (hasRamadhanTag) {
@@ -7965,90 +7336,9 @@
         setTimeout(() => stopKetupat(), 8000);
       }
     }
-    
-    // Get CSS properties for a tag
-    function getTagCss(tagName) {
-      const tagMeta = {
-        'vip': { title: 'VIP Member', bg: 'linear-gradient(135deg, #ffd700, #ff8c00)', color: '#000', border: '1px solid rgba(255,215,0,0.8)', shadow: '0 0 15px rgba(255,215,0,0.6)' },
-        'premium': { title: 'Premium', bg: 'linear-gradient(135deg, #a855f7, #6366f1)', color: '#fff', border: '1px solid rgba(168,85,247,0.8)', shadow: '0 0 12px rgba(168,85,247,0.5)' },
-        'pro': { title: 'Pro', bg: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', color: '#fff', border: '1px solid rgba(59,130,246,0.8)', shadow: '0 0 10px rgba(59,130,246,0.5)' },
-        'admin': { title: 'Admin', bg: 'linear-gradient(135deg, #ef4444, #dc2626)', color: '#fff', border: '1px solid rgba(239,68,68,0.8)', shadow: '0 0 15px rgba(239,68,68,0.6)' },
-        'moderator': { title: 'Moderator', bg: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', border: '1px solid rgba(34,197,94,0.8)', shadow: '0 0 12px rgba(34,197,94,0.5)' },
-        'legend': { title: 'Legend', bg: 'linear-gradient(135deg, #ff6b00, #ffd700, #ff6b00)', color: '#000', border: '1px solid rgba(255,215,0,0.8)', shadow: '0 0 20px rgba(255,107,0,0.7)' },
-        'mythic': { title: 'Mythic', bg: 'linear-gradient(135deg, #9c27b0, #673ab7, #3f51b5)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', shadow: '0 0 15px rgba(156,39,176,0.6)' },
-        'godlike': { title: 'Godlike', bg: 'linear-gradient(135deg, #ffd700, #ff8c00, #ffd700)', color: '#000', border: '1px solid #fff', shadow: '0 0 25px rgba(255,215,0,0.8)' },
-        'savage': { title: 'Savage', bg: '#000', color: '#ff0050', border: '2px solid #ff0050', shadow: '0 0 15px rgba(255,0,80,0.7)', textShadow: '0 0 8px #ff0050' },
-        'maniac': { title: 'Maniac', bg: 'linear-gradient(135deg, #e91e63, #9c27b0)', color: '#fff', border: '1px solid rgba(233,30,99,0.8)', shadow: '0 0 12px rgba(233,30,99,0.5)' },
-        'ultra': { title: 'Ultra', bg: 'linear-gradient(135deg, #00bcd4, #009688, #4caf50)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', shadow: '0 0 15px rgba(0,188,212,0.6)' },
-        'terkeren': { title: 'Terkeren', bg: 'linear-gradient(135deg, #00f5ff, #7c3aed)', color: '#fff', border: '1px solid rgba(59,130,246,0.7)', shadow: '0 0 12px rgba(124,58,237,0.7)' },
-        'tersulit': { title: 'Tersulit', bg: 'linear-gradient(135deg, #ff0050, #ff8c00)', color: '#fff', border: '1px solid rgba(248,113,113,0.8)', shadow: '0 0 12px rgba(255,92,92,0.7)' },
-        'ramadhan-1447h': { title: 'Ramadhan 1447H', bg: 'linear-gradient(135deg, #fbbf24, #f59e0b)', color: '#000', border: '1px solid rgba(245,158,11,0.8)', shadow: '0 0 15px rgba(251,191,36,0.6)' },
-        'night-tarawih': { title: 'Night Tarawih', bg: 'linear-gradient(135deg, #064e3b, #059669)', color: '#d1fae5', border: '1px solid rgba(16,185,129,0.8)', shadow: '0 0 20px rgba(16,185,129,0.7)' },
-        'valentine': { title: 'Valentine', bg: 'linear-gradient(135deg, #ff1493, #ff69b4)', color: '#fff', border: '1px solid rgba(255,105,180,0.8)', shadow: '0 0 20px rgba(255,20,147,0.6)' },
-        'love-story': { title: 'Love Story', bg: 'linear-gradient(135deg, #ec4899, #f43f5e)', color: '#fff', border: '1px solid rgba(236,72,153,0.8)', shadow: '0 0 15px rgba(236,72,153,0.6)' },
-        'heartbreaker': { title: 'Heartbreaker', bg: 'linear-gradient(135deg, #1f2937, #111827)', color: '#f43f5e', border: '1px solid rgba(244,63,94,0.8)', shadow: '0 0 12px rgba(244,63,94,0.5)' },
-        'exe-sahur': { title: 'Exe Sahur', bg: 'linear-gradient(135deg, #1e3a5f, #0f172a)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.8)', shadow: '0 0 15px rgba(56,189,248,0.6)' },
-        'content-creator': { title: 'Content Creator', bg: 'linear-gradient(135deg, #ec4899, #a855f7, #ec4899)', color: '#fff', border: '1px solid rgba(236,72,153,0.8)', shadow: '0 0 20px rgba(236,72,153,0.6)' }
-      };
-      return tagMeta[tagName] || null;
-    }
-    
-    // Format CSS for display
-    function formatCssForDisplay(tagData) {
-      if (!tagData) return '';
-      let css = `<span class="css-selector">.tag-${tagData.title.toLowerCase().replace(/\s+/g, '-')}</span> {\n`;
-      if (tagData.bg) css += `  <span class="css-prop">background</span>: <span class="css-value">${tagData.bg}</span>;\n`;
-      if (tagData.color) css += `  <span class="css-prop">color</span>: <span class="css-value">${tagData.color}</span>;\n`;
-      if (tagData.border) css += `  <span class="css-prop">border</span>: <span class="css-value">${tagData.border}</span>;\n`;
-      if (tagData.shadow) css += `  <span class="css-prop">box-shadow</span>: <span class="css-value">${tagData.shadow}</span>;\n`;
-      if (tagData.textShadow) css += `  <span class="css-prop">text-shadow</span>: <span class="css-value">${tagData.textShadow}</span>;\n`;
-      css += `  <span class="css-prop">font-weight</span>: <span class="css-value">900</span>;\n`;
-      css += `}`;
-      return css;
-    }
-    
-    // Create particle effects
-    function createTagUnlockParticles(container) {
-      if (!container) return;
-      container.innerHTML = '';
-      const colors = ['#22c55e', '#0ea5e9', '#a855f7', '#fbbf24', '#f472b6'];
-      for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'tag-unlock-particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.animationDelay = Math.random() * 3 + 's';
-        particle.style.animationDuration = (2 + Math.random() * 2) + 's';
-        container.appendChild(particle);
-      }
-    }
-    
-    // Create confetti
-    function createTagConfetti(container) {
-      if (!container) return;
-      const colors = ['#22c55e', '#0ea5e9', '#a855f7', '#fbbf24', '#f472b6', '#ffd700'];
-      for (let i = 0; i < 50; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'tag-unlock-confetti';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-20px';
-        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.animationDelay = Math.random() * 2 + 's';
-        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
-        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-        container.appendChild(confetti);
-      }
-    }
-    
     function closeTagUnlockFullscreen() {
       const wrap = document.getElementById('tagUnlockFullscreen');
-      const particles = document.getElementById('tagUnlockParticles');
-      if (wrap) {
-        wrap.classList.remove('show');
-      }
-      if (particles) {
-        particles.innerHTML = '';
-      }
+      if (wrap) wrap.classList.remove('show');
     }
 
     // ============================================================
@@ -8545,9 +7835,6 @@
           startUploadCooldownWatcher();
 
           document.getElementById('pBadge').innerHTML = folCount >= 50 ? '<i class="fas fa-check-circle v-badge"></i>' : '';
-          
-          // Update Admin/Creator Badge
-          updateAdminBadge('p', userData.role, userData.admpanel);
 
         const profHeader = document.getElementById('profileHeader');
         if (profHeader) {
@@ -9389,9 +8676,6 @@
       document.getElementById('vFol').innerText = fcr;
       document.getElementById('vFollowing').innerText = flgr;
       document.getElementById('vTagDisplay').innerHTML = getTagHTML(cData?.tag);
-      
-      // Update Admin/Creator Badge for viewer
-      updateAdminBadge('v', cData?.role, cData?.admpanel);
 
       const creatorHeader = document.querySelector('#modalCreator .modern-profile-header');
       if (creatorHeader) {
@@ -9909,9 +9193,6 @@
       neon: { title: 'NEON', desc: 'Cyber night user dengan aura tech dan cyberpunk' },
       'ramadhan-1447h': { title: 'RAMADHAN 1447H', desc: '🌅 Event Ramadhan Cycle 1: Login 3 hari + Play 10 lagu + Online 30 menit' },
       'night-tarawih': { title: 'NIGHT TARAWIH', desc: '🌙 Event Ramadhan Cycle 2: Online jam 18-20 (2 hari) + Share 2 lagu + Like 5 lagu' },
-      'valentine': { title: 'VALENTINE', desc: '💕 Event Valentine: Dapatkan tag cinta spesial' },
-      'love-story': { title: 'LOVE STORY', desc: '💖 Untuk yang mengalami story cinta indah' },
-      'heartbreaker': { title: 'HEARTBREAKER', desc: '💔 Tapi tetep semangat! Tag motivasi' },
       'lailat-mode': { title: 'LAILAT MODE', desc: '🕌 Event Ramadhan Cycle 3: Login 7/10 hari terakhir + 120 menit playtime + Aktif jam 23+' },
       'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' }
     };
@@ -10070,18 +9351,14 @@
       box.innerHTML = users.map(u => {
         const folCount = Array.isArray(u.followers) ? u.followers.length : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers).length : u.followers || 0);
         const tagHtml = getTagHTML(u.tag);
-        const fakeTarget = u.fakeFollowerTarget || 0;
-        const fakeAdded = u.fakeFollowerAdded || 0;
-        const fakeStatus = fakeTarget > 0 ? `<span style="color:#22c55e;font-size:10px;margin-left:8px"><i class="fas fa-robot"></i> ${fakeAdded}/${fakeTarget}</span>` : '';
         return `<div class="user-row-admin">
           <div class="ur-top">
             <div style="flex:1">
-              <div class="ur-name" onclick="adSelectUser('${u.uid}')">${escapeHtml(u.username || 'Unknown')} ${tagHtml} ${fakeStatus}</div>
+              <div class="ur-name" onclick="adSelectUser('${u.uid}')">${escapeHtml(u.username || 'Unknown')} ${tagHtml}</div>
               <div class="ur-uid">${u.uid}</div>
             </div>
           </div>
           <div class="ur-actions">
-            <button class="admin-btn admin-btn-green" onclick="adSetFakeFollowerTarget('${u.uid}')" style="padding:6px 10px;font-size:10px" title="Set Fake Follower Target"><i class="fas fa-robot"></i></button>
             <button class="admin-btn admin-btn-gold" onclick="adSelectUser('${u.uid}')" style="padding:6px 10px;font-size:11px">TAG</button>
             <button class="admin-btn admin-btn-blue" onclick="adOpenUserTools('${u.uid}','${escapeHtml(u.username||'')}')" style="padding:6px 10px;font-size:11px">TOOLS</button>
             <button class="admin-btn admin-btn-red" onclick="adToggleBan('${u.uid}', ${!!u.banned})" style="padding:6px 10px;font-size:11px">${u.banned ? 'UNBAN' : 'BAN'}</button>
@@ -10504,109 +9781,9 @@
         const u = s.val() || {};
         let fol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
         fol = fol.filter(f => !String(f).startsWith('fake_'));
-        db.ref('users/' + uid).update({ followers: fol, fakeFollowerTarget: null, fakeFollowerAdded: null }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
+        db.ref('users/' + uid).update({ followers: fol }).then(() => { addLog('Clear fake fol: ' + uid); showToast('Fake followers dihapus'); adLoadData(); });
       });
     }
-    
-    // ============================================================
-    // FAKE FOLLOWER AUTO-GROW SYSTEM
-    // ============================================================
-    let fakeFollowerInterval = null;
-    
-    function adSetFakeFollowerTarget(uid) {
-      Swal.fire({
-        title: 'Set Fake Follower Target',
-        html: `<p style="color:#aaa;font-size:12px;margin-bottom:15px">Masukkan jumlah fake followers yang ingin ditambahkan secara bertahap</p>
-               <input type="number" id="fakeTargetNum" class="swal2-input" placeholder="Contoh: 5" min="1" max="100">
-               <p style="color:#666;font-size:11px;margin-top:10px">Akan menambah 1-2 follower setiap beberapa jam</p>`,
-        background: '#0d0d15',
-        color: '#fff',
-        confirmButtonText: 'Set Target',
-        confirmButtonColor: '#22c55e',
-        cancelButtonText: 'Batal',
-        showCancelButton: true,
-        preConfirm: () => {
-          const num = document.getElementById('fakeTargetNum').value;
-          return parseInt(num) || null;
-        }
-      }).then(r => {
-        if (r.isConfirmed && r.value) {
-          const target = parseInt(r.value);
-          db.ref('users/' + uid).update({ 
-            fakeFollowerTarget: target,
-            fakeFollowerAdded: 0
-          }).then(() => {
-            addLog('Fake follower target set: ' + uid + ' = ' + target);
-            showToast(`✅ Target: ${target} fake followers`);
-            adLoadData();
-          });
-        }
-      });
-    }
-    
-    function adCancelFakeTarget(uid) {
-      db.ref('users/' + uid).update({ fakeFollowerTarget: null, fakeFollowerAdded: null }).then(() => {
-        addLog('Fake follower target cancelled: ' + uid);
-        showToast('Target fake follower dibatalkan');
-        adLoadData();
-      });
-    }
-    
-    // Generate fake follower name
-    function generateFakeFollower() {
-      const names = ['User', 'Musik', 'Lagu', 'Exe', 'Music', 'Song', 'Artist', 'Creator', 'Fans', 'Listener', 'Melody', 'Beat', 'Tune', 'Rhythm', 'Vibe', 'Groove', 'Sound', 'Audio', 'Track', 'Play'];
-      const suffix = Math.floor(Math.random() * 9000) + 1000;
-      return 'fake_' + names[Math.floor(Math.random() * names.length)] + suffix;
-    }
-    
-    // Process fake follower targets (runs periodically)
-    function processFakeFollowerTargets() {
-      db.ref('users').once('value').then(snap => {
-        const users = snap.val() || {};
-        Object.keys(users).forEach(uid => {
-          const u = users[uid];
-          const target = u.fakeFollowerTarget;
-          const added = u.fakeFollowerAdded || 0;
-          
-          if (target && added < target) {
-            // Add 1-2 fake followers
-            const toAdd = Math.floor(Math.random() * 2) + 1; // 1 or 2
-            const actuallyAdd = Math.min(toAdd, target - added);
-            
-            let currentFol = Array.isArray(u.followers) ? [...u.followers] : (u.followers && typeof u.followers === 'object' ? Object.keys(u.followers) : []);
-            
-            // Add new fake followers
-            for (let i = 0; i < actuallyAdd; i++) {
-              currentFol.push(generateFakeFollower());
-            }
-            
-            db.ref('users/' + uid).update({
-              followers: currentFol,
-              fakeFollowerAdded: added + actuallyAdd
-            }).then(() => {
-              console.log(`Added ${actuallyAdd} fake followers to ${uid}. Progress: ${added + actuallyAdd}/${target}`);
-            });
-          }
-        });
-      });
-    }
-    
-    // Start fake follower scheduler (check every 3 hours)
-    function startFakeFollowerScheduler() {
-      if (fakeFollowerInterval) clearInterval(fakeFollowerInterval);
-      // Check every 3 hours (10800000 ms)
-      fakeFollowerInterval = setInterval(processFakeFollowerTargets, 10800000);
-      // Also run once on startup (delayed by 10 seconds)
-      setTimeout(processFakeFollowerTargets, 10000);
-    }
-    
-    // Initialize on page load
-    window.addEventListener('load', () => {
-      // Start fake follower scheduler
-      setTimeout(startFakeFollowerScheduler, 5000);
-      // Check heart theme
-      setTimeout(checkHeartTheme, 3000);
-    });
 
     function adResetCD(uid) { db.ref('users/' + uid + '/lastUpload').remove().then(() => { addLog('Reset CD: ' + uid); showToast('Cooldown direset!'); }); }
     function adToggleBan(uid, status) { db.ref('users/' + uid).update({ banned: !status }).then(() => { addLog((status ? 'Unban' : 'Ban') + ': ' + uid); showToast((status ? 'Unbanned' : 'Banned') + '!'); adLoadData(); }); }
@@ -10756,6 +9933,105 @@
       if (!t || t === 'Ketik ID lagu dulu') { showToast('Isi ID dulu'); return; }
       navigator.clipboard.writeText(t).then(() => showToast('URL disalin!')); document.getElementById('modalAdminCopyUrl').style.display = 'none';
     }
+  </script>
+  
+  <!-- SPOTIFY POPUP -->
+  <div class="spotify-popup-overlay" id="spotifyPopup" onclick="if(event.target === this) closeSpotifyPopup()">
+    <div class="spotify-card">
+      <button class="spotify-card-close" onclick="closeSpotifyPopup()"><i class="fas fa-times"></i></button>
+      <div class="spotify-top">
+        <div class="spotify-pfp" id="spotifyPfp">
+          <div class="eq-icon" id="spotifyEq">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="spotify-texts">
+          <div class="spotify-title-1" id="spotifyTitle">Tidak Ada Lagu</div>
+          <div class="spotify-title-2" id="spotifyArtist">Pilih lagu dulu</div>
+        </div>
+      </div>
+      <div class="spotify-controls">
+        <svg onclick="prev()" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+        <div class="spotify-play-btn" onclick="toggle()">
+          <svg id="spotifyPlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <svg onclick="next()" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </div>
+      <div class="spotify-time">
+        <div class="spotify-elapsed" id="spotifyElapsed"></div>
+      </div>
+      <div class="spotify-timetext">
+        <span id="spotifyCurTime">0:00</span>
+        <span id="spotifyDurTime">0:00</span>
+      </div>
+      <div class="spotify-volume">
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        <div class="spotify-volume-bar">
+          <div class="spotify-volume-level" id="spotifyVolumeLevel"></div>
+          <div class="spotify-volume-circle" id="spotifyVolumeCircle"></div>
+        </div>
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Spotify Popup Functions
+    function openSpotifyPopup() {
+      updateSpotifyPopup();
+      document.getElementById('spotifyPopup').classList.add('show');
+    }
+    
+    function closeSpotifyPopup() {
+      document.getElementById('spotifyPopup').classList.remove('show');
+    }
+    
+    function updateSpotifyPopup() {
+      if (!songs[i]) return;
+      
+      // Update title and artist
+      document.getElementById('spotifyTitle').textContent = songs[i].title || 'Unknown';
+      document.getElementById('spotifyArtist').textContent = '@' + (songs[i].by || 'system');
+      
+      // Update play/pause icon
+      const playIcon = document.getElementById('spotifyPlayIcon');
+      if (audio.paused) {
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('spotifyPfp').classList.remove('playing');
+      } else {
+        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('spotifyPfp').classList.add('playing');
+      }
+      
+      // Update progress
+      const progress = (audio.currentTime / audio.duration) * 100 || 0;
+      document.getElementById('spotifyElapsed').style.width = progress + '%';
+      document.getElementById('spotifyCurTime').textContent = fmt(audio.currentTime);
+      document.getElementById('spotifyDurTime').textContent = fmt(audio.duration);
+      
+      // Update volume
+      const vol = audio.volume * 100;
+      document.getElementById('spotifyVolumeLevel').style.width = vol + '%';
+      document.getElementById('spotifyVolumeCircle').style.left = (vol * 0.7) + '%';
+    }
+    
+    // Update Spotify popup on time update
+    const originalOnTimeUpdate = audio.ontimeupdate;
+    audio.ontimeupdate = function() {
+      if (originalOnTimeUpdate) originalOnTimeUpdate.call(audio);
+      if (document.getElementById('spotifyPopup').classList.contains('show')) {
+        updateSpotifyPopup();
+      }
+    };
+    
+    // Update Spotify popup when play/pause changes
+    const originalToggle = toggle;
+    toggle = function() {
+      originalToggle();
+      if (document.getElementById('spotifyPopup').classList.contains('show')) {
+        updateSpotifyPopup();
+      }
+    };
   </script>
 </body>
 </html>
