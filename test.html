@@ -2327,6 +2327,28 @@
     }
     .mp-avatar:hover { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(0,255,136,0.15), 0 12px 35px rgba(0,255,136,0.25); }
     .modern-profile-header.vip .mp-avatar { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255,215,0,0.1), 0 8px 30px rgba(255,215,0,0.2); }
+    
+    /* TOP1 BORDER AVATAR */
+    .mp-avatar-container.top1 { padding-top: 25px; }
+    .mp-avatar-container.top1 .mp-avatar { 
+      width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: none !important; 
+      box-shadow: none !important;
+    }
+    .top1-badge {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 100px; pointer-events: none; z-index: 5;
+    }
+    .top1-badge svg { position: absolute; fill: #efd510; width: 30px; height: 30px; }
+    .top1-badge .star-1 { top: 5px; left: 5px; animation: top1rot 4s linear infinite; }
+    .top1-badge .star-2 { top: 5px; right: 5px; animation: top1rot 4s linear infinite reverse; }
+    .top1-badge .star-3 { bottom: 5px; left: 15px; animation: top1rot 3s linear infinite; }
+    .top1-badge .star-4 { bottom: 5px; right: 15px; animation: top1rot 3s linear infinite reverse; }
+    .top1-badge .crown {
+      top: -15px; left: 50%; transform: translateX(-50%); fill: #e10600; width: 40px; height: 40px;
+      animation: top1pulse 2s ease-in-out infinite;
+    }
+    @keyframes top1rot { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes top1pulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } }
     .mp-edit-badge {
       position: absolute; bottom: 2px; right: 2px;
       background: linear-gradient(135deg, #1a1a2e, #0f172a);
@@ -5080,8 +5102,15 @@
           <div class="pmp-timer" id="pmpTimer">0:00</div>
         </div>
         
-        <div class="mp-avatar-container">
+        <div class="mp-avatar-container" id="pAvatarContainer">
           <img id="pAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
+          <div class="top1-badge" id="pTop1Badge" style="display:none">
+            <svg class="crown" viewBox="0 0 24 24"><path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19A1,1 0 0,1 18,20H6A1,1 0 0,1 5,19V18H19V19Z"/></svg>
+            <svg class="star-1" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+            <svg class="star-2" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+            <svg class="star-3" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+            <svg class="star-4" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+          </div>
           <div class="mp-edit-badge" onclick="document.getElementById('avatarInp').click()"><i class="fas fa-camera"></i></div>
         </div>
         <input type="file" id="avatarInp" style="display:none" accept="image/*" onchange="uploadAvatar(this)">
@@ -5121,7 +5150,15 @@
   <div class="modal" id="modalCreator" onclick="if(event.target==this)closeCreatorModal()">
     <div class="sheet" style="padding:0; overflow:hidden">
       <div class="modern-profile-header">
-        <div class="mp-avatar-container"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar"></div>
+        <div class="mp-avatar-container" id="vAvatarContainer"><img id="vAvatarImg" src="https://via.placeholder.com/150" class="mp-avatar">
+          <div class="top1-badge" id="vTop1Badge" style="display:none">
+            <svg class="crown" viewBox="0 0 24 24"><path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19A1,1 0 0,1 18,20H6A1,1 0 0,1 5,19V18H19V19Z"/></svg>
+            <svg class="star-1" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+            <svg class="star-2" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+            <svg class="star-3" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+            <svg class="star-4" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/></svg>
+          </div>
+        </div>
         <div class="mp-name-row"><span id="vName" class="mp-name">@creator</span></div>
         <div id="vTagDisplay" style="margin-bottom:10px; display:flex; gap:5px; justify-content:center"></div>
         <div class="mp-stats">
@@ -7822,6 +7859,17 @@
           // Crown
           document.getElementById('pUsername').innerHTML = userData.username + (vipActive ? ' <i class="fas fa-crown" style="color:#ffd700;font-size:13px;margin-left:5px"></i>' : '');
           document.getElementById('pAvatarImg').src = userData.avatar || 'https://via.placeholder.com/150';
+          
+          // Handle TOP1 border avatar
+          const pContainer = document.getElementById('pAvatarContainer');
+          const pTop1Badge = document.getElementById('pTop1Badge');
+          if (userData.borderavatar === 'top1') {
+            pContainer.classList.add('top1');
+            pTop1Badge.style.display = 'block';
+          } else {
+            pContainer.classList.remove('top1');
+            pTop1Badge.style.display = 'none';
+          }
 
           const fol = userData.followers;
           const folCount = Array.isArray(fol) ? fol.length : (fol && typeof fol === 'object' ? Object.keys(fol).length : fol || 0);
@@ -8671,6 +8719,18 @@
       const fcr = (() => { const f = cData?.followers; return Array.isArray(f) ? f.length : (f && typeof f === 'object' ? Object.keys(f).length : f || 0); })();
       const flgr = (() => { const f = cData?.following; return Array.isArray(f) ? f.length : (f && typeof f === 'object' ? Object.keys(f).length : f || 0); })();
       document.getElementById('vAvatarImg').src = cData?.avatar || 'https://via.placeholder.com/150';
+      
+      // Handle TOP1 border avatar for creator
+      const vContainer = document.getElementById('vAvatarContainer');
+      const vTop1Badge = document.getElementById('vTop1Badge');
+      if (cData?.borderavatar === 'top1') {
+        vContainer.classList.add('top1');
+        vTop1Badge.style.display = 'block';
+      } else {
+        vContainer.classList.remove('top1');
+        vTop1Badge.style.display = 'none';
+      }
+      
       const creatorVip = getVipStatus(cData);
       document.getElementById('vName').innerHTML = '@' + (cData?.username || uid) + (fcr >= 50 ? '<i class="fas fa-check-circle v-badge" style="font-size:13px;margin-left:4px"></i>' : '') + (creatorVip ? ' <i class="fas fa-crown" style="color:#ffd700;font-size:13px;margin-left:4px"></i>' : '');
       document.getElementById('vFol').innerText = fcr;
