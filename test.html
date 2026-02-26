@@ -65,7 +65,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: #000;
+      background: transparent;
       z-index: -3;
     }
     
@@ -84,6 +84,31 @@
     }
     
     body.heart-theme-active .sheet {
+      background: transparent !important;
+    }
+    
+    /* Heart Theme - Modal Transparent */
+    body.heart-theme-active .modal {
+      background: rgba(0, 0, 0, 0.15) !important;
+      backdrop-filter: blur(3px);
+    }
+    
+    /* Heart Theme - All Containers Transparent */
+    body.heart-theme-active #app,
+    body.heart-theme-active .app-container,
+    body.heart-theme-active .main-content,
+    body.heart-theme-active .content-area,
+    body.heart-theme-active .player-section,
+    body.heart-theme-active .playlist-section,
+    body.heart-theme-active .sidebar,
+    body.heart-theme-active .header-section {
+      background: transparent !important;
+    }
+    
+    /* Heart Theme - Player Controls Transparent */
+    body.heart-theme-active .player-controls,
+    body.heart-theme-active .now-playing,
+    body.heart-theme-active .progress-container {
       background: transparent !important;
     }
 
