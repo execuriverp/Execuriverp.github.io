@@ -3,618 +3,2128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Execurive Roleplay | Blue City SA-MP</title>
-<link rel="icon" type="image/png" href="favicon.png">
-
+<title>MIRACLE RP — Community Forum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#020617;
-  --panel:#0f172a;
-  --border:#1e293b;
-  --blue:#38bdf8;
-  --purple:#6366f1;
-  --green:#22c55e;
-  --gold:#facc15;
-  --red:#ef4444;
-  --text:#e5e7eb;
-  --muted:#94a3b8;
+:root {
+  --gold:#FFD700;--orange:#FF6B00;--red:#E63946;--green:#25D366;--blue:#64b4ff;--purple:#b464ff;--cyan:#00C9B1;
+  --dark:#09090E;--dark2:#0F0F18;--dark3:#161622;--dark4:#1E1E2E;--dark5:#252535;
+  --border:rgba(255,215,0,.1);--border2:rgba(255,255,255,.06);--border3:rgba(255,255,255,.04);
+  --text:#DCDCE8;--muted:#6A6A84;--muted2:#9898B0;
+  --sidebar-w:260px;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;overflow-x:hidden;min-height:100vh;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:.35;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--dark);}::-webkit-scrollbar-thumb{background:var(--gold);}
 
-/* RESET */
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    radial-gradient(900px 300px at top, rgba(56,189,248,.18), transparent),
-    radial-gradient(700px 250px at bottom, rgba(99,102,241,.14), transparent),
-    var(--bg);
-  color:var(--text);
-}
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--dark);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity .5s ease;}
+#loader.hide{opacity:0;pointer-events:none;}
+.loader-logo{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:10px;color:var(--gold);text-shadow:0 0 40px rgba(255,215,0,.4);animation:loadpulse 1.2s ease infinite;}
+.loader-bar{width:180px;height:2px;background:var(--dark3);overflow:hidden;}
+.loader-prog{height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));animation:loadbar 1.4s ease-in-out infinite;}
+@keyframes loadbar{0%{width:0%;margin-left:0%}50%{width:55%;margin-left:22%}100%{width:0%;margin-left:100%}}
+@keyframes loadpulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* ===== NAVBAR ===== */
-.nav{
-  position:sticky;
-  top:0;
-  z-index:999;
-  background:rgba(2,6,23,.8);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
-}
-.nav-inner{
-  max-width:1200px;
-  margin:auto;
-  padding:14px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.nav-left{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-.logo{
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 0 18px rgba(56,189,248,.4);
-}
-.logo img{width:100%;height:100%}
-.nav-title{
-  font-weight:900;
-  letter-spacing:2px;
-  font-size:14px;
-  background:linear-gradient(90deg,var(--blue),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.nav-right{
-  display:flex;
-  gap:10px;
-}
-.nav-right a{
-  padding:10px 16px;
-  border-radius:12px;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:1.3px;
-  text-decoration:none;
-  color:var(--muted);
-}
-.nav-right a.active{
-  background:linear-gradient(135deg,var(--blue),var(--purple));
-  color:#020617;
-}
+/* NAVBAR */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;background:rgba(9,9,14,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;color:var(--gold);text-shadow:0 0 16px rgba(255,215,0,.4);text-decoration:none;display:flex;align-items:center;gap:.5rem;}
+.nav-logo span{color:var(--orange);}
+.nav-logo-tag{font-family:'Space Mono',monospace;font-size:.45rem;letter-spacing:2px;color:var(--muted);background:var(--dark3);border:1px solid var(--border);padding:2px 6px;}
+.nav-right{display:flex;align-items:center;gap:.6rem;}
+.nav-user-info{display:none;align-items:center;gap:.5rem;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted2);}
+.nav-user-info.show{display:flex;}
+.nav-ava{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--gold);object-fit:cover;background:var(--dark3);display:flex;align-items:center;justify-content:center;font-size:.75rem;cursor:pointer;}
+.nav-user-name{color:var(--gold);font-weight:700;cursor:pointer;}
+.nav-user-name:hover{text-decoration:underline;}
+.btn-nav{border:1px solid var(--border2);color:var(--muted2);padding:6px 14px;font-family:'Space Mono',monospace;font-size:.58rem;background:none;cursor:pointer;transition:all .2s;letter-spacing:1px;}
+.btn-nav:hover{border-color:var(--gold);color:var(--gold);}
+.btn-nav.gold{background:var(--gold);color:#000;border-color:var(--gold);font-weight:700;}
+.btn-nav.gold:hover{background:var(--orange);border-color:var(--orange);color:#fff;}
+.hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{width:20px;height:2px;background:var(--muted2);}
+.notif-btn{position:relative;background:none;border:1px solid var(--border2);color:var(--muted2);padding:5px 10px;cursor:pointer;font-size:.85rem;transition:all .2s;}
+.notif-btn:hover{border-color:var(--gold);color:var(--gold);}
+.notif-dot{position:absolute;top:2px;right:2px;width:7px;height:7px;background:var(--red);border-radius:50%;display:none;}
+.notif-dot.show{display:block;}
+.pm-badge-nav{position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:.45rem;font-family:'Space Mono',monospace;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center;display:none;}
+.pm-badge-nav.show{display:block;}
 
-/* ===== NEW EXEMUSIC PROMO BAR ===== */
-.exemusic-bar {
-  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(99, 102, 241, 0.1));
-  border-bottom: 1px solid var(--border);
-  padding: 8px 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  overflow: hidden;
-  position: relative;
-}
-.exemusic-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  animation: slideIn 0.8s ease-out;
-}
-@keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+/* FORUM LAYOUT */
+.forum-wrap{display:flex;min-height:100vh;padding-top:54px;}
+.sidebar{width:var(--sidebar-w);background:var(--dark2);border-right:1px solid var(--border);position:fixed;top:54px;left:0;bottom:0;z-index:100;overflow-y:auto;display:flex;flex-direction:column;transition:transform .3s;}
+.sidebar.closed{transform:translateX(-100%);}
+.main-area{margin-left:var(--sidebar-w);flex:1;min-height:calc(100vh - 54px);}
 
-.music-icon {
-  width: 24px;
-  height: 24px;
-  background: var(--purple);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
-  animation: pulse-music 2s infinite;
-}
-@keyframes pulse-music { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+/* SIDEBAR */
+.sb-section{padding:.5rem 1rem .2rem;font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:.3rem;}
+.sb-item{display:flex;align-items:center;gap:.6rem;padding:.55rem 1rem;color:var(--muted2);text-decoration:none;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.5px;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent;position:relative;}
+.sb-item:hover{color:var(--text);background:rgba(255,255,255,.025);}
+.sb-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(255,215,0,.04);}
+.sb-item-icon{font-size:.9rem;width:16px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.48rem;padding:2px 5px;border-radius:8px;min-width:16px;text-align:center;font-family:'Space Mono',monospace;}
+.sb-sub{padding-left:2.2rem;}
+.sb-divider{height:1px;background:var(--border2);margin:.4rem 1rem;}
+.sb-stats{padding:1rem;border-top:1px solid var(--border);margin-top:auto;}
+.sb-stat-row{display:flex;justify-content:space-between;padding:.25rem 0;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted2);}
+.sb-stat-val{color:var(--gold);font-weight:700;}
+.online-dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;margin-right:.3rem;animation:blinkdot 1.5s ease infinite;}
 
-.music-text {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-}
-.music-text span {
-  color: var(--purple);
-  text-transform: uppercase;
-  font-size: 10px;
-  margin-right: 5px;
-  border: 1px solid var(--purple);
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-.btn-listen {
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid var(--purple);
-  color: var(--purple);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 900;
-  transition: 0.3s;
-}
-.exemusic-content:hover .btn-listen {
-  background: var(--purple);
-  color: white;
-}
+/* MAIN CONTENT AREA */
+.content-area{padding:1.5rem;max-width:900px;}
+.page-section{display:none;}
+.page-section.active{display:block;}
 
-/* ===== CONTENT ===== */
-.wrapper{max-width:1150px;margin:34px auto;padding:18px}
+/* HERO BANNER (HOME) */
+.hero-banner{background:linear-gradient(135deg,var(--dark3),var(--dark2));border:1px solid var(--border);padding:2rem;margin-bottom:1.2rem;position:relative;overflow:hidden;}
+.hero-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(255,215,0,.04),transparent 60%);}
+.hero-banner-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,215,0,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,215,0,.02) 1px,transparent 1px);background-size:40px 40px;}
+.hero-banner-inner{position:relative;z-index:1;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:4px;color:var(--gold);line-height:.95;}
+.hero-title span{color:var(--orange);}
+.hero-sub{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:2px;color:var(--muted2);margin-top:.5rem;text-transform:uppercase;}
+.hero-ip{display:inline-flex;align-items:center;gap:.7rem;background:rgba(0,0,0,.4);border:1px solid var(--border);padding:.6rem 1rem;margin-top:1rem;font-family:'Space Mono',monospace;}
+.hero-ip-label{font-size:.5rem;letter-spacing:2px;color:var(--muted);}
+.hero-ip-val{font-size:.85rem;color:var(--gold);font-weight:700;}
+.hero-ip-copy{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);color:var(--gold);padding:3px 8px;font-size:.55rem;cursor:pointer;font-family:'Space Mono',monospace;transition:all .2s;}
+.hero-ip-copy:hover{background:rgba(255,215,0,.2);}
+.hero-stats{display:flex;gap:1.5rem;margin-top:1.2rem;flex-wrap:wrap;}
+.hero-stat{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted2);}
+.hero-stat strong{color:var(--gold);font-size:.8rem;display:block;}
+.hero-cta{display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap;}
+.btn-hero{padding:8px 20px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all .2s;border:none;text-decoration:none;display:inline-block;}
+.btn-hero.gold{background:var(--gold);color:#000;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.btn-hero.gold:hover{background:var(--orange);color:#fff;}
+.btn-hero.outline{background:none;border:1px solid var(--border);color:var(--muted2);}
+.btn-hero.outline:hover{border-color:var(--gold);color:var(--gold);}
 
-.header{
-  background:linear-gradient(160deg,#020617,#0b1224);
-  border:1px solid var(--border);
-  border-radius:26px;
-  padding:48px 22px;
-  text-align:center;
-}
-.title{
-  font-size:38px;
-  font-weight:900;
-  letter-spacing:2px;
-  background:linear-gradient(90deg,var(--blue),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.subtitle{
-  margin-top:8px;
-  font-size:20px;
-  font-weight:700;
-  color:var(--blue);
-}
-.tagline{margin-top:12px;color:var(--muted)}
+/* FORUM CATEGORY LIST */
+.cat-section{margin-bottom:1.2rem;}
+.cat-header{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;background:var(--dark3);border:1px solid var(--border);cursor:pointer;user-select:none;}
+.cat-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--gold);}
+.cat-desc{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:.15rem;}
+.cat-arrow{color:var(--muted);font-size:.7rem;transition:transform .2s;}
+.cat-arrow.open{transform:rotate(180deg);}
+.cat-body{border:1px solid var(--border);border-top:none;display:none;}
+.cat-body.open{display:block;}
+.cat-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:1rem;align-items:center;padding:.9rem 1.2rem;border-bottom:1px solid var(--border3);transition:background .15s;cursor:pointer;}
+.cat-row:last-child{border-bottom:none;}
+.cat-row:hover{background:rgba(255,255,255,.02);}
+.cat-row-icon{font-size:1.3rem;}
+.cat-row-name{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:1.5px;color:#E8E8F8;}
+.cat-row-sub{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);}
+.cat-count{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted2);text-align:center;}
+.cat-count strong{color:var(--gold);display:block;font-size:.75rem;}
+.cat-last{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);text-align:right;max-width:160px;}
+.cat-last-title{color:var(--muted2);font-size:.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-.section{margin-top:64px}
-.section h3{
-  font-size:17px;
-  margin-bottom:20px;
-  padding-left:14px;
-  border-left:4px solid var(--blue);
-}
+/* CATEGORY BADGE */
+.cat-badge{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:1.5px;padding:2px 7px;display:inline-block;}
+.cb-gold{background:rgba(255,215,0,.08);color:var(--gold);border:1px solid rgba(255,215,0,.2);}
+.cb-red{background:rgba(230,57,70,.08);color:#F07070;border:1px solid rgba(230,57,70,.2);}
+.cb-green{background:rgba(37,211,102,.08);color:var(--green);border:1px solid rgba(37,211,102,.2);}
+.cb-blue{background:rgba(100,180,255,.08);color:var(--blue);border:1px solid rgba(100,180,255,.2);}
+.cb-purple{background:rgba(180,100,255,.08);color:var(--purple);border:1px solid rgba(180,100,255,.2);}
+.cb-orange{background:rgba(255,107,0,.08);color:var(--orange);border:1px solid rgba(255,107,0,.2);}
+.cb-cyan{background:rgba(0,201,177,.08);color:var(--cyan);border:1px solid rgba(0,201,177,.2);}
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:20px;
-}
+/* FORUM POST LIST */
+.post-list-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;background:var(--dark3);border:1px solid var(--border);margin-bottom:1px;}
+.post-list-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:#E8E8F8;}
+.btn-new-post{background:var(--gold);color:#000;border:none;padding:7px 16px;font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:2px;cursor:pointer;transition:all .2s;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);}
+.btn-new-post:hover{background:var(--orange);color:#fff;}
+.post-item{display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:start;padding:1rem 1.2rem;background:var(--dark2);border:1px solid var(--border2);border-top:none;transition:background .15s;cursor:pointer;}
+.post-item:hover{background:var(--dark3);}
+.post-item.pinned{border-left:3px solid var(--gold);}
+.post-item-ava{width:40px;height:40px;border-radius:50%;background:var(--dark4);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.post-item-main{}
+.post-item-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;color:#E8E8F8;margin-bottom:.25rem;line-height:1.25;}
+.post-item-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);}
+.post-item-author{color:var(--gold);}
+.post-item-stats{text-align:right;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted2);}
+.post-item-count{font-size:.8rem;color:var(--text);font-weight:700;}
+.post-new-badge{background:var(--green);color:#000;font-family:'Space Mono',monospace;font-size:.45rem;padding:2px 5px;letter-spacing:1px;font-weight:700;}
+.post-locked-badge{background:rgba(255,107,0,.1);color:var(--orange);font-family:'Space Mono',monospace;font-size:.45rem;padding:2px 5px;border:1px solid rgba(255,107,0,.2);}
 
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:22px;
-  transition:.3s;
-}
-.card:hover{
-  transform:translateY(-4px);
-  border-color:var(--blue);
-  box-shadow:0 16px 34px rgba(56,189,248,.25);
-}
-.label{font-size:12px;color:var(--muted);margin-bottom:6px}
-.value{font-size:17px;font-weight:900;color:var(--blue)}
+/* FEED / COMMUNITY */
+.feed-grid{display:grid;grid-template-columns:1fr 270px;gap:1.2rem;align-items:start;}
+.feed-post-box{background:var(--dark3);border:1px solid var(--border2);padding:1.2rem;margin-bottom:1rem;}
+.feed-post-box textarea{width:100%;background:var(--dark);border:1px solid var(--border2);color:var(--text);padding:10px 12px;font-family:'Rajdhani',sans-serif;font-size:.95rem;resize:vertical;min-height:80px;outline:none;transition:border-color .2s;}
+.feed-post-box textarea:focus{border-color:rgba(255,215,0,.3);}
+.feed-post-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;flex-wrap:wrap;gap:.5rem;}
+.feed-post-actions{display:flex;align-items:center;gap:.5rem;}
+.btn-post{background:var(--gold);color:#000;border:none;padding:7px 18px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);}
+.btn-post:hover{background:var(--orange);color:#fff;}
+.btn-post:disabled{background:var(--muted);cursor:not-allowed;}
+.btn-attach{background:none;border:1px solid var(--border2);color:var(--muted2);padding:6px 12px;font-family:'Space Mono',monospace;font-size:.58rem;cursor:pointer;transition:all .2s;}
+.btn-attach:hover{border-color:var(--gold);color:var(--gold);}
+.feed-hint{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);}
 
-.status{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:900;
-  color:var(--green);
-}
-.pulse{
-  width:12px;height:12px;
-  border-radius:50%;
-  background:var(--green);
-  animation:pulse 1.6s infinite;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}
-  70%{box-shadow:0 0 0 14px rgba(34,197,94,0)}
-}
+/* POST CARD */
+.post-card{background:var(--dark2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:1px;}
+.post-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.7rem;gap:.5rem;}
+.post-author-info{display:flex;align-items:center;gap:.6rem;}
+.post-ava{width:34px;height:34px;border-radius:50%;background:var(--dark4);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;overflow:hidden;cursor:pointer;}
+.post-ava img{width:100%;height:100%;object-fit:cover;}
+.post-name{font-family:'Bebas Neue',sans-serif;font-size:.92rem;letter-spacing:2px;color:var(--gold);cursor:pointer;}
+.post-name:hover{text-decoration:underline;}
+.post-role-badge{font-family:'Space Mono',monospace;font-size:.48rem;padding:2px 6px;margin-left:.3rem;}
+.post-time{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);}
+.post-content{color:var(--text);font-size:.95rem;line-height:1.7;margin-bottom:.8rem;word-break:break-word;white-space:pre-wrap;}
+.post-image{width:100%;max-height:360px;object-fit:cover;border:1px solid var(--border2);margin-bottom:.8rem;cursor:pointer;}
+.post-reactions{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.6rem;}
+.reaction-btn{background:none;border:1px solid var(--border2);color:var(--muted2);padding:4px 10px;font-family:'Space Mono',monospace;font-size:.58rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.3rem;}
+.reaction-btn:hover{border-color:var(--gold);background:rgba(255,215,0,.05);}
+.reaction-btn.active-like{border-color:var(--red);color:var(--red);background:rgba(230,57,70,.05);}
+.reaction-btn.active-fire{border-color:var(--orange);color:var(--orange);background:rgba(255,107,0,.05);}
+.reaction-btn.active-haha{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.05);}
+.reaction-btn.active-wow{border-color:var(--blue);color:var(--blue);background:rgba(100,180,255,.05);}
+.reaction-btn.active-sad{border-color:var(--purple);color:var(--purple);background:rgba(180,100,255,.05);}
+.post-actions{display:flex;gap:.5rem;align-items:center;border-top:1px solid var(--border2);padding-top:.7rem;}
+.btn-comment-toggle{background:none;border:1px solid var(--border2);color:var(--muted2);padding:4px 12px;font-family:'Space Mono',monospace;font-size:.58rem;cursor:pointer;transition:all .2s;}
+.btn-comment-toggle:hover{border-color:var(--gold);color:var(--gold);}
+.btn-share{background:none;border:1px solid var(--border2);color:var(--muted2);padding:4px 10px;font-family:'Space Mono',monospace;font-size:.58rem;cursor:pointer;transition:all .2s;}
+.btn-share:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-delete-post{background:none;border:none;color:var(--muted);font-size:.65rem;cursor:pointer;margin-left:auto;padding:4px 8px;font-family:'Space Mono',monospace;transition:color .2s;}
+.btn-delete-post:hover{color:var(--red);}
+.comments-section{margin-top:.8rem;border-top:1px solid var(--border2);padding-top:.8rem;display:none;}
+.comments-section.open{display:block;}
+.comment-item{display:flex;gap:.6rem;margin-bottom:.7rem;align-items:flex-start;}
+.comment-ava{width:26px;height:26px;background:var(--dark4);border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;overflow:hidden;}
+.comment-ava img{width:100%;height:100%;object-fit:cover;}
+.comment-body{flex:1;background:var(--dark3);padding:.5rem .8rem;}
+.comment-name{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:1.5px;color:var(--gold);}
+.comment-text{font-size:.88rem;color:var(--text);line-height:1.5;margin-top:.15rem;}
+.comment-time{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);margin-top:.25rem;}
+.comment-input-row{display:flex;gap:.5rem;margin-top:.6rem;}
+.comment-input{flex:1;background:var(--dark);border:1px solid var(--border2);color:var(--text);padding:8px 10px;font-family:'Rajdhani',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;}
+.comment-input:focus{border-color:rgba(255,215,0,.3);}
+.btn-send-comment{background:var(--dark3);border:1px solid var(--border);color:var(--gold);padding:8px 14px;font-family:'Space Mono',monospace;font-size:.58rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-send-comment:hover{background:rgba(255,215,0,.1);}
 
-.copy-btn{
-  margin-top:14px;
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--blue);
-  background:linear-gradient(90deg,var(--blue),var(--purple));
-  font-weight:900;
-  font-size:12px;
-  cursor:pointer;
-}
-.copy-btn.copied{
-  background:var(--green);
-  border-color:var(--green);
-}
+/* ROLE BADGES */
+.r-owner{background:rgba(255,215,0,.08);color:var(--gold);border:1px solid rgba(255,215,0,.25);}
+.r-admin{background:rgba(230,57,70,.08);color:#F07070;border:1px solid rgba(230,57,70,.25);}
+.r-mod{background:rgba(255,107,0,.08);color:#FF9050;border:1px solid rgba(255,107,0,.25);}
+.r-dev{background:rgba(100,180,255,.08);color:#80C8FF;border:1px solid rgba(100,180,255,.25);}
+.r-headadmin{background:rgba(180,100,255,.08);color:#CC88FF;border:1px solid rgba(180,100,255,.25);}
+.r-volunteer{background:rgba(100,200,150,.08);color:#6DD5A8;border:1px solid rgba(100,200,150,.25);}
+.r-juniorhelper{background:rgba(100,200,200,.08);color:#6DD5D5;border:1px solid rgba(100,200,200,.25);}
+.r-seniorhelper{background:rgba(100,180,255,.08);color:#80C8FF;border:1px solid rgba(100,180,255,.25);}
+.r-junioradmin{background:rgba(255,180,100,.08);color:#FFB86E;border:1px solid rgba(255,180,100,.25);}
+.r-senioradmin{background:rgba(255,150,100,.08);color:#FF9966;border:1px solid rgba(255,150,100,.25);}
+.r-management{background:rgba(255,100,100,.08);color:#FF7575;border:1px solid rgba(255,100,100,.25);}
+.r-communityhandle{background:rgba(180,150,255,.08);color:#D5B8FF;border:1px solid rgba(180,150,255,.25);}
+.r-exstaff{background:rgba(150,150,150,.08);color:#AAAAAA;border:1px solid rgba(150,150,150,.25);}
 
-.starter ul{list-style:none;line-height:2}
-.starter li::before{
-  content:"▹";
-  color:var(--blue);
-  margin-right:10px;
-}
+/* SIDEBAR WIDGETS */
+.widget{background:var(--dark3);border:1px solid var(--border2);padding:1rem;margin-bottom:.8rem;}
+.widget-title{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:3px;color:var(--gold);margin-bottom:.7rem;border-bottom:1px solid var(--border2);padding-bottom:.3rem;}
+.widget-list-item{display:flex;align-items:center;gap:.5rem;padding:.25rem 0;font-size:.85rem;color:var(--muted2);}
+.widget-dot{width:6px;height:6px;background:var(--green);border-radius:50%;flex-shrink:0;animation:blinkdot 1.5s ease infinite;}
 
-.link{
-  display:block;
-  padding:20px;
-  border-radius:18px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  text-decoration:none;
-  transition:.3s;
-}
-.link:hover{
-  border-color:var(--blue);
-  box-shadow:0 14px 26px rgba(56,189,248,.25);
-}
-.link strong{color:var(--blue)}
-.link span{font-size:12px;color:var(--muted)}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--dark3);border:1px solid var(--border);padding:.9rem 1.3rem;z-index:9000;transform:translateX(130%);transition:transform .4s cubic-bezier(.175,.885,.32,1.275);max-width:300px;min-width:220px;}
+.toast.show{transform:translateX(0);}
+.toast-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:2px;color:var(--gold);margin-bottom:.2rem;}
+.toast.error .toast-title{color:var(--red);}
+.toast.success .toast-title{color:var(--green);}
+.toast-msg{font-size:.82rem;color:var(--muted2);font-weight:400;line-height:1.5;}
 
-.footer{
-  margin-top:80px;
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-}
+/* OVERLAY / MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;}
+.modal{background:var(--dark2);border:1px solid var(--border);padding:2rem;width:100%;max-width:480px;position:relative;animation:modalIn .3s ease;max-height:90vh;overflow-y:auto;}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.modal-close:hover{color:var(--gold);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:3px;color:var(--gold);margin-bottom:.3rem;}
+.modal-sub{color:var(--muted2);font-size:.88rem;margin-bottom:1.5rem;font-weight:400;line-height:1.6;}
+.form-group{margin-bottom:.9rem;}
+.form-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;display:block;margin-bottom:.35rem;}
+.form-input{width:100%;background:var(--dark3);border:1px solid var(--border2);color:var(--text);padding:10px 12px;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;outline:none;transition:border-color .2s;appearance:none;}
+.form-input:focus{border-color:rgba(255,215,0,.4);}
+.form-input::placeholder{color:var(--muted);font-weight:300;}
+.form-input option{background:var(--dark3);}
+textarea.form-input{resize:vertical;min-height:100px;}
+.btn-submit{width:100%;background:var(--gold);color:#000;border:none;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:4px;cursor:pointer;transition:all .2s;}
+.btn-submit:hover{background:var(--orange);color:#fff;}
+.btn-submit:disabled{background:var(--muted);cursor:not-allowed;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:.7rem;width:100%;background:#fff;color:#1a1a1a;border:none;padding:12px 20px;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:.5rem;}
+.btn-google:hover{background:#f0f0f0;}
+.auth-error{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.25);color:#F07070;padding:.7rem 1rem;font-family:'Space Mono',monospace;font-size:.65rem;margin-bottom:1rem;display:none;}
+.auth-error.show{display:block;}
 
-/* ===== LOADING ===== */
-.loading{
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.85);
-  backdrop-filter:blur(12px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-.loading-box{
-  background:#020617;
-  padding:36px 44px;
-  border-radius:24px;
-  text-align:center;
-}
-.spinner{
-  width:54px;height:54px;
-  border:6px solid rgba(56,189,248,.2);
-  border-top:6px solid var(--blue);
-  border-radius:50%;
-  margin:0 auto 18px;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* SECTION TITLE */
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:4px;color:#E8E8F8;margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-badge{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:2px;padding:3px 8px;background:rgba(255,215,0,.06);color:var(--gold);border:1px solid var(--border);}
 
-/* ===== EVENT POPUP MODAL STYLES ===== */
-.modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(2,6,23,0.9); z-index: 2000;
-  display: none; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-}
-.modal-content {
-  background: var(--panel); border: 1px solid var(--border);
-  padding: 30px; border-radius: 24px; text-align: center;
-  position: relative; width: 90%; max-width: 450px;
-  box-shadow: 0 0 50px rgba(34, 197, 94, 0.15);
-  animation: fadeIn 0.3s ease;
-}
-.modal-close {
-  position: absolute; top: 15px; right: 20px;
-  font-size: 24px; color: var(--muted); cursor: pointer;
-  transition: .2s;
-}
-.modal-close:hover { color: var(--text); }
+/* PROFILE PAGE */
+.profile-banner{height:120px;background:linear-gradient(135deg,var(--dark3),var(--dark4));border:1px solid var(--border);position:relative;overflow:hidden;margin-bottom:0;}
+.profile-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(255,215,0,.07),transparent 60%);}
+.profile-info-bar{background:var(--dark2);border:1px solid var(--border);border-top:none;padding:1rem 1.5rem;display:flex;align-items:flex-end;gap:1rem;margin-bottom:1px;}
+.profile-ava-big{width:72px;height:72px;border-radius:50%;border:3px solid var(--gold);background:var(--dark3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin-top:-36px;flex-shrink:0;overflow:hidden;}
+.profile-ava-big img{width:100%;height:100%;object-fit:cover;}
+.profile-name-big{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:#E8E8F8;}
+.profile-meta-row{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted2);}
+.profile-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:1px;}
+.profile-stat-box{background:var(--dark2);padding:1rem;text-align:center;}
+.profile-stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);}
+.profile-stat-label{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 
-/* Bagian Timer */
-.eid-title {
-  font-size: 18px; font-weight: 900; color: var(--green);
-  letter-spacing: 1px; margin-bottom: 20px;
-}
-.timer-grid {
-  display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;
-}
-.timer-item {
-  background: rgba(255,255,255,0.03); padding: 10px;
-  border-radius: 12px; min-width: 60px; border: 1px solid rgba(255,255,255,0.05);
-}
-.t-num { font-size: 20px; font-weight: 900; color: var(--text); display: block; }
-.t-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+/* CS REQUEST FORM */
+.cs-req-wrap{background:var(--dark2);border:1px solid var(--border);padding:2rem;}
+.cs-info-box{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.15);padding:1.2rem 1.5rem;margin-bottom:1.5rem;}
+.cs-info-title{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:3px;color:var(--gold);margin-bottom:.5rem;}
+.cs-info-text{font-family:'Rajdhani',sans-serif;font-size:.88rem;color:var(--muted2);line-height:1.75;}
+.cs-schedule-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem;}
+.cs-schedule-item{background:var(--dark3);border:1px solid var(--border2);padding:.8rem;}
+.cs-schedule-day{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:2px;color:var(--gold);}
+.cs-schedule-time{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted2);margin-top:.25rem;}
+.cs-status-banner{padding:.9rem 1.2rem;margin-bottom:1.2rem;font-family:'Space Mono',monospace;font-size:.65rem;}
+.cs-status-pending{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);color:var(--gold);}
+.cs-status-process{background:rgba(100,180,255,.06);border:1px solid rgba(100,180,255,.2);color:var(--blue);}
+.cs-status-accepted{background:rgba(37,211,102,.06);border:1px solid rgba(37,211,102,.2);color:var(--green);}
+.cs-status-denied{background:rgba(230,57,70,.06);border:1px solid rgba(230,57,70,.2);color:#F07070;}
+.cs-outside-hours{background:rgba(230,57,70,.06);border:1px solid rgba(230,57,70,.2);padding:1.2rem;text-align:center;margin-bottom:1.2rem;}
+.cs-outside-hours p{font-family:'Space Mono',monospace;font-size:.65rem;color:#F07070;}
 
-/* Bagian Special Offer Box (Style Diperbaiki) */
-.special-offer-box {
-  margin-top: 25px;
-  padding: 20px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(250, 204, 21, 0.05), rgba(15, 23, 42, 0.8));
-  border: 1px solid rgba(250, 204, 21, 0.4); /* Gold Border */
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-}
-.offer-header {
-  font-size: 13px;
-  font-weight: 900;
-  color: var(--gold);
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.badge-now {
-  background: var(--red);
-  color: #fff;
-  font-size: 9px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  animation: blink 1.2s infinite;
-}
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+/* PRIVATE MESSAGE (PM) */
+.pm-layout{display:grid;grid-template-columns:240px 1fr;height:calc(100vh - 54px - 3rem);border:1px solid var(--border);}
+.pm-list{background:var(--dark2);border-right:1px solid var(--border);overflow-y:auto;}
+.pm-list-header{padding:.8rem 1rem;border-bottom:1px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:3px;color:var(--gold);}
+.pm-item{display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border3);}
+.pm-item:hover,.pm-item.active{background:rgba(255,215,0,.04);}
+.pm-item.active{border-left:2px solid var(--gold);}
+.pm-item-ava{width:36px;height:36px;border-radius:50%;background:var(--dark4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;overflow:hidden;}
+.pm-item-ava img{width:100%;height:100%;object-fit:cover;}
+.pm-item-name{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:1.5px;color:#E8E8F8;}
+.pm-item-preview{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;}
+.pm-item-time{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);margin-left:auto;flex-shrink:0;}
+.pm-unread-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;flex-shrink:0;}
+.pm-chat{display:flex;flex-direction:column;background:var(--dark3);}
+.pm-chat-header{padding:.8rem 1.2rem;background:var(--dark2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.7rem;flex-shrink:0;}
+.pm-chat-name{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:#E8E8F8;}
+.pm-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem;}
+.pm-msg{max-width:75%;padding:.6rem .9rem;font-size:.9rem;line-height:1.5;}
+.pm-msg.mine{align-self:flex-end;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);color:var(--text);}
+.pm-msg.theirs{align-self:flex-start;background:var(--dark2);border:1px solid var(--border2);color:var(--text);}
+.pm-msg-time{font-family:'Space Mono',monospace;font-size:.48rem;color:var(--muted);margin-top:.2rem;text-align:right;}
+.pm-msg.theirs .pm-msg-time{text-align:left;}
+.pm-input-row{display:flex;gap:.5rem;padding:.8rem 1rem;background:var(--dark2);border-top:1px solid var(--border);flex-shrink:0;}
+.pm-input{flex:1;background:var(--dark3);border:1px solid var(--border2);color:var(--text);padding:9px 12px;font-family:'Rajdhani',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;}
+.pm-input:focus{border-color:rgba(255,215,0,.35);}
+.btn-pm-send{background:var(--gold);color:#000;border:none;padding:9px 18px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-pm-send:hover{background:var(--orange);color:#fff;}
+.pm-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--muted);font-family:'Space Mono',monospace;font-size:.65rem;text-align:center;gap:.5rem;}
 
-.offer-list {
-  list-style: none;
-  margin-bottom: 12px;
-}
-.offer-list li {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-}
-.offer-list li::before {
-  content: "🎁";
-  margin-right: 10px;
-  font-size: 12px;
-}
+/* WL + CS STATUS STEPS */
+.status-steps{display:flex;align-items:center;gap:0;margin:1rem 0;overflow-x:auto;}
+.step{display:flex;align-items:center;gap:.3rem;font-family:'Space Mono',monospace;font-size:.55rem;white-space:nowrap;}
+.step-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--muted);background:transparent;flex-shrink:0;}
+.step-dot.done{background:var(--green);border-color:var(--green);}
+.step-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(255,215,0,.4);}
+.step-dot.denied{background:var(--red);border-color:var(--red);}
+.step-line{width:40px;height:1px;background:var(--border);flex-shrink:0;}
+.step-line.done{background:var(--green);}
+.step-label{color:var(--muted);}
+.step-label.done{color:var(--green);}
+.step-label.active{color:var(--gold);font-weight:700;}
+.step-label.denied{color:var(--red);}
 
-.offer-note {
-  font-size: 10px;
-  color: var(--muted);
-  font-style: italic;
-  line-height: 1.4;
-  border-top: 1px dashed rgba(255,255,255,0.1);
-  padding-top: 10px;
+/* IMPORT REQUEST */
+.import-req-card{background:var(--dark2);border:1px solid var(--border2);padding:1.2rem;margin-bottom:1px;}
+.import-req-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;}
+.import-req-type{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;}
+.import-req-type.goodside{color:var(--green);}
+.import-req-type.badside{color:var(--red);}
+.import-req-type.family{color:var(--purple);}
+
+/* DELAY BANNER */
+.delay-banner{background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.22);padding:1rem 1.2rem;margin-bottom:1.2rem;display:none;}
+.delay-banner.show{display:block;}
+.delay-timer{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);letter-spacing:3px;margin-top:.3rem;}
+
+/* ANNOUNCEMENTS */
+.announce-item{background:var(--dark2);border:1px solid var(--border2);border-left:3px solid var(--gold);padding:1.2rem;margin-bottom:.8rem;}
+.announce-tag{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:.3rem;}
+.announce-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:#E8E8F8;}
+.announce-text{font-size:.9rem;color:var(--muted2);line-height:1.6;margin-top:.4rem;}
+.announce-meta{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:.5rem;}
+
+/* FOOTER */
+.forum-footer{background:var(--dark2);border-top:1px solid var(--border);padding:1.5rem;text-align:center;font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:2px;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main-area{margin-left:0;}
+  .hamburger{display:flex;}
+  .feed-grid{grid-template-columns:1fr;}
+  .pm-layout{grid-template-columns:1fr;height:auto;}
+  .pm-list{display:none;}
+  .pm-list.show{display:block;}
+  .cs-schedule-grid{grid-template-columns:1fr;}
 }
-.offer-note strong { color: var(--red); font-weight: 800; }
-
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-/* ===== MOBILE OPTIMIZATION ===== */
-@media(max-width:768px){
-  .nav-inner{padding:12px 14px}
-  .logo{width:36px;height:36px}
-  .nav-title{font-size:13px}
-  .nav-right a{
-    padding:8px 12px;
-    font-size:10px;
-  }
-
-  .title{font-size:30px}
-  .subtitle{font-size:17px}
-  .wrapper{margin:26px auto;padding:14px}
-
-  .grid{gap:16px}
-  .card{padding:18px}
-  .copy-btn{padding:11px;font-size:11px}
-  
-  .exemusic-bar { gap: 8px; }
-  .music-text { font-size: 10px; }
+@media(max-width:600px){
+  .hero-title{font-size:1.8rem;}
+  .cat-row{grid-template-columns:auto 1fr;gap:.6rem;}
+  .cat-count,.cat-last{display:none;}
+  .content-area{padding:1rem;}
+  .modal{padding:1.5rem 1.2rem;}
+  .hero-stats{gap:1rem;}
 }
+@keyframes blinkdot{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
-
 <body>
 
-<div class="nav">
-  <div class="nav-inner">
-    <div class="nav-left">
-      <div class="logo"><img src="favicon.png"></div>
-      <div class="nav-title">EXECURIVE</div>
-    </div>
-    <div class="nav-right">
-      <a href="index.html" class="active">HOME</a>
-      <a href="listtopup.html">LIST TOPUP</a>
-    </div>
-  </div>
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">MIRACLE</div>
+  <div class="loader-bar"><div class="loader-prog"></div></div>
 </div>
 
-<div class="exemusic-bar">
-  <a href="https://execuriverp.github.io/exemusic" target="_blank" class="exemusic-content">
-    <div class="music-icon">♫</div>
-    <div class="music-text"><span>LIVE</span> Execurive Music Streaming - Dengarkan Musik Sekarang!</div>
-    <div class="btn-listen">OPEN</div>
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">INFO</div>
+  <div class="toast-msg" id="toastMsg"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#" class="nav-logo" onclick="showSection('home');return false;">
+    MIRACLE<span>RP</span>
+    <span class="nav-logo-tag">FORUM</span>
   </a>
-</div>
-
-<div class="wrapper">
-
-<div class="header">
-  <div class="title">EXECURIVE ROLEPLAY</div>
-  <div class="subtitle">BLUE CITY • SA-MP SERVER</div>
-  <div class="tagline">RP gampang, paket awal komplet, teman baru menanti</div>
-</div>
-
-<div class="section">
-<h3>SERVER INFORMATION</h3>
-<div class="grid">
-  <div class="card">
-    <div class="label">IP Baru</div>
-    <div class="value" id="ip">82.25.36.26:7008</div>
-    <button class="copy-btn" onclick="copyIP(this)">COPY IP</button>
-  </div>
-  <div class="card">
-    <div class="label">Server Status</div>
-    <div class="status"><div class="pulse"></div>ONLINE</div>
-  </div>
-  <div class="card">
-    <div class="label">Access System</div>
-    <div class="value">WHITELIST</div>
-  </div>
-   
-  <div class="card" onclick="openEidModal()" style="cursor: pointer;">
-    <div class="label">ExeEvent</div>
-    <div class="value">2026 EVENT</div>
-    <div class="status" style="margin-top:5px; font-size:11px; color:var(--muted);">
-       <span style="color:var(--green)">●</span> Click to Open
+  <div class="nav-right">
+    <div class="nav-user-info" id="navUser">
+      <button class="notif-btn" onclick="showSection('pm')" title="Pesan" style="position:relative;">
+        💬<span class="pm-badge-nav" id="pmBadgeNav">0</span>
+      </button>
+      <div class="nav-ava" id="navAvaBtn" onclick="openMyProfile()">👤</div>
+      <span class="nav-user-name" id="navUserName" onclick="openMyProfile()">-</span>
+      <button class="btn-nav" onclick="doLogout()">LOGOUT</button>
     </div>
+    <button class="btn-nav gold" id="btnNavLogin" onclick="openModal('modalLogin')">LOGIN</button>
+    <button class="hamburger" onclick="toggleSidebar()" id="hamburgerBtn">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  </div>
-</div>
+</nav>
 
-<div class="section">
-<h3>STARTER PACKAGE</h3>
-<div class="card starter">
-<ul>
-  <li>Starting Cash 100.000.000</li>
-  <li>Level Boost +4</li>
-  <li>Food & Drink x10</li>
-  <li>Roulette Spin x3</li>
-  <li>Vehicle (Sultan)</li>
-</ul>
-</div>
-</div>
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <!-- NAVIGASI -->
+  <div class="sb-section">Forum</div>
+  <button class="sb-item active" id="sb-home" onclick="showSection('home')"><span class="sb-item-icon">🏠</span> Beranda</button>
+  <button class="sb-item" id="sb-community" onclick="showSection('community')"><span class="sb-item-icon">💬</span> Community Feed</button>
+  <button class="sb-item" id="sb-announcements" onclick="showSection('announcements')"><span class="sb-item-icon">📢</span> Pengumuman</button>
 
-<div class="section">
-<h3>OFFICIAL CONNECTIONS</h3>
-<div class="grid">
-  <a class="link" href="https://whatsapp.com/channel/0029VbBkf1PG8l55jmrSqt3H" target="_blank">
-    <strong>Announcement Channel</strong>
-    <span>Official Info & Updates</span>
-  </a>
-  <a class="link" href="https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho" target="_blank">
-    <strong>Main Community</strong>
-    <span>Join Players & Chat</span>
-  </a>
-  <a class="link" href="https://chat.whatsapp.com/K8UI5fivjCoEwMc12uukTc" target="_blank">
-    <strong>Goodside Faction</strong>
-    <span>Government & Law Enforcement</span>
-  </a>
-  <a class="link" href="https://chat.whatsapp.com/LfUW71S6w8M6QbTAsO5skZ" target="_blank">
-    <strong>Badside Faction</strong>
-    <span>Criminal & Underground Roleplay</span>
-  </a>
-</div>
-</div>
+  <div class="sb-section">INFORMASI</div>
+  <button class="sb-item" id="sb-rules" onclick="showSection('rules')"><span class="sb-item-icon">📋</span> Rules Server</button>
+  <button class="sb-item" id="sb-guide-job" onclick="showSection('guide-job')"><span class="sb-item-icon">💼</span> Guide Job</button>
+  <button class="sb-item" id="sb-guide-goodside" onclick="showSection('guide-goodside')"><span class="sb-item-icon">🛡️</span> Guide Goodside</button>
+  <button class="sb-item" id="sb-guide-badside" onclick="showSection('guide-badside')"><span class="sb-item-icon">💀</span> Guide Badside</button>
 
-<div class="footer">© Execurive Roleplay — Blue City Roleplay Experience</div>
-</div>
+  <div class="sb-section">REQUEST</div>
+  <button class="sb-item" id="sb-wl" onclick="showSection('wl')"><span class="sb-item-icon">📝</span> Whitelist <span class="sb-badge" id="sbBadgeWL" style="display:none;">!</span></button>
+  <button class="sb-item" id="sb-req-cs" onclick="showSection('req-cs')"><span class="sb-item-icon">🎭</span> Request CS <span class="sb-badge" id="sbBadgeCS" style="display:none;">!</span></button>
+  <button class="sb-item" id="sb-req-import" onclick="showSection('req-import')"><span class="sb-item-icon">🚀</span> Request Import</button>
 
-<div class="loading" id="loading">
-  <div class="loading-box">
-    <div class="spinner"></div>
-    <div id="loading-text">Copying...</div>
+  <div class="sb-section">AKUN</div>
+  <button class="sb-item" id="sb-profile" onclick="showSection('profile')"><span class="sb-item-icon">👤</span> Profil Saya</button>
+  <button class="sb-item" id="sb-pm" onclick="showSection('pm')"><span class="sb-item-icon">✉️</span> Pesan Pribadi <span class="sb-badge" id="sbBadgePM" style="display:none;">0</span></button>
+
+  <div class="sb-divider"></div>
+  <button class="sb-item" id="sb-staff" onclick="showSection('staff')"><span class="sb-item-icon">⭐</span> Daftar Staff</button>
+  <button class="sb-item" id="sb-admin-panel" style="display:none;" onclick="window.location.href='admin.html'"><span class="sb-item-icon" style="color:var(--gold);">⚙️</span> <span style="color:var(--gold);">Admin Panel</span></button>
+
+  <div class="sb-stats">
+    <div class="sb-stat-row"><span><span class="online-dot"></span>Online</span><span class="sb-stat-val" id="sbOnline">-</span></div>
+    <div class="sb-stat-row"><span>Total Member</span><span class="sb-stat-val" id="sbMembers">-</span></div>
+    <div class="sb-stat-row"><span>Total WL</span><span class="sb-stat-val" id="sbWL">-</span></div>
   </div>
 </div>
 
-<div class="modal-overlay" id="eidModal">
-  <div class="modal-content">
-    <span class="modal-close" onclick="closeEidModal()">&times;</span>
-    
-    <div class="eid-title">MENUJU IDUL FITRI 1447 H</div>
-    <div class="timer-grid">
-      <div class="timer-item">
-        <span class="t-num" id="d-val">00</span>
-        <span class="t-label">Hari</span>
-      </div>
-      <div class="timer-item">
-        <span class="t-num" id="h-val">00</span>
-        <span class="t-label">Jam</span>
-      </div>
-      <div class="timer-item">
-        <span class="t-num" id="m-val">00</span>
-        <span class="t-label">Menit</span>
-      </div>
-      <div class="timer-item">
-        <span class="t-num" id="s-val">00</span>
-        <span class="t-label">Detik</span>
-      </div>
-    </div>
-    
-    <div style="font-size:11px; color:var(--muted); margin-bottom:20px;">
-      <span style="color:var(--green); font-weight:bold;">Mohon Maaf Lahir dan Batin</span>
-    </div>
+<!-- MAIN AREA -->
+<div class="main-area" id="mainArea">
 
-    <div class="special-offer-box">
-      <div class="offer-header">
-        EVENT STARTERPACK <span class="badge-now">NOW!</span>
-      </div>
-      <ul class="offer-list">
-        <li>Rumah Gratis (1x Claim)</li>
-        <li>Mobil Import Turismo</li>
-      </ul>
-      <div class="offer-note">
-        <strong>NOTE :</strong> Khusus warga baru. Tidak berlaku bagi yang sudah ambil starterpack biasa.
+<!-- ════════════ HOME ════════════ -->
+<div class="page-section active" id="sec-home">
+  <div class="content-area">
+    <div class="hero-banner">
+      <div class="hero-banner-grid"></div>
+      <div class="hero-banner-inner">
+        <div class="hero-title">MIRACLE<span>RP</span></div>
+        <div class="hero-sub">SAN ANDREAS MULTIPLAYER · COMMUNITY FORUM</div>
+        <div class="hero-ip">
+          <div><div class="hero-ip-label">SERVER IP</div><div class="hero-ip-val" id="heroIP">samp.miracle-rp.id:7777</div></div>
+          <button class="hero-ip-copy" onclick="copyIP()">COPY</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong id="hStatOnline">0</strong>Online</div>
+          <div class="hero-stat"><strong id="hStatMembers">0</strong>Member</div>
+          <div class="hero-stat"><strong id="hStatWL">0</strong>Whitelist</div>
+          <div class="hero-stat"><strong id="hStatFactions">0</strong>Fraksi</div>
+        </div>
+        <div class="hero-cta">
+          <a href="#" class="btn-hero gold" onclick="showSection('wl');return false;">DAFTAR WL</a>
+          <a href="#" class="btn-hero outline" onclick="showSection('rules');return false;">BACA RULES</a>
+          <a href="#" class="btn-hero outline" onclick="openWA();return false;">📱 WA GROUP</a>
+        </div>
       </div>
     </div>
 
+    <!-- KATEGORI FORUM -->
+    <div id="announcePreview"></div>
+
+    <!-- INFO & GUIDE -->
+    <div class="cat-section">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <div>
+          <div class="cat-title">📋 INFORMASI & PANDUAN</div>
+          <div class="cat-desc">Rules, guide job, goodside, badside, dan info server</div>
+        </div>
+        <span class="cat-arrow open">▼</span>
+      </div>
+      <div class="cat-body open">
+        <div class="cat-row" onclick="showSection('rules')">
+          <div class="cat-row-icon">📋</div>
+          <div><div class="cat-row-name">RULES SERVER <span class="cat-badge cb-red">WAJIB BACA</span></div><div class="cat-row-sub">Peraturan yang harus dipatuhi semua player</div></div>
+          <div class="cat-count"><strong>-</strong>Post</div>
+          <div class="cat-last"><div class="cat-last-title">Lihat Rules</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('guide-job')">
+          <div class="cat-row-icon">💼</div>
+          <div><div class="cat-row-name">GUIDE JOB <span class="cat-badge cb-blue">GUIDE</span></div><div class="cat-row-sub">Panduan semua pekerjaan di server</div></div>
+          <div class="cat-count"><strong>-</strong>Post</div>
+          <div class="cat-last"><div class="cat-last-title">Lihat Guide</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('guide-goodside')">
+          <div class="cat-row-icon">🛡️</div>
+          <div><div class="cat-row-name">GUIDE GOODSIDE <span class="cat-badge cb-green">LEGAL</span></div><div class="cat-row-sub">Panduan fraksi legal (LSPD, SAFD, dll)</div></div>
+          <div class="cat-count"><strong>-</strong>Post</div>
+          <div class="cat-last"><div class="cat-last-title">Lihat Guide</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('guide-badside')">
+          <div class="cat-row-icon">💀</div>
+          <div><div class="cat-row-name">GUIDE BADSIDE <span class="cat-badge cb-red">ILEGAL</span></div><div class="cat-row-sub">Panduan fraksi ilegal (Mafia, Gang, dll)</div></div>
+          <div class="cat-count"><strong>-</strong>Post</div>
+          <div class="cat-last"><div class="cat-last-title">Lihat Guide</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REQUEST -->
+    <div class="cat-section">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <div>
+          <div class="cat-title">🎯 REQUEST & PENDAFTARAN</div>
+          <div class="cat-desc">Whitelist, Character Story, Import Fraksi</div>
+        </div>
+        <span class="cat-arrow open">▼</span>
+      </div>
+      <div class="cat-body open">
+        <div class="cat-row" onclick="showSection('wl')">
+          <div class="cat-row-icon">📝</div>
+          <div><div class="cat-row-name">WHITELIST <span class="cat-badge cb-gold">WL</span></div><div class="cat-row-sub">Daftar untuk bergabung di MIRACLE RP</div></div>
+          <div class="cat-count"><strong id="wlCount">-</strong>Pending</div>
+          <div class="cat-last"><div class="cat-last-title">Form Pendaftaran</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('req-cs')">
+          <div class="cat-row-icon">🎭</div>
+          <div><div class="cat-row-name">REQUEST CHARACTER STORY <span class="cat-badge cb-purple">CS</span></div><div class="cat-row-sub">Buat karakter story IC untuk roleplaying</div></div>
+          <div class="cat-count"><strong id="csCount">-</strong>Pending</div>
+          <div class="cat-last"><div class="cat-last-title">Form CS</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('req-import')">
+          <div class="cat-row-icon">🚀</div>
+          <div><div class="cat-row-name">REQUEST IMPORT <span class="cat-badge cb-cyan">IMPORT</span></div><div class="cat-row-sub">Request masuk fraksi goodside/badside/family</div></div>
+          <div class="cat-count"><strong>-</strong>Req</div>
+          <div class="cat-last"><div class="cat-last-title">Form Import</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMUNITY -->
+    <div class="cat-section">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <div>
+          <div class="cat-title">💬 KOMUNITAS</div>
+          <div class="cat-desc">Feed, diskusi, dan aktivitas member</div>
+        </div>
+        <span class="cat-arrow open">▼</span>
+      </div>
+      <div class="cat-body open">
+        <div class="cat-row" onclick="showSection('community')">
+          <div class="cat-row-icon">💬</div>
+          <div><div class="cat-row-name">COMMUNITY FEED <span class="cat-badge cb-orange">AKTIF</span></div><div class="cat-row-sub">Post, foto, diskusi bebas member</div></div>
+          <div class="cat-count"><strong id="feedCount">-</strong>Post</div>
+          <div class="cat-last"><div class="cat-last-title">Lihat Feed</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('pm')">
+          <div class="cat-row-icon">✉️</div>
+          <div><div class="cat-row-name">PESAN PRIBADI <span class="cat-badge cb-blue">PM</span></div><div class="cat-row-sub">Chat private antar member</div></div>
+          <div class="cat-count"><strong id="pmCount">0</strong>Unread</div>
+          <div class="cat-last"><div class="cat-last-title">Buka PM</div></div>
+        </div>
+        <div class="cat-row" onclick="showSection('staff')">
+          <div class="cat-row-icon">⭐</div>
+          <div><div class="cat-row-name">DAFTAR STAFF <span class="cat-badge cb-gold">TEAM</span></div><div class="cat-row-sub">Kenali tim MIRACLE RP</div></div>
+          <div class="cat-count"><strong id="staffCount">-</strong>Staff</div>
+          <div class="cat-last"><div class="cat-last-title">Lihat Staff</div></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<script>
-function copyIP(btn){
-  document.getElementById("loading").style.display="flex";
-  setTimeout(()=>{
-    navigator.clipboard.writeText(document.getElementById("ip").innerText);
-    document.getElementById("loading").style.display="none";
-    btn.classList.add("copied");
-    btn.innerText="COPIED!";
-    setTimeout(()=>{
-      btn.classList.remove("copied");
-      btn.innerText="COPY IP";
-    },2000);
-  },400);
+<!-- ════════════ COMMUNITY FEED ════════════ -->
+<div class="page-section" id="sec-community">
+  <div class="content-area" style="max-width:1100px;">
+    <div class="section-title">COMMUNITY FEED <span class="section-badge">AKTIF</span></div>
+    <div class="feed-grid">
+      <div>
+        <!-- POST BOX -->
+        <div id="feedPostBox" style="display:none;" class="feed-post-box">
+          <textarea id="postContent" placeholder="Bagikan sesuatu ke community..." maxlength="1000"></textarea>
+          <div style="margin-top:.5rem;display:none;" id="imagePreviewWrap">
+            <div style="position:relative;display:inline-block;">
+              <img id="imagePreview" style="max-height:180px;max-width:100%;border:1px solid var(--border2);" src="" alt="">
+              <button onclick="clearImage()" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);border:none;color:#fff;cursor:pointer;padding:2px 6px;font-size:.7rem;">✕</button>
+            </div>
+          </div>
+          <div class="feed-post-footer">
+            <div class="feed-post-actions">
+              <button class="btn-attach" onclick="document.getElementById('imgInput').click()">📷 Foto</button>
+              <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="handleImageSelect(this)">
+            </div>
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span class="feed-hint" id="postCooldownHint"></span>
+              <button class="btn-post" id="btnPost" onclick="submitPost()">POST</button>
+            </div>
+          </div>
+        </div>
+        <div id="feedLoginHint" style="padding:1.2rem;background:var(--dark3);border:1px solid var(--border2);margin-bottom:.8rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);text-align:center;">
+          <span style="cursor:pointer;color:var(--gold);" onclick="openModal('modalLogin')">Login</span> untuk post di feed.
+        </div>
+
+        <!-- FEED LIST -->
+        <div id="feedList"></div>
+        <div id="feedLoading" style="text-align:center;padding:2rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat feed...</div>
+      </div>
+      <!-- SIDEBAR WIDGET -->
+      <div>
+        <div class="widget">
+          <div class="widget-title">👥 ONLINE SEKARANG</div>
+          <div id="onlineWidget">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);" id="wOnline">-</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);">Player di server</div>
+          </div>
+        </div>
+        <div class="widget">
+          <div class="widget-title">📊 STATISTIK</div>
+          <div class="widget-list-item"><span class="widget-dot"></span>Members: <strong id="wMembers" style="color:var(--gold);margin-left:.3rem;">-</strong></div>
+          <div class="widget-list-item"><span class="widget-dot"></span>Whitelist: <strong id="wWL" style="color:var(--gold);margin-left:.3rem;">-</strong></div>
+          <div class="widget-list-item"><span class="widget-dot"></span>Posts: <strong id="wPosts" style="color:var(--gold);margin-left:.3rem;">-</strong></div>
+        </div>
+        <div class="widget">
+          <div class="widget-title">🔗 QUICK LINKS</div>
+          <div class="widget-list-item" style="cursor:pointer;" onclick="showSection('wl')">📝 Daftar Whitelist</div>
+          <div class="widget-list-item" style="cursor:pointer;" onclick="showSection('req-cs')">🎭 Request CS</div>
+          <div class="widget-list-item" style="cursor:pointer;" onclick="showSection('rules')">📋 Rules Server</div>
+          <div class="widget-list-item" style="cursor:pointer;" onclick="openWA()">📱 WA Group</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ ANNOUNCEMENTS ════════════ -->
+<div class="page-section" id="sec-announcements">
+  <div class="content-area">
+    <div class="section-title">PENGUMUMAN <span class="section-badge">PENTING</span></div>
+    <div id="announceList">
+      <div style="text-align:center;padding:2rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat pengumuman...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ RULES ════════════ -->
+<div class="page-section" id="sec-rules">
+  <div class="content-area">
+    <div class="section-title">RULES SERVER <span class="section-badge">WAJIB BACA</span></div>
+    <div id="rulesList">
+      <div style="text-align:center;padding:2rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat rules...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ GUIDE JOB ════════════ -->
+<div class="page-section" id="sec-guide-job">
+  <div class="content-area">
+    <div class="section-title">GUIDE JOB <span class="section-badge">PANDUAN</span></div>
+    <div id="guideJobList">
+      <div style="text-align:center;padding:2rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat guide...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ GUIDE GOODSIDE ════════════ -->
+<div class="page-section" id="sec-guide-goodside">
+  <div class="content-area">
+    <div class="section-title">GUIDE GOODSIDE <span class="section-badge">LEGAL</span></div>
+    <div id="guideGoodsideList">
+      <div style="text-align:center;padding:2rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat guide...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ GUIDE BADSIDE ════════════ -->
+<div class="page-section" id="sec-guide-badside">
+  <div class="content-area">
+    <div class="section-title">GUIDE BADSIDE <span class="section-badge">ILEGAL</span></div>
+    <div id="guideBadsideList">
+      <div style="text-align:center;padding:2rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat guide...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ WHITELIST ════════════ -->
+<div class="page-section" id="sec-wl">
+  <div class="content-area">
+    <div class="section-title">WHITELIST <span class="section-badge">PENDAFTARAN</span></div>
+    <div id="wlGuestBox" style="display:none;background:var(--dark2);border:1px solid var(--border);padding:2.5rem;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">🔒</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);margin-bottom:.5rem;">LOGIN DULU</div>
+      <p style="color:var(--muted2);font-size:.9rem;margin-bottom:1.5rem;">Login untuk akses form pendaftaran whitelist.</p>
+      <button class="btn-hero gold" onclick="openModal('modalLogin')">LOGIN / DAFTAR</button>
+    </div>
+    <div id="wlUserBox" style="display:none;">
+      <!-- STATUS WL -->
+      <div id="wlStatusWrap">
+        <!-- Injected by JS -->
+      </div>
+      <div id="wlFormWrap">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;background:var(--dark2);border:1px solid var(--border);padding:2rem;" id="wlFormGrid">
+          <div>
+            <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;margin-bottom:.8rem;color:#E8E8F8;">CARA BERGABUNG</h3>
+            <p style="color:var(--muted2);line-height:1.85;font-size:.92rem;margin-bottom:1rem;">Isi form di samping, admin akan menghubungi via <strong style="color:var(--green)">WhatsApp</strong> dalam 1×24 jam.</p>
+            <div style="background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.18);padding:1rem;margin-bottom:1rem;display:flex;gap:.8rem;align-items:center;">
+              <span style="font-size:1.8rem;">📱</span>
+              <div><strong style="font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:2px;color:var(--green);display:block;">WHATSAPP ONLY</strong><span style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);">Verifikasi via WA — cepat & aman</span></div>
+            </div>
+            <div style="margin-bottom:.8rem;">
+              <span class="cat-badge cb-gold">✓ Account ID</span>
+              <span class="cat-badge cb-gold">✓ Tutorial Join</span>
+              <span class="cat-badge cb-green">✓ Starter Kit</span>
+              <span class="cat-badge cb-green">✓ WA Group</span>
+            </div>
+          </div>
+          <div>
+            <div class="form-group"><label class="form-label">Nama IG (Format: Nama_Belakang)</label><input type="text" class="form-input" id="fName" placeholder="Contoh: John_Doe"></div>
+            <div class="form-group"><label class="form-label">Nomor WhatsApp Aktif</label><input type="text" class="form-input" id="fWA" placeholder="08xxxxxxxxxx"></div>
+            <div class="form-group"><label class="form-label">Umur</label><input type="number" class="form-input" id="fAge" placeholder="17" min="15" max="60"></div>
+            <div class="form-group"><label class="form-label">Pilih Fraksi Minat</label>
+              <select class="form-input" id="fFaction">
+                <option value="">-- Pilih Fraksi --</option>
+                <option>Los Santos Police Department</option>
+                <option>San Andreas Fire Department</option>
+                <option>Los Santos Mafia</option>
+                <option>Grove Street Families</option>
+                <option>Ballas Gang</option>
+                <option>Los Santos Vagos</option>
+                <option>Civilian (Sipil)</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Pengalaman Roleplay</label>
+              <select class="form-input" id="fExp">
+                <option value="pemula">Pemula (Baru Mulai)</option>
+                <option value="menengah">Menengah (1-2 Tahun)</option>
+                <option value="veteran">Veteran (3+ Tahun)</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Alasan Bergabung</label><textarea class="form-input" id="fReason" rows="3" placeholder="Ceritakan alasanmu bergabung..."></textarea></div>
+            <button class="btn-submit" id="btnSubmitWL" onclick="submitWL()">KIRIM PENDAFTARAN 📱</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ REQUEST CS ════════════ -->
+<div class="page-section" id="sec-req-cs">
+  <div class="content-area">
+    <div class="section-title">REQUEST CHARACTER STORY <span class="section-badge">CS</span></div>
+    <div id="csGuestBox" style="display:none;background:var(--dark2);border:1px solid var(--border);padding:2.5rem;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">🔒</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);margin-bottom:.5rem;">LOGIN DULU</div>
+      <p style="color:var(--muted2);font-size:.9rem;margin-bottom:1.5rem;">Login untuk akses form Request CS.</p>
+      <button class="btn-hero gold" onclick="openModal('modalLogin')">LOGIN</button>
+    </div>
+    <div id="csUserBox" style="display:none;">
+      <div id="csStatusWrap"></div>
+      <!-- INFO BOX -->
+      <div class="cs-req-wrap" id="csFormWrap">
+        <div class="cs-info-box">
+          <div class="cs-info-title">APA ITU CHARACTER STORY (CS)?</div>
+          <div class="cs-info-text">Character Story (CS) adalah cerita latar belakang karakter yang kamu mainkan di server roleplay. CS menjelaskan siapa karakter kamu, bagaimana kehidupannya sebelum masuk ke server, kepribadian, tujuan hidup, serta alasan mengapa ia berada di kota ini. CS bukan sekadar formalitas, tetapi menjadi pondasi utama dalam membangun roleplay karakter kamu.
+<br><br>CS yang baik harus ditulis secara IC (In Character), rapi, dan masuk akal. Hindari cerita yang berlebihan seperti langsung kaya, mantan bos mafia besar, atau memiliki kemampuan yang tidak realistis. Roleplay menekankan proses perkembangan karakter, bukan hasil instan sejak awal.
+<br><br>Saat menulis CS, gunakan bahasa yang sopan, runtut, dan mudah dipahami. Ceritakan latar belakang keluarga, kehidupan sehari-hari, pendidikan atau pekerjaan, serta tujuan karakter di masa depan. Semakin rapi dan realistis cerita yang kamu buat, semakin besar kemungkinan Character Story kamu diterima dengan cepat.</div>
+          <!-- JADWAL -->
+          <div style="margin-top:1rem;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:2px;color:var(--gold);margin-bottom:.5rem;">📅 JADWAL REQUEST CS</div>
+            <div class="cs-schedule-grid">
+              <div class="cs-schedule-item"><div class="cs-schedule-day">SENIN – KAMIS</div><div class="cs-schedule-time">17:00 – 20:00 WIB</div></div>
+              <div class="cs-schedule-item"><div class="cs-schedule-day">JUMAT – SABTU</div><div class="cs-schedule-time">06:00 – 10:00 (KRS SEMENTA)<br>13:00 – 15:00 WIB</div></div>
+              <div class="cs-schedule-item"><div class="cs-schedule-day">MINGGU</div><div class="cs-schedule-time">06:00 – 10:00 (KRS SEMENTA)<br>13:00 – 15:00 WIB</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OUTSIDE HOURS WARNING - injected by JS -->
+        <div id="csOutsideHours" class="cs-outside-hours" style="display:none;">
+          <div style="font-size:1.5rem;margin-bottom:.5rem;">⏰</div>
+          <p>Request CS hanya bisa dilakukan pada jam yang ditentukan.</p>
+          <p style="margin-top:.3rem;font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);">Cek jadwal di atas dan coba kembali saat jam request dibuka.</p>
+        </div>
+
+        <!-- CS FORM -->
+        <div id="csFormFields">
+          <div class="form-group"><label class="form-label">Character Name</label><input type="text" class="form-input" id="csName" placeholder="Nama karakter IC"></div>
+          <div class="form-group"><label class="form-label">Age (Umur Karakter)</label><input type="number" class="form-input" id="csAge" placeholder="Contoh: 25" min="15" max="80"></div>
+          <div class="form-group"><label class="form-label">Level</label><input type="number" class="form-input" id="csLevel" placeholder="Level karakter kamu" min="1"></div>
+          <div class="form-group"><label class="form-label">Screenshot/Stats (URL atau deskripsi)</label><input type="text" class="form-input" id="csScreenshot" placeholder="Link screenshot atau deskripsi stats..."></div>
+          <div class="form-group"><label class="form-label">Story (Cerita IC)</label><textarea class="form-input" id="csStory" rows="8" placeholder="Tulis cerita latar belakang karakter kamu secara IC...&#10;&#10;Contoh: Lahir di Jakarta, anak ke-2 dari 3 bersaudara..."></textarea></div>
+          <button class="btn-submit" id="btnSubmitCS" onclick="submitCS()">KIRIM REQUEST CS 🎭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ REQUEST IMPORT ════════════ -->
+<div class="page-section" id="sec-req-import">
+  <div class="content-area">
+    <div class="section-title">REQUEST IMPORT <span class="section-badge">FRAKSI</span></div>
+    <div id="importGuestBox" style="display:none;background:var(--dark2);border:1px solid var(--border);padding:2.5rem;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">🔒</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);margin-bottom:.5rem;">LOGIN DULU</div>
+      <button class="btn-hero gold" onclick="openModal('modalLogin')">LOGIN</button>
+    </div>
+    <div id="importUserBox" style="display:none;">
+      <div id="importStatusWrap"></div>
+      <div style="background:var(--dark2);border:1px solid var(--border);padding:2rem;">
+        <div style="margin-bottom:1.2rem;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:#E8E8F8;margin-bottom:.6rem;">JENIS IMPORT</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;" id="importTypeSelect">
+            <button class="cat-badge cb-green" style="padding:6px 14px;cursor:pointer;font-size:.6rem;border:1px solid rgba(37,211,102,.4);" onclick="selectImportType(this,'goodside')">🛡️ GOODSIDE</button>
+            <button class="cat-badge cb-red" style="padding:6px 14px;cursor:pointer;font-size:.6rem;border:1px solid rgba(230,57,70,.4);" onclick="selectImportType(this,'badside')">💀 BADSIDE</button>
+            <button class="cat-badge cb-purple" style="padding:6px 14px;cursor:pointer;font-size:.6rem;border:1px solid rgba(180,100,255,.4);" onclick="selectImportType(this,'family')">👨‍👩‍👧 FAMILY</button>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Nama IC</label><input type="text" class="form-input" id="impICName" placeholder="Nama IC karakter kamu"></div>
+        <div class="form-group"><label class="form-label">Fraksi / Keluarga Yang Dituju</label><input type="text" class="form-input" id="impTarget" placeholder="Contoh: Los Santos Police Department / Familia Martinez"></div>
+        <div class="form-group"><label class="form-label">Level Karakter</label><input type="number" class="form-input" id="impLevel" placeholder="Level karakter" min="1"></div>
+        <div class="form-group"><label class="form-label">Alasan Request Import</label><textarea class="form-input" id="impReason" rows="4" placeholder="Jelaskan alasan ingin import ke fraksi/keluarga ini..."></textarea></div>
+        <button class="btn-submit" id="btnSubmitImport" onclick="submitImport()">KIRIM REQUEST IMPORT 🚀</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PROFIL ════════════ -->
+<div class="page-section" id="sec-profile">
+  <div class="content-area">
+    <div id="profileGuestBox" style="display:none;background:var(--dark2);border:1px solid var(--border);padding:2.5rem;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">👤</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);margin-bottom:.5rem;">LOGIN UNTUK LIHAT PROFIL</div>
+      <button class="btn-hero gold" onclick="openModal('modalLogin')">LOGIN</button>
+    </div>
+    <div id="profileUserBox" style="display:none;">
+      <div class="profile-banner">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,215,0,.05),transparent 70%);"></div>
+      </div>
+      <div class="profile-info-bar">
+        <div class="profile-ava-big" id="profileAvaBig">👤</div>
+        <div>
+          <div class="profile-name-big" id="profileNameBig">-</div>
+          <div class="profile-meta-row">
+            <span id="profileRoleBadge"></span>
+            <span style="color:var(--muted);">|</span>
+            <span>IC: <strong id="profileICName" style="color:var(--gold);">-</strong></span>
+            <span style="color:var(--muted);">|</span>
+            <span id="profileWLBadge"></span>
+            <span style="color:var(--muted);">|</span>
+            <span>Joined: <strong id="profileJoined" style="color:var(--muted2);">-</strong></span>
+          </div>
+        </div>
+        <div style="margin-left:auto;">
+          <button class="btn-nav" onclick="openPMToUser(currentUser?.uid)" style="display:none;" id="btnProfilePM">💬 PM</button>
+        </div>
+      </div>
+      <div class="profile-stat-grid">
+        <div class="profile-stat-box"><div class="profile-stat-num" id="profileStatPosts">0</div><div class="profile-stat-label">Posts</div></div>
+        <div class="profile-stat-box"><div class="profile-stat-num" id="profileStatLikes">0</div><div class="profile-stat-label">Likes</div></div>
+        <div class="profile-stat-box"><div class="profile-stat-num" id="profileStatComments">0</div><div class="profile-stat-label">Comments</div></div>
+        <div class="profile-stat-box"><div class="profile-stat-num" id="profileStatActivity">-</div><div class="profile-stat-label">Aktivitas</div></div>
+      </div>
+      <div style="background:var(--dark2);border:1px solid var(--border);border-top:none;padding:1.2rem;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:3px;color:var(--gold);margin-bottom:.8rem;">POSTINGAN TERAKHIR</div>
+        <div id="profileFeed"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PRIVATE MESSAGE ════════════ -->
+<div class="page-section" id="sec-pm">
+  <div style="padding:1.5rem 1.5rem 0;">
+    <div class="section-title">PESAN PRIBADI <span class="section-badge">PM</span></div>
+  </div>
+  <div style="padding:0 1.5rem 1.5rem;">
+    <div id="pmGuestBox" style="display:none;background:var(--dark2);border:1px solid var(--border);padding:2.5rem;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">✉️</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);margin-bottom:.5rem;">LOGIN UNTUK MENGAKSES PM</div>
+      <button class="btn-hero gold" onclick="openModal('modalLogin')">LOGIN</button>
+    </div>
+    <div id="pmUserBox" style="display:none;">
+      <div class="pm-layout">
+        <div class="pm-list" id="pmListPanel">
+          <div class="pm-list-header">
+            💬 PESAN
+            <button class="btn-attach" onclick="openNewPMModal()" style="float:right;padding:3px 8px;">+ Baru</button>
+          </div>
+          <div id="pmConvoList">
+            <div style="padding:1rem;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);text-align:center;">Belum ada pesan.</div>
+          </div>
+        </div>
+        <div class="pm-chat" id="pmChatPanel">
+          <div class="pm-empty" id="pmEmptyState">
+            <div style="font-size:2rem;">✉️</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;color:var(--muted);">PILIH PERCAKAPAN</div>
+            <div style="font-size:.6rem;">atau mulai percakapan baru</div>
+          </div>
+          <div id="pmActiveChatWrap" style="display:none;display:flex;flex-direction:column;height:100%;">
+            <div class="pm-chat-header">
+              <div class="pm-item-ava" id="pmChatAva">👤</div>
+              <div class="pm-chat-name" id="pmChatName">-</div>
+            </div>
+            <div class="pm-messages" id="pmMessages"></div>
+            <div class="pm-input-row">
+              <input class="pm-input" id="pmInput" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendPM()}">
+              <button class="btn-pm-send" onclick="sendPM()">KIRIM</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ STAFF ════════════ -->
+<div class="page-section" id="sec-staff">
+  <div class="content-area">
+    <div class="section-title">DAFTAR STAFF <span class="section-badge">TEAM</span></div>
+    <div id="staffGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);">
+      <div style="padding:2rem;text-align:center;background:var(--dark2);grid-column:1/-1;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Memuat...</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="forum-footer">
+  MIRACLE RP · COMMUNITY FORUM · SAN ANDREAS MULTIPLAYER INDONESIA<br>
+  <span style="color:rgba(90,90,114,.4);">© 2024 MIRACLE RP. ALL RIGHTS RESERVED.</span>
+</footer>
+
+</div><!-- end main-area -->
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="modalLogin">
+  <div class="modal" style="max-width:360px;text-align:center;">
+    <button class="modal-close" onclick="closeModal('modalLogin')">✕</button>
+    <div style="font-size:2rem;margin-bottom:.8rem;">🎮</div>
+    <div class="modal-title">MASUK AKUN</div>
+    <div class="modal-sub">Login dengan Google untuk akses semua fitur forum.</div>
+    <div class="auth-error" id="authError"></div>
+    <button class="btn-google" onclick="doGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      LANJUTKAN DENGAN GOOGLE
+    </button>
+    <p style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:1rem;line-height:1.7;">Akun baru otomatis terdaftar saat pertama login.</p>
+  </div>
+</div>
+
+<!-- NEW PM MODAL -->
+<div class="overlay" id="modalNewPM">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('modalNewPM')">✕</button>
+    <div class="modal-title">PESAN BARU</div>
+    <div class="modal-sub">Kirim pesan ke member lain.</div>
+    <div class="form-group">
+      <label class="form-label">Username / Nama IC Penerima</label>
+      <input type="text" class="form-input" id="pmTargetInput" placeholder="Ketik username...">
+    </div>
+    <div id="pmUserSuggest" style="background:var(--dark3);border:1px solid var(--border2);display:none;max-height:150px;overflow-y:auto;"></div>
+    <div class="form-group" style="margin-top:.8rem;">
+      <label class="form-label">Pesan</label>
+      <textarea class="form-input" id="pmInitMsg" rows="3" placeholder="Tulis pesan..."></textarea>
+    </div>
+    <button class="btn-submit" onclick="sendNewPM()">KIRIM PESAN</button>
+  </div>
+</div>
+
+<!-- PROFILE VIEW MODAL -->
+<div class="overlay" id="modalProfileView">
+  <div class="modal" style="max-width:500px;">
+    <button class="modal-close" onclick="closeModal('modalProfileView')">✕</button>
+    <div id="profileViewBody"></div>
+  </div>
+</div>
+
+<!-- IMAGE VIEWER MODAL -->
+<div class="overlay" id="modalImageView" onclick="closeModal('modalImageView')">
+  <div style="max-width:90vw;max-height:90vh;position:relative;">
+    <img id="imgViewerSrc" style="max-width:90vw;max-height:85vh;object-fit:contain;display:block;" src="" alt="">
+    <button onclick="closeModal('modalImageView')" style="position:absolute;top:-30px;right:0;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">✕</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue, get, set, update, remove, query, orderByChild, limitToLast, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD5JGQ3eARM5Lo2IG3mkpdx7p3uh0nrBIk",
+  authDomain: "samp-miracle.firebaseapp.com",
+  projectId: "samp-miracle",
+  storageBucket: "samp-miracle.firebasestorage.app",
+  messagingSenderId: "465126706451",
+  appId: "1:465126706451:web:b94f2359a348ff7078dee6",
+  measurementId: "G-ZCRVX5DCPR",
+  databaseURL: "https://samp-miracle-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+let currentUser = null;
+let currentUserData = null;
+let selectedImportType = 'goodside';
+let currentPMTarget = null;
+let activePMConvoId = null;
+let pendingImageBase64 = null;
+
+const STAFF_ROLES = ['volunteer','juniorhelper','seniorhelper','junioradmin','senioradmin','management','communityhandle','moderator','admin','headadmin','developer','owner'];
+const POST_COOLDOWN = 60 * 60 * 1000; // 1 jam
+
+// ── LOADER ──
+window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hide'), 1200));
+
+// ── TOAST ──
+window.showToast = function(title, msg, type='info', dur=3500) {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + type;
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+};
+
+// ── CONFIG ──
+let waNumber = '62895329018240';
+let waGroup = 'https://chat.whatsapp.com/FFOolIdTvljDznFn2zWbho';
+
+window.openModal = id => document.getElementById(id).classList.add('open');
+window.closeModal = id => document.getElementById(id).classList.remove('open');
+window.openWA = () => window.open(waGroup || `https://wa.me/${waNumber}`, '_blank');
+window.copyIP = () => { navigator.clipboard.writeText(document.getElementById('heroIP').textContent); showToast('COPIED!','Server IP disalin.','success'); };
+window.toggleSidebar = () => document.getElementById('sidebar').classList.toggle('open');
+
+function timeAgo(ts) {
+  const d = Date.now() - ts, m = Math.floor(d/60000);
+  if (m < 1) return 'baru saja';
+  if (m < 60) return `${m} menit lalu`;
+  const h = Math.floor(m/60);
+  if (h < 24) return `${h} jam lalu`;
+  return `${Math.floor(h/24)} hari lalu`;
 }
 
-// ===== EID MODAL LOGIC =====
-function openEidModal() {
-    document.getElementById('eidModal').style.display = 'flex';
-}
-function closeEidModal() {
-    document.getElementById('eidModal').style.display = 'none';
+function fmtDate(ts) {
+  if (!ts) return '-';
+  return new Date(ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
 }
 
-// Close when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('eidModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
+function escHtml(t) {
+  return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ── SECTION NAVIGATION ──
+window.showSection = function(name) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById('sec-' + name);
+  if (sec) sec.classList.add('active');
+  const sb = document.getElementById('sb-' + name);
+  if (sb) sb.classList.add('active');
+  // Close sidebar on mobile
+  if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+  // Section-specific init
+  if (name === 'community') initFeedSection();
+  if (name === 'pm') initPMSection();
+  if (name === 'profile') initProfileSection();
+  if (name === 'staff') loadStaffSection();
+  if (name === 'announcements') loadAnnouncementsSection();
+  if (name === 'rules') loadGuideSection('rules', 'rulesList');
+  if (name === 'guide-job') loadGuideSection('guide_job', 'guideJobList');
+  if (name === 'guide-goodside') loadGuideSection('guide_goodside', 'guideGoodsideList');
+  if (name === 'guide-badside') loadGuideSection('guide_badside', 'guideBadsideList');
+};
+
+window.toggleCat = function(el) {
+  const body = el.nextElementSibling;
+  const arrow = el.querySelector('.cat-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+};
+
+// ── GOOGLE LOGIN ──
+window.doGoogleLogin = async function() {
+  const errEl = document.getElementById('authError');
+  errEl.classList.remove('show');
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const snap = await get(ref(db, 'users/' + user.uid));
+    if (!snap.exists()) {
+      const username = user.displayName || user.email.split('@')[0];
+      await set(ref(db, 'users/' + user.uid), {
+        username, email: user.email, uid: user.uid,
+        photoURL: user.photoURL || '', role: 'user',
+        status: 'active', createdAt: Date.now()
+      });
+      writeLog('AUTH', `User baru: ${username} (${user.email})`);
     }
+    closeModal('modalLogin');
+    showToast('LOGIN BERHASIL!', 'Selamat datang 👋', 'success');
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      errEl.textContent = 'Login gagal: ' + e.message;
+      errEl.classList.add('show');
+    }
+  }
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+  showToast('LOGOUT', 'Kamu telah keluar.', 'info');
+};
+
+// ── AUTH STATE ──
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  const navUser = document.getElementById('navUser');
+  const btnLogin = document.getElementById('btnNavLogin');
+
+  if (user) {
+    btnLogin.style.display = 'none';
+    navUser.classList.add('show');
+    document.getElementById('sbBadgeWL').style.display = 'none';
+    document.getElementById('sbBadgeCS').style.display = 'none';
+
+    onValue(ref(db, 'users/' + user.uid), snap => {
+      if (!snap.exists()) return;
+      currentUserData = snap.val();
+      const displayName = currentUserData.wlStatus === 'accepted' && currentUserData.wlName
+        ? currentUserData.wlName : currentUserData.username || 'User';
+      document.getElementById('navUserName').textContent = displayName;
+
+      // Avatar
+      const avaEl = document.getElementById('navAvaBtn');
+      if (currentUserData.photoURL) {
+        avaEl.innerHTML = `<img src="${currentUserData.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      } else {
+        avaEl.textContent = displayName[0].toUpperCase();
+      }
+
+      // Admin panel link
+      if (STAFF_ROLES.includes(currentUserData.role)) {
+        document.getElementById('sb-admin-panel').style.display = 'flex';
+      }
+
+      // Update guest/user boxes
+      updateAuthBoxes();
+      // Load WL status + CS status
+      checkWLStatus();
+      checkCSStatus();
+      checkImportStatus();
+      loadUnreadPM();
+    });
+  } else {
+    currentUserData = null;
+    btnLogin.style.display = '';
+    navUser.classList.remove('show');
+    document.getElementById('sb-admin-panel').style.display = 'none';
+    updateAuthBoxes();
+  }
+});
+
+function updateAuthBoxes() {
+  const loggedIn = !!currentUser;
+  // WL
+  document.getElementById('wlGuestBox').style.display = loggedIn ? 'none' : 'block';
+  document.getElementById('wlUserBox').style.display = loggedIn ? 'block' : 'none';
+  // CS
+  document.getElementById('csGuestBox').style.display = loggedIn ? 'none' : 'block';
+  document.getElementById('csUserBox').style.display = loggedIn ? 'block' : 'none';
+  // Import
+  document.getElementById('importGuestBox').style.display = loggedIn ? 'none' : 'block';
+  document.getElementById('importUserBox').style.display = loggedIn ? 'block' : 'none';
+  // Profile
+  document.getElementById('profileGuestBox').style.display = loggedIn ? 'none' : 'block';
+  document.getElementById('profileUserBox').style.display = loggedIn ? 'block' : 'none';
+  // PM
+  document.getElementById('pmGuestBox').style.display = loggedIn ? 'none' : 'block';
+  document.getElementById('pmUserBox').style.display = loggedIn ? 'block' : 'none';
+  // Feed
+  document.getElementById('feedPostBox').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('feedLoginHint').style.display = loggedIn ? 'none' : 'block';
 }
 
-// ===== COUNTDOWN LOGIC =====
-// Atur Tanggal Idul Fitri di bawah ini (Format: Month Day, Year Time)
-const eidDate = new Date("March 20, 2026 00:00:00").getTime(); 
+// ── WRITE LOG ──
+function writeLog(type, msg) {
+  push(ref(db, 'logs'), { type, msg, ts: Date.now() }).catch(()=>{});
+}
 
-const timer = setInterval(function() {
-    const now = new Date().getTime();
-    const distance = eidDate - now;
+// ─────────────────────────
+// ── WHITELIST ──
+// ─────────────────────────
+function checkWLStatus() {
+  if (!currentUser || !currentUserData) return;
+  const wrap = document.getElementById('wlStatusWrap');
+  const formWrap = document.getElementById('wlFormWrap');
+  const ud = currentUserData;
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  wrap.innerHTML = '';
 
-    document.getElementById("d-val").innerText = days < 10 ? "0" + days : days;
-    document.getElementById("h-val").innerText = hours < 10 ? "0" + hours : hours;
-    document.getElementById("m-val").innerText = minutes < 10 ? "0" + minutes : minutes;
-    document.getElementById("s-val").innerText = seconds < 10 ? "0" + seconds : seconds;
-}, 1000);
+  if (ud.status === 'banned') {
+    wrap.innerHTML = `<div style="background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.2);padding:1rem 1.2rem;margin-bottom:1.2rem;">
+      <p style="font-family:'Space Mono',monospace;font-size:.65rem;color:#F07070;">🚫 AKUN DIBANNED — Hubungi admin jika ada pertanyaan.</p>
+      <p style="font-size:.75rem;color:var(--muted2);margin-top:.3rem;">Alasan: ${ud.banReason || '-'}</p>
+    </div>`;
+    formWrap.style.opacity = '.3';
+    formWrap.style.pointerEvents = 'none';
+    return;
+  }
+
+  if (ud.wlStatus === 'accepted') {
+    wrap.innerHTML = `<div style="background:rgba(37,211,102,.06);border:1px solid rgba(37,211,102,.2);padding:1rem 1.2rem;margin-bottom:1.2rem;">
+      <p style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--green);">✅ KAMU SUDAH WHITELIST — Selamat bergabung di MIRACLE RP!</p>
+      <p style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted2);margin-top:.3rem;">Nama IC: <strong style="color:var(--gold);">${ud.wlName || '-'}</strong></p>
+      ${renderWLSteps('accepted')}
+    </div>`;
+    formWrap.style.opacity = '.3';
+    formWrap.style.pointerEvents = 'none';
+    return;
+  }
+
+  if (ud.wlStatus === 'pending') {
+    const lastSubmit = ud.lastWLSubmit || 0;
+    const diff = 24 * 60 * 60 * 1000 - (Date.now() - lastSubmit);
+    // Status "proses" artinya sudah dikirim via WA, nunggu balasan
+    const isProcess = ud.wlProcess === true;
+    wrap.innerHTML = `<div class="delay-banner show">
+      <p style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--orange);">⏳ ${isProcess ? 'SEDANG DIPROSES — Admin sudah kirim via WA' : 'PENDAFTARAN TERKIRIM — Menunggu konfirmasi staff'}</p>
+      ${renderWLSteps(isProcess ? 'process' : 'pending')}
+      ${diff > 0 && !isProcess ? `<div class="delay-timer" id="delayTimer">--:--:--</div>` : ''}
+      ${isProcess ? '<p style="font-family:\'Space Mono\',monospace;font-size:.6rem;color:var(--muted2);margin-top:.5rem;">⚠ Tidak membalas WA dalam 24 jam → otomatis ditolak</p>' : ''}
+    </div>`;
+    if (diff > 0 && !isProcess) startDelayTimer(diff);
+    formWrap.style.opacity = '.5';
+    formWrap.style.pointerEvents = 'none';
+    return;
+  }
+
+  if (ud.wlStatus === 'rejected') {
+    wrap.innerHTML = `<div style="background:rgba(230,57,70,.06);border:1px solid rgba(230,57,70,.2);padding:1rem 1.2rem;margin-bottom:1.2rem;">
+      <p style="font-family:'Space Mono',monospace;font-size:.65rem;color:#F07070;">❌ PENDAFTARAN DITOLAK — Kamu bisa daftar ulang.</p>
+      ${renderWLSteps('rejected')}
+    </div>`;
+    formWrap.style.opacity = '';
+    formWrap.style.pointerEvents = '';
+    return;
+  }
+
+  formWrap.style.opacity = '';
+  formWrap.style.pointerEvents = '';
+}
+
+function renderWLSteps(current) {
+  const steps = ['pending','process','accepted'];
+  const stepsLabel = ['Terkirim','Diproses','Diterima'];
+  const isDenied = current === 'rejected';
+  let html = '<div class="status-steps" style="margin-top:.7rem;">';
+  steps.forEach((s, i) => {
+    const isPast = steps.indexOf(current) > i;
+    const isCurr = current === s || (isDenied && s === 'pending');
+    const isDen = isDenied && s === 'accepted';
+    const dotClass = isDen ? 'denied' : (isPast || (current==='accepted') ? 'done' : (isCurr ? 'active' : ''));
+    const lblClass = isDen ? 'denied' : (isPast || (current==='accepted') ? 'done' : (isCurr ? 'active' : ''));
+    html += `<div class="step"><span class="step-dot ${dotClass}"></span><span class="step-label ${lblClass}">${stepsLabel[i]}</span></div>`;
+    if (i < steps.length - 1) html += `<div class="step-line ${isPast || (current==='accepted' && i<2) ? 'done' : ''}"></div>`;
+  });
+  if (isDenied) html += ' <span class="step-label denied" style="margin-left:.5rem;">❌ Ditolak</span>';
+  html += '</div>';
+  return html;
+}
+
+function startDelayTimer(ms) {
+  const el = document.getElementById('delayTimer');
+  if (!el) return;
+  const tick = () => {
+    const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000), s = Math.floor((ms%60000)/1000);
+    if (el) el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    ms -= 1000;
+    if (ms > 0) setTimeout(tick, 1000);
+    else if (el) el.textContent = 'Menunggu konfirmasi staff';
+  };
+  tick();
+}
+
+window.submitWL = async function() {
+  if (!currentUser || !currentUserData) return showToast('ERROR','Login terlebih dahulu.','error');
+  if (currentUserData.status === 'banned') return;
+  const name = document.getElementById('fName').value.trim();
+  const wa = document.getElementById('fWA').value.trim();
+  const age = document.getElementById('fAge').value;
+  const faction = document.getElementById('fFaction').value;
+  const exp = document.getElementById('fExp').value;
+  const reason = document.getElementById('fReason').value.trim();
+  if (!name || !wa || !age || !reason) return showToast('⚠ TIDAK LENGKAP','Isi semua field.','error');
+  if (!/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(name)) return showToast('⚠ FORMAT SALAH','Gunakan format Nama_Belakang','error');
+  if (!/^0[0-9]{9,12}$/.test(wa)) return showToast('⚠ NOMOR WA','Format: 08xxxxxxxxxx','error');
+  const btn = document.getElementById('btnSubmitWL');
+  btn.disabled = true; btn.textContent = 'MENGIRIM...';
+  try {
+    const now = Date.now();
+    await set(ref(db, 'registrations/' + currentUser.uid), {
+      uid: currentUser.uid, username: currentUserData.username, email: currentUserData.email,
+      name, wa, age: parseInt(age), faction, exp, reason, status: 'pending', submittedAt: now
+    });
+    await update(ref(db, 'users/' + currentUser.uid), {
+      wlStatus: 'pending', lastWLSubmit: now, wlName: name, wlWA: wa
+    });
+    writeLog('WL', `Pendaftaran WL baru: ${name} | WA: ${wa} | oleh ${currentUserData.username}`);
+    showToast('TERKIRIM!','Admin akan menghubungi via WA dalam 24 jam.','success');
+    btn.textContent = 'SUDAH DIKIRIM ✓';
+  } catch(e) {
+    showToast('ERROR','Gagal mengirim.','error');
+    btn.disabled = false;
+    btn.textContent = 'KIRIM PENDAFTARAN 📱';
+  }
+};
+
+// ─────────────────────────
+// ── CS REQUEST ──
+// ─────────────────────────
+function isCSOpen() {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun, 1=Mon...6=Sat
+  const h = now.getHours(), m = now.getMinutes();
+  const t = h * 60 + m;
+  // Senin-Kamis (1-4): 17:00-20:00
+  if (day >= 1 && day <= 4) return t >= 17*60 && t < 20*60;
+  // Jumat-Sabtu (5-6): 06:00-10:00 or 13:00-15:00
+  if (day === 5 || day === 6) return (t >= 6*60 && t < 10*60) || (t >= 13*60 && t < 15*60);
+  // Minggu (0): 06:00-10:00 or 13:00-15:00
+  if (day === 0) return (t >= 6*60 && t < 10*60) || (t >= 13*60 && t < 15*60);
+  return false;
+}
+
+function checkCSStatus() {
+  if (!currentUser || !currentUserData) return;
+  const wrap = document.getElementById('csStatusWrap');
+  const formWrap = document.getElementById('csFormWrap');
+  wrap.innerHTML = '';
+
+  // Check CS data from separate node
+  get(ref(db, 'cs_requests/' + currentUser.uid)).then(snap => {
+    const csData = snap.exists() ? snap.val() : null;
+    const csStatus = csData ? csData.status : null;
+
+    if (csStatus === 'accepted') {
+      wrap.innerHTML = `<div class="cs-status-banner cs-status-accepted">✅ CHARACTER STORY DITERIMA — Karakter kamu sudah aktif!</div>`;
+      document.getElementById('csOutsideHours').style.display = 'none';
+      document.getElementById('csFormFields').style.opacity = '.3';
+      document.getElementById('csFormFields').style.pointerEvents = 'none';
+      return;
+    }
+
+    if (csStatus === 'pending') {
+      const isProcess = csData.process === true;
+      wrap.innerHTML = `<div class="cs-status-banner ${isProcess ? 'cs-status-process' : 'cs-status-pending'}">
+        ${isProcess ? '🔄 CS SEDANG DIPROSES — Admin sudah kirim via WA, tunggu balasan.' : '⏳ CS TERKIRIM — Menunggu review admin.'}
+        ${isProcess ? '<br><span style="font-size:.6rem;color:var(--muted2);">Tidak membalas dalam 24 jam = otomatis denied.</span>' : ''}
+      </div>`;
+      document.getElementById('csOutsideHours').style.display = 'none';
+      document.getElementById('csFormFields').style.opacity = '.4';
+      document.getElementById('csFormFields').style.pointerEvents = 'none';
+      return;
+    }
+
+    if (csStatus === 'denied') {
+      wrap.innerHTML = `<div class="cs-status-banner cs-status-denied">❌ CS DITOLAK — Kamu bisa mengajukan CS baru.</div>`;
+    }
+
+    // Check jam
+    const open = isCSOpen();
+    document.getElementById('csOutsideHours').style.display = open ? 'none' : 'block';
+    document.getElementById('csFormFields').style.opacity = open ? '' : '.4';
+    document.getElementById('csFormFields').style.pointerEvents = open ? '' : 'none';
+    document.getElementById('btnSubmitCS').disabled = !open;
+  });
+}
+
+window.submitCS = async function() {
+  if (!currentUser || !currentUserData) return showToast('ERROR','Login terlebih dahulu.','error');
+  if (!isCSOpen()) return showToast('DILUAR JAM','Request CS hanya bisa dilakukan pada jam yang ditentukan.','error');
+  if (currentUserData.wlStatus !== 'accepted') return showToast('BELUM WL','Kamu harus whitelist terlebih dahulu.','error');
+
+  const name = document.getElementById('csName').value.trim();
+  const age = document.getElementById('csAge').value;
+  const level = document.getElementById('csLevel').value;
+  const screenshot = document.getElementById('csScreenshot').value.trim();
+  const story = document.getElementById('csStory').value.trim();
+  if (!name || !age || !level || !story) return showToast('⚠ TIDAK LENGKAP','Isi semua field.','error');
+  if (story.length < 100) return showToast('STORY TERLALU PENDEK','Minimal 100 karakter.','error');
+
+  const btn = document.getElementById('btnSubmitCS');
+  btn.disabled = true; btn.textContent = 'MENGIRIM...';
+  try {
+    const now = Date.now();
+    await set(ref(db, 'cs_requests/' + currentUser.uid), {
+      uid: currentUser.uid, username: currentUserData.username,
+      icName: currentUserData.wlName || name,
+      email: currentUserData.email, wlWA: currentUserData.wlWA || '',
+      name, age: parseInt(age), level: parseInt(level), screenshot, story,
+      status: 'pending', submittedAt: now, process: false
+    });
+    writeLog('CS', `CS Request baru: ${name} Lv.${level} | oleh ${currentUserData.username}`);
+    showToast('CS TERKIRIM!','Admin akan menghubungi via WA.','success');
+    btn.textContent = 'SUDAH TERKIRIM ✓';
+    checkCSStatus();
+  } catch(e) {
+    showToast('ERROR',e.message,'error');
+    btn.disabled = false;
+    btn.textContent = 'KIRIM REQUEST CS 🎭';
+  }
+};
+
+// ─────────────────────────
+// ── IMPORT REQUEST ──
+// ─────────────────────────
+window.selectImportType = function(el, type) {
+  selectedImportType = type;
+  document.querySelectorAll('#importTypeSelect button').forEach(b => b.style.opacity = '.5');
+  el.style.opacity = '1';
+};
+
+function checkImportStatus() {
+  if (!currentUser) return;
+  get(ref(db, 'import_requests/' + currentUser.uid)).then(snap => {
+    const wrap = document.getElementById('importStatusWrap');
+    if (!snap.exists()) { wrap.innerHTML = ''; return; }
+    const d = snap.val();
+    const colors = {pending:'var(--gold)',accepted:'var(--green)',denied:'#F07070'};
+    wrap.innerHTML = `<div style="background:rgba(255,255,255,.03);border:1px solid var(--border2);padding:1rem;margin-bottom:1rem;font-family:'Space Mono',monospace;font-size:.65rem;color:${colors[d.status]||'var(--muted)'};">
+      📋 Import Request: ${(d.type||'').toUpperCase()} ke ${d.targetFaction||'-'} — Status: ${(d.status||'').toUpperCase()}
+    </div>`;
+  });
+}
+
+window.submitImport = async function() {
+  if (!currentUser || !currentUserData) return showToast('ERROR','Login terlebih dahulu.','error');
+  if (currentUserData.wlStatus !== 'accepted') return showToast('BELUM WL','Harus whitelist dulu.','error');
+  const icName = document.getElementById('impICName').value.trim();
+  const target = document.getElementById('impTarget').value.trim();
+  const level = document.getElementById('impLevel').value;
+  const reason = document.getElementById('impReason').value.trim();
+  if (!icName || !target || !level || !reason) return showToast('TIDAK LENGKAP','Isi semua field.','error');
+  const btn = document.getElementById('btnSubmitImport');
+  btn.disabled = true; btn.textContent = 'MENGIRIM...';
+  try {
+    await set(ref(db, 'import_requests/' + currentUser.uid), {
+      uid: currentUser.uid, username: currentUserData.username,
+      email: currentUserData.email, type: selectedImportType,
+      icName, targetFaction: target, level: parseInt(level), reason,
+      status: 'pending', submittedAt: Date.now()
+    });
+    writeLog('IMPORT', `Import Request: ${selectedImportType} → ${target} oleh ${currentUserData.username}`);
+    showToast('IMPORT REQUEST TERKIRIM!','Admin akan memproses request kamu.','success');
+    btn.textContent = 'TERKIRIM ✓';
+    checkImportStatus();
+  } catch(e) {
+    showToast('ERROR',e.message,'error');
+    btn.disabled = false;
+    btn.textContent = 'KIRIM REQUEST IMPORT 🚀';
+  }
+};
+
+// ─────────────────────────
+// ── FEED ──
+// ─────────────────────────
+let feedInited = false;
+let postCooldownInterval = null;
+let pendingImgBase64 = null;
+
+function initFeedSection() {
+  if (!feedInited) {
+    feedInited = true;
+    loadFeed();
+  }
+  if (currentUser) startPostCooldownCheck();
+}
+
+window.handleImageSelect = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) return showToast('TERLALU BESAR','Max ukuran foto 2MB.','error');
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    pendingImgBase64 = e.target.result;
+    document.getElementById('imagePreview').src = pendingImgBase64;
+    document.getElementById('imagePreviewWrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.clearImage = function() {
+  pendingImgBase64 = null;
+  document.getElementById('imagePreview').src = '';
+  document.getElementById('imagePreviewWrap').style.display = 'none';
+  document.getElementById('imgInput').value = '';
+};
+
+function startPostCooldownCheck() {
+  const check = async () => {
+    if (!currentUser) return;
+    const snap = await get(ref(db, 'users/' + currentUser.uid));
+    if (!snap.exists()) return;
+    const ud = snap.val();
+    const lastPost = ud.lastPostAt || 0;
+    const rem = POST_COOLDOWN - (Date.now() - lastPost);
+    const btn = document.getElementById('btnPost');
+    const hint = document.getElementById('postCooldownHint');
+    if (!btn) return;
+    if (rem > 0) {
+      btn.disabled = true;
+      const m = Math.floor(rem/60000), s = Math.floor((rem%60000)/1000);
+      hint.textContent = `⏳ ${m}m ${s}s`;
+    } else {
+      btn.disabled = false;
+      hint.textContent = '';
+    }
+  };
+  check();
+  if (postCooldownInterval) clearInterval(postCooldownInterval);
+  postCooldownInterval = setInterval(check, 5000);
+}
+
+window.submitPost = async function() {
+  if (!currentUser || !currentUserData) return showToast('ERROR','Login dulu.','error');
+  if (currentUserData.status === 'banned') return showToast('BANNED','Akun dibanned.','error');
+  const content = document.getElementById('postContent').value.trim();
+  if (!content && !pendingImgBase64) return showToast('ERROR','Tulis sesuatu atau pilih foto.','error');
+  if (content.length > 1000) return showToast('TERLALU PANJANG','Maks 1000 karakter.','error');
+
+  const snap = await get(ref(db, 'users/' + currentUser.uid));
+  const ud = snap.val();
+  if (Date.now() - (ud.lastPostAt||0) < POST_COOLDOWN) {
+    const rem = Math.ceil((POST_COOLDOWN-(Date.now()-(ud.lastPostAt||0)))/60000);
+    return showToast('COOLDOWN',`Tunggu ${rem} menit lagi.`,'error');
+  }
+
+  const btn = document.getElementById('btnPost');
+  btn.disabled = true; btn.textContent = 'POSTING...';
+  const displayName = currentUserData.wlStatus==='accepted' && currentUserData.wlName ? currentUserData.wlName : currentUserData.username;
+
+  try {
+    await push(ref(db, 'posts'), {
+      uid: currentUser.uid, author: displayName,
+      role: currentUserData.role || 'user',
+      wlStatus: currentUserData.wlStatus || '',
+      photoURL: currentUserData.photoURL || '',
+      content: content || '',
+      imageData: pendingImgBase64 || null,
+      ts: Date.now(), likes: {}, reactions: {}, likeCount: 0
+    });
+    await update(ref(db, 'users/' + currentUser.uid), { lastPostAt: Date.now() });
+    document.getElementById('postContent').value = '';
+    clearImage();
+    btn.textContent = 'POST';
+    startPostCooldownCheck();
+    showToast('POSTED!','Postingan dikirim.','success');
+  } catch(e) {
+    showToast('ERROR',e.message,'error');
+    btn.disabled = false; btn.textContent = 'POST';
+  }
+};
+
+const REACTIONS = [
+  {key:'like', emoji:'❤️', label:'Like'},
+  {key:'fire', emoji:'🔥', label:'Fire'},
+  {key:'haha', emoji:'😂', label:'Haha'},
+  {key:'wow', emoji:'😮', label:'Wow'},
+  {key:'sad', emoji:'😢', label:'Sad'},
+];
+
+window.toggleReaction = async function(postKey, rKey) {
+  if (!currentUser) return openModal('modalLogin');
+  if (currentUserData?.status === 'banned') return showToast('BANNED','','error');
+  const rRef = ref(db, `posts/${postKey}/reactions/${rKey}/${currentUser.uid}`);
+  const snap = await get(rRef);
+  if (snap.exists()) await remove(rRef);
+  else await set(rRef, true);
+};
+
+window.toggleComments = key => {
+  const el = document.getElementById('cmts-' + key);
+  if (el) el.classList.toggle('open');
+};
+
+window.submitComment = async function(postKey) {
+  if (!currentUser || !currentUserData) return openModal('modalLogin');
+  if (currentUserData.status === 'banned') return showToast('BANNED','','error');
+  const input = document.getElementById('ci-' + postKey);
+  const text = input?.value.trim();
+  if (!text) return;
+  const displayName = currentUserData.wlStatus==='accepted' && currentUserData.wlName ? currentUserData.wlName : currentUserData.username;
+  await push(ref(db, `posts/${postKey}/comments`), {
+    uid: currentUser.uid, author: displayName,
+    role: currentUserData.role || 'user',
+    photoURL: currentUserData.photoURL || '',
+    text, ts: Date.now()
+  });
+  input.value = '';
+};
+
+window.deletePost = async function(key, uid) {
+  if (!currentUser) return;
+  if (currentUser.uid !== uid && !STAFF_ROLES.includes(currentUserData?.role)) return showToast('DITOLAK','','error');
+  if (!confirm('Hapus postingan?')) return;
+  await remove(ref(db, 'posts/' + key));
+};
+
+window.deleteComment = async function(postKey, cmtKey, cmtUid) {
+  if (!currentUser) return;
+  if (currentUser.uid !== cmtUid && !STAFF_ROLES.includes(currentUserData?.role)) return;
+  await remove(ref(db, `posts/${postKey}/comments/${cmtKey}`));
+};
+
+function getRoleBadge(role) {
+  const map = {
+    owner:`<span class="post-role-badge r-owner">OWNER</span>`,
+    headadmin:`<span class="post-role-badge r-headadmin">HEAD ADMIN</span>`,
+    senioradmin:`<span class="post-role-badge r-senioradmin">SR ADMIN</span>`,
+    junioradmin:`<span class="post-role-badge r-junioradmin">JR ADMIN</span>`,
+    admin:`<span class="post-role-badge r-admin">ADMIN</span>`,
+    developer:`<span class="post-role-badge r-dev">DEV</span>`,
+    management:`<span class="post-role-badge r-management">MGMT</span>`,
+    communityhandle:`<span class="post-role-badge r-communityhandle">COM</span>`,
+    moderator:`<span class="post-role-badge r-mod">MOD</span>`,
+    seniorhelper:`<span class="post-role-badge r-seniorhelper">SR HELPER</span>`,
+    juniorhelper:`<span class="post-role-badge r-juniorhelper">JR HELPER</span>`,
+    volunteer:`<span class="post-role-badge r-volunteer">VOLUNTEER</span>`,
+    exstaff:`<span class="post-role-badge r-exstaff">EX-STAFF</span>`,
+  };
+  return map[role] || '';
+}
+
+function getAvaHtml(photoURL, author, size=34) {
+  if (photoURL) return `<img src="${photoURL}" style="width:${size}px;height:${size}px;object-fit:cover;border-radius:50%;" loading="lazy">`;
+  return `<span style="font-size:${size*.4}px;">${(author||'?')[0].toUpperCase()}</span>`;
+}
+
+function loadFeed() {
+  const q = query(ref(db, 'posts'), orderByChild('ts'), limitToLast(50));
+  onValue(q, snap => {
+    const feedList = document.getElementById('feedList');
+    const loading = document.getElementById('feedLoading');
+    if (loading) loading.style.display = 'none';
+    if (!snap.exists()) {
+      feedList.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.65rem;border:1px solid var(--border2);">Belum ada postingan.</div>';
+      document.getElementById('wPosts').textContent = '0';
+      document.getElementById('feedCount').textContent = '0';
+      return;
+    }
+    const posts = Object.entries(snap.val()).reverse();
+    document.getElementById('wPosts').textContent = posts.length;
+    document.getElementById('feedCount').textContent = posts.length;
+
+    feedList.innerHTML = posts.map(([key, p]) => {
+      const reactionsHtml = REACTIONS.map(r => {
+        const count = p.reactions && p.reactions[r.key] ? Object.keys(p.reactions[r.key]).length : 0;
+        const myReact = currentUser && p.reactions && p.reactions[r.key] && p.reactions[r.key][currentUser.uid];
+        return `<button class="reaction-btn ${myReact ? 'active-'+r.key : ''}" onclick="toggleReaction('${key}','${r.key}')">${r.emoji} ${count>0?count:''}</button>`;
+      }).join('');
+
+      const commentCount = p.comments ? Object.keys(p.comments).length : 0;
+      const canDelete = currentUser && (currentUser.uid === p.uid || STAFF_ROLES.includes(currentUserData?.role));
+
+      const commentsHtml = p.comments ? Object.entries(p.comments).map(([ck, c]) => {
+        const canDelC = currentUser && (currentUser.uid === c.uid || STAFF_ROLES.includes(currentUserData?.role));
+        return `<div class="comment-item">
+          <div class="comment-ava">${getAvaHtml(c.photoURL||'', c.author, 26)}</div>
+          <div class="comment-body">
+            <span class="comment-name">${escHtml(c.author)}</span> ${getRoleBadge(c.role)}
+            <div class="comment-text">${escHtml(c.text)}</div>
+            <span class="comment-time">${timeAgo(c.ts)}${canDelC?` · <span style="color:var(--red);cursor:pointer;" onclick="deleteComment('${key}','${ck}','${c.uid}')">hapus</span>`:''}</span>
+          </div>
+        </div>`;
+      }).join('') : '';
+
+      return `<div class="post-card">
+        <div class="post-header">
+          <div class="post-author-info">
+            <div class="post-ava" onclick="viewProfile('${p.uid}')">${getAvaHtml(p.photoURL||'', p.author, 34)}</div>
+            <div>
+              <span class="post-name" onclick="viewProfile('${p.uid}')">${escHtml(p.author)}</span>${getRoleBadge(p.role)}
+              ${p.wlStatus==='accepted'?'<span style="font-family:Space Mono,monospace;font-size:.48rem;color:var(--green);margin-left:.3rem;">✓WL</span>':''}
+            </div>
+          </div>
+          <span class="post-time">${timeAgo(p.ts)}</span>
+        </div>
+        ${p.content ? `<div class="post-content">${escHtml(p.content)}</div>` : ''}
+        ${p.imageData ? `<img class="post-image" src="${p.imageData}" alt="post image" onclick="viewImage('${p.imageData.substring(0,50)}','${key}')" loading="lazy">` : ''}
+        <div class="post-reactions">${reactionsHtml}</div>
+        <div class="post-actions">
+          <button class="btn-comment-toggle" onclick="toggleComments('${key}')">💬 ${commentCount}</button>
+          <button class="btn-share" onclick="sharePost('${key}')">🔗 Share</button>
+          ${canDelete ? `<button class="btn-delete-post" onclick="deletePost('${key}','${p.uid}')">🗑</button>` : ''}
+        </div>
+        <div class="comments-section" id="cmts-${key}">
+          ${commentsHtml}
+          ${currentUser ? `<div class="comment-input-row">
+            <input class="comment-input" id="ci-${key}" placeholder="Komentar..." onkeydown="if(event.key==='Enter'){event.preventDefault();submitComment('${key}')}">
+            <button class="btn-send-comment" onclick="submitComment('${key}')">KIRIM</button>
+          </div>` : `<div style="font-family:Space Mono,monospace;font-size:.6rem;color:var(--muted);margin-top:.5rem;"><span style="cursor:pointer;color:var(--gold);" onclick="openModal('modalLogin')">Login</span> untuk komentar.</div>`}
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// Store post images by key for viewer
+window._postImgCache = {};
+window.viewImage = function(prefix, postKey) {
+  // Get full image from posts
+  get(ref(db, `posts/${postKey}/imageData`)).then(snap => {
+    if (snap.exists()) {
+      document.getElementById('imgViewerSrc').src = snap.val();
+      openModal('modalImageView');
+    }
+  });
+};
+
+window.sharePost = function(key) {
+  const url = window.location.origin + window.location.pathname + '?post=' + key;
+  navigator.clipboard.writeText(url).then(() => showToast('LINK DISALIN','Link post disalin!','success'));
+};
+
+// ─────────────────────────
+// ── PROFILE ──
+// ─────────────────────────
+function initProfileSection() {
+  if (!currentUser || !currentUserData) return;
+  const displayName = currentUserData.wlStatus==='accepted' && currentUserData.wlName ? currentUserData.wlName : currentUserData.username;
+  const avaEl = document.getElementById('profileAvaBig');
+  if (currentUserData.photoURL) {
+    avaEl.innerHTML = `<img src="${currentUserData.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    avaEl.textContent = displayName[0].toUpperCase();
+  }
+  document.getElementById('profileNameBig').textContent = displayName;
+  document.getElementById('profileICName').textContent = currentUserData.wlName || '-';
+  document.getElementById('profileRoleBadge').innerHTML = getRoleBadge(currentUserData.role) || '<span style="font-family:Space Mono,monospace;font-size:.55rem;color:var(--muted);">USER</span>';
+  document.getElementById('profileWLBadge').innerHTML = currentUserData.wlStatus==='accepted' ? '<span style="color:var(--green);font-family:Space Mono,monospace;font-size:.55rem;">✓ WHITELIST</span>' : '<span style="color:var(--muted);font-family:Space Mono,monospace;font-size:.55rem;">Belum WL</span>';
+  document.getElementById('profileJoined').textContent = fmtDate(currentUserData.createdAt);
+
+  // Load profile posts
+  const q = query(ref(db,'posts'), orderByChild('uid'), limitToLast(100));
+  get(q).then(snap => {
+    let posts = 0, likes = 0, comments = 0;
+    const userPosts = [];
+    if (snap.exists()) {
+      Object.entries(snap.val()).forEach(([k, p]) => {
+        if (p.uid === currentUser.uid) {
+          posts++;
+          likes += p.reactions ? Object.values(p.reactions).reduce((a,r) => a + Object.keys(r).length, 0) : 0;
+          comments += p.comments ? Object.keys(p.comments).length : 0;
+          userPosts.push([k, p]);
+        }
+      });
+    }
+    document.getElementById('profileStatPosts').textContent = posts;
+    document.getElementById('profileStatLikes').textContent = likes;
+    document.getElementById('profileStatComments').textContent = comments;
+    document.getElementById('profileStatActivity').textContent = posts + comments > 0 ? 'Aktif' : '-';
+
+    // Show last 5 posts
+    const pfEl = document.getElementById('profileFeed');
+    const recent = userPosts.sort((a,b) => (b[1].ts||0) - (a[1].ts||0)).slice(0,5);
+    if (recent.length === 0) {
+      pfEl.innerHTML = '<div style="font-family:Space Mono,monospace;font-size:.65rem;color:var(--muted);padding:1rem 0;">Belum ada postingan.</div>';
+      return;
+    }
+    pfEl.innerHTML = recent.map(([k, p]) => `<div style="padding:.7rem 0;border-bottom:1px solid var(--border2);font-size:.9rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:.2rem;">${timeAgo(p.ts)}</div>
+      ${p.content ? `<div style="color:var(--text);">${escHtml(p.content).substring(0, 200)}${p.content.length>200?'...':''}</div>` : ''}
+      ${p.imageData ? '<div style="color:var(--muted);font-family:Space Mono,monospace;font-size:.55rem;margin-top:.2rem;">📷 [Foto]</div>' : ''}
+    </div>`).join('');
+  });
+}
+
+window.openMyProfile = function() {
+  showSection('profile');
+};
+
+window.viewProfile = async function(uid) {
+  const snap = await get(ref(db, 'users/' + uid));
+  if (!snap.exists()) return;
+  const u = snap.val();
+  const displayName = u.wlStatus==='accepted' && u.wlName ? u.wlName : u.username;
+  const avaHtml = u.photoURL ? `<img src="${u.photoURL}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);">` : `<div style="width:60px;height:60px;border-radius:50%;background:var(--dark3);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${displayName[0].toUpperCase()}</div>`;
+  document.getElementById('profileViewBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;">
+      ${avaHtml}
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:3px;color:#E8E8F8;">${escHtml(displayName)}</div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem;">
+          ${getRoleBadge(u.role)||'<span style="font-family:Space Mono,monospace;font-size:.55rem;color:var(--muted);">USER</span>'}
+          ${u.wlStatus==='accepted'?'<span style="color:var(--green);font-family:Space Mono,monospace;font-size:.55rem;">✓ WL</span>':''}
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;gap:.4rem;font-size:.85rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted2);">Username: <strong style="color:var(--text);">${escHtml(u.username||'-')}</strong></div>
+      <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted2);">Nama IC: <strong style="color:var(--gold);">${escHtml(u.wlName||'-')}</strong></div>
+      <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted2);">Bergabung: <strong style="color:var(--muted2);">${fmtDate(u.createdAt)}</strong></div>
+    </div>
+    ${currentUser && currentUser.uid !== uid ? `<button class="btn-submit" style="margin-top:1rem;" onclick="openPMToUser('${uid}','${escHtml(displayName)}');closeModal('modalProfileView')">💬 KIRIM PESAN</button>` : ''}
+  `;
+  openModal('modalProfileView');
+};
+
+// ─────────────────────────
+// ── PRIVATE MESSAGE ──
+// ─────────────────────────
+let pmListInited = false;
+
+function initPMSection() {
+  if (!currentUser) return;
+  loadPMList();
+}
+
+function loadUnreadPM() {
+  if (!currentUser) return;
+  onValue(ref(db, `pm_convos`), snap => {
+    if (!snap.exists()) return;
+    let unread = 0;
+    Object.entries(snap.val()).forEach(([convoId, convo]) => {
+      if (!convoId.includes(currentUser.uid)) return;
+      const msgs = convo.messages ? Object.values(convo.messages) : [];
+      msgs.forEach(m => {
+        if (m.to === currentUser.uid && !m.read) unread++;
+      });
+    });
+    const badge = document.getElementById('sbBadgePM');
+    const navBadge = document.getElementById('pmBadgeNav');
+    const pmCount = document.getElementById('pmCount');
+    if (unread > 0) {
+      badge.textContent = unread; badge.style.display = 'block';
+      navBadge.textContent = unread; navBadge.classList.add('show');
+      if (pmCount) pmCount.textContent = unread;
+    } else {
+      badge.style.display = 'none';
+      navBadge.classList.remove('show');
+      if (pmCount) pmCount.textContent = '0';
+    }
+  });
+}
+
+function getConvoId(uid1, uid2) {
+  return [uid1, uid2].sort().join('_');
+}
+
+function loadPMList() {
+  const listEl = document.getElementById('pmConvoList');
+  onValue(ref(db, 'pm_convos'), async snap => {
+    if (!snap.exists()) {
+      listEl.innerHTML = '<div style="padding:1rem;font-family:Space Mono,monospace;font-size:.62rem;color:var(--muted);text-align:center;">Belum ada percakapan.</div>';
+      return;
+    }
+    const convos = Object.entries(snap.val()).filter(([id]) => id.includes(currentUser.uid));
+    if (convos.length === 0) {
+      listEl.innerHTML = '<div style="padding:1rem;font-family:Space Mono,monospace;font-size:.62rem;color:var(--muted);text-align:center;">Belum ada percakapan.</div>';
+      return;
+    }
+    // Get partner user data
+    let items = [];
+    for (const [convoId, convo] of convos) {
+      const partnerUID = convoId.split('_').find(id => id !== currentUser.uid);
+      const partnerSnap = await get(ref(db, 'users/' + partnerUID));
+      const partner = partnerSnap.exists() ? partnerSnap.val() : {username: 'Unknown'};
+      const partnerName = partner.wlStatus==='accepted' && partner.wlName ? partner.wlName : partner.username;
+      const msgs = convo.messages ? Object.values(convo.messages) : [];
+      const lastMsg = msgs.sort((a,b) => b.ts - a.ts)[0];
+      const unread = msgs.filter(m => m.to === currentUser.uid && !m.read).length;
+      items.push({convoId, partnerUID, partnerName, partner, lastMsg, unread});
+    }
+    items.sort((a,b) => (b.lastMsg?.ts||0) - (a.lastMsg?.ts||0));
+    listEl.innerHTML = items.map(item => {
+      const avaHtml = item.partner.photoURL ? `<img src="${item.partner.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : item.partnerName[0].toUpperCase();
+      return `<div class="pm-item ${activePMConvoId===item.convoId?'active':''}" onclick="openConvo('${item.convoId}','${item.partnerUID}','${escHtml(item.partnerName)}')">
+        <div class="pm-item-ava">${avaHtml}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="pm-item-name">${escHtml(item.partnerName)}</div>
+          <div class="pm-item-preview">${escHtml(item.lastMsg?.text || '...')}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;">
+          <span class="pm-item-time">${item.lastMsg ? timeAgo(item.lastMsg.ts) : ''}</span>
+          ${item.unread > 0 ? `<span class="pm-unread-dot"></span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+window.openConvo = function(convoId, partnerUID, partnerName) {
+  activePMConvoId = convoId;
+  document.getElementById('pmEmptyState').style.display = 'none';
+  document.getElementById('pmActiveChatWrap').style.display = 'flex';
+  document.getElementById('pmActiveChatWrap').style.flexDirection = 'column';
+  document.getElementById('pmActiveChatWrap').style.height = '100%';
+  document.getElementById('pmChatName').textContent = partnerName;
+
+  // Load messages
+  onValue(ref(db, `pm_convos/${convoId}/messages`), async snap => {
+    const msgEl = document.getElementById('pmMessages');
+    if (!snap.exists()) { msgEl.innerHTML = ''; return; }
+    const msgs = Object.entries(snap.val()).sort((a,b) => a[1].ts - b[1].ts);
+    msgEl.innerHTML = msgs.map(([k, m]) => `<div class="pm-msg ${m.from===currentUser.uid?'mine':'theirs'}">
+      ${escHtml(m.text)}
+      <div class="pm-msg-time">${timeAgo(m.ts)}</div>
+    </div>`).join('');
+    msgEl.scrollTop = msgEl.scrollHeight;
+    // Mark as read
+    msgs.forEach(([k, m]) => {
+      if (m.to === currentUser.uid && !m.read) {
+        update(ref(db, `pm_convos/${convoId}/messages/${k}`), { read: true }).catch(()=>{});
+      }
+    });
+  });
+  loadPMList(); // refresh list to update active
+};
+
+window.sendPM = async function() {
+  if (!currentUser) return;
+  const text = document.getElementById('pmInput').value.trim();
+  if (!text || !activePMConvoId) return;
+  const partnerUID = activePMConvoId.split('_').find(id => id !== currentUser.uid);
+  await push(ref(db, `pm_convos/${activePMConvoId}/messages`), {
+    from: currentUser.uid, to: partnerUID,
+    text, ts: Date.now(), read: false
+  });
+  document.getElementById('pmInput').value = '';
+};
+
+window.openPMToUser = function(uid, name) {
+  if (!currentUser) return openModal('modalLogin');
+  if (uid === currentUser.uid) return showToast('INFO','Tidak bisa PM diri sendiri.','info');
+  const convoId = getConvoId(currentUser.uid, uid);
+  showSection('pm');
+  setTimeout(() => openConvo(convoId, uid, name || uid), 300);
+};
+
+window.openNewPMModal = function() {
+  openModal('modalNewPM');
+};
+
+window.sendNewPM = async function() {
+  if (!currentUser) return;
+  const targetInput = document.getElementById('pmTargetInput').value.trim();
+  const msg = document.getElementById('pmInitMsg').value.trim();
+  if (!targetInput || !msg) return showToast('ERROR','Isi penerima dan pesan.','error');
+
+  // Find user by username or IC name
+  const usersSnap = await get(ref(db, 'users'));
+  if (!usersSnap.exists()) return showToast('ERROR','User tidak ditemukan.','error');
+  let targetUID = null, targetName = '';
+  Object.entries(usersSnap.val()).forEach(([uid, u]) => {
+    if ((u.username||'').toLowerCase() === targetInput.toLowerCase() ||
+        (u.wlName||'').toLowerCase() === targetInput.toLowerCase()) {
+      targetUID = uid;
+      targetName = u.wlName || u.username;
+    }
+  });
+  if (!targetUID) return showToast('USER TIDAK DITEMUKAN','Cek kembali username/nama IC.','error');
+  if (targetUID === currentUser.uid) return showToast('ERROR','Tidak bisa PM diri sendiri.','error');
+
+  const convoId = getConvoId(currentUser.uid, targetUID);
+  await push(ref(db, `pm_convos/${convoId}/messages`), {
+    from: currentUser.uid, to: targetUID,
+    text: msg, ts: Date.now(), read: false
+  });
+  closeModal('modalNewPM');
+  document.getElementById('pmTargetInput').value = '';
+  document.getElementById('pmInitMsg').value = '';
+  openConvo(convoId, targetUID, targetName);
+  showToast('TERKIRIM!','Pesan dikirim.','success');
+};
+
+// ─────────────────────────
+// ── STAFF ──
+// ─────────────────────────
+function loadStaffSection() {
+  const grid = document.getElementById('staffGrid');
+  get(ref(db, 'users')).then(snap => {
+    if (!snap.exists()) return;
+    const users = Object.values(snap.val()).filter(u => STAFF_ROLES.includes(u.role) && u.status !== 'banned');
+    const order = ['owner','developer','headadmin','management','senioradmin','junioradmin','admin','communityhandle','moderator','seniorhelper','juniorhelper','volunteer'];
+    users.sort((a,b) => order.indexOf(a.role||'') - order.indexOf(b.role||''));
+    const roleLabels = {owner:'OWNER',developer:'DEVELOPER',headadmin:'HEAD ADMIN',management:'MANAGEMENT',senioradmin:'SENIOR ADMIN',junioradmin:'JUNIOR ADMIN',admin:'ADMIN',communityhandle:'COMMUNITY HANDLE',moderator:'MODERATOR',seniorhelper:'SENIOR HELPER',juniorhelper:'JUNIOR HELPER',volunteer:'VOLUNTEER'};
+    const roleEmoji = {owner:'👑',developer:'💻',headadmin:'🛡️',management:'📊',senioradmin:'⚔️',junioradmin:'🗡️',admin:'⚡',communityhandle:'💬',moderator:'🔰',seniorhelper:'🤝',juniorhelper:'👋',volunteer:'🙋'};
+    if (users.length === 0) {
+      grid.innerHTML = '<div style="padding:2rem;text-align:center;background:var(--dark2);grid-column:1/-1;font-family:Space Mono,monospace;font-size:.65rem;color:var(--muted);">Belum ada staff.</div>';
+      return;
+    }
+    const roleClass = {owner:'r-owner',developer:'r-dev',headadmin:'r-headadmin',management:'r-management',senioradmin:'r-senioradmin',junioradmin:'r-junioradmin',admin:'r-admin',communityhandle:'r-communityhandle',moderator:'r-mod',seniorhelper:'r-seniorhelper',juniorhelper:'r-juniorhelper',volunteer:'r-volunteer'};
+    grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);';
+    grid.innerHTML = users.map(u => {
+      const displayName = u.wlName || u.username;
+      const avaHtml = u.photoURL ? `<img src="${u.photoURL}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--border);">` : `<div style="width:52px;height:52px;background:var(--dark4);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">${roleEmoji[u.role]||'👤'}</div>`;
+      return `<div style="background:var(--dark2);padding:1.5rem 1rem;text-align:center;transition:background .2s;cursor:pointer;" onmouseover="this.style.background='var(--dark3)'" onmouseout="this.style.background='var(--dark2)'" onclick="viewProfile('${u.uid}')">
+        <div style="margin:0 auto .7rem;">${avaHtml}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;margin-bottom:.3rem;color:#E0E0F0;">${escHtml(displayName)}</div>
+        <span class="role-badge ${roleClass[u.role]||'r-mod'}">${roleLabels[u.role]||u.role.toUpperCase()}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('staffCount').textContent = users.length;
+  });
+}
+
+// ─────────────────────────
+// ── GUIDES / RULES (DB-based) ──
+// ─────────────────────────
+function loadGuideSection(dbKey, elId) {
+  const el = document.getElementById(elId);
+  onValue(ref(db, 'guides/' + dbKey), snap => {
+    if (!snap.exists()) {
+      el.innerHTML = `<div style="background:var(--dark2);border:1px solid var(--border);padding:2rem;text-align:center;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Belum ada konten. Admin bisa tambahkan melalui panel admin.</div>`;
+      return;
+    }
+    const items = Object.values(snap.val()).sort((a,b) => (a.order||0)-(b.order||0));
+    el.innerHTML = items.map(item => `<div class="announce-item" style="${item.pinned?'border-left-color:var(--orange);':''}">
+      ${item.tag ? `<div class="announce-tag">${item.tag}</div>` : ''}
+      <div class="announce-title">${escHtml(item.title||'')}</div>
+      <div class="announce-text">${escHtml(item.content||'')}</div>
+      <div class="announce-meta">— ${item.author||'Admin'} · ${item.date||'-'}</div>
+    </div>`).join('');
+  });
+}
+
+// ─────────────────────────
+// ── ANNOUNCEMENTS ──
+// ─────────────────────────
+function loadAnnouncementsSection() {
+  const q = query(ref(db, 'announcements'), orderByChild('ts'), limitToLast(20));
+  onValue(q, snap => {
+    const el = document.getElementById('announceList');
+    if (!snap.exists()) {
+      el.innerHTML = '<div style="padding:2rem;text-align:center;font-family:Space Mono,monospace;font-size:.65rem;color:var(--muted);">Belum ada pengumuman.</div>';
+      return;
+    }
+    const items = Object.values(snap.val()).reverse();
+    el.innerHTML = items.map(a => `<div class="announce-item" style="border-left-color:var(--orange);">
+      <div class="announce-tag">${a.tag||'ANNOUNCEMENT'}</div>
+      <div class="announce-title">${escHtml(a.title||'')}</div>
+      <div class="announce-text">${escHtml(a.content||'')}</div>
+      <div class="announce-meta">— ${a.author||'Admin'} · ${timeAgo(a.ts)}</div>
+    </div>`).join('');
+  });
+}
+
+function loadAnnouncePreview() {
+  const q = query(ref(db, 'announcements'), orderByChild('ts'), limitToLast(2));
+  onValue(q, snap => {
+    const el = document.getElementById('announcePreview');
+    if (!snap.exists()) { el.innerHTML = ''; return; }
+    const items = Object.values(snap.val()).reverse();
+    el.innerHTML = items.map(a => `<div class="announce-item" style="border-left-color:var(--orange);margin-bottom:.8rem;">
+      <div class="announce-tag">${a.tag||'ANNOUNCEMENT'}</div>
+      <div class="announce-title">${escHtml(a.title||'')}</div>
+      <div class="announce-text">${(a.content||'').substring(0,120)}${(a.content||'').length>120?'...':''}</div>
+      <div class="announce-meta">— ${a.author||'Admin'} · ${timeAgo(a.ts)} · <span style="cursor:pointer;color:var(--gold);" onclick="showSection('announcements')">Lihat Semua</span></div>
+    </div>`).join('');
+  });
+}
+
+// ─────────────────────────
+// ── LOAD DATA ──
+// ─────────────────────────
+function loadData() {
+  loadAnnouncePreview();
+  initFeedSection();
+
+  onValue(ref(db,'config'), s => {
+    if (!s.exists()) return;
+    const c = s.val();
+    if (c.serverIP) document.getElementById('heroIP').textContent = c.serverIP;
+    if (c.waNumber) waNumber = String(c.waNumber);
+    if (c.waGroup) waGroup = c.waGroup;
+  });
+
+  onValue(ref(db,'stats'), s => {
+    const d = s.exists() ? s.val() : {};
+    document.getElementById('hStatOnline').textContent = d.online||0;
+    document.getElementById('hStatMembers').textContent = (d.members||0).toLocaleString();
+    document.getElementById('hStatFactions').textContent = d.factions||0;
+    document.getElementById('wOnline').textContent = d.online||0;
+    document.getElementById('wMembers').textContent = (d.members||0).toLocaleString();
+    document.getElementById('sbOnline').textContent = d.online||0;
+    document.getElementById('sbMembers').textContent = (d.members||0).toLocaleString();
+  });
+
+  onValue(ref(db,'users'), s => {
+    if (!s.exists()) return;
+    const all = Object.values(s.val());
+    const wlCount = all.filter(u => u.wlStatus==='accepted').length;
+    document.getElementById('hStatWL').textContent = wlCount.toLocaleString();
+    document.getElementById('wWL').textContent = wlCount.toLocaleString();
+    document.getElementById('sbWL').textContent = wlCount.toLocaleString();
+    document.getElementById('wlCount').textContent = all.filter(u => u.wlStatus==='pending').length;
+  });
+
+  get(ref(db,'cs_requests')).then(s => {
+    if (!s.exists()) return;
+    document.getElementById('csCount').textContent = Object.values(s.val()).filter(r => r.status==='pending').length;
+  });
+}
+
+loadData();
 </script>
-
 </body>
 </html>
