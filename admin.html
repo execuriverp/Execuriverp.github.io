@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRACLE RP — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FFD700;--orange:#FF6B00;--red:#E63946;--green:#25D366;--blue:#64b4ff;--purple:#b464ff;--cyan:#00C9B1;
+  --dark:#09090E;--dark2:#0F0F18;--dark3:#161622;--dark4:#1E1E2E;
+  --border:rgba(255,215,0,.1);--border2:rgba(255,255,255,.06);
+  --text:#DCDCE8;--muted:#6A6A84;--muted2:#9898B0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:3px;height:3px;}::-webkit-scrollbar-thumb{background:var(--gold);}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;background:var(--dark);position:relative;}
+#loginScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(255,107,0,.05),transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(255,215,0,.04),transparent 60%);}
+.login-box{background:var(--dark2);border:1px solid var(--border);padding:2.5rem;width:100%;max-width:400px;position:relative;z-index:1;}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:6px;color:var(--gold);text-align:center;margin-bottom:.2rem;text-shadow:0 0 20px rgba(255,215,0,.3);}
+.login-logo span{color:var(--orange);}
+.login-sub{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:3px;color:var(--muted);text-align:center;margin-bottom:2rem;}
+.form-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;display:block;margin-bottom:.4rem;}
+.form-input{width:100%;background:var(--dark3);border:1px solid var(--border2);color:var(--text);padding:10px 12px;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;outline:none;transition:border-color .2s;appearance:none;margin-bottom:1rem;}
+.form-input:focus{border-color:rgba(255,215,0,.35);}
+.form-input::placeholder{color:var(--muted);font-weight:300;}
+.form-input option{background:var(--dark3);}
+textarea.form-input{resize:vertical;min-height:80px;}
+.btn-gold{width:100%;background:var(--gold);color:#000;border:none;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:4px;cursor:pointer;transition:all .2s;}
+.btn-gold:hover{background:var(--orange);color:#fff;}
+.auth-err{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.2);color:#F07070;padding:.7rem 1rem;font-family:'Space Mono',monospace;font-size:.62rem;margin-bottom:1rem;display:none;}
+.auth-err.show{display:block;}
+.btn-google-admin{display:flex;align-items:center;justify-content:center;gap:.7rem;width:100%;background:#fff;color:#1a1a1a;border:none;padding:12px 20px;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-google-admin:hover{background:#f0f0f0;transform:translateY(-1px);}
+
+/* ── LAYOUT ── */
+#adminApp{display:none;min-height:100vh;}
+.admin-layout{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:232px;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s;overflow-y:auto;}
+.sidebar-logo{padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:4px;color:var(--gold);}
+.sidebar-logo-text span{color:var(--orange);}
+.sidebar-logo-sub{font-family:'Space Mono',monospace;font-size:.45rem;letter-spacing:2px;color:var(--muted);}
+.sidebar-nav{flex:1;padding:.5rem 0;overflow-y:auto;}
+.nav-section{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:3px;color:var(--muted);padding:.6rem 1.1rem .2rem;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:.55rem;padding:.55rem 1.1rem;color:var(--muted2);font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.5px;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent;}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.025);}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(255,215,0,.04);}
+.nav-item .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.46rem;padding:2px 5px;border-radius:8px;min-width:16px;text-align:center;}
+.sidebar-user{padding:.9rem 1.2rem;border-top:1px solid var(--border);flex-shrink:0;}
+.sidebar-user-name{font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:2px;color:var(--gold);}
+.sidebar-user-role{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:.4rem;}
+.sidebar-perms{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:.5rem;}
+.perm-chip{font-family:'Space Mono',monospace;font-size:.44rem;padding:2px 5px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);color:var(--gold);}
+.btn-logout-sm{background:none;border:1px solid rgba(230,57,70,.25);color:#F07070;padding:5px 10px;font-family:'Space Mono',monospace;font-size:.55rem;cursor:pointer;transition:all .2s;width:100%;}
+.btn-logout-sm:hover{background:rgba(230,57,70,.1);}
+
+/* ── TOPBAR ── */
+.topbar{height:52px;background:rgba(9,9,14,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.4rem;position:sticky;top:0;z-index:40;backdrop-filter:blur(8px);}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;color:#E8E8F8;}
+.topbar-back{color:var(--muted2);text-decoration:none;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:1px;border:1px solid var(--border2);padding:5px 12px;transition:all .2s;}
+.topbar-back:hover{border-color:var(--gold);color:var(--gold);}
+.hamburger-admin{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger-admin span{width:20px;height:2px;background:var(--muted2);}
+
+/* ── MAIN ── */
+.main-content{margin-left:232px;flex:1;}
+.page{display:none;padding:1.4rem;}
+.page.active{display:block;animation:fadeUp .25s ease;}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:3px;color:#E8E8F8;}
+.page-sub{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:1.5px;margin-top:.2rem;margin-bottom:1.2rem;}
+
+/* ── CARDS ── */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:1.4rem;}
+.stat-card{background:var(--dark2);padding:1.3rem;transition:background .2s;}
+.stat-card:hover{background:var(--dark3);}
+.stat-card-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;margin-bottom:.3rem;}
+.stat-card-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);}
+.stat-card-val.red{color:#F07070;}
+.stat-card-val.green{color:var(--green);}
+.stat-card-val.blue{color:var(--blue);}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--dark2);border:1px solid var(--border);overflow-x:auto;margin-bottom:1.4rem;}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.5rem;}
+.table-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:#E8E8F8;}
+.table-search{background:var(--dark3);border:1px solid var(--border2);color:var(--text);padding:6px 10px;font-family:'Space Mono',monospace;font-size:.58rem;outline:none;width:190px;transition:border-color .2s;}
+.table-search:focus{border-color:rgba(255,215,0,.3);}
+table{width:100%;border-collapse:collapse;min-width:580px;}
+th{background:var(--dark3);padding:.6rem 1rem;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:1.5px;color:var(--muted2);text-transform:uppercase;text-align:left;border-bottom:1px solid var(--border);}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border2);font-size:.9rem;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.012);}
+.empty-row td{text-align:center;color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;padding:2rem;}
+
+/* ── STATUS BADGES ── */
+.s-badge{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:1px;padding:3px 7px;display:inline-block;}
+.s-pending{background:rgba(255,215,0,.08);color:var(--gold);border:1px solid rgba(255,215,0,.2);}
+.s-process{background:rgba(100,180,255,.08);color:var(--blue);border:1px solid rgba(100,180,255,.2);}
+.s-accepted{background:rgba(37,211,102,.08);color:var(--green);border:1px solid rgba(37,211,102,.2);}
+.s-denied,.s-rejected{background:rgba(230,57,70,.08);color:#F07070;border:1px solid rgba(230,57,70,.2);}
+.s-banned{background:rgba(230,57,70,.15);color:#F07070;border:1px solid rgba(230,57,70,.3);}
+
+/* ── ACTION BTNS ── */
+.action-btn{background:none;border:1px solid var(--border2);color:var(--muted2);padding:4px 8px;font-family:'Space Mono',monospace;font-size:.5rem;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+.action-btn:hover{border-color:var(--gold);color:var(--gold);}
+.action-btn.red:hover{border-color:#F07070;color:#F07070;}
+.action-btn.green:hover{border-color:var(--green);color:var(--green);}
+.action-btn.blue:hover{border-color:var(--blue);color:var(--blue);}
+.action-btn.orange:hover{border-color:var(--orange);color:var(--orange);}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;}
+.modal{background:var(--dark2);border:1px solid var(--border);padding:1.8rem;width:100%;max-width:500px;position:relative;animation:modalIn .25s ease;max-height:92vh;overflow-y:auto;}
+.modal.wide{max-width:640px;}
+@keyframes modalIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.modal-close:hover{color:var(--gold);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);margin-bottom:.3rem;}
+.modal-sub{color:var(--muted2);font-size:.85rem;margin-bottom:1.2rem;line-height:1.6;}
+.modal-actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap;}
+.btn-modal-green{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:var(--green);padding:9px 16px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;flex:1;}
+.btn-modal-green:hover{background:rgba(37,211,102,.2);}
+.btn-modal-red{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.25);color:#F07070;padding:9px 16px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;flex:1;}
+.btn-modal-red:hover{background:rgba(230,57,70,.2);}
+.btn-modal-blue{background:rgba(100,180,255,.1);border:1px solid rgba(100,180,255,.25);color:var(--blue);padding:9px 16px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;flex:1;}
+.btn-modal-blue:hover{background:rgba(100,180,255,.2);}
+.btn-modal-gray{background:rgba(255,255,255,.04);border:1px solid var(--border2);color:var(--muted2);padding:9px 16px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn-modal-gray:hover{border-color:var(--muted2);}
+.detail-row{display:flex;gap:.5rem;margin-bottom:.5rem;}
+.detail-key{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted2);min-width:110px;padding-top:.12rem;}
+.detail-val{color:var(--text);font-weight:600;flex:1;word-break:break-all;font-size:.88rem;}
+.detail-story{background:var(--dark3);border:1px solid var(--border2);padding:.8rem;font-size:.85rem;color:var(--text);line-height:1.7;max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;}
+
+/* ── LOGS ── */
+.log-stream{background:var(--dark);border:1px solid var(--border);padding:.8rem;max-height:480px;overflow-y:auto;font-family:'Space Mono',monospace;font-size:.58rem;}
+.log-entry{padding:.32rem 0;border-bottom:1px solid rgba(255,255,255,.03);display:flex;gap:.6rem;align-items:flex-start;}
+.log-time{color:var(--muted);min-width:130px;flex-shrink:0;font-size:.52rem;}
+.log-type{min-width:55px;flex-shrink:0;font-weight:700;}
+.log-type.AUTH{color:var(--blue);}
+.log-type.WL{color:var(--gold);}
+.log-type.BAN{color:#F07070;}
+.log-type.ACCEPT{color:var(--green);}
+.log-type.DENY,.log-type.REJECT{color:var(--orange);}
+.log-type.ROLE{color:var(--purple);}
+.log-type.CS{color:var(--cyan);}
+.log-type.IMPORT{color:#6DD5A8;}
+.log-type.SYSTEM{color:var(--muted2);}
+.log-type.NEWS{color:var(--purple);}
+.log-type.CHAT{color:var(--gold);}
+.log-msg{color:var(--text);flex:1;line-height:1.4;}
+
+/* ── ROLE CHIPS ── */
+.role-chip{font-family:'Space Mono',monospace;font-size:.5rem;padding:4px 10px;cursor:pointer;transition:all .2s;border:1px solid var(--border2);color:var(--muted2);display:inline-block;margin:2px;}
+.role-chip:hover{border-color:var(--gold);}
+.role-chip.sel{background:rgba(255,215,0,.1);border-color:var(--gold);color:var(--gold);}
+
+/* ── PERM TAGS ── */
+.perm-tag{font-family:'Space Mono',monospace;font-size:.48rem;padding:4px 9px;cursor:pointer;user-select:none;display:inline-block;margin:2px;transition:all .2s;}
+.perm-tag.on{background:rgba(255,215,0,.1);border:1px solid var(--gold);color:var(--gold);}
+.perm-tag.off{background:none;border:1px solid var(--border2);color:var(--muted);}
+
+/* ── ADMIN CHAT ── */
+.admin-chat-wrap{display:flex;flex-direction:column;height:65vh;border:1px solid var(--border);}
+.admin-chat-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem;background:var(--dark3);}
+.admin-msg{max-width:72%;padding:.6rem .9rem;}
+.admin-msg.mine{align-self:flex-end;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.18);}
+.admin-msg.theirs{align-self:flex-start;background:var(--dark2);border:1px solid var(--border2);}
+.admin-msg-meta{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--gold);margin-bottom:.2rem;}
+.admin-msg.mine .admin-msg-meta{color:var(--orange);}
+.admin-msg-text{font-size:.88rem;color:var(--text);line-height:1.5;}
+.admin-msg-time{font-family:'Space Mono',monospace;font-size:.46rem;color:var(--muted);margin-top:.2rem;}
+.admin-chat-input-row{display:flex;gap:.5rem;padding:.8rem 1rem;background:var(--dark2);border-top:1px solid var(--border);}
+.admin-chat-input-row input{flex:1;background:var(--dark3);border:1px solid var(--border2);color:var(--text);padding:8px 12px;font-family:'Rajdhani',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;}
+.admin-chat-input-row input:focus{border-color:rgba(255,215,0,.3);}
+.btn-send-chat{background:var(--gold);color:#000;border:none;padding:8px 16px;font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn-send-chat:hover{background:var(--orange);color:#fff;}
+
+/* ── ANNOUNCE ── */
+.announce-admin-item{background:var(--dark2);padding:1rem 1.2rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--border2);transition:background .15s;}
+.announce-admin-item:hover{background:var(--dark3);}
+.announce-admin-item:last-child{border-bottom:none;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--dark3);border:1px solid var(--border);padding:.9rem 1.3rem;z-index:9000;transform:translateX(130%);transition:transform .4s cubic-bezier(.175,.885,.32,1.275);max-width:300px;}
+.toast.show{transform:translateX(0);}
+.toast-title{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;color:var(--gold);margin-bottom:.15rem;}
+.toast.terror .toast-title{color:#F07070;}
+.toast.tsuccess .toast-title{color:var(--green);}
+.toast-msg{font-size:.8rem;color:var(--muted2);line-height:1.5;}
+
+/* STATUS STEPS */
+.wl-steps{display:flex;align-items:center;gap:.3rem;margin:.5rem 0;}
+.step-dot{width:9px;height:9px;border-radius:50%;border:2px solid var(--muted);}
+.step-dot.done{background:var(--green);border-color:var(--green);}
+.step-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(255,215,0,.4);}
+.step-dot.denied{background:var(--red);border-color:var(--red);}
+.step-line{width:30px;height:1px;background:var(--border);}
+.step-line.done{background:var(--green);}
+.step-label{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);}
+.step-label.done{color:var(--green);}
+.step-label.active{color:var(--gold);}
+.step-label.denied{color:var(--red);}
+
+/* GUIDE ITEM */
+.guide-item{background:var(--dark2);padding:1rem 1.2rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--border2);}
+.guide-item:last-child{border-bottom:none;}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main-content{margin-left:0;}
+  .hamburger-admin{display:flex;}
+  .cards-row{grid-template-columns:repeat(2,1fr);}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">INFO</div>
+  <div class="toast-msg" id="toastMsg"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">MIRACLE<span>RP</span></div>
+    <div class="login-sub">ADMIN PANEL · STAFF ACCESS ONLY</div>
+    <div class="auth-err" id="loginErr"></div>
+    <button class="btn-google-admin" onclick="doAdminLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      LOGIN DENGAN GOOGLE
+    </button>
+    <p style="font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-top:1rem;text-align:center;line-height:1.7;">Hanya akun dengan role admin yang dapat masuk.</p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">MIRACLE<span>RP</span></div>
+      <div class="sidebar-logo-sub">ADMIN PANEL</div>
+    </div>
+    <div class="sidebar-nav" id="sidebarNav"></div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarName">-</div>
+      <div class="sidebar-user-role" id="sidebarRole">-</div>
+      <div class="sidebar-perms" id="sidebarPerms"></div>
+      <button class="btn-logout-sm" onclick="doAdminLogout()">LOGOUT</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:.8rem;">
+        <button class="hamburger-admin" onclick="document.getElementById('sidebar').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.8rem;">
+        <a href="index.html" class="topbar-back">← FORUM</a>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-title">DASHBOARD</div>
+      <div class="page-sub">Statistik dan aktivitas terbaru</div>
+      <div class="cards-row">
+        <div class="stat-card"><div class="stat-card-label">Pending WL</div><div class="stat-card-val red" id="dc-wlPending">0</div></div>
+        <div class="stat-card"><div class="stat-card-label">Pending CS</div><div class="stat-card-val red" id="dc-csPending">0</div></div>
+        <div class="stat-card"><div class="stat-card-label">Total Member</div><div class="stat-card-val" id="dc-members">0</div></div>
+        <div class="stat-card"><div class="stat-card-label">WL Accepted</div><div class="stat-card-val green" id="dc-accepted">0</div></div>
+        <div class="stat-card"><div class="stat-card-label">Banned</div><div class="stat-card-val red" id="dc-banned">0</div></div>
+        <div class="stat-card"><div class="stat-card-label">Staff Aktif</div><div class="stat-card-val blue" id="dc-staff">0</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">AKTIVITAS TERBARU</div></div>
+        <div class="log-stream" id="dashLogs" style="max-height:300px;border:none;"></div>
+      </div>
+    </div>
+
+    <!-- WL PENDING -->
+    <div class="page" id="page-wlPending">
+      <div class="page-title">PENDING WHITELIST</div>
+      <div class="page-sub">Review dan proses antrian whitelist</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">ANTRIAN WL <span id="wlPendingLabel" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--gold);"></span></div>
+          <input class="table-search" placeholder="Cari..." oninput="filterTable('tblWLPending',this.value)">
+        </div>
+        <table id="tblWLPending"><thead><tr><th>Nama IG</th><th>WhatsApp</th><th>Fraksi</th><th>Tgl Daftar</th><th>Status</th><th>Proses WA</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyWLPending"><tr class="empty-row"><td colspan="7">Memuat...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- WL ALL -->
+    <div class="page" id="page-wlAll">
+      <div class="page-title">SEMUA WHITELIST</div>
+      <div class="page-sub">Riwayat semua pendaftaran</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">RIWAYAT WL</div>
+          <input class="table-search" placeholder="Cari..." oninput="filterTable('tblWLAll',this.value)">
+        </div>
+        <table id="tblWLAll"><thead><tr><th>Nama IG</th><th>Username</th><th>WA</th><th>Status</th><th>Proses</th><th>Tgl Daftar</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyWLAll"><tr class="empty-row"><td colspan="7">Memuat...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- CS PENDING -->
+    <div class="page" id="page-csPending">
+      <div class="page-title">PENDING CHARACTER STORY</div>
+      <div class="page-sub">Review dan proses request CS member</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">ANTRIAN CS <span id="csPendingLabel" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--gold);"></span></div>
+          <input class="table-search" placeholder="Cari..." oninput="filterTable('tblCSPending',this.value)">
+        </div>
+        <table id="tblCSPending"><thead><tr><th>Nama IC</th><th>Char Name</th><th>Level</th><th>WA</th><th>Tgl Request</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyCSPending"><tr class="empty-row"><td colspan="7">Memuat...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- CS ALL -->
+    <div class="page" id="page-csAll">
+      <div class="page-title">SEMUA CS REQUEST</div>
+      <div class="page-sub">Riwayat semua Character Story request</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">RIWAYAT CS</div>
+          <input class="table-search" placeholder="Cari..." oninput="filterTable('tblCSAll',this.value)">
+        </div>
+        <table id="tblCSAll"><thead><tr><th>Nama IC</th><th>Username</th><th>Char Name</th><th>Level</th><th>Status</th><th>Tgl Request</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyCSAll"><tr class="empty-row"><td colspan="7">Memuat...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- IMPORT -->
+    <div class="page" id="page-importReq">
+      <div class="page-title">IMPORT REQUESTS</div>
+      <div class="page-sub">Request import goodside / badside / family</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">ANTRIAN IMPORT</div>
+          <input class="table-search" placeholder="Cari..." oninput="filterTable('tblImport',this.value)">
+        </div>
+        <table id="tblImport"><thead><tr><th>Nama IC</th><th>Username</th><th>Tipe</th><th>Fraksi/Family</th><th>Lv</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyImport"><tr class="empty-row"><td colspan="7">Memuat...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="page-users">
+      <div class="page-title">USERS & ROLE</div>
+      <div class="page-sub">Kelola user, role, dan permission</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">DAFTAR USER</div>
+          <input class="table-search" placeholder="Cari username / email..." oninput="filterTable('tblUsers',this.value)">
+        </div>
+        <table id="tblUsers"><thead><tr><th>Username</th><th>Email</th><th>Role</th><th>WL</th><th>Nama IC</th><th>Joined</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyUsers"><tr class="empty-row"><td colspan="7">Memuat...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- BANNED -->
+    <div class="page" id="page-banned">
+      <div class="page-title">BANNED USERS</div>
+      <div class="page-sub">Daftar user yang dibanned</div>
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">BANNED LIST</div></div>
+        <table id="tblBanned"><thead><tr><th>Username</th><th>Email</th><th>Alasan</th><th>Dibanned Oleh</th><th>Tgl Ban</th><th>Aksi</th></tr></thead>
+        <tbody id="tbodyBanned"><tr class="empty-row"><td colspan="6">Tidak ada.</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="page" id="page-news">
+      <div class="page-title">NEWS & UPDATE</div>
+      <div class="page-sub">Kelola berita server</div>
+      <div style="display:grid;grid-template-columns:1fr 350px;gap:1.4rem;align-items:start;">
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">DAFTAR BERITA</div></div>
+          <div id="newsList"></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title" id="newsFormTitle">TAMBAH BERITA</div></div>
+          <div style="padding:1.2rem;">
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.8rem;" id="tagSelect">
+              <span class="role-chip sel" onclick="selTag(this,'UPDATE')">UPDATE</span>
+              <span class="role-chip" onclick="selTag(this,'EVENT')">EVENT</span>
+              <span class="role-chip" onclick="selTag(this,'HOTFIX')">HOTFIX</span>
+              <span class="role-chip" onclick="selTag(this,'NOTICE')">NOTICE</span>
+            </div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Judul</label><input type="text" class="form-input" id="nTitle" placeholder="Judul berita..."></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Konten</label><textarea class="form-input" id="nContent" rows="4" placeholder="Isi berita..."></textarea></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Tanggal</label><input type="date" class="form-input" id="nDate"></div>
+            <button class="btn-gold" onclick="submitNews()">SIMPAN BERITA</button>
+            <button class="btn-gold" id="btnCancelNews" onclick="cancelEditNews()" style="display:none;background:var(--dark4);color:var(--muted2);margin-top:.4rem;">BATAL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUIDES -->
+    <div class="page" id="page-guides">
+      <div class="page-title">KELOLA GUIDES</div>
+      <div class="page-sub">Rules, Guide Job, Goodside, Badside</div>
+      <div style="display:grid;grid-template-columns:1fr 350px;gap:1.4rem;align-items:start;">
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">ARTIKEL</div>
+            <select class="table-search" id="guideTypeFilter" onchange="loadGuidesList()" style="width:160px;">
+              <option value="rules">Rules Server</option>
+              <option value="guide_job">Guide Job</option>
+              <option value="guide_goodside">Guide Goodside</option>
+              <option value="guide_badside">Guide Badside</option>
+            </select>
+          </div>
+          <div id="guidesList"><div style="padding:1.5rem;text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);">Pilih tipe guide di atas.</div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title" id="guideFormTitle">TAMBAH ARTIKEL</div></div>
+          <div style="padding:1.2rem;">
+            <div style="margin-bottom:.7rem;"><label class="form-label">Judul</label><input type="text" class="form-input" id="gTitle" placeholder="Judul artikel..."></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Tag</label><input type="text" class="form-input" id="gTag" placeholder="Contoh: WAJIB BACA"></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Konten</label><textarea class="form-input" id="gContent" rows="6" placeholder="Isi artikel..."></textarea></div>
+            <label style="display:flex;align-items:center;gap:.5rem;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted2);margin-bottom:.8rem;cursor:pointer;"><input type="checkbox" id="gPinned"> Pinned</label>
+            <button class="btn-gold" onclick="submitGuide()">SIMPAN ARTIKEL</button>
+            <button class="btn-gold" id="btnCancelGuide" onclick="cancelEditGuide()" style="display:none;background:var(--dark4);color:var(--muted2);margin-top:.4rem;">BATAL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCE -->
+    <div class="page" id="page-announce">
+      <div class="page-title">PENGUMUMAN</div>
+      <div class="page-sub">Buat pengumuman untuk community</div>
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:1.4rem;align-items:start;">
+        <div style="border:1px solid var(--border);min-height:200px;" id="announceList"></div>
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">BUAT PENGUMUMAN</div></div>
+          <div style="padding:1.2rem;">
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.8rem;" id="annTagSelect">
+              <span class="role-chip sel" onclick="selAnnTag(this,'ANNOUNCEMENT')">ANNOUNCEMENT</span>
+              <span class="role-chip" onclick="selAnnTag(this,'MAINTENANCE')">MAINTENANCE</span>
+              <span class="role-chip" onclick="selAnnTag(this,'WARNING')">WARNING</span>
+              <span class="role-chip" onclick="selAnnTag(this,'INFO')">INFO</span>
+            </div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Judul</label><input type="text" class="form-input" id="annTitle" placeholder="Judul..."></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Isi</label><textarea class="form-input" id="annContent" rows="4" placeholder="Isi pengumuman..."></textarea></div>
+            <button class="btn-gold" onclick="submitAnnounce()">KIRIM PENGUMUMAN</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN CHAT -->
+    <div class="page" id="page-adminChat">
+      <div class="page-title">ADMIN CHAT</div>
+      <div class="page-sub">Diskusi internal tim admin — hanya staff yang bisa read & write</div>
+      <div class="table-wrap" style="padding:0;overflow:hidden;">
+        <div class="admin-chat-wrap">
+          <div class="admin-chat-msgs" id="adminChatMsgs">
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);text-align:center;padding:1rem;">Memuat pesan...</div>
+          </div>
+          <div class="admin-chat-input-row">
+            <input id="adminChatInput" placeholder="Tulis ke tim admin..." onkeydown="if(event.key==='Enter')sendAdminChat()">
+            <button class="btn-send-chat" onclick="sendAdminChat()">KIRIM</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="page" id="page-logs">
+      <div class="page-title">SYSTEM LOGS</div>
+      <div class="page-sub">Riwayat semua aktivitas sistem</div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">ACTIVITY LOG</div>
+          <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+            <select class="table-search" style="width:130px;" onchange="filterLogs(this.value)">
+              <option value="">SEMUA</option>
+              <option value="AUTH">AUTH</option>
+              <option value="WL">WL</option>
+              <option value="CS">CS</option>
+              <option value="IMPORT">IMPORT</option>
+              <option value="BAN">BAN</option>
+              <option value="ACCEPT">ACCEPT</option>
+              <option value="DENY">DENY</option>
+              <option value="ROLE">ROLE</option>
+              <option value="SYSTEM">SYSTEM</option>
+            </select>
+            <button class="action-btn red" id="btnClearLogs" onclick="clearLogs()" style="display:none;">CLEAR</button>
+          </div>
+        </div>
+        <div class="log-stream" id="logStream" style="max-height:560px;"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-title">SETTINGS</div>
+      <div class="page-sub">Konfigurasi server</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;">
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">SERVER CONFIG</div></div>
+          <div style="padding:1.2rem;">
+            <div style="margin-bottom:.7rem;"><label class="form-label">Server IP</label><input type="text" class="form-input" id="cfgIP" placeholder="samp.miracle-rp.id:7777"></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Nomor WA Admin</label><input type="text" class="form-input" id="cfgWA" placeholder="628xxxxxxxxxx"></div>
+            <div style="margin-bottom:.7rem;"><label class="form-label">Link WA Group</label><input type="text" class="form-input" id="cfgWAGroup" placeholder="https://chat.whatsapp.com/..."></div>
+            <button class="btn-gold" onclick="saveConfig()">SIMPAN CONFIG</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">STATS MANUAL</div></div>
+          <div style="padding:1.2rem;">
+            <div style="margin-bottom:.7rem;"><label class="form-label">Total Fraksi</label><input type="number" class="form-input" id="cfgFactions" placeholder="0"></div>
+            <button class="btn-gold" onclick="saveStats()">UPDATE STATS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main-content -->
+</div>
+</div><!-- end adminApp -->
+
+<!-- MODAL WL DETAIL -->
+<div class="overlay" id="modalWL">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modalWL')">✕</button>
+    <div class="modal-title">DETAIL WHITELIST</div>
+    <div id="wlDetailBody"></div>
+    <div class="modal-actions" id="wlActions"></div>
+  </div>
+</div>
+
+<!-- MODAL CS DETAIL -->
+<div class="overlay" id="modalCS">
+  <div class="modal wide">
+    <button class="modal-close" onclick="closeModal('modalCS')">✕</button>
+    <div class="modal-title">DETAIL CHARACTER STORY</div>
+    <div id="csDetailBody"></div>
+    <div class="modal-actions" id="csActions"></div>
+  </div>
+</div>
+
+<!-- MODAL IMPORT DETAIL -->
+<div class="overlay" id="modalImport">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modalImport')">✕</button>
+    <div class="modal-title">DETAIL IMPORT REQUEST</div>
+    <div id="importDetailBody"></div>
+    <div class="modal-actions" id="importActions"></div>
+  </div>
+</div>
+
+<!-- MODAL BAN -->
+<div class="overlay" id="modalBan">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modalBan')">✕</button>
+    <div class="modal-title" style="color:#F07070;">BAN USER</div>
+    <div class="modal-sub" id="banTargetSub">-</div>
+    <label class="form-label">Alasan Ban</label>
+    <input type="text" class="form-input" id="banReasonInput" placeholder="Alasan ban...">
+    <div class="modal-actions">
+      <button class="btn-modal-red" onclick="confirmBan()">BAN USER</button>
+      <button class="btn-modal-gray" onclick="closeModal('modalBan')">BATAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ROLE + PERMISSION -->
+<div class="overlay" id="modalRole">
+  <div class="modal wide">
+    <button class="modal-close" onclick="closeModal('modalRole')">✕</button>
+    <div class="modal-title">KELOLA ROLE & PERMISSION</div>
+    <div class="modal-sub" id="roleTargetSub">-</div>
+    <div style="margin-bottom:1rem;">
+      <label class="form-label">Primary Role</label>
+      <div id="primaryRoleSelect" style="display:flex;flex-wrap:wrap;gap:.3rem;"></div>
+    </div>
+    <div style="margin-bottom:.5rem;">
+      <label class="form-label">Permission Tambahan</label>
+      <p style="font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-bottom:.5rem;">Centang permission yang ingin diberikan ke user ini (berlaku di atas role default)</p>
+      <div id="permSelect" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-green" onclick="confirmRoleChange()">SIMPAN</button>
+      <button class="btn-modal-gray" onclick="closeModal('modalRole')">BATAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IC NAME -->
+<div class="overlay" id="modalICName">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modalICName')">✕</button>
+    <div class="modal-title">EDIT NAMA IC</div>
+    <div class="modal-sub" id="icNameTargetSub">-</div>
+    <label class="form-label">Nama IC Baru (Format: Nama_Belakang)</label>
+    <input type="text" class="form-input" id="icNameInput" placeholder="Contoh: John_Doe">
+    <div class="modal-actions">
+      <button class="btn-modal-green" onclick="confirmICNameChange()">SIMPAN</button>
+      <button class="btn-modal-gray" onclick="closeModal('modalICName')">BATAL</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, get, set, update, push, remove, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD5JGQ3eARM5Lo2IG3mkpdx7p3uh0nrBIk",
+  authDomain: "samp-miracle.firebaseapp.com",
+  projectId: "samp-miracle",
+  storageBucket: "samp-miracle.firebasestorage.app",
+  messagingSenderId: "465126706451",
+  appId: "1:465126706451:web:b94f2359a348ff7078dee6",
+  measurementId: "G-ZCRVX5DCPR",
+  databaseURL: "https://samp-miracle-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+const gProvider = new GoogleAuthProvider();
+
+let adminUser = null, adminData = null, adminPerms = [];
+let currentWLTarget = null, currentCSTarget = null, currentImportTarget = null;
+let currentBanTarget = null, currentRoleTarget = null, currentICTarget = null;
+let selectedPrimaryRole = 'user', selectedPerms = [];
+let selectedTag = 'UPDATE', selectedAnnTag = 'ANNOUNCEMENT';
+let editingNewsKey = null, editingGuideKey = null;
+let allLogsCache = [], regsCache = {}, csCache = {}, importCache = {}, usersCache = {};
+
+// ══════════════════════════
+// PERMISSION DEFINITIONS
+// ══════════════════════════
+const ALL_ROLES = ['user','exstaff','volunteer','juniorhelper','seniorhelper','junioradmin','senioradmin','moderator','management','communityhandle','admin','headadmin','developer','owner'];
+const PERMS_DEF = {
+  handle_wl:'Handle WL', handle_cs:'Handle CS',
+  handle_import:'Handle Import', handle_goodside:'Handle Goodside',
+  handle_badside:'Handle Badside', ban_user:'Ban/Unban',
+  manage_roles:'Kelola Role', edit_icname:'Edit IC Name',
+  manage_news:'Manage News', manage_guides:'Manage Guides',
+  manage_announce:'Manage Announce', view_logs:'View Logs',
+  clear_logs:'Clear Logs', settings:'Settings', admin_chat:'Admin Chat'
+};
+
+function isOwner() { return adminData?.role === 'owner'; }
+function hasPerm(p) { if (isOwner()) return true; return adminPerms.includes(p); }
+function isStaff() { return ALL_ROLES.indexOf(adminData?.role||'user') > ALL_ROLES.indexOf('user'); }
+
+function getDefaultPerms(role) {
+  const base = ['admin_chat','view_logs'];
+  if (['owner','developer'].includes(role)) return Object.keys(PERMS_DEF);
+  if (role==='headadmin') return Object.keys(PERMS_DEF).filter(p=>!['settings','clear_logs'].includes(p));
+  if (role==='admin') return [...base,'handle_wl','handle_cs','ban_user','manage_news','manage_announce'];
+  if (role==='management') return [...base,'manage_announce','manage_news'];
+  if (role==='communityhandle') return [...base,'handle_import','handle_goodside','handle_badside'];
+  if (role==='senioradmin') return [...base,'handle_wl','ban_user','manage_news'];
+  if (role==='junioradmin') return [...base,'handle_wl'];
+  if (role==='moderator') return [...base,'handle_wl'];
+  return [...base];
+}
+
+// ── TOAST ──
+window.showToast = (title,msg,type='') => {
+  const t=document.getElementById('toast');
+  t.className='toast'+(type?' t'+type:'');
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+};
+window.closeModal = id=>document.getElementById(id).classList.remove('open');
+window.openModal = id=>document.getElementById(id).classList.add('open');
+
+function fmtDate(ts){if(!ts)return'-';return new Date(ts).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function fmtShort(ts){if(!ts)return'-';return new Date(ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});}
+function escHtml(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── FILTER TABLE ──
+window.filterTable=(id,q)=>{
+  const rows=document.querySelectorAll('#'+id+' tbody tr:not(.empty-row)');
+  const lq=q.toLowerCase();
+  rows.forEach(r=>r.style.display=r.textContent.toLowerCase().includes(lq)?'':'none');
+};
+
+// ── GOOGLE LOGIN ──
+window.doAdminLogin = async () => {
+  const errEl=document.getElementById('loginErr'); errEl.classList.remove('show');
+  try {
+    const res=await signInWithPopup(auth,gProvider);
+    const user=res.user;
+    const snap=await get(ref(db,'users/'+user.uid));
+    if(!snap.exists()){
+      await set(ref(db,'users/'+user.uid),{username:user.displayName||user.email.split('@')[0],email:user.email,uid:user.uid,photoURL:user.photoURL||'',role:'user',status:'active',createdAt:Date.now()});
+    }
+  } catch(e){
+    if(e.code!=='auth/popup-closed-by-user'){errEl.textContent='Login gagal: '+e.message;errEl.classList.add('show');}
+  }
+};
+window.doAdminLogout = ()=>signOut(auth);
+
+// ── AUTH STATE ──
+onAuthStateChanged(auth, async user=>{
+  adminUser=user;
+  if(!user){showLoginScreen();return;}
+  const snap=await get(ref(db,'users/'+user.uid));
+  if(!snap.exists()){showLoginError('Akun tidak ditemukan.');await signOut(auth);return;}
+  adminData=snap.val();
+  if(ALL_ROLES.indexOf(adminData.role||'user')<=ALL_ROLES.indexOf('user')){showLoginError('Tidak memiliki akses admin.');await signOut(auth);return;}
+  await loadAdminPerms();
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminApp').style.display='block';
+  document.getElementById('sidebarName').textContent=adminData.username||'Admin';
+  document.getElementById('sidebarRole').textContent=(adminData.role||'staff').toUpperCase();
+  // Show perms as chips
+  const permsEl=document.getElementById('sidebarPerms');
+  permsEl.innerHTML=adminPerms.slice(0,6).map(p=>`<span class="perm-chip">${PERMS_DEF[p]||p}</span>`).join('');
+  buildSidebarNav();
+  initData();
+  writeLog('AUTH',`Admin login: ${adminData.username} (${adminData.role})`);
+});
+
+function showLoginScreen(){document.getElementById('loginScreen').style.display='flex';document.getElementById('adminApp').style.display='none';}
+function showLoginError(msg){showLoginScreen();const e=document.getElementById('loginErr');e.textContent=msg;e.classList.add('show');}
+
+async function loadAdminPerms(){
+  const snap=await get(ref(db,`admin_perms/${adminUser.uid}`));
+  if(snap.exists()){adminPerms=snap.val().perms||[];}
+  else{
+    adminPerms=getDefaultPerms(adminData.role);
+    await set(ref(db,`admin_perms/${adminUser.uid}`),{uid:adminUser.uid,username:adminData.username,role:adminData.role,perms:adminPerms,setAt:Date.now()});
+  }
+}
+
+// ── BUILD SIDEBAR ──
+function buildSidebarNav(){
+  const nav=document.getElementById('sidebarNav');
+  let h='';
+  h+=`<div class="nav-section">Utama</div>`;
+  h+=navBtn('dashboard','📊','Dashboard','');
+  if(hasPerm('admin_chat'))h+=navBtn('adminChat','💬','Admin Chat','');
+  if(hasPerm('handle_wl')){
+    h+=`<div class="nav-section">Whitelist</div>`;
+    h+=navBtn('wlPending','⏳','Pending WL','badgeWLPending');
+    h+=navBtn('wlAll','📋','Semua WL','');
+  }
+  if(hasPerm('handle_cs')){
+    h+=`<div class="nav-section">Character Story</div>`;
+    h+=navBtn('csPending','🎭','Pending CS','badgeCSPending');
+    h+=navBtn('csAll','📋','Semua CS','');
+  }
+  if(hasPerm('handle_import')||hasPerm('handle_goodside')||hasPerm('handle_badside')){
+    h+=`<div class="nav-section">Import</div>`;
+    h+=navBtn('importReq','🚀','Import Requests','badgeImport');
+  }
+  if(hasPerm('ban_user')||hasPerm('manage_roles')||isOwner()){
+    h+=`<div class="nav-section">Users</div>`;
+    h+=navBtn('users','👥','Users & Role','');
+    h+=navBtn('banned','🚫','Banned Users','');
+  }
+  const hasContent=hasPerm('manage_news')||hasPerm('manage_guides')||hasPerm('manage_announce');
+  if(hasContent){
+    h+=`<div class="nav-section">Konten</div>`;
+    if(hasPerm('manage_news'))h+=navBtn('news','📰','News & Update','');
+    if(hasPerm('manage_guides'))h+=navBtn('guides','📚','Guides & Rules','');
+    if(hasPerm('manage_announce'))h+=navBtn('announce','📢','Pengumuman','');
+  }
+  if(hasPerm('view_logs')){
+    h+=`<div class="nav-section">Sistem</div>`;
+    h+=navBtn('logs','🔍','System Logs','');
+  }
+  if(hasPerm('settings'))h+=navBtn('settings','⚙️','Settings','');
+  nav.innerHTML=h;
+  // Set dashboard active by default
+  showPage('dashboard');
+}
+
+function navBtn(page,icon,label,badgeId){
+  return `<button class="nav-item" id="nav-${page}" onclick="showPage('${page}')"><span style="font-size:.85rem;width:14px;text-align:center;">${icon}</span> ${label}${badgeId?`<span class="nav-badge" id="${badgeId}" style="display:none;">0</span>`:''}</button>`;
+}
+
+// ── PAGE NAV ──
+window.showPage = page=>{
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pageEl=document.getElementById('page-'+page);
+  if(pageEl)pageEl.classList.add('active');
+  const navEl=document.getElementById('nav-'+page);
+  if(navEl)navEl.classList.add('active');
+  const titles={dashboard:'DASHBOARD',adminChat:'ADMIN CHAT',wlPending:'PENDING WL',wlAll:'SEMUA WL',csPending:'PENDING CS',csAll:'SEMUA CS',importReq:'IMPORT REQUESTS',users:'USERS & ROLE',banned:'BANNED',news:'NEWS',guides:'GUIDES',announce:'PENGUMUMAN',logs:'SYSTEM LOGS',settings:'SETTINGS'};
+  document.getElementById('topbarTitle').textContent=titles[page]||page.toUpperCase();
+  if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');
+  if(page==='guides')loadGuidesList();
+  if(page==='adminChat')initAdminChat();
+};
+
+// ── WRITE LOG ──
+function writeLog(type,msg){
+  if(!adminUser)return;
+  push(ref(db,'logs'),{type,msg,ts:Date.now(),by:adminData?.username||adminUser.email}).catch(()=>{});
+}
+
+// ── INIT DATA ──
+function initData(){
+  loadDashStats();
+  loadUsers();
+  loadRegistrations();
+  loadCSRequests();
+  loadImportRequests();
+  loadNews();
+  loadAnnounce();
+  loadLogs();
+  loadConfig();
+}
+
+// ── DASHBOARD ──
+function loadDashStats(){
+  onValue(ref(db,'users'),s=>{
+    if(!s.exists())return;
+    const users=Object.values(s.val());
+    document.getElementById('dc-members').textContent=users.length;
+    document.getElementById('dc-banned').textContent=users.filter(u=>u.status==='banned').length;
+    document.getElementById('dc-accepted').textContent=users.filter(u=>u.wlStatus==='accepted').length;
+    const STAFF=['volunteer','juniorhelper','seniorhelper','junioradmin','senioradmin','management','communityhandle','moderator','admin','headadmin','developer','owner'];
+    document.getElementById('dc-staff').textContent=users.filter(u=>STAFF.includes(u.role)).length;
+  });
+}
+
+// ══════════════════════════════
+// WHITELIST
+// ══════════════════════════════
+function loadRegistrations(){
+  onValue(ref(db,'registrations'),s=>{
+    regsCache={};
+    const tbP=document.getElementById('tbodyWLPending');
+    const tbA=document.getElementById('tbodyWLAll');
+    if(!s.exists()){
+      tbP.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada pendaftaran.</td></tr>';
+      tbA.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada data.</td></tr>';
+      updateBadge('badgeWLPending',0,'dc-wlPending');
+      return;
+    }
+    regsCache=s.val();
+    const entries=Object.entries(regsCache).sort((a,b)=>(b[1].submittedAt||0)-(a[1].submittedAt||0));
+    const pending=entries.filter(([,r])=>r.status==='pending');
+    updateBadge('badgeWLPending',pending.length,'dc-wlPending');
+    // Update label
+    const lbl=document.getElementById('wlPendingLabel');
+    if(lbl)lbl.textContent=pending.length>0?`(${pending.length} pending)`:'';
+
+    let rowsP='',rowsA='';
+    entries.forEach(([uid,r])=>{
+      const waLink=r.wa?`<a href="https://wa.me/${r.wa.replace(/^0/,'62')}" target="_blank" style="color:var(--green);font-family:'Space Mono',monospace;font-size:.75rem;">${r.wa}</a>`:'<span style="color:var(--muted);">-</span>';
+      const statusBadge=getStatusBadge(r.status);
+      const processBadge=r.process?`<span class="s-badge s-process">DIPROSES</span>`:`<span class="s-badge" style="color:var(--muted);border:1px solid var(--border2);">-</span>`;
+      const steps=renderWLSteps(r.status,r.process);
+      if(r.status==='pending'){
+        rowsP+=`<tr>
+          <td><strong>${escHtml(r.name||'-')}</strong></td>
+          <td>${waLink}</td>
+          <td style="font-size:.82rem;color:var(--muted2);">${escHtml(r.faction||'-')}</td>
+          <td style="color:var(--muted);font-size:.78rem;">${fmtShort(r.submittedAt)}</td>
+          <td>${statusBadge}</td>
+          <td>${processBadge}</td>
+          <td><button class="action-btn" onclick="openWLDetail('${uid}')">DETAIL</button></td>
+        </tr>`;
+      }
+      rowsA+=`<tr>
+        <td><strong>${escHtml(r.name||'-')}</strong></td>
+        <td style="font-size:.82rem;color:var(--muted2);">${escHtml(r.username||'-')}</td>
+        <td>${waLink}</td>
+        <td>${statusBadge}</td>
+        <td>${processBadge}</td>
+        <td style="color:var(--muted);font-size:.78rem;">${fmtShort(r.submittedAt)}</td>
+        <td><button class="action-btn" onclick="openWLDetail('${uid}')">DETAIL</button></td>
+      </tr>`;
+    });
+    tbP.innerHTML=rowsP||'<tr class="empty-row"><td colspan="7">Tidak ada pending.</td></tr>';
+    tbA.innerHTML=rowsA||'<tr class="empty-row"><td colspan="7">Belum ada data.</td></tr>';
+  });
+}
+
+function renderWLSteps(status,isProcess){
+  const steps=[
+    {key:'pending',label:'Terkirim'},
+    {key:'process',label:'Diproses'},
+    {key:'accepted',label:'Diterima'},
+  ];
+  const isDenied=status==='rejected'||status==='denied';
+  let html='<div class="wl-steps">';
+  steps.forEach((s,i)=>{
+    let dotClass='', lblClass='';
+    if(status==='accepted'){dotClass='done';lblClass='done';}
+    else if(s.key==='pending'){dotClass='done';lblClass='done';}
+    else if(s.key==='process'&&isProcess){dotClass='active';lblClass='active';}
+    else if(s.key==='accepted'&&isDenied){dotClass='denied';lblClass='denied';}
+    html+=`<div class="step-dot ${dotClass}"></div><span class="step-label ${lblClass}" style="margin-right:.3rem;">${s.label}</span>`;
+    if(i<steps.length-1){html+=`<div class="step-line ${status==='accepted'?'done':''}"></div>`;}
+  });
+  if(isDenied)html+='<span class="step-label denied" style="margin-left:.3rem;">❌ Ditolak</span>';
+  html+='</div>';
+  return html;
+}
+
+window.openWLDetail = uid=>{
+  if(!hasPerm('handle_wl'))return showToast('AKSES DITOLAK','','error');
+  const r=regsCache[uid];
+  if(!r)return;
+  currentWLTarget={uid,...r};
+  const waLink=r.wa?`<a href="https://wa.me/${r.wa.replace(/^0/,'62')}" target="_blank" style="color:var(--green);">📱 ${r.wa} — Klik buka WA</a>`:'<span>-</span>';
+  document.getElementById('wlDetailBody').innerHTML=`
+    ${renderWLSteps(r.status,r.process)}
+    <div class="detail-row"><span class="detail-key">Nama IG</span><span class="detail-val">${escHtml(r.name||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Username</span><span class="detail-val">${escHtml(r.username||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">WhatsApp</span><span class="detail-val">${waLink}</span></div>
+    <div class="detail-row"><span class="detail-key">Umur</span><span class="detail-val">${r.age||'-'}</span></div>
+    <div class="detail-row"><span class="detail-key">Fraksi</span><span class="detail-val">${escHtml(r.faction||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Pengalaman</span><span class="detail-val">${escHtml(r.exp||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Alasan</span><span class="detail-val">${escHtml(r.reason||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Tgl Daftar</span><span class="detail-val" style="color:var(--muted2)">${fmtDate(r.submittedAt)}</span></div>
+  `;
+  const acts=document.getElementById('wlActions');
+  if(r.status==='pending'){
+    acts.innerHTML=`
+      <button class="btn-modal-blue" onclick="setWLProcess('${uid}')">🔄 SET DIPROSES</button>
+      <button class="btn-modal-green" onclick="acceptWL('${uid}')">✅ ACCEPT WL</button>
+      <button class="btn-modal-red" onclick="rejectWL('${uid}')">❌ REJECT</button>
+      <button class="btn-modal-gray" onclick="closeModal('modalWL')">TUTUP</button>
+    `;
+  } else {
+    acts.innerHTML=`<button class="btn-modal-gray" onclick="closeModal('modalWL')">TUTUP</button>`;
+  }
+  openModal('modalWL');
+};
+
+// SET PROSES — admin kirim via WA, status jadi "diproses"
+// Jika 24 jam tidak balas → auto denied (handled by cloud function or manual check)
+window.setWLProcess = async uid=>{
+  if(!hasPerm('handle_wl'))return showToast('AKSES DITOLAK','','error');
+  const r=regsCache[uid];
+  if(!r)return;
+  try{
+    const now=Date.now();
+    await update(ref(db,'registrations/'+uid),{process:true,processAt:now,processBy:adminData.username});
+    await update(ref(db,'users/'+uid),{wlProcess:true});
+    // Auto-denied after 24h — mark deadline
+    await update(ref(db,'registrations/'+uid),{autoDeniedAt:now+(24*60*60*1000)});
+    writeLog('WL',`WL diset PROSES: ${r.name} | WA: ${r.wa} | oleh ${adminData.username}`);
+    closeModal('modalWL');
+    showToast('STATUS DIPROSES','Admin sudah kirim via WA. Jika 24 jam tidak balas → auto denied.','success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+window.acceptWL = async uid=>{
+  if(!hasPerm('handle_wl'))return showToast('AKSES DITOLAK','','error');
+  const r=regsCache[uid];
+  if(!r)return;
+  try{
+    const now=Date.now();
+    await update(ref(db,'registrations/'+uid),{status:'accepted',reviewedBy:adminData.username,reviewedAt:now,process:false});
+    await update(ref(db,'users/'+uid),{wlStatus:'accepted',wlName:r.name,wlAcceptedAt:now,wlWA:r.wa,wlProcess:false});
+    const statsSnap=await get(ref(db,'stats'));
+    const stats=statsSnap.exists()?statsSnap.val():{};
+    await update(ref(db,'stats'),{members:(stats.members||0)+1});
+    writeLog('ACCEPT',`WL diterima: ${r.name} | WA: ${r.wa} | oleh ${adminData.username}`);
+    closeModal('modalWL');
+    showToast('WL DITERIMA!',`${r.name} berhasil whitelist.`,'success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+window.rejectWL = async uid=>{
+  if(!hasPerm('handle_wl'))return showToast('AKSES DITOLAK','','error');
+  const r=regsCache[uid];
+  if(!r)return;
+  if(!confirm(`Tolak WL ${r.name}?`))return;
+  try{
+    await update(ref(db,'registrations/'+uid),{status:'rejected',reviewedBy:adminData.username,reviewedAt:Date.now(),process:false});
+    await update(ref(db,'users/'+uid),{wlStatus:'rejected',wlProcess:false});
+    writeLog('DENY',`WL ditolak: ${r.name} | oleh ${adminData.username}`);
+    closeModal('modalWL');
+    showToast('WL DITOLAK','','error');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+// ══════════════════════════════
+// CHARACTER STORY
+// ══════════════════════════════
+function loadCSRequests(){
+  onValue(ref(db,'cs_requests'),s=>{
+    csCache={};
+    const tbP=document.getElementById('tbodyCSPending');
+    const tbA=document.getElementById('tbodyCSAll');
+    if(!s.exists()){
+      tbP.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada CS pending.</td></tr>';
+      tbA.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada data.</td></tr>';
+      updateBadge('badgeCSPending',0,'dc-csPending');
+      return;
+    }
+    csCache=s.val();
+    const entries=Object.entries(csCache).sort((a,b)=>(b[1].submittedAt||0)-(a[1].submittedAt||0));
+    const pending=entries.filter(([,r])=>r.status==='pending');
+    updateBadge('badgeCSPending',pending.length,'dc-csPending');
+    const lbl=document.getElementById('csPendingLabel');
+    if(lbl)lbl.textContent=pending.length>0?`(${pending.length} pending)`:'';
+
+    let rowsP='',rowsA='';
+    entries.forEach(([uid,r])=>{
+      const waLink=r.wlWA?`<a href="https://wa.me/${r.wlWA.replace(/^0/,'62')}" target="_blank" style="color:var(--green);font-family:'Space Mono',monospace;font-size:.75rem;">${r.wlWA}</a>`:'<span style="color:var(--muted);">-</span>';
+      const statusBadge=getStatusBadge(r.status);
+      const processTag=r.process?`<span class="s-badge s-process">DIPROSES</span>`:'';
+      if(r.status==='pending'){
+        rowsP+=`<tr>
+          <td><strong>${escHtml(r.icName||'-')}</strong></td>
+          <td style="font-size:.82rem;">${escHtml(r.name||'-')}</td>
+          <td style="font-size:.82rem;">Lv.${r.level||'-'}</td>
+          <td>${waLink}</td>
+          <td style="color:var(--muted);font-size:.78rem;">${fmtShort(r.submittedAt)}</td>
+          <td>${statusBadge} ${processTag}</td>
+          <td><button class="action-btn" onclick="openCSDetail('${uid}')">DETAIL</button></td>
+        </tr>`;
+      }
+      rowsA+=`<tr>
+        <td><strong>${escHtml(r.icName||'-')}</strong></td>
+        <td style="font-size:.82rem;color:var(--muted2);">${escHtml(r.username||'-')}</td>
+        <td style="font-size:.82rem;">${escHtml(r.name||'-')}</td>
+        <td style="font-size:.82rem;">Lv.${r.level||'-'}</td>
+        <td>${statusBadge}</td>
+        <td style="color:var(--muted);font-size:.78rem;">${fmtShort(r.submittedAt)}</td>
+        <td><button class="action-btn" onclick="openCSDetail('${uid}')">DETAIL</button></td>
+      </tr>`;
+    });
+    tbP.innerHTML=rowsP||'<tr class="empty-row"><td colspan="7">Tidak ada pending CS.</td></tr>';
+    tbA.innerHTML=rowsA||'<tr class="empty-row"><td colspan="7">Belum ada data.</td></tr>';
+  });
+}
+
+window.openCSDetail = uid=>{
+  if(!hasPerm('handle_cs'))return showToast('AKSES DITOLAK','','error');
+  const r=csCache[uid];
+  if(!r)return;
+  currentCSTarget={uid,...r};
+  const waLink=r.wlWA?`<a href="https://wa.me/${r.wlWA.replace(/^0/,'62')}" target="_blank" style="color:var(--green);">📱 ${r.wlWA}</a>`:'<span>-</span>';
+  document.getElementById('csDetailBody').innerHTML=`
+    <div class="detail-row"><span class="detail-key">Nama IC</span><span class="detail-val">${escHtml(r.icName||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Char Name</span><span class="detail-val">${escHtml(r.name||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Age</span><span class="detail-val">${r.age||'-'} tahun</span></div>
+    <div class="detail-row"><span class="detail-key">Level</span><span class="detail-val">Lv. ${r.level||'-'}</span></div>
+    <div class="detail-row"><span class="detail-key">Screenshot</span><span class="detail-val">${escHtml(r.screenshot||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">WhatsApp</span><span class="detail-val">${waLink}</span></div>
+    <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val">${getStatusBadge(r.status)} ${r.process?'<span class="s-badge s-process">DIPROSES</span>':''}</span></div>
+    <div style="margin-top:.8rem;"><div class="form-label" style="margin-bottom:.4rem;">STORY (IC)</div><div class="detail-story">${escHtml(r.story||'-')}</div></div>
+  `;
+  const acts=document.getElementById('csActions');
+  if(r.status==='pending'){
+    acts.innerHTML=`
+      <button class="btn-modal-blue" onclick="setCSProcess('${uid}')">🔄 SET DIPROSES</button>
+      <button class="btn-modal-green" onclick="acceptCS('${uid}')">✅ ACC CS</button>
+      <button class="btn-modal-red" onclick="denyCS('${uid}')">❌ DENY CS</button>
+      <button class="btn-modal-gray" onclick="closeModal('modalCS')">TUTUP</button>
+    `;
+  } else {
+    acts.innerHTML=`<button class="btn-modal-gray" onclick="closeModal('modalCS')">TUTUP</button>`;
+  }
+  openModal('modalCS');
+};
+
+window.setCSProcess = async uid=>{
+  if(!hasPerm('handle_cs'))return showToast('AKSES DITOLAK','','error');
+  const r=csCache[uid];
+  if(!r)return;
+  try{
+    const now=Date.now();
+    await update(ref(db,'cs_requests/'+uid),{process:true,processAt:now,processBy:adminData.username,autoDeniedAt:now+(24*60*60*1000)});
+    writeLog('CS',`CS diset PROSES: ${r.name} | ${r.icName} | oleh ${adminData.username}`);
+    closeModal('modalCS');
+    showToast('CS DIPROSES','Admin sudah kirim via WA. Auto-denied jika 24 jam tidak balas.','success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+window.acceptCS = async uid=>{
+  if(!hasPerm('handle_cs'))return showToast('AKSES DITOLAK','','error');
+  const r=csCache[uid];
+  if(!r)return;
+  try{
+    await update(ref(db,'cs_requests/'+uid),{status:'accepted',reviewedBy:adminData.username,reviewedAt:Date.now(),process:false});
+    writeLog('ACCEPT',`CS diterima: ${r.name} (${r.icName}) Lv.${r.level} | oleh ${adminData.username}`);
+    closeModal('modalCS');
+    showToast('CS DITERIMA!',`Character Story ${r.name} acc.`,'success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+window.denyCS = async uid=>{
+  if(!hasPerm('handle_cs'))return showToast('AKSES DITOLAK','','error');
+  const r=csCache[uid];
+  if(!r)return;
+  if(!confirm(`Deny CS ${r.name}?`))return;
+  try{
+    await update(ref(db,'cs_requests/'+uid),{status:'denied',reviewedBy:adminData.username,reviewedAt:Date.now(),process:false});
+    writeLog('DENY',`CS ditolak: ${r.name} (${r.icName}) | oleh ${adminData.username}`);
+    closeModal('modalCS');
+    showToast('CS DENIED','','error');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+// ══════════════════════════════
+// IMPORT REQUESTS
+// ══════════════════════════════
+function loadImportRequests(){
+  onValue(ref(db,'import_requests'),s=>{
+    importCache={};
+    const tb=document.getElementById('tbodyImport');
+    if(!s.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada import request.</td></tr>';updateBadge('badgeImport',0,'');return;}
+    importCache=s.val();
+    const entries=Object.entries(importCache).sort((a,b)=>(b[1].submittedAt||0)-(a[1].submittedAt||0));
+    const pending=entries.filter(([,r])=>r.status==='pending');
+    updateBadge('badgeImport',pending.length,'');
+    const typeColor={goodside:'var(--green)',badside:'#F07070',family:'#CC88FF'};
+    tb.innerHTML=entries.map(([uid,r])=>`<tr>
+      <td><strong>${escHtml(r.icName||'-')}</strong></td>
+      <td style="font-size:.82rem;color:var(--muted2);">${escHtml(r.username||'-')}</td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:.6rem;color:${typeColor[r.type]||'var(--muted2)'};">${(r.type||'-').toUpperCase()}</span></td>
+      <td style="font-size:.82rem;">${escHtml(r.targetFaction||'-')}</td>
+      <td style="font-size:.82rem;">Lv.${r.level||'-'}</td>
+      <td>${getStatusBadge(r.status)}</td>
+      <td><button class="action-btn" onclick="openImportDetail('${uid}')">DETAIL</button></td>
+    </tr>`).join('')||'<tr class="empty-row"><td colspan="7">Tidak ada data.</td></tr>';
+  });
+}
+
+window.openImportDetail = uid=>{
+  const canHandle=hasPerm('handle_import')||hasPerm('handle_goodside')||hasPerm('handle_badside');
+  if(!canHandle)return showToast('AKSES DITOLAK','','error');
+  const r=importCache[uid];
+  if(!r)return;
+  currentImportTarget={uid,...r};
+  // Check specific perm per type
+  const typePerm={goodside:'handle_goodside',badside:'handle_badside',family:'handle_import'};
+  const canAct=hasPerm(typePerm[r.type]||'handle_import');
+  document.getElementById('importDetailBody').innerHTML=`
+    <div class="detail-row"><span class="detail-key">Nama IC</span><span class="detail-val">${escHtml(r.icName||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Username</span><span class="detail-val">${escHtml(r.username||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Tipe</span><span class="detail-val">${(r.type||'-').toUpperCase()}</span></div>
+    <div class="detail-row"><span class="detail-key">Fraksi/Family</span><span class="detail-val">${escHtml(r.targetFaction||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Level</span><span class="detail-val">Lv. ${r.level||'-'}</span></div>
+    <div class="detail-row"><span class="detail-key">Alasan</span><span class="detail-val">${escHtml(r.reason||'-')}</span></div>
+    <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val">${getStatusBadge(r.status)}</span></div>
+    ${!canAct?'<div style="font-family:Space Mono,monospace;font-size:.6rem;color:var(--orange);margin-top:.5rem;">⚠ Kamu tidak punya permission untuk tipe ini.</div>':''}
+  `;
+  const acts=document.getElementById('importActions');
+  if(r.status==='pending'&&canAct){
+    acts.innerHTML=`
+      <button class="btn-modal-green" onclick="acceptImport('${uid}')">✅ ACCEPT IMPORT</button>
+      <button class="btn-modal-red" onclick="denyImport('${uid}')">❌ DENY</button>
+      <button class="btn-modal-gray" onclick="closeModal('modalImport')">TUTUP</button>
+    `;
+  } else {
+    acts.innerHTML=`<button class="btn-modal-gray" onclick="closeModal('modalImport')">TUTUP</button>`;
+  }
+  openModal('modalImport');
+};
+
+window.acceptImport = async uid=>{
+  const r=importCache[uid];
+  if(!r)return;
+  try{
+    await update(ref(db,'import_requests/'+uid),{status:'accepted',reviewedBy:adminData.username,reviewedAt:Date.now()});
+    writeLog('IMPORT',`Import ACCEPTED: ${r.icName} → ${r.targetFaction} (${r.type}) | oleh ${adminData.username}`);
+    closeModal('modalImport');
+    showToast('IMPORT ACCEPTED!','','success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+window.denyImport = async uid=>{
+  const r=importCache[uid];
+  if(!r||!confirm(`Deny import ${r.icName}?`))return;
+  try{
+    await update(ref(db,'import_requests/'+uid),{status:'denied',reviewedBy:adminData.username,reviewedAt:Date.now()});
+    writeLog('DENY',`Import DENIED: ${r.icName} → ${r.targetFaction} | oleh ${adminData.username}`);
+    closeModal('modalImport');
+    showToast('IMPORT DENIED','','error');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+// ══════════════════════════════
+// USERS
+// ══════════════════════════════
+function loadUsers(){
+  onValue(ref(db,'users'),s=>{
+    usersCache={};
+    const tb=document.getElementById('tbodyUsers');
+    const tbB=document.getElementById('tbodyBanned');
+    if(!s.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="7">Belum ada user.</td></tr>';return;}
+    usersCache=s.val();
+    let rows='',bannedRows='';
+    Object.entries(usersCache).forEach(([uid,u])=>{
+      const isBanned=u.status==='banned';
+      const roleColor={owner:'var(--gold)',developer:'var(--blue)',headadmin:'#CC88FF',admin:'#F07070',moderator:'var(--orange)'}[u.role]||'var(--muted2)';
+      const wlBadge=u.wlStatus==='accepted'?'<span class="s-badge s-accepted">WL</span>':u.wlStatus==='pending'?'<span class="s-badge s-pending">PENDING</span>':'<span style="color:var(--muted);font-size:.75rem;">-</span>';
+      const icHtml=hasPerm('edit_icname')&&u.wlStatus==='accepted'
+        ?`<span style="color:var(--gold);font-family:'Space Mono',monospace;font-size:.72rem;">${u.wlName||'-'}</span> <button class="action-btn" onclick="openICModal('${uid}','${escHtml(u.username)}','${u.wlName||''}')" style="font-size:.48rem;padding:2px 5px;">EDIT</button>`
+        :`<span style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted2);">${u.wlName||'-'}</span>`;
+      rows+=`<tr>
+        <td><strong>${escHtml(u.username||'-')}</strong></td>
+        <td style="color:var(--muted2);font-size:.78rem;">${escHtml(u.email||'-')}</td>
+        <td><span style="font-family:'Space Mono',monospace;font-size:.58rem;color:${roleColor};">${(u.role||'user').toUpperCase()}</span></td>
+        <td>${wlBadge}</td>
+        <td>${icHtml}</td>
+        <td style="color:var(--muted);font-size:.76rem;">${fmtShort(u.createdAt)}</td>
+        <td><div style="display:flex;gap:.3rem;flex-wrap:wrap;">
+          ${hasPerm('manage_roles')?`<button class="action-btn" onclick="openRoleModal('${uid}','${escHtml(u.username)}','${u.role||'user'}')">ROLE</button>`:''}
+          ${hasPerm('ban_user')&&!isBanned?`<button class="action-btn red" onclick="openBanModal('${uid}','${escHtml(u.username)}')">BAN</button>`:''}
+          ${hasPerm('ban_user')&&isBanned?`<button class="action-btn green" onclick="unbanUser('${uid}','${escHtml(u.username)}')">UNBAN</button>`:''}
+        </div></td>
+      </tr>`;
+      if(isBanned){bannedRows+=`<tr>
+        <td><strong>${escHtml(u.username||'-')}</strong></td>
+        <td style="font-size:.78rem;color:var(--muted2);">${escHtml(u.email||'-')}</td>
+        <td style="color:#F07070;">${escHtml(u.banReason||'-')}</td>
+        <td style="color:var(--muted2);">${escHtml(u.bannedBy||'-')}</td>
+        <td style="color:var(--muted);font-size:.76rem;">${fmtShort(u.bannedAt)}</td>
+        <td>${hasPerm('ban_user')?`<button class="action-btn green" onclick="unbanUser('${uid}','${escHtml(u.username)}')">UNBAN</button>`:'-'}</td>
+      </tr>`;}
+    });
+    tb.innerHTML=rows||'<tr class="empty-row"><td colspan="7">Belum ada user.</td></tr>';
+    tbB.innerHTML=bannedRows||'<tr class="empty-row"><td colspan="6">Tidak ada user banned.</td></tr>';
+  });
+}
+
+// ── BAN ──
+window.openBanModal = (uid,username)=>{
+  if(!hasPerm('ban_user'))return showToast('AKSES DITOLAK','','error');
+  currentBanTarget={uid,username};
+  document.getElementById('banTargetSub').textContent=`User "${username}" akan dibanned.`;
+  document.getElementById('banReasonInput').value='';
+  openModal('modalBan');
+};
+window.confirmBan = async()=>{
+  if(!hasPerm('ban_user'))return showToast('AKSES DITOLAK','','error');
+  if(!currentBanTarget)return;
+  const reason=document.getElementById('banReasonInput').value.trim();
+  if(!reason)return showToast('ERROR','Isi alasan ban.','error');
+  const {uid,username}=currentBanTarget;
+  try{
+    await update(ref(db,'users/'+uid),{status:'banned',banReason:reason,bannedBy:adminData.username,bannedAt:Date.now()});
+    writeLog('BAN',`User dibanned: ${username} | Alasan: ${reason} | oleh ${adminData.username}`);
+    closeModal('modalBan');
+    showToast('USER DIBANNED',username,'error');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+window.unbanUser = async(uid,username)=>{
+  if(!hasPerm('ban_user'))return showToast('AKSES DITOLAK','','error');
+  if(!confirm(`Unban ${username}?`))return;
+  try{
+    await update(ref(db,'users/'+uid),{status:'active',banReason:null,bannedBy:null,bannedAt:null});
+    writeLog('BAN',`User di-unban: ${username} | oleh ${adminData.username}`);
+    showToast('UNBAN BERHASIL',username,'success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+// ── ROLE + PERMISSION MODAL ──
+window.openRoleModal = async(uid,username,currentRole)=>{
+  if(!hasPerm('manage_roles'))return showToast('AKSES DITOLAK','Hanya yang punya permission manage_roles.','error');
+  currentRoleTarget={uid,username};
+  selectedPrimaryRole=currentRole||'user';
+  // Load current extra perms from DB
+  const permSnap=await get(ref(db,`admin_perms/${uid}`));
+  selectedPerms=permSnap.exists()?(permSnap.val().perms||[]):[...getDefaultPerms(currentRole)];
+
+  document.getElementById('roleTargetSub').textContent=`User: ${username} | Role saat ini: ${currentRole?.toUpperCase()||'USER'}`;
+  // Build primary role chips
+  const primaryEl=document.getElementById('primaryRoleSelect');
+  primaryEl.innerHTML=ALL_ROLES.filter(r=>r!=='user'||isOwner()).map(r=>`<span class="role-chip ${r===selectedPrimaryRole?'sel':''}" onclick="selectPrimaryRole(this,'${r}')">${r.toUpperCase()}</span>`).join('');
+  // Build perm tags
+  buildPermTags();
+  openModal('modalRole');
+};
+
+function buildPermTags(){
+  const el=document.getElementById('permSelect');
+  el.innerHTML=Object.entries(PERMS_DEF).map(([key,label])=>`<span class="perm-tag ${selectedPerms.includes(key)?'on':'off'}" onclick="togglePerm(this,'${key}')">${label}</span>`).join('');
+}
+
+window.selectPrimaryRole = (el,role)=>{
+  selectedPrimaryRole=role;
+  document.querySelectorAll('#primaryRoleSelect .role-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  // Update default perms based on role
+  selectedPerms=[...getDefaultPerms(role)];
+  buildPermTags();
+};
+
+window.togglePerm = (el,key)=>{
+  if(selectedPerms.includes(key)){selectedPerms=selectedPerms.filter(p=>p!==key);el.className='perm-tag off';}
+  else{selectedPerms.push(key);el.className='perm-tag on';}
+};
+
+window.confirmRoleChange = async()=>{
+  if(!hasPerm('manage_roles'))return showToast('AKSES DITOLAK','','error');
+  if(!currentRoleTarget)return;
+  const {uid,username}=currentRoleTarget;
+  try{
+    await update(ref(db,'users/'+uid),{role:selectedPrimaryRole});
+    await set(ref(db,`admin_perms/${uid}`),{uid,username,role:selectedPrimaryRole,perms:selectedPerms,setAt:Date.now(),setBy:adminData.username});
+    writeLog('ROLE',`Role diubah: ${username} → ${selectedPrimaryRole.toUpperCase()} | Perms: ${selectedPerms.join(',')} | oleh ${adminData.username}`);
+    closeModal('modalRole');
+    showToast('ROLE DISIMPAN',`${username}: ${selectedPrimaryRole.toUpperCase()}`,'success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+// ── IC NAME ──
+window.openICModal = (uid,username,currentName)=>{
+  if(!hasPerm('edit_icname'))return showToast('AKSES DITOLAK','','error');
+  currentICTarget={uid,username};
+  document.getElementById('icNameTargetSub').textContent=`User: ${username} | Nama IC saat ini: ${currentName||'-'}`;
+  document.getElementById('icNameInput').value=currentName||'';
+  openModal('modalICName');
+};
+window.confirmICNameChange = async()=>{
+  if(!hasPerm('edit_icname'))return showToast('AKSES DITOLAK','','error');
+  if(!currentICTarget)return;
+  const newName=document.getElementById('icNameInput').value.trim();
+  if(!newName)return showToast('ERROR','Isi nama IC.','error');
+  if(!/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(newName))return showToast('FORMAT SALAH','Format: Nama_Belakang','error');
+  const {uid,username}=currentICTarget;
+  try{
+    await update(ref(db,'users/'+uid),{wlName:newName});
+    const regSnap=await get(ref(db,'registrations/'+uid));
+    if(regSnap.exists())await update(ref(db,'registrations/'+uid),{name:newName});
+    writeLog('ROLE',`Nama IC diubah: ${username} → ${newName} | oleh ${adminData.username}`);
+    closeModal('modalICName');
+    showToast('NAMA IC DIUBAH',`${username} → ${newName}`,'success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+
+// ══════════════════════════════
+// NEWS
+// ══════════════════════════════
+let newsCache={};
+function loadNews(){
+  onValue(ref(db,'news'),s=>{
+    newsCache={};
+    const list=document.getElementById('newsList');
+    if(!s.exists()){list.innerHTML='<div style="padding:1.5rem;text-align:center;font-family:Space Mono,monospace;font-size:.62rem;color:var(--muted);">Belum ada berita.</div>';return;}
+    newsCache=s.val();
+    const items=Object.entries(newsCache).sort((a,b)=>(b[1].order||0)-(a[1].order||0));
+    list.innerHTML=items.map(([k,n])=>`<div class="announce-admin-item">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--orange);">${n.tag||'NEWS'}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:2px;color:#E8E8F8;">${escHtml(n.title||'-')}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);">${n.date||'-'} · ${n.author||'Admin'}</div>
+      </div>
+      <div style="display:flex;gap:.3rem;">
+        ${hasPerm('manage_news')?`<button class="action-btn" onclick="editNews('${k}')">EDIT</button><button class="action-btn red" onclick="deleteNews('${k}')">HAPUS</button>`:''}
+      </div>
+    </div>`).join('');
+  });
+}
+window.selTag=(el,tag)=>{selectedTag=tag;document.querySelectorAll('#tagSelect .role-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');};
+window.editNews = k=>{
+  const n=newsCache[k]; if(!n)return;
+  editingNewsKey=k; selectedTag=n.tag||'UPDATE';
+  document.querySelectorAll('#tagSelect .role-chip').forEach(c=>c.classList.toggle('sel',c.textContent===selectedTag));
+  document.getElementById('nTitle').value=n.title||'';
+  document.getElementById('nContent').value=n.content||'';
+  document.getElementById('nDate').value=n.date||'';
+  document.getElementById('newsFormTitle').textContent='EDIT BERITA';
+  document.getElementById('btnCancelNews').style.display='block';
+};
+window.cancelEditNews=()=>{editingNewsKey=null;['nTitle','nContent','nDate'].forEach(id=>document.getElementById(id).value='');document.getElementById('newsFormTitle').textContent='TAMBAH BERITA';document.getElementById('btnCancelNews').style.display='none';};
+window.submitNews=async()=>{
+  if(!hasPerm('manage_news'))return showToast('AKSES DITOLAK','','error');
+  const title=document.getElementById('nTitle').value.trim(),content=document.getElementById('nContent').value.trim(),date=document.getElementById('nDate').value;
+  if(!title||!content)return showToast('TIDAK LENGKAP','Isi judul dan konten.','error');
+  const data={tag:selectedTag,title,content,date:date||new Date().toISOString().split('T')[0],author:adminData.username,order:Date.now()};
+  try{
+    if(editingNewsKey){await update(ref(db,'news/'+editingNewsKey),data);writeLog('NEWS',`Berita diupdate: "${title}" oleh ${adminData.username}`);showToast('DIUPDATE','','success');}
+    else{await push(ref(db,'news'),data);writeLog('NEWS',`Berita baru: "${title}" oleh ${adminData.username}`);showToast('DITAMBAH','','success');}
+    cancelEditNews();
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+window.deleteNews=async k=>{
+  if(!hasPerm('manage_news')||!confirm('Hapus berita?'))return;
+  const n=newsCache[k];
+  await remove(ref(db,'news/'+k));
+  writeLog('NEWS',`Berita dihapus: "${n?.title||k}" oleh ${adminData.username}`);
+  showToast('DIHAPUS','','success');
+};
+
+// ══════════════════════════════
+// GUIDES
+// ══════════════════════════════
+let guidesCache={};
+window.loadGuidesList=()=>{
+  const type=document.getElementById('guideTypeFilter')?.value||'rules';
+  const el=document.getElementById('guidesList');
+  if(!el)return;
+  onValue(ref(db,'guides/'+type),s=>{
+    guidesCache={};
+    if(!s.exists()){el.innerHTML='<div style="padding:1.5rem;text-align:center;font-family:Space Mono,monospace;font-size:.62rem;color:var(--muted);">Belum ada artikel.</div>';return;}
+    guidesCache=s.val();
+    const items=Object.entries(guidesCache).sort((a,b)=>(a[1].order||0)-(b[1].order||0));
+    el.innerHTML=items.map(([k,g])=>`<div class="guide-item">
+      <div>
+        ${g.pinned?'<span style="font-family:Space Mono,monospace;font-size:.48rem;color:var(--orange);margin-right:.3rem;">📌 PINNED</span>':''}
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;color:#E8E8F8;">${escHtml(g.title||'-')}</div>
+        <div style="font-size:.8rem;color:var(--muted2);">${(g.content||'').substring(0,80)}...</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-top:.2rem;">${g.author||'Admin'} · ${g.date||'-'}</div>
+      </div>
+      <div style="display:flex;gap:.3rem;flex-shrink:0;">
+        ${hasPerm('manage_guides')?`<button class="action-btn" onclick="editGuide('${k}')">EDIT</button><button class="action-btn red" onclick="deleteGuide('${k}')">HAPUS</button>`:''}
+      </div>
+    </div>`).join('');
+  });
+};
+window.editGuide=k=>{
+  const g=guidesCache[k];if(!g)return;
+  editingGuideKey=k;
+  document.getElementById('gTitle').value=g.title||'';
+  document.getElementById('gTag').value=g.tag||'';
+  document.getElementById('gContent').value=g.content||'';
+  document.getElementById('gPinned').checked=!!g.pinned;
+  document.getElementById('guideFormTitle').textContent='EDIT ARTIKEL';
+  document.getElementById('btnCancelGuide').style.display='block';
+};
+window.cancelEditGuide=()=>{editingGuideKey=null;['gTitle','gTag','gContent'].forEach(id=>document.getElementById(id).value='');document.getElementById('gPinned').checked=false;document.getElementById('guideFormTitle').textContent='TAMBAH ARTIKEL';document.getElementById('btnCancelGuide').style.display='none';};
+window.submitGuide=async()=>{
+  if(!hasPerm('manage_guides'))return showToast('AKSES DITOLAK','','error');
+  const type=document.getElementById('guideTypeFilter')?.value||'rules';
+  const title=document.getElementById('gTitle').value.trim(),content=document.getElementById('gContent').value.trim();
+  if(!title||!content)return showToast('TIDAK LENGKAP','Isi judul dan konten.','error');
+  const data={title,tag:document.getElementById('gTag').value.trim(),content,pinned:document.getElementById('gPinned').checked,author:adminData.username,date:new Date().toLocaleDateString('id-ID'),order:Date.now()};
+  try{
+    if(editingGuideKey){await update(ref(db,`guides/${type}/${editingGuideKey}`),data);showToast('DIUPDATE','','success');}
+    else{await push(ref(db,`guides/${type}`),data);showToast('DITAMBAH','','success');}
+    writeLog('SYSTEM',`Guide ${editingGuideKey?'diupdate':'ditambah'}: "${title}" (${type}) oleh ${adminData.username}`);
+    cancelEditGuide();loadGuidesList();
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+window.deleteGuide=async k=>{
+  if(!hasPerm('manage_guides')||!confirm('Hapus artikel?'))return;
+  const type=document.getElementById('guideTypeFilter')?.value||'rules';
+  await remove(ref(db,`guides/${type}/${k}`));
+  showToast('DIHAPUS','','success');loadGuidesList();
+};
+
+// ══════════════════════════════
+// ANNOUNCE
+// ══════════════════════════════
+function loadAnnounce(){
+  const q=query(ref(db,'announcements'),orderByChild('ts'),limitToLast(20));
+  onValue(q,s=>{
+    const list=document.getElementById('announceList');
+    if(!s.exists()){list.innerHTML='<div style="padding:1.5rem;text-align:center;font-family:Space Mono,monospace;font-size:.62rem;color:var(--muted);">Belum ada pengumuman.</div>';return;}
+    const items=Object.entries(s.val()).sort((a,b)=>b[1].ts-a[1].ts);
+    list.innerHTML=items.map(([k,a])=>`<div class="announce-admin-item">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:2px;color:var(--orange);">${a.tag||'ANNOUNCEMENT'}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:.92rem;letter-spacing:2px;color:#E8E8F8;">${escHtml(a.title||'-')}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);">${a.author||'Admin'} · ${new Date(a.ts).toLocaleDateString('id-ID')}</div>
+      </div>
+      <div>${hasPerm('manage_announce')?`<button class="action-btn red" onclick="deleteAnnounce('${k}')">HAPUS</button>`:''}</div>
+    </div>`).join('');
+  });
+}
+window.selAnnTag=(el,tag)=>{selectedAnnTag=tag;document.querySelectorAll('#annTagSelect .role-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');};
+window.submitAnnounce=async()=>{
+  if(!hasPerm('manage_announce'))return showToast('AKSES DITOLAK','','error');
+  const title=document.getElementById('annTitle').value.trim(),content=document.getElementById('annContent').value.trim();
+  if(!title||!content)return showToast('TIDAK LENGKAP','Isi judul dan konten.','error');
+  try{
+    await push(ref(db,'announcements'),{tag:selectedAnnTag,title,content,author:adminData.username,ts:Date.now()});
+    writeLog('SYSTEM',`Pengumuman baru: "${title}" oleh ${adminData.username}`);
+    document.getElementById('annTitle').value='';document.getElementById('annContent').value='';
+    showToast('PENGUMUMAN TERKIRIM','','success');
+  }catch(e){showToast('ERROR',e.message,'error');}
+};
+window.deleteAnnounce=async k=>{
+  if(!hasPerm('manage_announce')||!confirm('Hapus pengumuman?'))return;
+  await remove(ref(db,'announcements/'+k));showToast('DIHAPUS','','success');
+};
+
+// ══════════════════════════════
+// ADMIN CHAT
+// ══════════════════════════════
+let adminChatInited=false;
+function initAdminChat(){
+  if(adminChatInited)return;
+  adminChatInited=true;
+  const q=query(ref(db,'admin_chat'),orderByChild('ts'),limitToLast(100));
+  onValue(q,s=>{
+    const el=document.getElementById('adminChatMsgs');
+    if(!s.exists()){el.innerHTML='<div style="font-family:Space Mono,monospace;font-size:.62rem;color:var(--muted);text-align:center;padding:1rem;">Belum ada pesan.</div>';return;}
+    const msgs=Object.entries(s.val()).sort((a,b)=>a[1].ts-b[1].ts);
+    el.innerHTML=msgs.map(([k,m])=>`<div class="admin-msg ${m.uid===adminUser.uid?'mine':'theirs'}">
+      <div class="admin-msg-meta">${escHtml(m.author||'?')} <span style="font-family:Space Mono,monospace;font-size:.48rem;color:var(--muted);margin-left:.3rem;">${m.role?.toUpperCase()||''}</span></div>
+      <div class="admin-msg-text">${escHtml(m.text||'')}</div>
+      <div class="admin-msg-time">${fmtDate(m.ts)}</div>
+    </div>`).join('');
+    el.scrollTop=el.scrollHeight;
+  });
+}
+window.sendAdminChat=async()=>{
+  if(!hasPerm('admin_chat'))return showToast('AKSES DITOLAK','','error');
+  const input=document.getElementById('adminChatInput');
+  const text=input?.value.trim();
+  if(!text)return;
+  await push(ref(db,'admin_chat'),{uid:adminUser.uid,author:adminData.username,role:adminData.role,text,ts:Date.now()});
+  input.value='';
+  writeLog('CHAT',`${adminData.username}: "${text.substring(0,40)}..."`);
+};
+
+// ══════════════════════════════
+// LOGS
+// ══════════════════════════════
+function loadLogs(){
+  if(!hasPerm('view_logs'))return;
+  const q=query(ref(db,'logs'),orderByChild('ts'),limitToLast(300));
+  onValue(q,s=>{
+    allLogsCache=[];
+    if(s.exists())allLogsCache=Object.values(s.val()).sort((a,b)=>b.ts-a.ts);
+    renderLogs(allLogsCache);
+    // Dashboard recent
+    const dashEl=document.getElementById('dashLogs');
+    const recent=allLogsCache.slice(0,15);
+    dashEl.innerHTML=recent.length?recent.map(logHtml).join(''):'<div style="color:var(--muted);font-family:Space Mono,monospace;font-size:.65rem;padding:.5rem;">Belum ada aktivitas.</div>';
+  });
+  if(hasPerm('clear_logs'))document.getElementById('btnClearLogs').style.display='inline-block';
+}
+function logHtml(l){return `<div class="log-entry"><span class="log-time">${fmtDate(l.ts)}</span><span class="log-type ${l.type||''}">[${l.type||'SYS'}]</span><span class="log-msg">${escHtml(l.msg||'-')}${l.by?`<span style="color:var(--muted);"> — by ${l.by}</span>`:''}</span></div>`;}
+function renderLogs(logs){const el=document.getElementById('logStream');if(!el)return;el.innerHTML=logs.length?logs.map(logHtml).join(''):'<div style="color:var(--muted);font-family:Space Mono,monospace;font-size:.62rem;padding:.5rem;">Tidak ada log.</div>';}
+window.filterLogs=type=>{renderLogs(type?allLogsCache.filter(l=>l.type===type):allLogsCache);};
+window.clearLogs=async()=>{
+  if(!hasPerm('clear_logs'))return showToast('AKSES DITOLAK','Hanya Owner.','error');
+  if(!confirm('Hapus semua logs?'))return;
+  await remove(ref(db,'logs'));
+  writeLog('SYSTEM',`Logs dihapus oleh ${adminData.username}`);
+  showToast('LOGS DIHAPUS','','success');
+};
+
+// ══════════════════════════════
+// CONFIG / SETTINGS
+// ══════════════════════════════
+function loadConfig(){
+  onValue(ref(db,'config'),s=>{
+    if(!s.exists())return;
+    const c=s.val();
+    const ipEl=document.getElementById('cfgIP');const waEl=document.getElementById('cfgWA');const waGEl=document.getElementById('cfgWAGroup');
+    if(ipEl)ipEl.value=c.serverIP||'';
+    if(waEl)waEl.value=c.waNumber||'';
+    if(waGEl)waGEl.value=c.waGroup||'';
+  });
+}
+window.saveConfig=async()=>{
+  if(!hasPerm('settings'))return showToast('AKSES DITOLAK','Hanya Owner.','error');
+  await update(ref(db,'config'),{serverIP:document.getElementById('cfgIP').value.trim(),waNumber:document.getElementById('cfgWA').value.trim(),waGroup:document.getElementById('cfgWAGroup').value.trim()});
+  writeLog('SYSTEM',`Config diupdate oleh ${adminData.username}`);
+  showToast('CONFIG DISIMPAN','','success');
+};
+window.saveStats=async()=>{
+  if(!hasPerm('settings'))return showToast('AKSES DITOLAK','Hanya Owner.','error');
+  await update(ref(db,'stats'),{factions:parseInt(document.getElementById('cfgFactions').value)||0});
+  showToast('STATS DIUPDATE','','success');
+};
+
+// ══════════════════════════════
+// HELPERS
+// ══════════════════════════════
+function getStatusBadge(status){
+  const map={pending:'s-pending PENDING',process:'s-process DIPROSES',accepted:'s-accepted ACCEPTED',rejected:'s-denied REJECTED',denied:'s-denied DENIED'};
+  const cls=map[status]||'';
+  if(!cls)return`<span style="font-family:Space Mono,monospace;font-size:.5rem;color:var(--muted);">${(status||'-').toUpperCase()}</span>`;
+  const[c,l]=cls.split(' ');
+  return`<span class="s-badge ${c}">${l}</span>`;
+}
+function updateBadge(badgeId,count,statId){
+  const el=document.getElementById(badgeId);
+  if(el){el.textContent=count;el.style.display=count>0?'inline-block':'none';}
+  if(statId){const s=document.getElementById(statId);if(s)s.textContent=count;}
+}
+</script>
+</body>
+</html>
