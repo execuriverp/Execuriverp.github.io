@@ -42,7 +42,7 @@ function initFirebase() {
     firebase.analytics();
   }
 
-  console.log('%c[Miracle RP] Firebase connected ✓', 'color:#00C9B1;font-weight:bold');
+  console.log('%c[discord bot] database connected ✓', 'color:#00C9B1;font-weight:bold');
 
   // Dispatch event so index.html knows Firebase is ready
   document.dispatchEvent(new Event('firebaseReady'));
