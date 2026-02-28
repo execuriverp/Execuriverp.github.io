@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle RP </title>
+<title>Miracle RP — Community Forum</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -325,8 +325,8 @@ tr:hover td{background:rgba(255,255,255,.01)}
 @keyframes tIn{from{transform:translateX(14px);opacity:0}to{transform:none;opacity:1}}
 
 /* LOADER */
-#loader{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .3s}
-#loader.hidden{opacity:0;pointer-events:none}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .4s}
+#loader.hidden{opacity:0;pointer-events:none;visibility:hidden}
 .ld-logo{font-size:18px;font-weight:800;letter-spacing:4px;color:#fff}
 .ld-bar{width:140px;height:1.5px;background:var(--b);border-radius:2px;overflow:hidden}
 .ld-fill{height:100%;background:#fff;animation:lb 1s ease-in-out forwards}
@@ -1072,7 +1072,7 @@ firebase.auth().onAuthStateChanged(async function(u){
       await DB.ref('users/'+u.uid).set({uid:u.uid,email:u.email,username:u.displayName||u.email.split('@')[0],photoURL:u.photoURL||'',role:'user',status:'active',wlStatus:'none',icName:'',postCount:0,createdAt:Date.now()});
     }
     UP=(await DB.ref('users/'+u.uid).get()).val();
-    if(UP && UP.status==='banned'){await firebase.auth().signOut();toast('Akun kamu dibanned.','e');return}
+    if(UP && UP.status==='banned'){await firebase.auth().signOut();toast('Akun kamu dibanned.','e');hideLoader();return}
     var ps=await DB.ref('admin_perms/'+u.uid).get();
     if(ps.exists()){
       var pd=ps.val();
@@ -1083,6 +1083,7 @@ firebase.auth().onAuthStateChanged(async function(u){
     addLog('AUTH','Login: '+UP.username+' ('+UP.role+')');
   }
   renderAuth();loadConfig();loadHomeStats();
+  hideLoader();
 });
 
 function renderAuth(){
@@ -1565,7 +1566,10 @@ async function loadMyPosts(){
 // LOGS
 // ============================================================
 async function addLog(type,msg){
-  try{await DB.ref('logs').push({by:(UP&&UP.username)||'system',msg:msg,type:type,ts:Date.now()})}catch(e){}
+  try{
+    if(!CU)return;
+    await DB.ref('logs').push({by:(UP&&UP.username)||'system',msg:msg,type:type,ts:Date.now()});
+  }catch(e){}
 }
 
 async function loadAdmLogs(){
@@ -2139,11 +2143,14 @@ window.addEventListener('resize',checkAdmGrids);
 window.addEventListener('DOMContentLoaded',function(){
   nav('home');
   checkAdmGrids();
-  setTimeout(function(){
-    var loader=document.getElementById('loader');
-    if(loader)loader.classList.add('hidden');
-  },1100);
+  // Hide loader after max 2s regardless
+  setTimeout(function(){hideLoader()},2000);
 });
+
+function hideLoader(){
+  var loader=document.getElementById('loader');
+  if(loader&&!loader.classList.contains('hidden'))loader.classList.add('hidden');
+}
 
 </script>
 </body>
