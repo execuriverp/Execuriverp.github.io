@@ -1,5 +1,5 @@
-// Firebase SDK
-const scripts = [
+// Firebase SDK - sequential load (urutan penting!)
+const _fbScripts = [
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js",
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js",
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js",
@@ -8,20 +8,16 @@ const scripts = [
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"
 ];
 
-(function loadFirebase() {
-  let loaded = 0;
-  scripts.forEach(src => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = () => {
-      loaded++;
-      if (loaded === scripts.length) initFirebase();
-    };
-    document.head.appendChild(s);
-  });
-})();
+function _loadScriptSeq(scripts, index, callback) {
+  if (index >= scripts.length) { callback(); return; }
+  const s = document.createElement('script');
+  s.src = scripts[index];
+  s.onload = () => _loadScriptSeq(scripts, index + 1, callback);
+  s.onerror = () => _loadScriptSeq(scripts, index + 1, callback);
+  document.head.appendChild(s);
+}
 
-function initFirebase() {
+_loadScriptSeq(_fbScripts, 0, function () {
   const firebaseConfig = {
     apiKey: "AIzaSyD5JGQ3eARM5Lo2IG3mkpdx7p3uh0nrBIk",
     authDomain: "samp-miracle.firebaseapp.com",
@@ -37,13 +33,10 @@ function initFirebase() {
     firebase.initializeApp(firebaseConfig);
   }
 
-  // Optional: enable analytics
-  if (typeof firebase.analytics === 'function') {
-    firebase.analytics();
-  }
+  try { firebase.analytics(); } catch(e) {}
 
-  console.log('%c[discord bot] database connected ✓', 'color:#00C9B1;font-weight:bold');
+  console.log('%c[bot discord] Database Loaded ✓', 'color:#00C9B1;font-weight:bold');
 
-  // Dispatch event so index.html knows Firebase is ready
+  // Beritahu index.html bahwa Firebase sudah siap
   document.dispatchEvent(new Event('firebaseReady'));
-}
+});
