@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle RP — Community Forum</title>
+<title>Miracle Community Forum</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -237,7 +237,7 @@ textarea.finp{resize:vertical;min-height:80px}
 .pava img{width:100%;height:100%;object-fit:cover}
 
 /* ADMIN LAYOUT */
-.adm-wrap{display:flex;min-height:calc(100vh - 50px)}
+.adm-wrap{display:flex;min-height:calc(100vh - 50px);flex-direction:row}
 .adm-sb{width:195px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b);overflow-y:auto;display:flex;flex-direction:column}
 .adm-sb-inner{padding:10px 0;flex:1}
 .adm-sec{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t3);padding:8px 12px 3px;margin-top:4px}
@@ -257,14 +257,11 @@ textarea.finp{resize:vertical;min-height:80px}
 .acard .acv{font-size:24px;font-weight:700;color:#fff}
 
 /* MOBILE ADMIN HEADER */
-.adm-mob-hdr{display:none;padding:10px 14px;border-bottom:1px solid var(--b);align-items:center;gap:10px;background:var(--bg2)}
+.adm-mob-hdr-outer{display:none}
 .adm-mob-ttl{font-size:13px;font-weight:700;color:#fff}
-.adm-mob-menu{background:var(--bg2);border:1px solid var(--b3);border-radius:var(--r);position:absolute;top:100%;left:0;right:0;z-index:100;display:none;max-height:60vh;overflow-y:auto}
-.adm-mob-menu.open{display:block}
-.adm-mob-wrap{position:relative}
 
 /* TABLE */
-.twrap{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;overflow-x:auto;margin-bottom:12px}
+.twrap{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;overflow-x:auto;margin-bottom:12px;-webkit-overflow-scrolling:touch;max-width:100%}
 .thdr{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--b);flex-wrap:wrap;gap:6px}
 .ttitle{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#fff}
 .tsrch{background:var(--bg3);border:1px solid var(--b);color:#fff;padding:5px 9px;font-size:11px;font-family:inherit;outline:none;border-radius:var(--r);width:160px}
@@ -347,16 +344,37 @@ tr:hover td{background:rgba(255,255,255,.01)}
 @media(max-width:768px){
   .hbg{display:flex}.mnav{display:none}
   .sgrd{grid-template-columns:1fr}
-  .adm-sb{display:none}
-  .adm-mob-hdr{display:flex}
-  .adm-content{padding:12px 14px}
-  .adm-cards{grid-template-columns:1fr 1fr}
+  .adm-sb{display:none!important}
+  .adm-mob-hdr-outer{display:block!important}
+  .adm-wrap{flex-direction:column!important;min-height:unset}
+  .adm-content{padding:10px 12px;width:100%;box-sizing:border-box}
+  .adm-cards{grid-template-columns:repeat(2,1fr)}
+  .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:500px;font-size:11px}
+  .thdr{flex-direction:column;align-items:stretch;gap:6px}
+  .tsrch{width:100%!important;box-sizing:border-box}
+  .annAdmGrid,.guideAdmGrid,.staffAdmGrid{grid-template-columns:1fr!important}
   .imp-grid{grid-template-columns:repeat(3,1fr)}
-  table{min-width:320px}
+  .mdl-inner{width:92vw!important;max-width:92vw!important}
+  .mfoot{flex-wrap:wrap;gap:6px}
+  .adm-chat{height:50vh}
+  .adm-mob-menu{max-height:70vh;overflow-y:auto}
 }
 @media(max-width:480px){
-  .adm-cards{grid-template-columns:1fr 1fr}
+  .adm-cards{grid-template-columns:repeat(2,1fr)}
   .playout{padding:8px 0 30px}
+  .wrap{padding:0 8px}
+  .acard .acv{font-size:20px}
+  table{min-width:400px;font-size:10.5px}
+}
+  .playout{padding:8px 0 30px}
+  .wrap{padding:0 10px}
+  .sgrd{grid-template-columns:repeat(2,1fr)}
+  .imp-grid{grid-template-columns:repeat(3,1fr)}
+  .btn{padding:4px 9px;font-size:11px}
+  .wlstep-l{display:none}
+  .adm-cards{grid-template-columns:1fr 1fr}
+  .acard .acv{font-size:20px}
 }
 </style>
 </head>
@@ -777,17 +795,16 @@ tr:hover td{background:rgba(255,255,255,.01)}
 
 <!-- ADMIN (full width) -->
 <div class="page" id="page-admin">
-  <div class="adm-wrap">
-    <!-- MOBILE ADMIN HEADER -->
-    <div class="adm-mob-wrap">
-      <div class="adm-mob-hdr">
-        <span style="font-size:16px">☰</span>
-        <div class="adm-mob-ttl" id="admMobTitle">Dashboard</div>
-        <button class="btn btn-sm" onclick="toggleAdmMenu()" style="margin-left:auto">Menu ▾</button>
-        <div class="adm-mob-menu" id="admMobMenu"></div>
-      </div>
+  <!-- mobile header: shown on <=768px, hidden on desktop -->
+  <div style="position:sticky;top:50px;z-index:160;display:none" id="admMobWrap" class="adm-mob-hdr-outer">
+    <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--bg2);border-bottom:1px solid var(--b);position:relative">
+      <span style="font-size:15px;color:var(--t2)">☰</span>
+      <div style="font-size:13px;font-weight:700;color:#fff;flex:1" id="admMobTitle">Dashboard</div>
+      <button class="btn btn-sm" id="admMenuBtn" onclick="toggleAdmMenu()">Menu ▾</button>
+      <div id="admMobMenu" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--b3);border-top:none;z-index:200;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.6)"></div>
     </div>
-
+  </div>
+  <div class="adm-wrap">
     <div class="adm-sb" id="admSB"></div>
     <div class="adm-content" id="admContent">
 
@@ -1661,19 +1678,22 @@ function buildAdmMobMenu(){
   var html='';
   ADM_ITEMS.forEach(function(item){
     if(!item.always&&!hasPerm(item.perm))return;
-    html+='<div class="adm-mob-item" data-tab="'+item.id+'" style="padding:9px 14px;border-bottom:1px solid var(--b2);cursor:pointer;font-size:12px;color:var(--t2)">'+item.icon+' '+item.lbl+'</div>';
+    html+='<div class="adm-mob-item" data-tab="'+item.id+'" style="padding:10px 16px;border-bottom:1px solid var(--b2);cursor:pointer;font-size:12.5px;color:var(--t2);display:flex;align-items:center;gap:8px">'+item.icon+' '+item.lbl+'</div>';
   });
   mm.innerHTML=html;
   mm.querySelectorAll('.adm-mob-item').forEach(function(el){
     el.addEventListener('click',function(){
       switchAdmTab(el.dataset.tab);
-      toggleAdmMenu();
+      var m=document.getElementById('admMobMenu');if(m)m.style.display='none';
     });
   });
 }
 
 function toggleAdmMenu(){
-  document.getElementById('admMobMenu').classList.toggle('open');
+  var menu=document.getElementById('admMobMenu');
+  if(!menu)return;
+  var isOpen=menu.style.display!=='none'&&menu.style.display!=='';
+  menu.style.display=isOpen?'none':'block';
 }
 
 function switchAdmTab(id){
@@ -2136,6 +2156,13 @@ function checkAdmGrids(){
   });
 }
 window.addEventListener('resize',checkAdmGrids);
+window.addEventListener('click',function(e){
+  var menu=document.getElementById('admMobMenu');
+  var btn=document.getElementById('admMenuBtn');
+  if(menu&&btn&&menu.style.display==='block'&&!menu.contains(e.target)&&!btn.contains(e.target)){
+    menu.style.display='none';
+  }
+});
 
 // ============================================================
 // INIT
