@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle RP — Community Forum</title>
+<title>Miracle RP </title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -981,6 +981,7 @@ tr:hover td{background:rgba(255,255,255,.01)}
   </div>
 </div>
 
+
 <script>
 // ============================================================
 // GLOBALS
@@ -991,7 +992,7 @@ let editGuideKey=null,selAnnTagVal='ANNOUNCEMENT',roleTarget=null,banTarget=null
 let postImgBase64=null;
 
 const ALL_PERMS=['handle_wl','handle_cs','handle_import','handle_goodside','handle_badside','ban_user','edit_icname','manage_news','manage_guides','manage_announce','view_logs','clear_logs','settings','admin_chat','manage_roles'];
-const PERM_LBL={'handle_wl':'Handle WL','handle_cs':'Handle CS','handle_import':'Handle Import','handle_goodside':'Handle Goodside','handle_badside':'Handle Badside','ban_user':'Ban User','edit_icname':'Edit IC Name','manage_news':'Manage News','manage_guides':'Manage Guides','manage_announce':'Manage Announce','view_logs':'View Logs','clear_logs':'Clear Logs','settings':'Settings','admin_chat':'Admin Chat','manage_roles':'Manage Roles'};
+const PERM_LBL={handle_wl:'Handle WL',handle_cs:'Handle CS',handle_import:'Handle Import',handle_goodside:'Handle Goodside',handle_badside:'Handle Badside',ban_user:'Ban User',edit_icname:'Edit IC Name',manage_news:'Manage News',manage_guides:'Manage Guides',manage_announce:'Manage Announce',view_logs:'View Logs',clear_logs:'Clear Logs',settings:'Settings',admin_chat:'Admin Chat',manage_roles:'Manage Roles'};
 const ROLES=['owner','developer','headadmin','senioradmin','admin','junioradmin','management','moderator','communityhandle','seniorhelper','helper','juniorhelper','volunteer','exstaff','vip','user'];
 const RLBL={owner:'Owner',developer:'Developer',headadmin:'Head Admin',senioradmin:'Senior Admin',admin:'Admin',junioradmin:'Junior Admin',management:'Management',moderator:'Moderator',communityhandle:'Community Handle',seniorhelper:'Senior Helper',helper:'Helper',juniorhelper:'Junior Helper',volunteer:'Volunteer',exstaff:'Ex Staff',vip:'VIP',user:'Member'};
 const ADMIN_ROLES=['owner','developer','headadmin','senioradmin','admin','junioradmin','management','moderator','communityhandle','seniorhelper','helper','juniorhelper','volunteer'];
@@ -999,37 +1000,52 @@ const ADMIN_ROLES=['owner','developer','headadmin','senioradmin','admin','junior
 // ============================================================
 // HELPERS
 // ============================================================
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-const ini=n=>{if(!n)return'?';const p=n.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase()}
-const fmtD=ts=>ts?new Date(ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'—'
-const fmtDT=ts=>ts?new Date(ts).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—'
-const ago=ts=>{if(!ts)return'';const d=Math.floor((Date.now()-ts)/1000);if(d<60)return d+'d';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'j';return Math.floor(d/86400)+'h lalu'}
-const rc=r=>'r-'+(r||'user').toLowerCase().replace(/[\s\/]/g,'')
-const st=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v}
-function toast(msg,type='i',dur=3200){const el=document.createElement('div');el.className='toast '+type;el.innerHTML='<span>'+(type==='s'?'✓':type==='e'?'✗':'ℹ')+'</span><span>'+esc(msg)+'</span>';document.getElementById('toastWrap').prepend(el);setTimeout(()=>el.remove(),dur)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function ini(n){if(!n)return'?';const p=n.trim().split(/\s+/);return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase()}
+function fmtD(ts){return ts?new Date(ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'—'}
+function fmtDT(ts){return ts?new Date(ts).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—'}
+function ago(ts){if(!ts)return'';const d=Math.floor((Date.now()-ts)/1000);if(d<60)return d+'d';if(d<3600)return Math.floor(d/60)+'m lalu';if(d<86400)return Math.floor(d/3600)+'j lalu';return Math.floor(d/86400)+'hr lalu'}
+function rc(r){return 'r-'+(r||'user').toLowerCase().replace(/[\s\/]/g,'')}
+function st(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function toast(msg,type,dur){
+  type=type||'i';dur=dur||3200;
+  var el=document.createElement('div');el.className='toast '+type;
+  el.innerHTML='<span>'+(type==='s'?'✓':type==='e'?'✗':'ℹ')+'</span><span>'+esc(msg)+'</span>';
+  document.getElementById('toastWrap').prepend(el);setTimeout(function(){el.remove()},dur);
+}
 function om(id){document.getElementById(id).classList.add('open')}
 function cm(id){document.getElementById(id).classList.remove('open')}
-function copyTxt(t){navigator.clipboard.writeText(t).then(()=>toast('Tersalin!','s'))}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'))})
+function copyTxt(t){navigator.clipboard.writeText(t).then(function(){toast('Tersalin!','s')})}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.mo.open').forEach(function(m){m.classList.remove('open')})});
 
 // ============================================================
 // NAV
 // ============================================================
 function nav(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'))
-  document.getElementById('page-'+page)?.classList.add('act')
-  document.querySelectorAll('.mnav a').forEach(a=>a.classList.remove('act'))
-  document.querySelector(`.mnav a[data-p="${page}"]`)?.classList.add('act')
-  const map={feed:initFeed,whitelist:initWL,cs:initCS,import:initImport,staff:loadStaff,leaderboard:loadLB,announcements:loadAnn,rules:()=>loadGuides('rules'),profile:initProfile,admin:initAdmin}
-  if(map[page])map[page]()
-  window.scrollTo(0,0)
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('act')});
+  var el=document.getElementById('page-'+page);if(el)el.classList.add('act');
+  document.querySelectorAll('.mnav a').forEach(function(a){a.classList.remove('act')});
+  var na=document.querySelector('.mnav a[data-p="'+page+'"]');if(na)na.classList.add('act');
+  if(page==='feed')initFeed();
+  else if(page==='whitelist')initWL();
+  else if(page==='cs')initCS();
+  else if(page==='import')initImport();
+  else if(page==='staff')loadStaff();
+  else if(page==='leaderboard')loadLB();
+  else if(page==='announcements')loadAnn();
+  else if(page==='rules')loadGuides('rules');
+  else if(page==='profile')initProfile();
+  else if(page==='admin')initAdmin();
+  window.scrollTo(0,0);
 }
+
 function stab(btn,pid){
-  const par=btn.closest('.tabs');if(!par)return
-  par.querySelectorAll('.tbn').forEach(b=>b.classList.remove('act'));btn.classList.add('act')
-  const nx=par.nextElementSibling;if(nx)nx.querySelectorAll('.tpanel').forEach(p=>p.classList.remove('act'))
-  document.getElementById(pid)?.classList.add('act')
+  var par=btn.closest('.tabs');if(!par)return;
+  par.querySelectorAll('.tbn').forEach(function(b){b.classList.remove('act')});btn.classList.add('act');
+  var nx=par.nextElementSibling;if(nx)nx.querySelectorAll('.tpanel').forEach(function(p){p.classList.remove('act')});
+  var tp=document.getElementById(pid);if(tp)tp.classList.add('act');
 }
+
 function openMob(){document.getElementById('mbnav').classList.add('open');document.getElementById('mbo').classList.add('open')}
 function closeMob(){document.getElementById('mbnav').classList.remove('open');document.getElementById('mbo').classList.remove('open')}
 
@@ -1037,229 +1053,315 @@ function closeMob(){document.getElementById('mbnav').classList.remove('open');do
 // AUTH
 // ============================================================
 async function loginGoogle(){
-  try{const p=new firebase.auth.GoogleAuthProvider();await firebase.auth().signInWithPopup(p);cm('moLogin');toast('Login berhasil!','s')}
-  catch(e){toast('Login gagal: '+e.message,'e')}
-}
-async function logoutUser(){
-  await firebase.auth().signOut();CU=null;UP=null;renderAuth();toast('Logout.','i');nav('home')
+  try{
+    var p=new firebase.auth.GoogleAuthProvider();
+    await firebase.auth().signInWithPopup(p);
+    cm('moLogin');toast('Login berhasil!','s');
+  }catch(e){toast('Login gagal: '+e.message,'e')}
 }
 
-firebase.auth().onAuthStateChanged(async u=>{
-  CU=u
+async function logoutUser(){
+  await firebase.auth().signOut();CU=null;UP=null;renderAuth();toast('Logout.','i');nav('home');
+}
+
+firebase.auth().onAuthStateChanged(async function(u){
+  CU=u;
   if(u){
-    const snap=await DB.ref('users/'+u.uid).get()
+    var snap=await DB.ref('users/'+u.uid).get();
     if(!snap.exists()){
-      await DB.ref('users/'+u.uid).set({uid:u.uid,email:u.email,username:u.displayName||u.email.split('@')[0],photoURL:u.photoURL||'',role:'user',status:'active',wlStatus:'none',icName:'',postCount:0,createdAt:Date.now()})
+      await DB.ref('users/'+u.uid).set({uid:u.uid,email:u.email,username:u.displayName||u.email.split('@')[0],photoURL:u.photoURL||'',role:'user',status:'active',wlStatus:'none',icName:'',postCount:0,createdAt:Date.now()});
     }
-    UP=(await DB.ref('users/'+u.uid).get()).val()
-    if(UP?.status==='banned'){await firebase.auth().signOut();toast('Akun kamu dibanned.','e');return}
-    const ps=await DB.ref('admin_perms/'+u.uid).get()
-    if(ps.exists()){const pd=ps.val();if(pd.role!==UP.role)await DB.ref('users/'+u.uid).update({role:pd.role});UP.role=pd.role;UP.perms=pd.perms||[]}
-    addLog('AUTH','Login: '+UP.username+' ('+UP.role+')')
+    UP=(await DB.ref('users/'+u.uid).get()).val();
+    if(UP && UP.status==='banned'){await firebase.auth().signOut();toast('Akun kamu dibanned.','e');return}
+    var ps=await DB.ref('admin_perms/'+u.uid).get();
+    if(ps.exists()){
+      var pd=ps.val();
+      if(pd.role && pd.role!==UP.role) await DB.ref('users/'+u.uid).update({role:pd.role});
+      UP.role=pd.role||UP.role;
+      UP.perms=pd.perms||[];
+    }
+    addLog('AUTH','Login: '+UP.username+' ('+UP.role+')');
   }
-  renderAuth();loadConfig();loadHomeStats()
-})
+  renderAuth();loadConfig();loadHomeStats();
+});
 
 function renderAuth(){
-  const el=document.getElementById('tbRight'),isAdm=ADMIN_ROLES.includes(UP?.role)
-  document.getElementById('admNavLink').style.display=isAdm?'':'none'
-  document.getElementById('admMobLink').style.display=isAdm?'':'none'
-  if(!CU){el.innerHTML='<button class="btn" onclick="om(\'moLogin\')">Masuk</button><button class="btn btn-p" onclick="om(\'moLogin\')">Daftar</button>';return}
-  const av=UP?.photoURL?`<img src="${UP.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover">`:`<div style="width:28px;height:28px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:1px solid var(--b)">${ini(UP?.username)}</div>`
-  el.innerHTML=`<div style="display:flex;align-items:center;gap:7px;cursor:pointer" onclick="nav('profile')">${av}<span style="font-size:11px;color:var(--t);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(UP?.username||'')}</span></div>`
+  var el=document.getElementById('tbRight');
+  var isAdm=ADMIN_ROLES.indexOf(UP&&UP.role)>=0;
+  document.getElementById('admNavLink').style.display=isAdm?'':'none';
+  document.getElementById('admMobLink').style.display=isAdm?'':'none';
+  if(!CU){
+    el.innerHTML='<button class="btn" onclick="om(\'moLogin\')">Masuk</button><button class="btn btn-p" onclick="om(\'moLogin\')">Daftar</button>';
+    return;
+  }
+  var av=UP&&UP.photoURL?'<img src="'+UP.photoURL+'" style="width:28px;height:28px;border-radius:50%;object-fit:cover">':'<div style="width:28px;height:28px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:1px solid var(--b)">'+ini(UP&&UP.username)+'</div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:7px;cursor:pointer" onclick="nav(\'profile\')">'+av+'<span style="font-size:11px;color:var(--t);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(UP&&UP.username||'')+'</span></div>';
 }
 
 // ============================================================
 // CONFIG
 // ============================================================
 function loadConfig(){
-  DB.ref('config').on('value',snap=>{CFG=snap.val()||{};applyConfig()})
-  DB.ref('settings').on('value',snap=>{SCFG=snap.val()||{};applySettings()})
+  DB.ref('config').on('value',function(snap){CFG=snap.val()||{};applyConfig()});
+  DB.ref('settings').on('value',function(snap){SCFG=snap.val()||{};applySettings()});
 }
+
 function applyConfig(){
-  st('srvIP',CFG.serverIP||'—');st('feedIP',CFG.serverIP||'—');st('srvWA',CFG.waNumber||'—');st('staffWA','WhatsApp: '+(CFG.waNumber||'—'))
-  DB.ref('announcements').orderByChild('ts').limitToLast(1).get().then(s=>{
-    if(s.exists()){const a=Object.values(s.val())[0];document.getElementById('topAnnBar').style.display='flex';document.getElementById('topAnnTxt').innerHTML=`<strong>${esc(a.tag||'')}</strong> — ${esc((a.title||'').substring(0,70))}`}
-  })
-  DB.ref('features').orderByChild('order').get().then(s=>{
-    const el=document.getElementById('featList');if(!el)return
-    if(s.exists()){const items=Object.values(s.val()).sort((a,b)=>a.order-b.order);el.innerHTML=items.map(f=>`<div class="srow"><span>${f.icon||''} ${esc(f.title||'')}</span></div>`).join('')}
-  })
+  st('srvIP',CFG.serverIP||'—');st('feedIP',CFG.serverIP||'—');
+  st('srvWA',CFG.waNumber?String(CFG.waNumber):'—');
+  st('staffWA','WhatsApp: '+(CFG.waNumber||'—'));
+  DB.ref('announcements').orderByChild('ts').limitToLast(1).get().then(function(s){
+    if(s.exists()){
+      var a=Object.values(s.val())[0];
+      document.getElementById('topAnnBar').style.display='flex';
+      document.getElementById('topAnnTxt').innerHTML='<strong>'+esc(a.tag||'')+'</strong> — '+esc((a.title||'').substring(0,70));
+    }
+  });
+  DB.ref('features').orderByChild('order').get().then(function(s){
+    var el=document.getElementById('featList');if(!el)return;
+    if(s.exists()){
+      var items=Object.values(s.val()).sort(function(a,b){return a.order-b.order});
+      el.innerHTML=items.map(function(f){return'<div class="srow"><span>'+esc(f.icon||'')+' '+esc(f.title||'')+'</span></div>'}).join('');
+    }
+  });
 }
+
 function applySettings(){
-  const s=SCFG
+  var s=SCFG;
   // WL
-  const wlOk=s.wlOpen!==false
-  const wcb=document.getElementById('wlClosedBox');if(wcb)wcb.style.display=wlOk?'none':''
-  const wow=document.getElementById('wlOpenWrap');if(wow)wow.style.display=wlOk?'':'none'
-  const wrw=document.getElementById('wlReqWgt');if(wrw)wrw.innerHTML=(s.wlRequirements||'Min. 17 tahun\nWhatsApp aktif').split('\n').filter(Boolean).map(r=>`<p>✓ ${esc(r)}</p>`).join('')
-  const wri=document.getElementById('wlReqInfo');if(wri&&s.wlRequirements){wri.style.display='';wri.innerHTML=s.wlRequirements.split('\n').filter(Boolean).map(r=>`✓ ${esc(r)}`).join(' &nbsp;|&nbsp; ')}
+  var wlOk=s.wlOpen!==false;
+  var wcb=document.getElementById('wlClosedBox');if(wcb)wcb.style.display=wlOk?'none':'';
+  var wow=document.getElementById('wlOpenWrap');if(wow)wow.style.display=wlOk?'':'none';
+  var wrw=document.getElementById('wlReqWgt');
+  if(wrw)wrw.innerHTML=(s.wlRequirements||'Min. 17 tahun\nWhatsApp aktif').split('\n').filter(Boolean).map(function(r){return'<p>✓ '+esc(r)+'</p>'}).join('');
+  var wri=document.getElementById('wlReqInfo');
+  if(wri&&s.wlRequirements){wri.style.display='';wri.innerHTML=s.wlRequirements.split('\n').filter(Boolean).map(function(r){return'✓ '+esc(r)}).join(' &nbsp;|&nbsp; ')}
   // CS
-  const csOk=s.csOpen!==false
-  const ccb=document.getElementById('csClosedBox');if(ccb)ccb.style.display=csOk?'none':''
-  const cow=document.getElementById('csOpenWrap');if(cow)cow.style.display=csOk?'':'none'
-  const cib=document.getElementById('csInfoBox');if(cib)cib.textContent=s.csInfo||'Jadwal review setiap Senin & Kamis'
-  const cml=document.getElementById('csMinLbl');if(cml)cml.textContent='(min. '+(s.csMinWords||150)+' kata)'
-  const cpw=document.getElementById('csPanWgt');if(cpw)cpw.innerHTML=(s.csPanduan||'Min. 150 kata\nKarakter realistis').split('\n').filter(Boolean).map(r=>`<p>✓ ${esc(r)}</p>`).join('')
-  const slots=document.getElementById('csSlots')
-  if(slots){const sl=(s.csSchedules||'Senin 19:00,Kamis 19:00').split(',').map(x=>x.trim()).filter(Boolean);slots.innerHTML=sl.map(x=>`<div style="background:var(--bg3);border:1.5px solid var(--b);border-radius:var(--r);padding:5px 10px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .1s" onclick="selSlot(this,'${esc(x)}')">${esc(x)}</div>`).join('')}
+  var csOk=s.csOpen!==false;
+  var ccb=document.getElementById('csClosedBox');if(ccb)ccb.style.display=csOk?'none':'';
+  var cow=document.getElementById('csOpenWrap');if(cow)cow.style.display=csOk?'':'none';
+  var cib=document.getElementById('csInfoBox');if(cib)cib.textContent=s.csInfo||'Jadwal review setiap Senin & Kamis';
+  var cml=document.getElementById('csMinLbl');if(cml)cml.textContent='(min. '+(s.csMinWords||150)+' kata)';
+  var cpw=document.getElementById('csPanWgt');
+  if(cpw)cpw.innerHTML=(s.csPanduan||'Min. 150 kata\nKarakter realistis').split('\n').filter(Boolean).map(function(r){return'<p>✓ '+esc(r)+'</p>'}).join('');
+  var slots=document.getElementById('csSlots');
+  if(slots){
+    var sl=(s.csSchedules||'Senin 19:00,Kamis 19:00').split(',').map(function(x){return x.trim()}).filter(Boolean);
+    slots.innerHTML=sl.map(function(x){
+      return '<div class="slot-btn" data-slot="'+esc(x)+'" onclick="selSlot(this)" style="background:var(--bg3);border:1.5px solid var(--b);border-radius:var(--r);padding:5px 10px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .1s">'+esc(x)+'</div>';
+    }).join('');
+  }
   // Import
-  const iOk=s.importOpen!==false
-  const icb=document.getElementById('impClosedBox');if(icb)icb.style.display=iOk?'none':''
-  const iow=document.getElementById('impOpenWrap');if(iow)iow.style.display=iOk?'':'none'
-  const iib=document.getElementById('impInfoBox');if(iib)iib.textContent=s.importInfo||'Import request dibuka secara berkala'
-  const irw=document.getElementById('impReqWgt');if(irw)irw.innerHTML=(s.importRequirements||'Harus ada lore IC\nMax 1 request/minggu').split('\n').filter(Boolean).map(r=>`<p>✓ ${esc(r)}</p>`).join('')
-  ;[['impGood','goodsideOpen'],['impBad','badsideOpen'],['impFam','familyOpen']].forEach(([id,key])=>{const btn=document.getElementById(id);if(btn)btn.classList.toggle('dis',!iOk||s[key]===false)})
+  var iOk=s.importOpen!==false;
+  var icb=document.getElementById('impClosedBox');if(icb)icb.style.display=iOk?'none':'';
+  var iow=document.getElementById('impOpenWrap');if(iow)iow.style.display=iOk?'':'none';
+  var iib=document.getElementById('impInfoBox');if(iib)iib.textContent=s.importInfo||'Import request dibuka secara berkala';
+  var irw=document.getElementById('impReqWgt');
+  if(irw)irw.innerHTML=(s.importRequirements||'Harus ada lore IC\nMax 1 request/minggu').split('\n').filter(Boolean).map(function(r){return'<p>✓ '+esc(r)+'</p>'}).join('');
+  [['impGood','goodsideOpen'],['impBad','badsideOpen'],['impFam','familyOpen']].forEach(function(pair){
+    var btn=document.getElementById(pair[0]);
+    if(btn)btn.className='imp-btn'+((!iOk||s[pair[1]]===false)?' dis':'');
+  });
 }
 
 // ============================================================
 // HOME STATS
 // ============================================================
 function loadHomeStats(){
-  DB.ref('users').get().then(s=>{const v=s.val()||{};st('hPosts',Object.values(v).reduce((a,u)=>a+(u.postCount||0),0))})
-  DB.ref('registrations').get().then(s=>{const v=Object.values(s.val()||{});st('hWL',v.filter(x=>x.status==='pending').length);st('wlPendSide',v.filter(x=>x.status==='pending').length);st('wlProcSide',v.filter(x=>x.process).length);st('wlAccSide',v.filter(x=>x.status==='accepted').length)})
-  DB.ref('cs_requests').get().then(s=>{st('hCS',s.exists()?Object.values(s.val()||{}).filter(x=>x.status==='pending').length:0)})
-  DB.ref('import_requests').get().then(s=>{st('hImport',s.exists()?Object.values(s.val()||{}).filter(x=>x.status==='pending').length:0)})
+  DB.ref('posts').get().then(function(s){st('hPosts',s.exists()?Object.keys(s.val()).length:0)});
+  DB.ref('registrations').get().then(function(s){
+    var v=Object.values(s.val()||{});
+    st('hWL',v.filter(function(x){return x.status==='pending'}).length);
+    st('wlPendSide',v.filter(function(x){return x.status==='pending'}).length);
+    st('wlProcSide',v.filter(function(x){return x.process}).length);
+    st('wlAccSide',v.filter(function(x){return x.status==='accepted'}).length);
+  });
+  DB.ref('cs_requests').get().then(function(s){st('hCS',s.exists()?Object.values(s.val()||{}).filter(function(x){return x.status==='pending'}).length:0)});
+  DB.ref('import_requests').get().then(function(s){st('hImport',s.exists()?Object.values(s.val()||{}).filter(function(x){return x.status==='pending'}).length:0)});
 }
 
 // ============================================================
 // FEED
 // ============================================================
 function initFeed(){
-  if(CU&&UP){const fc=document.getElementById('feedComposer');if(fc)fc.style.display='';const ca=document.getElementById('compAva');if(ca)ca.innerHTML=UP.photoURL?`<img src="${UP.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`:ini(UP.username)}
-  loadFeed()
+  if(CU&&UP){
+    var fc=document.getElementById('feedComposer');if(fc)fc.style.display='';
+    var ca=document.getElementById('compAva');
+    if(ca)ca.innerHTML=UP.photoURL?'<img src="'+UP.photoURL+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':ini(UP.username);
+  }
+  loadFeed();
 }
+
 function loadFeed(){
-  const list=document.getElementById('feedList'),empty=document.getElementById('feedEmpty');if(!list)return
-  DB.ref('posts').orderByChild('ts').limitToLast(40).get().then(snap=>{
+  var list=document.getElementById('feedList'),empty=document.getElementById('feedEmpty');if(!list)return;
+  DB.ref('posts').orderByChild('ts').limitToLast(40).get().then(function(snap){
     if(!snap.exists()){list.innerHTML='';if(empty)empty.style.display='';return}
-    list.innerHTML=Object.entries(snap.val()).reverse().map(([k,p])=>renderPost(k,p)).join('')
-    if(empty)empty.style.display='none'
-  })
+    var entries=Object.entries(snap.val()).reverse();
+    list.innerHTML=entries.map(function(e){return renderPost(e[0],e[1])}).join('');
+    if(empty)empty.style.display='none';
+  });
 }
+
 function renderPost(key,p){
-  const av=p.photoURL?`<img src="${p.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`:ini(p.author||'?')
-  const likes=Object.keys(p.likes||{}).length,liked=CU&&p.likes&&p.likes[CU.uid]
-  const canDel=CU&&(CU.uid===p.uid||(UP&&ADMIN_ROLES.includes(UP.role)))
-  const imgHtml=p.imageUrl?`<img class="post-img" src="${esc(p.imageUrl)}" onclick="viewImg('${esc(p.imageUrl)}')" alt="Post image">`:'';
-  return `<div class="pcard" id="pc-${key}">
-    <div class="phdr">
-      <div class="pava">${av}</div>
-      <div style="flex:1"><div style="font-size:12.5px;font-weight:600">${esc(p.author||'?')} <span class="${rc(p.role)}" style="font-size:9.5px">[${RLBL[p.role]||'Member'}]</span></div><div style="font-size:9.5px;color:var(--t3)">${ago(p.ts)}</div></div>
-      ${canDel?`<button class="btn btn-d btn-sm" onclick="delPost('${key}')">Hapus</button>`:''}
-    </div>
-    <div class="pbody">${esc(p.content||'')}</div>
-    ${imgHtml}
-    <div class="pact">
-      <button class="rbtn ${liked?'liked':''}" id="like-${key}" onclick="toggleLike('${key}',this)">❤ ${likes}</button>
-      <button class="rbtn" onclick="toggleCmt('${key}')">💬 Komentar</button>
-    </div>
-    <div class="pcmts" id="cmt-${key}" style="display:none">
-      <div id="cmtList-${key}" style="margin-bottom:6px"></div>
-      ${CU?`<div style="display:flex;gap:6px;align-items:center"><div class="cmt-av">${ini(UP?.username||'?')}</div><input class="cmt-inp" placeholder="Tambah komentar..." onkeydown="if(event.key==='Enter')addCmt('${key}',this)"></div>`:'<div style="font-size:10.5px;color:var(--t3)">Login untuk komentar.</div>'}
-    </div>
-  </div>`
+  var av=p.photoURL?'<img src="'+esc(p.photoURL)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':ini(p.author||'?');
+  var likes=Object.keys(p.likes||{}).length;
+  var liked=CU&&p.likes&&p.likes[CU.uid];
+  var canDel=CU&&(CU.uid===p.uid||(UP&&ADMIN_ROLES.indexOf(UP.role)>=0));
+  var imgHtml=p.imageUrl?'<img class="post-img" src="'+esc(p.imageUrl)+'" onclick="viewImg(this.src)" alt="foto">':'';
+  return '<div class="pcard" id="pc-'+key+'">'+
+    '<div class="phdr">'+
+      '<div class="pava">'+av+'</div>'+
+      '<div style="flex:1"><div style="font-size:12.5px;font-weight:600">'+esc(p.author||'?')+' <span class="'+rc(p.role)+'" style="font-size:9.5px">['+esc(RLBL[p.role]||'Member')+']</span></div><div style="font-size:9.5px;color:var(--t3)">'+ago(p.ts)+'</div></div>'+
+      (canDel?'<button class="btn btn-d btn-sm" onclick="delPost(\''+key+'\')">Hapus</button>':'')+
+    '</div>'+
+    (p.content?'<div class="pbody">'+esc(p.content)+'</div>':'')+
+    imgHtml+
+    '<div class="pact">'+
+      '<button class="rbtn'+(liked?' liked':'')+'" id="like-'+key+'" onclick="toggleLike(\''+key+'\',this)">❤ '+likes+'</button>'+
+      '<button class="rbtn" onclick="toggleCmt(\''+key+'\')">💬 Komentar</button>'+
+    '</div>'+
+    '<div class="pcmts" id="cmt-'+key+'" style="display:none">'+
+      '<div id="cmtList-'+key+'" style="margin-bottom:6px"></div>'+
+      (CU?'<div style="display:flex;gap:6px;align-items:center"><div class="cmt-av">'+ini(UP&&UP.username||'?')+'</div><input class="cmt-inp" placeholder="Komentar..." onkeydown="if(event.key===\'Enter\')addCmt(\''+key+'\',this)"></div>':'<div style="font-size:10.5px;color:var(--t3)">Login untuk komentar.</div>')+
+    '</div>'+
+  '</div>';
 }
+
 function viewImg(url){document.getElementById('moImgSrc').src=url;om('moImg')}
 
 function handleImg(input){
-  const file=input.files[0];if(!file)return
+  var file=input.files[0];if(!file)return;
   if(file.size>4*1024*1024){toast('Foto max 4MB!','e');input.value='';return}
-  const r=new FileReader();r.onload=e=>{postImgBase64=e.target.result;const prev=document.getElementById('imgPreview');prev.style.display='';document.getElementById('imgPreviewImg').src=e.target.result};r.readAsDataURL(file)
+  var r=new FileReader();
+  r.onload=function(e){
+    postImgBase64=e.target.result;
+    var prev=document.getElementById('imgPreview');prev.style.display='';
+    document.getElementById('imgPreviewImg').src=e.target.result;
+  };
+  r.readAsDataURL(file);
 }
+
 function clearImg(){postImgBase64=null;document.getElementById('imgPreview').style.display='none';document.getElementById('imgPreviewImg').src=''}
 
 async function submitPost(){
   if(!CU){om('moLogin');return}
-  const txt=document.getElementById('compTxt').value.trim()
+  var txt=document.getElementById('compTxt').value.trim();
   if(!txt&&!postImgBase64){toast('Tulis sesuatu atau tambahkan foto!','e');return}
   if(txt.length>1000){toast('Teks max 1000 karakter!','e');return}
-  const cooldown=(SCFG.postCooldownMin||60)*60*1000
-  const lastSnap=await DB.ref('posts').orderByChild('uid').equalTo(CU.uid).limitToLast(1).get()
-  if(lastSnap.exists()){const lp=Object.values(lastSnap.val())[0];const diff=Date.now()-lp.ts;if(diff<cooldown){toast(`Cooldown: tunggu ${Math.ceil((cooldown-diff)/60000)} menit lagi.`,'e');return}}
-  const key=DB.ref('posts').push().key
-  const postData={uid:CU.uid,author:UP.username,photoURL:UP.photoURL||'',role:UP.role||'user',content:txt,likeCount:0,likes:{},ts:Date.now()}
-  if(postImgBase64)postData.imageUrl=postImgBase64
-  await DB.ref('posts/'+key).set(postData)
-  await DB.ref('users/'+CU.uid+'/postCount').transaction(c=>(c||0)+1)
-  addLog('POST',UP.username+' posting: '+txt.substring(0,50))
-  document.getElementById('compTxt').value='';clearImg();toast('Post berhasil!','s');loadFeed()
+  var cooldown=(SCFG.postCooldownMin||60)*60*1000;
+  var lastSnap=await DB.ref('posts').orderByChild('uid').equalTo(CU.uid).limitToLast(1).get();
+  if(lastSnap.exists()){
+    var lp=Object.values(lastSnap.val())[0];
+    var diff=Date.now()-lp.ts;
+    if(diff<cooldown){toast('Cooldown: tunggu '+Math.ceil((cooldown-diff)/60000)+' menit lagi.','e');return}
+  }
+  var key=DB.ref('posts').push().key;
+  var postData={uid:CU.uid,author:UP.username,photoURL:UP.photoURL||'',role:UP.role||'user',content:txt,likeCount:0,likes:{},ts:Date.now()};
+  if(postImgBase64)postData.imageUrl=postImgBase64;
+  await DB.ref('posts/'+key).set(postData);
+  await DB.ref('users/'+CU.uid+'/postCount').transaction(function(c){return(c||0)+1});
+  addLog('POST',UP.username+' posting: '+txt.substring(0,50));
+  document.getElementById('compTxt').value='';clearImg();toast('Post berhasil!','s');loadFeed();
 }
+
 async function delPost(key){
-  if(!confirm('Hapus post ini?'))return
-  await DB.ref('posts/'+key).remove();toast('Post dihapus.','i');loadFeed()
+  if(!confirm('Hapus post ini?'))return;
+  await DB.ref('posts/'+key).remove();toast('Post dihapus.','i');loadFeed();
 }
+
 async function toggleLike(key,btn){
   if(!CU){toast('Login dulu!','e');return}
-  const ref=DB.ref('posts/'+key+'/likes/'+CU.uid),snap=await ref.get()
-  const cur=parseInt(btn.textContent.replace(/\D/g,''))||0
+  var ref=DB.ref('posts/'+key+'/likes/'+CU.uid);
+  var snap=await ref.get();
+  var cur=parseInt(btn.textContent.replace(/\D/g,''))||0;
   if(snap.exists()){await ref.remove();btn.className='rbtn';btn.innerHTML='❤ '+(cur-1)}
   else{await ref.set(true);btn.className='rbtn liked';btn.innerHTML='❤ '+(cur+1)}
 }
+
 async function toggleCmt(key){
-  const el=document.getElementById('cmt-'+key);if(!el)return
-  const open=el.style.display!=='none';el.style.display=open?'none':''
-  if(!open){const ls=document.getElementById('cmtList-'+key);if(ls){const snap=await DB.ref('posts/'+key+'/comments').get();ls.innerHTML=snap.exists()?Object.values(snap.val()).map(c=>`<div class="cmt-item"><div class="cmt-av">${ini(c.author||'?')}</div><div class="cmt-bdy"><div class="cmt-auth">${esc(c.author||'?')}</div><div class="cmt-txt">${esc(c.text||'')}</div></div></div>`).join(''):'<div style="font-size:10.5px;color:var(--t3)">Belum ada komentar.</div>'}}
+  var el=document.getElementById('cmt-'+key);if(!el)return;
+  var open=el.style.display!=='none';el.style.display=open?'none':'';
+  if(!open){
+    var ls=document.getElementById('cmtList-'+key);
+    if(ls){
+      var snap=await DB.ref('posts/'+key+'/comments').get();
+      ls.innerHTML=snap.exists()?Object.values(snap.val()).map(function(c){
+        return '<div class="cmt-item"><div class="cmt-av">'+ini(c.author||'?')+'</div><div class="cmt-bdy"><div class="cmt-auth">'+esc(c.author||'?')+'</div><div class="cmt-txt">'+esc(c.text||'')+'</div></div></div>';
+      }).join(''):'<div style="font-size:10.5px;color:var(--t3)">Belum ada komentar.</div>';
+    }
+  }
 }
+
 async function addCmt(key,input){
-  if(!CU||!input.value.trim())return
-  await DB.ref('posts/'+key+'/comments').push({uid:CU.uid,author:UP.username,text:input.value.trim(),ts:Date.now()})
-  input.value='';toggleCmt(key);setTimeout(()=>toggleCmt(key),50)
+  if(!CU||!input.value.trim())return;
+  await DB.ref('posts/'+key+'/comments').push({uid:CU.uid,author:UP.username,text:input.value.trim(),ts:Date.now()});
+  input.value='';
+  var el=document.getElementById('cmt-'+key);if(el)el.style.display='none';
+  setTimeout(function(){toggleCmt(key)},50);
 }
 
 // ============================================================
 // WHITELIST
 // ============================================================
 function initWL(){checkMyWL();loadHomeStats()}
+
 async function checkMyWL(){
-  if(!CU)return
-  const snap=await DB.ref('registrations').orderByChild('uid').equalTo(CU.uid).get()
-  if(!snap.exists())return
-  const entries=Object.values(snap.val()).sort((a,b)=>b.submittedAt-a.submittedAt),latest=entries[0]
-  const sv=document.getElementById('wlMyStatus'),fw=document.getElementById('wlFormWrap')
-  const sm={pending:'<span class="bdg b-pending">PENDING</span>',process:'<span class="bdg b-process">DIPROSES</span>',accepted:'<span class="bdg b-accepted">DITERIMA ✓</span>',rejected:'<span class="bdg b-rejected">DITOLAK</span>',denied:'<span class="bdg b-denied">DITOLAK</span>'}
-  if(['pending','process'].includes(latest.status)){
-    sv.style.display='';fw.style.display='none'
-    sv.innerHTML=`<div class="card" style="padding:16px;margin-bottom:12px"><div style="font-size:12.5px;font-weight:700;margin-bottom:10px">Status Pendaftaran Kamu</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${sm[latest.status]}<span style="font-size:10px;color:var(--t3)">${fmtD(latest.submittedAt)}</span></div><div class="drow"><div class="dk">Nama IC</div><div class="dv">${esc(latest.name||'')}</div></div><div class="drow"><div class="dk">Fraksi</div><div class="dv">${esc(latest.faction||'')}</div></div>${latest.adminNote?`<div class="ibox" style="margin-top:10px"><strong>Catatan:</strong> ${esc(latest.adminNote)}</div>`:''}</div>`
-  }else if(latest.status==='accepted'){
-    sv.style.display='';fw.style.display='none'
-    sv.innerHTML=`<div class="ibox ok" style="margin-bottom:12px">✅ Whitelist diterima. IC Name: <strong>${esc(latest.name)}</strong> — Selamat datang di Miracle RP!</div>`
-  }else{
-    sv.style.display='';fw.style.display=''
-    sv.innerHTML=`<div class="ibox warn" style="margin-bottom:10px">⚠️ Pendaftaran sebelumnya ditolak. Kamu bisa mendaftar ulang.${latest.adminNote?'<br>Alasan: '+esc(latest.adminNote):''}</div>`
+  if(!CU)return;
+  var snap=await DB.ref('registrations').orderByChild('uid').equalTo(CU.uid).get();
+  if(!snap.exists())return;
+  var entries=Object.values(snap.val()).sort(function(a,b){return b.submittedAt-a.submittedAt});
+  var latest=entries[0];
+  var sv=document.getElementById('wlMyStatus'),fw=document.getElementById('wlFormWrap');
+  var sm={pending:'<span class="bdg b-pending">PENDING</span>',process:'<span class="bdg b-process">DIPROSES</span>',accepted:'<span class="bdg b-accepted">DITERIMA ✓</span>',rejected:'<span class="bdg b-rejected">DITOLAK</span>',denied:'<span class="bdg b-denied">DITOLAK</span>'};
+  if(latest.status==='pending'||latest.status==='process'){
+    sv.style.display='';fw.style.display='none';
+    sv.innerHTML='<div class="card" style="padding:16px;margin-bottom:12px"><div style="font-size:12.5px;font-weight:700;margin-bottom:10px">Status Pendaftaran Kamu</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+(sm[latest.status]||'')+'<span style="font-size:10px;color:var(--t3)">'+fmtD(latest.submittedAt)+'</span></div><div class="drow"><div class="dk">Nama IC</div><div class="dv">'+esc(latest.name||'')+'</div></div><div class="drow"><div class="dk">Fraksi</div><div class="dv">'+esc(latest.faction||'')+'</div></div>'+(latest.adminNote?'<div class="ibox" style="margin-top:10px"><strong>Catatan:</strong> '+esc(latest.adminNote)+'</div>':'')+'</div>';
+  } else if(latest.status==='accepted'){
+    sv.style.display='';fw.style.display='none';
+    sv.innerHTML='<div class="ibox ok" style="margin-bottom:12px">✅ Whitelist diterima. IC Name: <strong>'+esc(latest.name)+'</strong> — Selamat datang!</div>';
+  } else {
+    sv.style.display='';fw.style.display='';
+    sv.innerHTML='<div class="ibox warn" style="margin-bottom:10px">⚠️ Pendaftaran sebelumnya ditolak. Kamu bisa mendaftar ulang.'+(latest.adminNote?'<br>Alasan: '+esc(latest.adminNote):'')+'</div>';
   }
 }
-let wlData={}
+
+var wlData={};
 function wlNext(p){
   if(p===1){
-    const ic=document.getElementById('wlIC').value.trim(),fn=document.getElementById('wlFN').value.trim(),age=document.getElementById('wlAge').value,wa=document.getElementById('wlWA').value.trim(),exp=document.getElementById('wlExp').value
+    var ic=document.getElementById('wlIC').value.trim(),fn=document.getElementById('wlFN').value.trim(),age=document.getElementById('wlAge').value,wa=document.getElementById('wlWA').value.trim(),exp=document.getElementById('wlExp').value;
     if(!ic||!fn||!age||!wa||!exp){toast('Isi semua field!','e');return}
     if(!CU){om('moLogin');return}
     if(parseInt(age)<10||parseInt(age)>99){toast('Umur tidak valid!','e');return}
-    wlData={name:ic,fullName:fn,age:parseInt(age),wa,exp,faction:document.getElementById('wlFaction').value.trim()}
-    document.getElementById('wlP1').style.display='none';document.getElementById('wlP2').style.display='';setWlStep(2)
-  }else if(p===2){
-    const q1=document.getElementById('wlQ1').value.trim(),q2=document.getElementById('wlQ2').value.trim(),q3=document.getElementById('wlQ3').value.trim(),reason=document.getElementById('wlReason').value.trim()
+    wlData={name:ic,fullName:fn,age:parseInt(age),wa:wa,exp:exp,faction:document.getElementById('wlFaction').value.trim()};
+    document.getElementById('wlP1').style.display='none';document.getElementById('wlP2').style.display='';setWlStep(2);
+  } else if(p===2){
+    var q1=document.getElementById('wlQ1').value.trim(),q2=document.getElementById('wlQ2').value.trim(),q3=document.getElementById('wlQ3').value.trim(),reason=document.getElementById('wlReason').value.trim();
     if(!q1||!q2||!q3||!reason){toast('Isi semua pertanyaan!','e');return}
-    wlData={...wlData,q1,q2,q3,reason}
-    document.getElementById('wlP2').style.display='none';document.getElementById('wlP3').style.display='';setWlStep(3)
-    document.getElementById('wlPreview').innerHTML=`IC: <b>${esc(wlData.name)}</b><br>Nama: <b>${esc(wlData.fullName)}</b><br>Umur: <b>${wlData.age}</b><br>WA: <b>${esc(wlData.wa)}</b><br>Pengalaman: <b>${esc(wlData.exp)}</b><br>Fraksi: <b>${esc(wlData.faction||'-')}</b>`
+    wlData.q1=q1;wlData.q2=q2;wlData.q3=q3;wlData.reason=reason;
+    document.getElementById('wlP2').style.display='none';document.getElementById('wlP3').style.display='';setWlStep(3);
+    document.getElementById('wlPreview').innerHTML='IC: <b>'+esc(wlData.name)+'</b><br>Nama: <b>'+esc(wlData.fullName)+'</b><br>Umur: <b>'+wlData.age+'</b><br>WA: <b>'+esc(wlData.wa)+'</b><br>Pengalaman: <b>'+esc(wlData.exp)+'</b><br>Fraksi: <b>'+esc(wlData.faction||'-')+'</b>';
   }
 }
 function wlBack(p){
   if(p===2){document.getElementById('wlP2').style.display='none';document.getElementById('wlP1').style.display='';setWlStep(1)}
   else if(p===3){document.getElementById('wlP3').style.display='none';document.getElementById('wlP2').style.display='';setWlStep(2)}
 }
-function setWlStep(n){for(let i=1;i<=4;i++){const s=document.getElementById('wlS'+i);if(!s)continue;s.className='wlstep'+(i<n?' done':i===n?' act':'')}}
+function setWlStep(n){
+  for(var i=1;i<=4;i++){
+    var s=document.getElementById('wlS'+i);if(!s)continue;
+    s.className='wlstep'+(i<n?' done':i===n?' act':'');
+  }
+}
 async function wlSubmit(){
   if(!CU){toast('Login dulu!','e');return}
   try{
-    const key=DB.ref('registrations').push().key
-    await DB.ref('registrations/'+key).set({...wlData,uid:CU.uid,email:CU.email,username:UP.username,status:'pending',submittedAt:Date.now()})
-    await DB.ref('users/'+CU.uid).update({wlStatus:'pending'})
-    addLog('WL',UP.username+' daftar WL: '+wlData.name)
-    document.getElementById('wlP3').style.display='none';document.getElementById('wlP4').style.display='';setWlStep(4)
-    toast('Pendaftaran berhasil!','s');loadHomeStats()
+    var key=DB.ref('registrations').push().key;
+    var data=Object.assign({},wlData,{uid:CU.uid,email:CU.email,username:UP.username,status:'pending',submittedAt:Date.now()});
+    await DB.ref('registrations/'+key).set(data);
+    await DB.ref('users/'+CU.uid).update({wlStatus:'pending'});
+    addLog('WL',UP.username+' daftar WL: '+wlData.name);
+    document.getElementById('wlP3').style.display='none';document.getElementById('wlP4').style.display='';setWlStep(4);
+    toast('Pendaftaran berhasil!','s');loadHomeStats();
   }catch(e){toast('Gagal: '+e.message,'e')}
 }
 
@@ -1267,27 +1369,44 @@ async function wlSubmit(){
 // CS
 // ============================================================
 function initCS(){
-  checkMyCS()
-  const st=document.getElementById('csStory');if(st)st.addEventListener('input',function(){document.getElementById('csWC').textContent=this.value.trim().split(/\s+/).filter(Boolean).length+' kata'})
+  checkMyCS();
+  var st2=document.getElementById('csStory');
+  if(st2)st2.addEventListener('input',function(){
+    var wc=this.value.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('csWC').textContent=wc+' kata';
+  });
 }
-function selSlot(el,val){document.querySelectorAll('#csSlots > div').forEach(s=>{s.style.borderColor='var(--b)';s.style.color='var(--t2)'});el.style.borderColor='#fff';el.style.color='#fff';selCSSlot=val}
+
+function selSlot(el){
+  document.querySelectorAll('#csSlots .slot-btn').forEach(function(s){s.style.borderColor='var(--b)';s.style.color='var(--t2)'});
+  el.style.borderColor='#fff';el.style.color='#fff';selCSSlot=el.dataset.slot;
+}
+
 async function checkMyCS(){
-  if(!CU)return
-  const snap=await DB.ref('cs_requests').orderByChild('uid').equalTo(CU.uid).limitToLast(1).get()
-  if(snap.exists()){const d=Object.values(snap.val())[0];if(['pending','process'].includes(d.status)){document.getElementById('csMyStatus').style.display='';document.getElementById('csFormWrap').style.display='none';document.getElementById('csMyStatus').innerHTML=`<div class="card" style="padding:14px;margin-bottom:10px"><div style="font-size:12.5px;font-weight:700;margin-bottom:8px">CS Request Aktif</div><div class="drow"><div class="dk">Char Name</div><div class="dv">${esc(d.charName||'')}</div></div><div class="drow" style="margin-bottom:0"><div class="dk">Status</div><div class="dv"><span class="bdg b-${d.status}">${d.status.toUpperCase()}</span></div></div></div>`}}
+  if(!CU)return;
+  var snap=await DB.ref('cs_requests').orderByChild('uid').equalTo(CU.uid).limitToLast(1).get();
+  if(snap.exists()){
+    var d=Object.values(snap.val())[0];
+    if(d.status==='pending'||d.status==='process'){
+      document.getElementById('csMyStatus').style.display='';document.getElementById('csFormWrap').style.display='none';
+      document.getElementById('csMyStatus').innerHTML='<div class="card" style="padding:14px;margin-bottom:10px"><div style="font-size:12.5px;font-weight:700;margin-bottom:8px">CS Request Aktif</div><div class="drow"><div class="dk">Char Name</div><div class="dv">'+esc(d.charName||'')+'</div></div><div class="drow" style="margin-bottom:0"><div class="dk">Status</div><div class="dv"><span class="bdg b-'+d.status+'">'+d.status.toUpperCase()+'</span></div></div></div>';
+    }
+  }
 }
+
 async function submitCS(){
   if(!CU){om('moLogin');return}
-  const icName=document.getElementById('csIC').value.trim(),charName=document.getElementById('csChar').value.trim(),age=document.getElementById('csAge').value,level=document.getElementById('csLvl').value,screenshot=document.getElementById('csScr').value.trim(),story=document.getElementById('csStory').value.trim()
+  var icName=document.getElementById('csIC').value.trim(),charName=document.getElementById('csChar').value.trim(),age=document.getElementById('csAge').value,level=document.getElementById('csLvl').value,screenshot=document.getElementById('csScr').value.trim(),story=document.getElementById('csStory').value.trim();
   if(!icName||!charName||!age||!level||!story||!selCSSlot){toast('Isi semua field dan pilih jadwal!','e');return}
-  const wc=story.trim().split(/\s+/).filter(Boolean).length,min=SCFG.csMinWords||150
-  if(wc<min){toast(`Story min. ${min} kata! (${wc} sekarang)`,'e');return}
+  var wc=story.trim().split(/\s+/).filter(Boolean).length,min=SCFG.csMinWords||150;
+  if(wc<min){toast('Story min. '+min+' kata! ('+wc+' sekarang)','e');return}
   try{
-    const key=DB.ref('cs_requests').push().key
-    await DB.ref('cs_requests/'+key).set({uid:CU.uid,email:CU.email,username:UP.username,icName,charName,age:parseInt(age),level:parseInt(level),screenshot,story,schedule:selCSSlot,status:'pending',createdAt:Date.now()})
-    addLog('CS',UP.username+' CS request: '+charName)
-    toast('CS Request terkirim!','s');document.getElementById('csFormWrap').style.display='none';document.getElementById('csMyStatus').style.display=''
-    document.getElementById('csMyStatus').innerHTML='<div class="ibox ok">✅ CS Request berhasil dikirim! Tunggu review dari staff.</div>'
+    var key=DB.ref('cs_requests').push().key;
+    await DB.ref('cs_requests/'+key).set({uid:CU.uid,email:CU.email,username:UP.username,icName:icName,charName:charName,age:parseInt(age),level:parseInt(level),screenshot:screenshot,story:story,schedule:selCSSlot,status:'pending',createdAt:Date.now()});
+    addLog('CS',UP.username+' CS request: '+charName);
+    toast('CS Request terkirim!','s');
+    document.getElementById('csFormWrap').style.display='none';document.getElementById('csMyStatus').style.display='';
+    document.getElementById('csMyStatus').innerHTML='<div class="ibox ok">✅ CS Request berhasil dikirim!</div>';
   }catch(e){toast('Gagal: '+e.message,'e')}
 }
 
@@ -1295,23 +1414,36 @@ async function submitCS(){
 // IMPORT
 // ============================================================
 function initImport(){checkMyImport()}
-function selImp(el,type){document.querySelectorAll('.imp-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');selImpType=type}
-async function checkMyImport(){
-  if(!CU)return
-  const snap=await DB.ref('import_requests').orderByChild('userId').equalTo(CU.uid).limitToLast(1).get()
-  if(snap.exists()){const d=Object.values(snap.val())[0];if(d.status==='pending'){document.getElementById('impMyStatus').style.display='';document.getElementById('impFormWrap').style.display='none';document.getElementById('impMyStatus').innerHTML=`<div class="card" style="padding:14px;margin-bottom:10px"><div style="font-size:12.5px;font-weight:700;margin-bottom:8px">Import Request Aktif</div><div class="drow"><div class="dk">Tipe</div><div class="dv" style="text-transform:capitalize">${esc(d.type||'')}</div></div><div class="drow" style="margin-bottom:0"><div class="dk">Status</div><div class="dv"><span class="bdg b-${d.status}">${d.status.toUpperCase()}</span></div></div></div>`}}
+
+function selImp(el,type){
+  document.querySelectorAll('.imp-btn').forEach(function(b){b.classList.remove('sel')});
+  el.classList.add('sel');selImpType=type;
 }
+
+async function checkMyImport(){
+  if(!CU)return;
+  var snap=await DB.ref('import_requests').orderByChild('userId').equalTo(CU.uid).limitToLast(1).get();
+  if(snap.exists()){
+    var d=Object.values(snap.val())[0];
+    if(d.status==='pending'){
+      document.getElementById('impMyStatus').style.display='';document.getElementById('impFormWrap').style.display='none';
+      document.getElementById('impMyStatus').innerHTML='<div class="card" style="padding:14px;margin-bottom:10px"><div style="font-size:12.5px;font-weight:700;margin-bottom:8px">Import Request Aktif</div><div class="drow"><div class="dk">Tipe</div><div class="dv" style="text-transform:capitalize">'+esc(d.type||'')+'</div></div><div class="drow" style="margin-bottom:0"><div class="dk">Status</div><div class="dv"><span class="bdg b-'+d.status+'">'+d.status.toUpperCase()+'</span></div></div></div>';
+    }
+  }
+}
+
 async function submitImport(){
   if(!CU){om('moLogin');return}
   if(!selImpType){toast('Pilih jenis import!','e');return}
-  const charName=document.getElementById('impChar').value.trim(),faction=document.getElementById('impFaction').value.trim(),items=document.getElementById('impItems').value.trim(),lore=document.getElementById('impLore').value.trim(),proof=document.getElementById('impProof').value.trim()
+  var charName=document.getElementById('impChar').value.trim(),faction=document.getElementById('impFaction').value.trim(),items=document.getElementById('impItems').value.trim(),lore=document.getElementById('impLore').value.trim(),proof=document.getElementById('impProof').value.trim();
   if(!charName||!faction||!lore){toast('Isi semua field wajib!','e');return}
   try{
-    const key=DB.ref('import_requests').push().key
-    await DB.ref('import_requests/'+key).set({userId:CU.uid,email:CU.email,username:UP.username,type:selImpType,charName,faction,items,lore,proof,status:'pending',createdAt:Date.now()})
-    addLog('IMPORT',UP.username+' import request: '+charName+' ('+selImpType+')')
-    toast('Import request terkirim!','s');document.getElementById('impFormWrap').style.display='none';document.getElementById('impMyStatus').style.display=''
-    document.getElementById('impMyStatus').innerHTML='<div class="ibox ok">✅ Import request berhasil dikirim!</div>'
+    var key=DB.ref('import_requests').push().key;
+    await DB.ref('import_requests/'+key).set({userId:CU.uid,email:CU.email,username:UP.username,type:selImpType,charName:charName,faction:faction,items:items,lore:lore,proof:proof,status:'pending',createdAt:Date.now()});
+    addLog('IMPORT',UP.username+' import request: '+charName+' ('+selImpType+')');
+    toast('Import request terkirim!','s');
+    document.getElementById('impFormWrap').style.display='none';document.getElementById('impMyStatus').style.display='';
+    document.getElementById('impMyStatus').innerHTML='<div class="ibox ok">✅ Import request berhasil dikirim!</div>';
   }catch(e){toast('Gagal: '+e.message,'e')}
 }
 
@@ -1319,30 +1451,36 @@ async function submitImport(){
 // STAFF
 // ============================================================
 async function loadStaff(){
-  const grid=document.getElementById('staffGrid');if(!grid)return
-  const snap=await DB.ref('staff').orderByChild('order').get()
+  var grid=document.getElementById('staffGrid');if(!grid)return;
+  var snap=await DB.ref('staff').orderByChild('order').get();
   if(!snap.exists()){grid.innerHTML='<p style="color:var(--t3);font-size:11px">Belum ada data staff.</p>';return}
-  const rCls={'Owner':'r-owner','Co-Owner':'r-owner','Developer':'r-developer','Head Admin':'r-headadmin','Senior Admin':'r-senioradmin','Admin':'r-admin','Junior Admin':'r-junioradmin','Management':'r-management','Moderator':'r-moderator','Community Handle':'r-communityhandle','Senior Helper':'r-seniorhelper','Helper':'r-helper','Junior Helper':'r-juniorhelper','Volunteer':'r-volunteer','Ex Staff':'r-exstaff'}
-  grid.innerHTML=Object.values(snap.val()).sort((a,b)=>a.order-b.order).map(s=>`<div class="scard"><div class="scard-av">${s.emoji||ini(s.name||'?')}</div><div class="scard-name">${esc(s.name||'—')}</div><div class="scard-role ${rCls[s.role]||'r-user'}">${esc(s.role||'')}</div>${s.wa?`<div style="font-size:9px;color:var(--t3);margin-top:4px">📱 +${s.wa}</div>`:''}</div>`).join('')
+  var rCls={Owner:'r-owner','Co-Owner':'r-owner',Developer:'r-developer','Head Admin':'r-headadmin','Senior Admin':'r-senioradmin',Admin:'r-admin','Junior Admin':'r-junioradmin',Management:'r-management',Moderator:'r-moderator','Community Handle':'r-communityhandle','Senior Helper':'r-seniorhelper',Helper:'r-helper','Junior Helper':'r-juniorhelper',Volunteer:'r-volunteer','Ex Staff':'r-exstaff'};
+  var sorted=Object.values(snap.val()).sort(function(a,b){return a.order-b.order});
+  grid.innerHTML=sorted.map(function(s){
+    return '<div class="scard"><div class="scard-av">'+(s.emoji||ini(s.name||'?'))+'</div><div class="scard-name">'+esc(s.name||'—')+'</div><div class="scard-role '+(rCls[s.role]||'r-user')+'">'+esc(s.role||'')+'</div>'+(s.wa?'<div style="font-size:9px;color:var(--t3);margin-top:4px">📱 +'+s.wa+'</div>':'')+'</div>';
+  }).join('');
 }
 
 // ============================================================
 // LEADERBOARD
 // ============================================================
 async function loadLB(){
-  const snap=await DB.ref('users').orderByChild('postCount').limitToLast(10).get()
-  const lbP=document.getElementById('lbPosts')
+  var snap=await DB.ref('users').orderByChild('postCount').limitToLast(10).get();
+  var lbP=document.getElementById('lbPosts');
   if(lbP&&snap.exists()){
-    const users=Object.values(snap.val()).filter(u=>u.postCount>0).sort((a,b)=>b.postCount-a.postCount)
-    const rc2={0:'r1',1:'r2',2:'r3'}
-    lbP.innerHTML=users.length?users.map((u,i)=>`<div class="lbrow"><div class="lbrank ${rc2[i]||''}">${i+1}</div><div class="lbav">${u.photoURL?`<img src="${u.photoURL}">`:ini(u.username||'?')}</div><div class="lbi"><div class="lbn">${esc(u.username||'')}</div><div class="lbs ${rc(u.role)}">${RLBL[u.role||'user']||'Member'}</div></div><div class="lbv">${u.postCount||0}</div></div>`).join(''):'<div style="padding:18px;text-align:center;color:var(--t3)">Belum ada data.</div>'
+    var users=Object.values(snap.val()).filter(function(u){return u.postCount>0}).sort(function(a,b){return b.postCount-a.postCount});
+    var rc2={0:'r1',1:'r2',2:'r3'};
+    lbP.innerHTML=users.length?users.map(function(u,i){
+      return '<div class="lbrow"><div class="lbrank '+(rc2[i]||'')+'">'+( i+1)+'</div><div class="lbav">'+(u.photoURL?'<img src="'+esc(u.photoURL)+'">':ini(u.username||'?'))+'</div><div class="lbi"><div class="lbn">'+esc(u.username||'')+'</div><div class="lbs '+rc(u.role)+'">'+(RLBL[u.role||'user']||'Member')+'</div></div><div class="lbv">'+(u.postCount||0)+'</div></div>';
+    }).join(''):'<div style="padding:18px;text-align:center;color:var(--t3)">Belum ada data.</div>';
   }
-  const snapWL=await DB.ref('registrations').orderByChild('status').equalTo('accepted').get()
-  const lbW=document.getElementById('lbWL')
+  var snapWL=await DB.ref('registrations').orderByChild('status').equalTo('accepted').get();
+  var lbW=document.getElementById('lbWL');
   if(lbW&&snapWL.exists()){
-    const wls=Object.values(snapWL.val()).sort((a,b)=>b.reviewedAt-a.reviewedAt).slice(0,10)
-    const rc3={0:'r1',1:'r2',2:'r3'}
-    lbW.innerHTML=wls.map((w,i)=>`<div class="lbrow"><div class="lbrank ${rc3[i]||''}">${i+1}</div><div class="lbav">${ini(w.name||'?')}</div><div class="lbi"><div class="lbn">${esc(w.name||'')}</div><div class="lbs">${fmtD(w.reviewedAt)}</div></div><div class="lbv" style="color:var(--grn);font-size:14px">✓</div></div>`).join('')
+    var wls=Object.values(snapWL.val()).sort(function(a,b){return b.reviewedAt-a.reviewedAt}).slice(0,10);
+    lbW.innerHTML=wls.map(function(w,i){
+      return '<div class="lbrow"><div class="lbrank '+(i<3?'r'+(i+1):'')+'">'+(i+1)+'</div><div class="lbav">'+ini(w.name||'?')+'</div><div class="lbi"><div class="lbn">'+esc(w.name||'')+'</div><div class="lbs">'+fmtD(w.reviewedAt)+'</div></div><div class="lbv" style="color:var(--grn)">✓</div></div>';
+    }).join('');
   }
 }
 
@@ -1350,27 +1488,31 @@ async function loadLB(){
 // ANNOUNCEMENTS
 // ============================================================
 async function loadAnn(){
-  const el=document.getElementById('annList');if(!el)return
-  el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3)">Memuat...</div>'
-  const snap=await DB.ref('announcements').orderByChild('ts').limitToLast(30).get()
+  var el=document.getElementById('annList');if(!el)return;
+  el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3)">Memuat...</div>';
+  var snap=await DB.ref('announcements').orderByChild('ts').limitToLast(30).get();
   if(!snap.exists()){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3)">Belum ada pengumuman.</div>';return}
-  const tclr={ANNOUNCEMENT:'var(--red)',MAINTENANCE:'var(--or)',WARNING:'var(--or)',INFO:'var(--blu)'}
-  el.innerHTML=Object.values(snap.val()).reverse().map(a=>`<div class="ann-card"><div class="ann-tag" style="background:${tclr[a.tag]||'var(--blu)'}22;color:${tclr[a.tag]||'var(--blu)'};">${esc(a.tag||'INFO')}</div><div class="ann-ttl">${esc(a.title||'')}</div><div class="ann-body">${esc(a.content||'')}</div><div class="ann-meta">${fmtDT(a.ts)} • ${esc(a.author||'Admin')}</div></div>`).join('')
+  var tclr={ANNOUNCEMENT:'var(--red)',MAINTENANCE:'var(--or)',WARNING:'var(--or)',INFO:'var(--blu)'};
+  el.innerHTML=Object.values(snap.val()).reverse().map(function(a){
+    return '<div class="ann-card"><div class="ann-tag" style="background:'+( tclr[a.tag]||'var(--blu)')+'22;color:'+(tclr[a.tag]||'var(--blu)')+';">'+esc(a.tag||'INFO')+'</div><div class="ann-ttl">'+esc(a.title||'')+'</div><div class="ann-body">'+esc(a.content||'')+'</div><div class="ann-meta">'+fmtDT(a.ts)+' • '+esc(a.author||'Admin')+'</div></div>';
+  }).join('');
 }
 
 // ============================================================
 // GUIDES
 // ============================================================
-const gcache={}
+var gcache={};
 async function loadGuides(type){
-  const ids={rules:'gRules',guide_job:'gJob',guide_goodside:'gGood',guide_badside:'gBad'}
-  const el=document.getElementById(ids[type]);if(!el)return
+  var ids={rules:'gRules',guide_job:'gJob',guide_goodside:'gGood',guide_badside:'gBad'};
+  var el=document.getElementById(ids[type]);if(!el)return;
   if(gcache[type]){el.innerHTML=gcache[type];return}
-  el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3)">Memuat...</div>'
-  const snap=await DB.ref('guides').orderByChild('type').equalTo(type).get()
+  el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3)">Memuat...</div>';
+  var snap=await DB.ref('guides').orderByChild('type').equalTo(type).get();
   if(!snap.exists()){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--t3)">Belum ada konten.</div>';return}
-  gcache[type]=Object.values(snap.val()).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).map(g=>`<div class="gcard">${g.pinned?'<div style="font-size:9px;color:var(--gold);font-weight:700;margin-bottom:4px">📌 PINNED</div>':''}<div class="gtag">${esc(g.tag||'')}</div><div class="gttl">${esc(g.title||'')}</div><div class="gbody">${esc(g.body||'')}</div></div>`).join('')
-  el.innerHTML=gcache[type]
+  gcache[type]=Object.values(snap.val()).sort(function(a,b){return(b.pinned?1:0)-(a.pinned?1:0)}).map(function(g){
+    return '<div class="gcard">'+(g.pinned?'<div style="font-size:9px;color:var(--gold);font-weight:700;margin-bottom:4px">📌 PINNED</div>':'')+'<div class="gtag">'+esc(g.tag||'')+'</div><div class="gttl">'+esc(g.title||'')+'</div><div class="gbody">'+esc(g.body||'')+'</div></div>';
+  }).join('');
+  el.innerHTML=gcache[type];
 }
 
 // ============================================================
@@ -1378,11 +1520,13 @@ async function loadGuides(type){
 // ============================================================
 async function submitReport(){
   if(!CU){om('moLogin');return}
-  const reporter=document.getElementById('repReporter').value.trim(),target=document.getElementById('repTarget').value.trim(),type=document.getElementById('repType').value,date=document.getElementById('repDate').value,kron=document.getElementById('repKron').value.trim(),bukti=document.getElementById('repBukti').value.trim()
+  var reporter=document.getElementById('repReporter').value.trim(),target=document.getElementById('repTarget').value.trim(),type=document.getElementById('repType').value,date=document.getElementById('repDate').value,kron=document.getElementById('repKron').value.trim(),bukti=document.getElementById('repBukti').value.trim();
   if(!reporter||!target||!type||!kron){toast('Isi semua field wajib!','e');return}
-  const key=DB.ref('reports').push().key
-  await DB.ref('reports/'+key).set({uid:CU.uid,email:CU.email,username:UP.username,reporter,target,type,date,kronologi:kron,bukti,status:'open',createdAt:Date.now()})
-  toast('Laporan dikirim!','s');['repReporter','repTarget','repKron','repBukti'].forEach(id=>document.getElementById(id).value='');document.getElementById('repType').value=''
+  var key=DB.ref('reports').push().key;
+  await DB.ref('reports/'+key).set({uid:CU.uid,email:CU.email,username:UP.username,reporter:reporter,target:target,type:type,date:date,kronologi:kron,bukti:bukti,status:'open',createdAt:Date.now()});
+  toast('Laporan dikirim!','s');
+  ['repReporter','repTarget','repKron','repBukti'].forEach(function(id){document.getElementById(id).value=''});
+  document.getElementById('repType').value='';
 }
 
 // ============================================================
@@ -1390,410 +1534,617 @@ async function submitReport(){
 // ============================================================
 async function initProfile(){
   if(!CU){nav('home');return}
-  st('profName',UP.username||'');st('profUN','@'+(UP.username||''));st('profEmail',CU.email||'');st('profIC',UP.icName||'—');st('profJoined',fmtD(UP.createdAt)||'—');st('profPosts',UP.postCount||0);document.getElementById('profLogout').style.display=''
-  const el=document.getElementById('profAva');el.innerHTML=UP.photoURL?`<img src="${UP.photoURL}" style="width:100%;height:100%;object-fit:cover">`:ini(UP.username||'?')
-  document.getElementById('profRole').textContent=RLBL[UP.role||'user']||'Member'
-  const wlS=await DB.ref('registrations').orderByChild('uid').equalTo(CU.uid).limitToLast(1).get()
-  const sm={pending:'<span class="bdg b-pending">PENDING</span>',process:'<span class="bdg b-process">DIPROSES</span>',accepted:'<span class="bdg b-accepted">DITERIMA</span>',rejected:'<span class="bdg b-rejected">DITOLAK</span>',denied:'<span class="bdg b-denied">DITOLAK</span>'}
-  document.getElementById('profWL').innerHTML=wlS.exists()?sm[Object.values(wlS.val())[0].status]||'—':'<span style="color:var(--t3)">Belum Mendaftar</span>'
-  document.getElementById('setUN').value=UP.username||''
+  st('profName',UP.username||'');st('profUN','@'+(UP.username||''));st('profEmail',CU.email||'');
+  st('profIC',UP.icName||'—');st('profJoined',fmtD(UP.createdAt)||'—');st('profPosts',UP.postCount||0);
+  document.getElementById('profLogout').style.display='';
+  var el=document.getElementById('profAva');el.innerHTML=UP.photoURL?'<img src="'+UP.photoURL+'" style="width:100%;height:100%;object-fit:cover">':ini(UP.username||'?');
+  document.getElementById('profRole').textContent=RLBL[UP.role||'user']||'Member';
+  var wlS=await DB.ref('registrations').orderByChild('uid').equalTo(CU.uid).limitToLast(1).get();
+  var sm={pending:'<span class="bdg b-pending">PENDING</span>',process:'<span class="bdg b-process">DIPROSES</span>',accepted:'<span class="bdg b-accepted">DITERIMA</span>',rejected:'<span class="bdg b-rejected">DITOLAK</span>',denied:'<span class="bdg b-denied">DITOLAK</span>'};
+  document.getElementById('profWL').innerHTML=wlS.exists()?( sm[Object.values(wlS.val())[0].status]||'—'):'<span style="color:var(--t3)">Belum Mendaftar</span>';
+  document.getElementById('setUN').value=UP.username||'';
 }
-async function saveProfile(){if(!CU)return;const name=document.getElementById('setUN').value.trim();if(!name){toast('Nama kosong!','e');return};if(name.length>30){toast('Max 30 karakter!','e');return};await DB.ref('users/'+CU.uid+'/username').set(name);UP.username=name;renderAuth();toast('Tersimpan!','s')}
+
+async function saveProfile(){
+  if(!CU)return;var name=document.getElementById('setUN').value.trim();
+  if(!name){toast('Nama kosong!','e');return}if(name.length>30){toast('Max 30 karakter!','e');return}
+  await DB.ref('users/'+CU.uid+'/username').set(name);UP.username=name;renderAuth();toast('Tersimpan!','s');
+}
+
 async function loadMyPosts(){
-  const el=document.getElementById('myPostList');if(!el||!CU)return
-  el.innerHTML='<div style="padding:18px;text-align:center;color:var(--t3)">Memuat...</div>'
-  const snap=await DB.ref('posts').orderByChild('uid').equalTo(CU.uid).get()
+  var el=document.getElementById('myPostList');if(!el||!CU)return;
+  el.innerHTML='<div style="padding:18px;text-align:center;color:var(--t3)">Memuat...</div>';
+  var snap=await DB.ref('posts').orderByChild('uid').equalTo(CU.uid).get();
   if(!snap.exists()){el.innerHTML='<div style="padding:14px;color:var(--t3)">Belum ada post.</div>';return}
-  el.innerHTML=Object.values(snap.val()).reverse().map(p=>`<div style="padding:9px 12px;border-bottom:1px solid var(--b2)"><div style="font-size:11.5px;color:var(--t2)">${esc((p.content||'').substring(0,100))}</div><div style="font-size:9.5px;color:var(--t3);margin-top:3px">${ago(p.ts)}</div></div>`).join('')
+  el.innerHTML=Object.values(snap.val()).reverse().map(function(p){
+    return '<div style="padding:9px 12px;border-bottom:1px solid var(--b2)"><div style="font-size:11.5px;color:var(--t2)">'+esc((p.content||'').substring(0,100))+'</div><div style="font-size:9.5px;color:var(--t3);margin-top:3px">'+ago(p.ts)+'</div></div>';
+  }).join('');
 }
 
 // ============================================================
 // LOGS
 // ============================================================
-async function addLog(type,msg){try{await DB.ref('logs').push({by:UP?.username||'system',msg,type,ts:Date.now()})}catch(e){}}
+async function addLog(type,msg){
+  try{await DB.ref('logs').push({by:(UP&&UP.username)||'system',msg:msg,type:type,ts:Date.now()})}catch(e){}
+}
+
 async function loadAdmLogs(){
-  const snap=await DB.ref('logs').orderByChild('ts').limitToLast(300).get()
-  logsCache=snap.exists()?Object.values(snap.val()).reverse():[];renderLogs()
-  const btn=document.getElementById('clearLogsBtn');if(btn&&hasPerm('clear_logs'))btn.style.display=''
+  var snap=await DB.ref('logs').orderByChild('ts').limitToLast(300).get();
+  logsCache=snap.exists()?Object.values(snap.val()).reverse():[];renderLogs();
+  var btn=document.getElementById('clearLogsBtn');
+  if(btn&&hasPerm('clear_logs'))btn.style.display='';
 }
+
 function renderLogs(){
-  const el=document.getElementById('logStream');if(!el)return
-  const f=document.getElementById('logTypeF')?.value||''
-  const logs=f?logsCache.filter(l=>l.type===f):logsCache
+  var el=document.getElementById('logStream');if(!el)return;
+  var f=document.getElementById('logTypeF');var filter=f?f.value:'';
+  var logs=filter?logsCache.filter(function(l){return l.type===filter}):logsCache;
   if(!logs.length){el.innerHTML='<div class="log-line"><div class="log-msg" style="color:var(--t3)">Tidak ada log.</div></div>';return}
-  el.innerHTML=logs.map(l=>`<div class="log-line"><div class="log-time">${fmtDT(l.ts)}</div><div class="log-type ${l.type||''}">${esc(l.type||'SYS')}</div><div class="log-msg">[${esc(l.by||'?')}] ${esc(l.msg||'')}</div></div>`).join('')
+  el.innerHTML=logs.map(function(l){
+    return '<div class="log-line"><div class="log-time">'+fmtDT(l.ts)+'</div><div class="log-type '+(l.type||'')+'">'+esc(l.type||'SYS')+'</div><div class="log-msg">['+esc(l.by||'?')+'] '+esc(l.msg||'')+'</div></div>';
+  }).join('');
 }
-async function clearLogs(){if(!confirm('Hapus semua logs?'))return;await DB.ref('logs').remove();logsCache=[];renderLogs();addLog('SYSTEM','Logs dihapus oleh '+(UP?.username||'?'));toast('Logs dihapus.','i')}
+
+async function clearLogs(){
+  if(!confirm('Hapus semua logs?'))return;
+  await DB.ref('logs').remove();logsCache=[];renderLogs();
+  addLog('SYSTEM','Logs dihapus oleh '+(UP&&UP.username||'?'));toast('Logs dihapus.','i');
+}
 
 // ============================================================
-// ADMIN
+// ADMIN — PERMISSION HELPER
 // ============================================================
-function hasPerm(p){if(!UP)return false;if(['owner','developer'].includes(UP.role))return true;return(UP.perms||[]).includes(p)}
+function hasPerm(p){
+  if(!UP)return false;
+  if(UP.role==='owner'||UP.role==='developer')return true;
+  return Array.isArray(UP.perms)&&UP.perms.indexOf(p)>=0;
+}
 
-const ADM_MENU=[
-  {id:'overview',icon:'📊',lbl:'Overview',section:'Utama',always:true},
-  {id:'adminChat',icon:'💬',lbl:'Admin Chat',perm:'admin_chat'},
-  {id:'wlPending',icon:'📋',lbl:'WL Pending',perm:'handle_wl',badge:'nbWL',section:'Manajemen'},
-  {id:'wlAll',icon:'📋',lbl:'WL Semua',perm:'handle_wl'},
-  {id:'csPending',icon:'🎭',lbl:'CS Pending',perm:'handle_cs',badge:'nbCS'},
-  {id:'csAll',icon:'🎭',lbl:'CS Semua',perm:'handle_cs'},
-  {id:'importReq',icon:'📦',lbl:'Import Req',perm:'handle_import',badge:'nbImp'},
-  {id:'users',icon:'👥',lbl:'Users & Role',perm:'manage_roles'},
-  {id:'banned',icon:'🚫',lbl:'Banned',perm:'ban_user'},
-  {id:'reports',icon:'🚩',lbl:'Reports',always:true},
-  {id:'announce',icon:'📢',lbl:'Pengumuman',perm:'manage_announce',section:'Konten'},
-  {id:'guides',icon:'📚',lbl:'Guides & Rules',perm:'manage_guides'},
-  {id:'staff',icon:'👑',lbl:'Staff List',always:true},
-  {id:'settings',icon:'⚙️',lbl:'Settings',perm:'settings',section:'Sistem'},
-  {id:'logs',icon:'📜',lbl:'Logs',perm:'view_logs'},
-]
+// ============================================================
+// ADMIN — SIDEBAR & TAB SWITCHING
+// ============================================================
+var ADM_ITEMS=[
+  {id:'overview',     icon:'📊', lbl:'Overview',      sec:'Utama',       always:true,  fn:function(){loadAdmDash()}},
+  {id:'adminChat',    icon:'💬', lbl:'Admin Chat',    sec:'',            perm:'admin_chat', fn:function(){loadAdmChat()}},
+  {id:'wlPending',    icon:'📋', lbl:'WL Pending',    sec:'Manajemen',   perm:'handle_wl', badge:'nbWL', fn:function(){loadAdmWL('pending')}},
+  {id:'wlAll',        icon:'📋', lbl:'WL Semua',      sec:'',            perm:'handle_wl', fn:function(){loadAdmWL('all')}},
+  {id:'csPending',    icon:'🎭', lbl:'CS Pending',    sec:'',            perm:'handle_cs', badge:'nbCS', fn:function(){loadAdmCS('pending')}},
+  {id:'csAll',        icon:'🎭', lbl:'CS Semua',      sec:'',            perm:'handle_cs', fn:function(){loadAdmCS('all')}},
+  {id:'importReq',    icon:'📦', lbl:'Import Req',    sec:'',            perm:'handle_import', badge:'nbImp', fn:function(){loadAdmImport()}},
+  {id:'users',        icon:'👥', lbl:'Users & Role',  sec:'',            perm:'manage_roles', fn:function(){loadAdmUsers()}},
+  {id:'banned',       icon:'🚫', lbl:'Banned',        sec:'',            perm:'ban_user', fn:function(){loadAdmBanned()}},
+  {id:'reports',      icon:'🚩', lbl:'Reports',       sec:'',            always:true,  fn:function(){loadAdmReports()}},
+  {id:'announce',     icon:'📢', lbl:'Pengumuman',    sec:'Konten',      perm:'manage_announce', fn:function(){loadAdmAnn()}},
+  {id:'guides',       icon:'📚', lbl:'Guides & Rules',sec:'',            perm:'manage_guides', fn:function(){loadAdmGuides()}},
+  {id:'staff',        icon:'👑', lbl:'Staff List',    sec:'',            always:true,  fn:function(){loadAdmStaff()}},
+  {id:'settings',     icon:'⚙️', lbl:'Settings',     sec:'Sistem',      perm:'settings', fn:function(){loadSettingsForm()}},
+  {id:'logs',         icon:'📜', lbl:'Logs',          sec:'',            perm:'view_logs', fn:function(){loadAdmLogs()}},
+];
+
+var currentAdmFn=null;
 
 function initAdmin(){
-  if(!CU||!UP||!ADMIN_ROLES.includes(UP.role)){nav('home');return}
-  buildAdmSidebar();switchAdmTab('overview');loadAdmDash()
+  if(!CU||!UP||ADMIN_ROLES.indexOf(UP.role)<0){nav('home');toast('Akses ditolak.','e');return}
+  buildAdmSidebar();
+  switchAdmTab('overview');
 }
 
 function buildAdmSidebar(){
-  const sb=document.getElementById('admSB');if(!sb)return
-  let html=`<div style="padding:7px 12px 5px;font-size:13px;font-weight:800;letter-spacing:2px;color:#fff;border-bottom:1px solid var(--b);margin-bottom:4px;padding-bottom:10px">ADMIN PANEL</div><div class="adm-sb-inner">`
-  let sec=''
-  ADM_MENU.forEach(m=>{
-    if(!m.always&&!hasPerm(m.perm))return
-    if(m.section&&m.section!==sec){sec=m.section;html+=`<div class="adm-sec">${sec}</div>`}
-    html+=`<button class="adm-itm" id="si-${m.id}" onclick="switchAdmTab('${m.id}'${m.id==='adminChat'?';loadAdmChat()':m.id==='logs'?';loadAdmLogs()':m.id==='wlPending'?';loadAdmWL(\'pending\')':m.id==='wlAll'?';loadAdmWL(\'all\')':m.id==='csPending'?';loadAdmCS(\'pending\')':m.id==='csAll'?';loadAdmCS(\'all\')':m.id==='importReq'?';loadAdmImport()':m.id==='users'?';loadAdmUsers()':m.id==='banned'?';loadAdmBanned()':m.id==='reports'?';loadAdmReports()':m.id==='announce'?';loadAdmAnn()':m.id==='guides'?';loadAdmGuides()':m.id==='staff'?';loadAdmStaff()':m.id==='settings'?';loadSettingsForm()':''})">${m.icon} ${m.lbl}${m.badge?`<span class="adm-badge" id="${m.badge}">0</span>`:''}</button>`
-  })
-  html+='</div>';sb.innerHTML=html
+  var sb=document.getElementById('admSB');if(!sb)return;
+  var html='<div style="padding:10px 12px 5px;font-size:13px;font-weight:800;letter-spacing:2px;color:#fff;border-bottom:1px solid var(--b);padding-bottom:10px;margin-bottom:4px">ADMIN</div>';
+  var lastSec='';
+  ADM_ITEMS.forEach(function(item){
+    if(!item.always&&!hasPerm(item.perm))return;
+    if(item.sec&&item.sec!==lastSec){lastSec=item.sec;html+='<div class="adm-sec">'+item.sec+'</div>'}
+    html+='<button class="adm-itm" id="si-'+item.id+'" data-tab="'+item.id+'">'+item.icon+' '+item.lbl+(item.badge?'<span class="adm-badge" id="'+item.badge+'">0</span>':'')+'</button>';
+  });
+  sb.innerHTML=html;
+  // Attach click handlers AFTER innerHTML
+  ADM_ITEMS.forEach(function(item){
+    var btn=document.getElementById('si-'+item.id);
+    if(btn){
+      btn.addEventListener('click',function(){
+        switchAdmTab(item.id);
+      });
+    }
+  });
   // Mobile menu
-  buildAdmMobMenu()
+  buildAdmMobMenu();
 }
 
 function buildAdmMobMenu(){
-  const mm=document.getElementById('admMobMenu');if(!mm)return
-  let html=''
-  ADM_MENU.forEach(m=>{
-    if(!m.always&&!hasPerm(m.perm))return
-    html+=`<div onclick="switchAdmTab('${m.id}');toggleAdmMenu()" style="padding:9px 14px;border-bottom:1px solid var(--b2);cursor:pointer;font-size:12px;color:var(--t2)">${m.icon} ${m.lbl}</div>`
-  })
-  mm.innerHTML=html
+  var mm=document.getElementById('admMobMenu');if(!mm)return;
+  var html='';
+  ADM_ITEMS.forEach(function(item){
+    if(!item.always&&!hasPerm(item.perm))return;
+    html+='<div class="adm-mob-item" data-tab="'+item.id+'" style="padding:9px 14px;border-bottom:1px solid var(--b2);cursor:pointer;font-size:12px;color:var(--t2)">'+item.icon+' '+item.lbl+'</div>';
+  });
+  mm.innerHTML=html;
+  mm.querySelectorAll('.adm-mob-item').forEach(function(el){
+    el.addEventListener('click',function(){
+      switchAdmTab(el.dataset.tab);
+      toggleAdmMenu();
+    });
+  });
 }
 
-function toggleAdmMenu(){document.getElementById('admMobMenu').classList.toggle('open')}
+function toggleAdmMenu(){
+  document.getElementById('admMobMenu').classList.toggle('open');
+}
 
-function switchAdmTab(name){
-  document.querySelectorAll('.adm-tab').forEach(t=>{t.style.display='none';t.classList.remove('act')})
-  const t=document.getElementById('adm-'+name);if(t){t.style.display='';t.classList.add('act')}
-  document.querySelectorAll('.adm-itm').forEach(b=>b.classList.remove('act'))
-  document.getElementById('si-'+name)?.classList.add('act')
+function switchAdmTab(id){
+  // Hide all tabs
+  document.querySelectorAll('.adm-tab').forEach(function(t){t.style.display='none';t.classList.remove('act')});
+  // Show target tab
+  var tab=document.getElementById('adm-'+id);
+  if(tab){tab.style.display='';tab.classList.add('act')}
+  // Update sidebar active state
+  document.querySelectorAll('.adm-itm').forEach(function(b){b.classList.remove('act')});
+  var si=document.getElementById('si-'+id);if(si)si.classList.add('act');
   // Update mobile title
-  const m=ADM_MENU.find(x=>x.id===name);if(m){const el=document.getElementById('admMobTitle');if(el)el.textContent=m.icon+' '+m.lbl}
+  var item=null;
+  for(var i=0;i<ADM_ITEMS.length;i++){if(ADM_ITEMS[i].id===id){item=ADM_ITEMS[i];break}}
+  if(item){
+    var mt=document.getElementById('admMobTitle');if(mt)mt.textContent=item.icon+' '+item.lbl;
+    // Call the loader function
+    if(item.fn)item.fn();
+  }
 }
 
+// ============================================================
+// ADMIN DASHBOARD
+// ============================================================
 async function loadAdmDash(){
-  const [users,regs,cs,imp,reps,staff]=await Promise.all([DB.ref('users').get(),DB.ref('registrations').get(),DB.ref('cs_requests').get(),DB.ref('import_requests').get(),DB.ref('reports').get(),DB.ref('staff').get()])
-  const uv=users.val()||{},rv=regs.val()||{},cv=cs.val()||{},iv=imp.val()||{},repv=reps.val()||{},sv=staff.val()||{}
-  const wlPend=Object.values(rv).filter(x=>x.status==='pending').length,csPend=Object.values(cv).filter(x=>x.status==='pending').length,impPend=Object.values(iv).filter(x=>x.status==='pending').length,repOpen=Object.values(repv).filter(x=>x.status==='open').length,wlAcc=Object.values(rv).filter(x=>x.status==='accepted').length,banCount=Object.values(uv).filter(u=>u.status==='banned').length
-  st('admMembers',Object.keys(uv).length);st('admWLPend',wlPend);st('admCSPend',csPend);st('admImpPend',impPend);st('admRepOpen',repOpen);st('admWLAcc',wlAcc);st('admBanned',banCount);st('admStaff',Object.keys(sv).length)
-  ;[['nbWL',wlPend],['nbCS',csPend],['nbImp',impPend]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v})
-  const snap=await DB.ref('logs').orderByChild('ts').limitToLast(20).get()
-  const el=document.getElementById('dashLog');if(!el)return
+  try{
+    var results=await Promise.all([DB.ref('users').get(),DB.ref('registrations').get(),DB.ref('cs_requests').get(),DB.ref('import_requests').get(),DB.ref('reports').get(),DB.ref('staff').get()]);
+    var uv=results[0].val()||{},rv=results[1].val()||{},cv=results[2].val()||{},iv=results[3].val()||{},repv=results[4].val()||{},sv=results[5].val()||{};
+    var wlPend=Object.values(rv).filter(function(x){return x.status==='pending'}).length;
+    var csPend=Object.values(cv).filter(function(x){return x.status==='pending'}).length;
+    var impPend=Object.values(iv).filter(function(x){return x.status==='pending'}).length;
+    var repOpen=Object.values(repv).filter(function(x){return x.status==='open'}).length;
+    var wlAcc=Object.values(rv).filter(function(x){return x.status==='accepted'}).length;
+    var banCount=Object.values(uv).filter(function(u){return u.status==='banned'}).length;
+    st('admMembers',Object.keys(uv).length);st('admWLPend',wlPend);st('admCSPend',csPend);
+    st('admImpPend',impPend);st('admRepOpen',repOpen);st('admWLAcc',wlAcc);
+    st('admBanned',banCount);st('admStaff',Object.keys(sv).length);
+    [['nbWL',wlPend],['nbCS',csPend],['nbImp',impPend]].forEach(function(pair){var e=document.getElementById(pair[0]);if(e)e.textContent=pair[1]});
+  }catch(e){console.error('loadAdmDash error',e)}
+  // Load recent logs
+  var snap=await DB.ref('logs').orderByChild('ts').limitToLast(20).get();
+  var el=document.getElementById('dashLog');if(!el)return;
   if(!snap.exists()){el.innerHTML='<div class="log-line"><div class="log-msg" style="color:var(--t3)">Belum ada log.</div></div>';return}
-  el.innerHTML=Object.values(snap.val()).reverse().map(l=>`<div class="log-line"><div class="log-time">${fmtDT(l.ts)}</div><div class="log-type ${l.type||''}">${esc(l.type||'SYS')}</div><div class="log-msg">[${esc(l.by||'?')}] ${esc(l.msg||'')}</div></div>`).join('')
+  el.innerHTML=Object.values(snap.val()).reverse().map(function(l){
+    return '<div class="log-line"><div class="log-time">'+fmtDT(l.ts)+'</div><div class="log-type '+(l.type||'')+'">'+esc(l.type||'SYS')+'</div><div class="log-msg">['+esc(l.by||'?')+'] '+esc(l.msg||'')+'</div></div>';
+  }).join('');
 }
 
-// ── WL ADMIN ──
+// ============================================================
+// WL ADMIN
+// ============================================================
 async function loadAdmWL(mode){
-  const tbId=mode==='pending'?'tbWLPend':'tbWLAll',tb=document.getElementById(tbId);if(!tb)return
-  tb.innerHTML=`<tr class="empty-row"><td colspan="6">Memuat...</td></tr>`
-  const snap=await DB.ref('registrations').get()
-  if(!snap.exists()){tb.innerHTML=`<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>`;return}
-  let entries=Object.entries(snap.val()).map(([k,v])=>({...v,_key:k}))
-  if(mode==='pending')entries=entries.filter(x=>x.status==='pending')
-  entries.sort((a,b)=>b.submittedAt-a.submittedAt)
-  const lbl=document.getElementById('wlPLbl');if(lbl&&mode==='pending')lbl.textContent='('+entries.length+')'
-  tb.innerHTML=entries.length?entries.map(w=>`<tr><td><strong>${esc(w.name||'')}</strong></td><td style="font-size:10.5px">${esc(w.wa||'')}</td><td>${esc(w.faction||'')}</td><td style="font-size:10px">${fmtD(w.submittedAt)}</td><td><span class="bdg b-${w.status}">${w.status.toUpperCase()}</span></td><td><button class="atb" onclick="openWLDetail('${w._key}')">Detail</button></td></tr>`).join(''):`<tr class="empty-row"><td colspan="6">Tidak ada data.</td></tr>`
+  var tbId=mode==='pending'?'tbWLPend':'tbWLAll';
+  var tb=document.getElementById(tbId);if(!tb)return;
+  tb.innerHTML='<tr class="empty-row"><td colspan="6">Memuat...</td></tr>';
+  var snap=await DB.ref('registrations').get();
+  if(!snap.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>';return}
+  var entries=Object.entries(snap.val()).map(function(e){return Object.assign({},e[1],{_key:e[0]})});
+  if(mode==='pending')entries=entries.filter(function(x){return x.status==='pending'});
+  entries.sort(function(a,b){return b.submittedAt-a.submittedAt});
+  var lbl=document.getElementById('wlPLbl');if(lbl&&mode==='pending')lbl.textContent='('+entries.filter(function(x){return x.status==='pending'}).length+')';
+  if(!entries.length){tb.innerHTML='<tr class="empty-row"><td colspan="6">Tidak ada data.</td></tr>';return}
+  tb.innerHTML=entries.map(function(w){
+    return '<tr><td><strong>'+esc(w.name||'')+'</strong></td><td style="font-size:10.5px">'+esc(w.wa||'')+'</td><td>'+esc(w.faction||'')+'</td><td style="font-size:10px">'+fmtD(w.submittedAt)+'</td><td><span class="bdg b-'+w.status+'">'+w.status.toUpperCase()+'</span></td><td><button class="atb" onclick="openWLDetail(\''+w._key+'\')">Detail</button></td></tr>';
+  }).join('');
 }
+
 async function openWLDetail(key){
-  const snap=await DB.ref('registrations/'+key).get();if(!snap.exists())return
-  const w=snap.val()
-  document.getElementById('wlDetailBody').innerHTML=`
-    <div class="drow"><div class="dk">Nama IC</div><div class="dv">${esc(w.name||'')}</div></div>
-    <div class="drow"><div class="dk">Nama OOC</div><div class="dv">${esc(w.fullName||'')}</div></div>
-    <div class="drow"><div class="dk">Username</div><div class="dv">${esc(w.username||'')}</div></div>
-    <div class="drow"><div class="dk">Email</div><div class="dv" style="font-size:11px">${esc(w.email||'')}</div></div>
-    <div class="drow"><div class="dk">WA</div><div class="dv">${esc(w.wa||'')}</div></div>
-    <div class="drow"><div class="dk">Umur</div><div class="dv">${esc(w.age||'')}</div></div>
-    <div class="drow"><div class="dk">Fraksi</div><div class="dv">${esc(w.faction||'')}</div></div>
-    <div class="drow"><div class="dk">Pengalaman</div><div class="dv">${esc(w.exp||'')}</div></div>
-    <div class="drow"><div class="dk">Status</div><div class="dv"><span class="bdg b-${w.status}">${w.status.toUpperCase()}</span></div></div>
-    <hr style="border-color:var(--b);margin:10px 0">
-    <div class="flbl" style="margin-bottom:4px">Q: Apa itu RP?</div><div class="dstory">${esc(w.q1||'')}</div>
-    <div class="flbl" style="margin:8px 0 4px">Q: Metagaming</div><div class="dstory">${esc(w.q2||'')}</div>
-    <div class="flbl" style="margin:8px 0 4px">Q: Powergaming</div><div class="dstory">${esc(w.q3||'')}</div>
-    <div class="flbl" style="margin:8px 0 4px">Alasan</div><div class="dstory">${esc(w.reason||'')}</div>
-    <div class="fgrp" style="margin-top:10px"><label class="flbl">Catatan Admin (opsional)</label><input type="text" class="finp" id="wlNote" value="${esc(w.adminNote||'')}" placeholder="Catatan untuk pendaftar..."></div>`
-  const act=document.getElementById('wlDetailAct')
-  if(hasPerm('handle_wl')&&['pending','process'].includes(w.status))
-    act.innerHTML=`<button class="btn btn-g" onclick="updWL('${key}','accepted')">✓ Terima</button><button class="btn" onclick="updWL('${key}','process')">⟳ Proses</button><button class="btn btn-d" onclick="updWL('${key}','rejected')">✗ Tolak</button>`
-  else act.innerHTML=`<span class="bdg b-${w.status}">${w.status.toUpperCase()}</span>`
-  om('moWL')
+  var snap=await DB.ref('registrations/'+key).get();if(!snap.exists())return;
+  var w=snap.val();
+  document.getElementById('wlDetailBody').innerHTML='<div class="drow"><div class="dk">Nama IC</div><div class="dv">'+esc(w.name||'')+'</div></div><div class="drow"><div class="dk">Nama OOC</div><div class="dv">'+esc(w.fullName||'')+'</div></div><div class="drow"><div class="dk">Username</div><div class="dv">'+esc(w.username||'')+'</div></div><div class="drow"><div class="dk">Email</div><div class="dv" style="font-size:11px">'+esc(w.email||'')+'</div></div><div class="drow"><div class="dk">WA</div><div class="dv">'+esc(w.wa||'')+'</div></div><div class="drow"><div class="dk">Umur</div><div class="dv">'+esc(w.age||'')+'</div></div><div class="drow"><div class="dk">Fraksi</div><div class="dv">'+esc(w.faction||'')+'</div></div><div class="drow"><div class="dk">Pengalaman</div><div class="dv">'+esc(w.exp||'')+'</div></div><div class="drow"><div class="dk">Status</div><div class="dv"><span class="bdg b-'+w.status+'">'+w.status.toUpperCase()+'</span></div></div><hr style="border-color:var(--b);margin:10px 0"><div class="flbl" style="margin-bottom:4px">Q: Apa itu RP?</div><div class="dstory">'+esc(w.q1||'')+'</div><div class="flbl" style="margin:8px 0 4px">Q: Metagaming</div><div class="dstory">'+esc(w.q2||'')+'</div><div class="flbl" style="margin:8px 0 4px">Q: Powergaming</div><div class="dstory">'+esc(w.q3||'')+'</div><div class="flbl" style="margin:8px 0 4px">Alasan</div><div class="dstory">'+esc(w.reason||'')+'</div><div class="fgrp" style="margin-top:10px"><label class="flbl">Catatan Admin</label><input type="text" class="finp" id="wlNote" value="'+esc(w.adminNote||'')+'" placeholder="Catatan..."></div>';
+  var act=document.getElementById('wlDetailAct');
+  if(hasPerm('handle_wl')&&(w.status==='pending'||w.status==='process')){
+    act.innerHTML='<button class="btn btn-g" onclick="updWL(\''+key+'\',\'accepted\')">✓ Terima</button><button class="btn" onclick="updWL(\''+key+'\',\'process\')">⟳ Proses</button><button class="btn btn-d" onclick="updWL(\''+key+'\',\'rejected\')">✗ Tolak</button>';
+  } else {
+    act.innerHTML='<span class="bdg b-'+w.status+'">'+w.status.toUpperCase()+'</span>';
+  }
+  om('moWL');
 }
+
 async function updWL(key,status){
-  const note=document.getElementById('wlNote')?.value||''
-  const snap=await DB.ref('registrations/'+key).get();const w=snap.val()
-  await DB.ref('registrations/'+key).update({status,adminNote:note,reviewedBy:UP.username,reviewedAt:Date.now()})
-  if(status==='accepted'&&w.uid)await DB.ref('users/'+w.uid).update({wlStatus:'accepted',icName:w.name})
-  addLog('WL_REVIEW',`WL ${status}: ${w.name} oleh ${UP.username}`)
-  toast('WL '+status+'!','s');cm('moWL');loadAdmWL('pending');loadAdmWL('all');loadAdmDash()
+  var note=document.getElementById('wlNote');var noteVal=note?note.value:'';
+  var snap=await DB.ref('registrations/'+key).get();var w=snap.val();
+  await DB.ref('registrations/'+key).update({status:status,adminNote:noteVal,reviewedBy:UP.username,reviewedAt:Date.now()});
+  if(status==='accepted'&&w.uid)await DB.ref('users/'+w.uid).update({wlStatus:'accepted',icName:w.name});
+  addLog('WL_REVIEW','WL '+status+': '+w.name+' oleh '+UP.username);
+  toast('WL '+status+'!','s');cm('moWL');loadAdmWL('pending');loadAdmWL('all');loadAdmDash();
 }
 
-// ── CS ADMIN ──
+// ============================================================
+// CS ADMIN
+// ============================================================
 async function loadAdmCS(mode){
-  const tbId=mode==='pending'?'tbCSPend':'tbCSAll',tb=document.getElementById(tbId);if(!tb)return
-  tb.innerHTML=`<tr class="empty-row"><td colspan="6">Memuat...</td></tr>`
-  const snap=await DB.ref('cs_requests').get()
-  if(!snap.exists()){tb.innerHTML=`<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>`;return}
-  let entries=Object.entries(snap.val()).map(([k,v])=>({...v,_key:k}))
-  if(mode==='pending')entries=entries.filter(x=>x.status==='pending')
-  entries.sort((a,b)=>b.createdAt-a.createdAt)
-  tb.innerHTML=entries.length?entries.map(c=>`<tr><td>${esc(c.icName||'')}</td><td>${esc(c.charName||'')}</td><td>${esc(c.level||'')}</td><td>${esc(c.schedule||'')}</td><td><span class="bdg b-${c.status}">${c.status.toUpperCase()}</span></td><td><button class="atb" onclick="openCSDetail('${c._key}')">Detail</button></td></tr>`).join(''):`<tr class="empty-row"><td colspan="6">Tidak ada data.</td></tr>`
+  var tbId=mode==='pending'?'tbCSPend':'tbCSAll';
+  var tb=document.getElementById(tbId);if(!tb)return;
+  tb.innerHTML='<tr class="empty-row"><td colspan="6">Memuat...</td></tr>';
+  var snap=await DB.ref('cs_requests').get();
+  if(!snap.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>';return}
+  var entries=Object.entries(snap.val()).map(function(e){return Object.assign({},e[1],{_key:e[0]})});
+  if(mode==='pending')entries=entries.filter(function(x){return x.status==='pending'});
+  entries.sort(function(a,b){return b.createdAt-a.createdAt});
+  if(!entries.length){tb.innerHTML='<tr class="empty-row"><td colspan="6">Tidak ada data.</td></tr>';return}
+  tb.innerHTML=entries.map(function(c){
+    return '<tr><td>'+esc(c.icName||'')+'</td><td>'+esc(c.charName||'')+'</td><td>'+esc(c.level||'')+'</td><td>'+esc(c.schedule||'')+'</td><td><span class="bdg b-'+c.status+'">'+c.status.toUpperCase()+'</span></td><td><button class="atb" onclick="openCSDetail(\''+c._key+'\')">Detail</button></td></tr>';
+  }).join('');
 }
+
 async function openCSDetail(key){
-  const snap=await DB.ref('cs_requests/'+key).get();if(!snap.exists())return;const c=snap.val()
-  document.getElementById('csDetailBody').innerHTML=`
-    <div class="drow"><div class="dk">IC Name</div><div class="dv">${esc(c.icName||'')}</div></div>
-    <div class="drow"><div class="dk">Char Name</div><div class="dv">${esc(c.charName||'')}</div></div>
-    <div class="drow"><div class="dk">Usia / Level</div><div class="dv">${esc(c.age||'')} / ${esc(c.level||'')}</div></div>
-    <div class="drow"><div class="dk">Jadwal</div><div class="dv">${esc(c.schedule||'')}</div></div>
-    <div class="drow"><div class="dk">Screenshot</div><div class="dv"><a href="${esc(c.screenshot||'#')}" target="_blank" style="color:var(--blu)">Lihat →</a></div></div>
-    <div class="drow"><div class="dk">Status</div><div class="dv"><span class="bdg b-${c.status}">${c.status.toUpperCase()}</span></div></div>
-    <div class="flbl" style="margin:10px 0 4px">Story IC <span style="color:var(--t3);font-size:9px">(${(c.story||'').trim().split(/\s+/).filter(Boolean).length} kata)</span></div>
-    <div class="dstory">${esc(c.story||'')}</div>
-    <div class="fgrp" style="margin-top:10px"><label class="flbl">Catatan Admin</label><input type="text" class="finp" id="csNote" value="${esc(c.adminNote||'')}" placeholder="Catatan..."></div>`
-  const act=document.getElementById('csDetailAct')
-  if(hasPerm('handle_cs')&&['pending','process'].includes(c.status))
-    act.innerHTML=`<button class="btn btn-g" onclick="updCS('${key}','accepted')">✓ Terima</button><button class="btn" onclick="updCS('${key}','process')">⟳ Proses</button><button class="btn btn-d" onclick="updCS('${key}','rejected')">✗ Tolak</button>`
-  else act.innerHTML=`<span class="bdg b-${c.status}">${c.status.toUpperCase()}</span>`
-  om('moCS')
+  var snap=await DB.ref('cs_requests/'+key).get();if(!snap.exists())return;var c=snap.val();
+  document.getElementById('csDetailBody').innerHTML='<div class="drow"><div class="dk">IC Name</div><div class="dv">'+esc(c.icName||'')+'</div></div><div class="drow"><div class="dk">Char Name</div><div class="dv">'+esc(c.charName||'')+'</div></div><div class="drow"><div class="dk">Usia / Level</div><div class="dv">'+esc(c.age||'')+' / '+esc(c.level||'')+'</div></div><div class="drow"><div class="dk">Jadwal</div><div class="dv">'+esc(c.schedule||'')+'</div></div><div class="drow"><div class="dk">Screenshot</div><div class="dv"><a href="'+esc(c.screenshot||'#')+'" target="_blank" style="color:var(--blu)">Lihat →</a></div></div><div class="drow"><div class="dk">Status</div><div class="dv"><span class="bdg b-'+c.status+'">'+c.status.toUpperCase()+'</span></div></div><div class="flbl" style="margin:10px 0 4px">Story IC <span style="color:var(--t3);font-size:9px">('+((c.story||'').trim().split(/\s+/).filter(Boolean).length)+' kata)</span></div><div class="dstory">'+esc(c.story||'')+'</div><div class="fgrp" style="margin-top:10px"><label class="flbl">Catatan Admin</label><input type="text" class="finp" id="csNote" value="'+esc(c.adminNote||'')+'" placeholder="Catatan..."></div>';
+  var act=document.getElementById('csDetailAct');
+  if(hasPerm('handle_cs')&&(c.status==='pending'||c.status==='process')){
+    act.innerHTML='<button class="btn btn-g" onclick="updCS(\''+key+'\',\'accepted\')">✓ Terima</button><button class="btn" onclick="updCS(\''+key+'\',\'process\')">⟳ Proses</button><button class="btn btn-d" onclick="updCS(\''+key+'\',\'rejected\')">✗ Tolak</button>';
+  } else {
+    act.innerHTML='<span class="bdg b-'+c.status+'">'+c.status.toUpperCase()+'</span>';
+  }
+  om('moCS');
 }
+
 async function updCS(key,status){
-  const note=document.getElementById('csNote')?.value||''
-  const snap=await DB.ref('cs_requests/'+key).get();const c=snap.val()
-  await DB.ref('cs_requests/'+key).update({status,adminNote:note,reviewedBy:UP.username,reviewedAt:Date.now()})
-  addLog('CS_REVIEW',`CS ${status}: ${c.charName} oleh ${UP.username}`)
-  toast('CS '+status+'!','s');cm('moCS');loadAdmCS('pending');loadAdmCS('all')
+  var note=document.getElementById('csNote');var noteVal=note?note.value:'';
+  var snap=await DB.ref('cs_requests/'+key).get();var c=snap.val();
+  await DB.ref('cs_requests/'+key).update({status:status,adminNote:noteVal,reviewedBy:UP.username,reviewedAt:Date.now()});
+  addLog('CS_REVIEW','CS '+status+': '+c.charName+' oleh '+UP.username);
+  toast('CS '+status+'!','s');cm('moCS');loadAdmCS('pending');loadAdmCS('all');
 }
 
-// ── IMPORT ADMIN ──
+// ============================================================
+// IMPORT ADMIN
+// ============================================================
 async function loadAdmImport(){
-  const tb=document.getElementById('tbImport');if(!tb)return
-  tb.innerHTML=`<tr class="empty-row"><td colspan="6">Memuat...</td></tr>`
-  const snap=await DB.ref('import_requests').get()
-  if(!snap.exists()){tb.innerHTML=`<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>`;return}
-  const entries=Object.entries(snap.val()).map(([k,v])=>({...v,_key:k})).sort((a,b)=>b.createdAt-a.createdAt)
-  const nb=document.getElementById('nbImp');if(nb)nb.textContent=entries.filter(x=>x.status==='pending').length
-  tb.innerHTML=entries.map(r=>`<tr><td>${esc(r.username||'')}</td><td>${esc(r.charName||'')}</td><td style="text-transform:capitalize">${esc(r.type||'')}</td><td>${esc(r.faction||'')}</td><td><span class="bdg b-${r.status}">${r.status.toUpperCase()}</span></td><td><button class="atb" onclick="openImpDetail('${r._key}')">Detail</button></td></tr>`).join('')
-}
-async function openImpDetail(key){
-  const snap=await DB.ref('import_requests/'+key).get();if(!snap.exists())return;const r=snap.val()
-  // Permission check per type
-  const canHandle=hasPerm('handle_import')||(r.type==='goodside'&&hasPerm('handle_goodside'))||(r.type==='badside'&&hasPerm('handle_badside'))
-  document.getElementById('impDetailBody').innerHTML=`
-    <div class="drow"><div class="dk">Username</div><div class="dv">${esc(r.username||'')}</div></div>
-    <div class="drow"><div class="dk">Tipe</div><div class="dv" style="text-transform:capitalize">${esc(r.type||'')}</div></div>
-    <div class="drow"><div class="dk">Char Name</div><div class="dv">${esc(r.charName||'')}</div></div>
-    <div class="drow"><div class="dk">Fraksi/Family</div><div class="dv">${esc(r.faction||'')}</div></div>
-    <div class="drow"><div class="dk">Bukti</div><div class="dv"><a href="${esc(r.proof||'#')}" target="_blank" style="color:var(--blu)">Lihat →</a></div></div>
-    <div class="drow"><div class="dk">Status</div><div class="dv"><span class="bdg b-${r.status}">${r.status.toUpperCase()}</span></div></div>
-    <div class="flbl" style="margin:10px 0 4px">Items</div><div class="dstory">${esc(r.items||'—')}</div>
-    <div class="flbl" style="margin:8px 0 4px">Lore IC</div><div class="dstory">${esc(r.lore||'')}</div>
-    <div class="fgrp" style="margin-top:10px"><label class="flbl">Catatan Admin</label><input type="text" class="finp" id="impNote" value="${esc(r.adminNote||'')}" placeholder="Catatan..."></div>`
-  const act=document.getElementById('impDetailAct')
-  if(canHandle&&r.status==='pending')
-    act.innerHTML=`<button class="btn btn-g" onclick="updImp('${key}','accepted')">✓ Terima</button><button class="btn btn-d" onclick="updImp('${key}','denied')">✗ Tolak</button>`
-  else act.innerHTML=`<span class="bdg b-${r.status}">${r.status.toUpperCase()}</span>`
-  om('moImport')
-}
-async function updImp(key,status){
-  const note=document.getElementById('impNote')?.value||''
-  const snap=await DB.ref('import_requests/'+key).get();const r=snap.val()
-  await DB.ref('import_requests/'+key).update({status,adminNote:note,reviewedBy:UP.username,reviewedAt:Date.now()})
-  addLog('IMPORT',`Import ${status}: ${r.charName} (${r.type}) oleh ${UP.username}`)
-  toast('Import '+status+'!','s');cm('moImport');loadAdmImport()
+  var tb=document.getElementById('tbImport');if(!tb)return;
+  tb.innerHTML='<tr class="empty-row"><td colspan="6">Memuat...</td></tr>';
+  var snap=await DB.ref('import_requests').get();
+  if(!snap.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>';return}
+  var entries=Object.entries(snap.val()).map(function(e){return Object.assign({},e[1],{_key:e[0]})}).sort(function(a,b){return b.createdAt-a.createdAt});
+  var nb=document.getElementById('nbImp');if(nb)nb.textContent=entries.filter(function(x){return x.status==='pending'}).length;
+  tb.innerHTML=entries.map(function(r){
+    return '<tr><td>'+esc(r.username||'')+'</td><td>'+esc(r.charName||'')+'</td><td style="text-transform:capitalize">'+esc(r.type||'')+'</td><td>'+esc(r.faction||'')+'</td><td><span class="bdg b-'+r.status+'">'+r.status.toUpperCase()+'</span></td><td><button class="atb" onclick="openImpDetail(\''+r._key+'\')">Detail</button></td></tr>';
+  }).join('');
 }
 
-// ── USERS ADMIN ──
+async function openImpDetail(key){
+  var snap=await DB.ref('import_requests/'+key).get();if(!snap.exists())return;var r=snap.val();
+  var canHandle=hasPerm('handle_import')||(r.type==='goodside'&&hasPerm('handle_goodside'))||(r.type==='badside'&&hasPerm('handle_badside'));
+  document.getElementById('impDetailBody').innerHTML='<div class="drow"><div class="dk">Username</div><div class="dv">'+esc(r.username||'')+'</div></div><div class="drow"><div class="dk">Tipe</div><div class="dv" style="text-transform:capitalize">'+esc(r.type||'')+'</div></div><div class="drow"><div class="dk">Char Name</div><div class="dv">'+esc(r.charName||'')+'</div></div><div class="drow"><div class="dk">Fraksi/Family</div><div class="dv">'+esc(r.faction||'')+'</div></div><div class="drow"><div class="dk">Bukti</div><div class="dv"><a href="'+esc(r.proof||'#')+'" target="_blank" style="color:var(--blu)">Lihat →</a></div></div><div class="drow"><div class="dk">Status</div><div class="dv"><span class="bdg b-'+r.status+'">'+r.status.toUpperCase()+'</span></div></div><div class="flbl" style="margin:10px 0 4px">Items</div><div class="dstory">'+esc(r.items||'—')+'</div><div class="flbl" style="margin:8px 0 4px">Lore IC</div><div class="dstory">'+esc(r.lore||'')+'</div><div class="fgrp" style="margin-top:10px"><label class="flbl">Catatan Admin</label><input type="text" class="finp" id="impNote" value="'+esc(r.adminNote||'')+'" placeholder="Catatan..."></div>';
+  var act=document.getElementById('impDetailAct');
+  if(canHandle&&r.status==='pending'){
+    act.innerHTML='<button class="btn btn-g" onclick="updImp(\''+key+'\',\'accepted\')">✓ Terima</button><button class="btn btn-d" onclick="updImp(\''+key+'\',\'denied\')">✗ Tolak</button>';
+  } else {
+    act.innerHTML='<span class="bdg b-'+r.status+'">'+r.status.toUpperCase()+'</span>';
+  }
+  om('moImport');
+}
+
+async function updImp(key,status){
+  var note=document.getElementById('impNote');var noteVal=note?note.value:'';
+  var snap=await DB.ref('import_requests/'+key).get();var r=snap.val();
+  await DB.ref('import_requests/'+key).update({status:status,adminNote:noteVal,reviewedBy:UP.username,reviewedAt:Date.now()});
+  addLog('IMPORT','Import '+status+': '+r.charName+' ('+r.type+') oleh '+UP.username);
+  toast('Import '+status+'!','s');cm('moImport');loadAdmImport();
+}
+
+// ============================================================
+// USERS ADMIN
+// ============================================================
 async function loadAdmUsers(){
-  const tb=document.getElementById('tbUsers');if(!tb)return
-  tb.innerHTML=`<tr class="empty-row"><td colspan="7">Memuat...</td></tr>`
-  const [us,ps]=await Promise.all([DB.ref('users').get(),DB.ref('admin_perms').get()])
-  if(!us.exists()){tb.innerHTML=`<tr class="empty-row"><td colspan="7">Tidak ada user.</td></tr>`;return}
-  const perms=ps.val()||{}
-  const users=Object.entries(us.val()).map(([k,v])=>({...v,_key:k})).sort((a,b)=>a.createdAt-b.createdAt)
-  tb.innerHTML=users.map(u=>{
-    const p=perms[u._key]||{},role=p.role||u.role||'user',isBanned=u.status==='banned'
-    return `<tr><td><span class="${rc(role)}">${esc(u.username||'')}</span>${isBanned?' <span class="bdg b-banned" style="font-size:8px">BAN</span>':''}</td>
-      <td style="font-size:10px;color:var(--t3)">${esc(u.email||'')}</td>
-      <td><span style="font-size:11px">${RLBL[role]||role}</span></td>
-      <td>${u.wlStatus==='accepted'?'<span class="bdg b-accepted" style="font-size:8px">✓</span>':'—'}</td>
-      <td style="font-size:10.5px">${esc(u.icName||'—')}</td>
-      <td style="font-size:10px">${fmtD(u.createdAt)}</td>
-      <td style="white-space:nowrap">
-        ${hasPerm('manage_roles')?`<button class="atb" onclick="openRoleModal('${u._key}','${esc(u.username||'')}','${role}',${JSON.stringify((p.perms||[]))})">Role</button> `:''}
-        ${hasPerm('edit_icname')?`<button class="atb" onclick="openICModal('${u._key}','${esc(u.username||'')}','${esc(u.icName||'')}')">IC</button> `:''}
-        ${hasPerm('ban_user')&&!isBanned?`<button class="atb r" onclick="openBanModal('${u._key}','${esc(u.username||'')}')">Ban</button>`:''}
-        ${hasPerm('ban_user')&&isBanned?`<button class="atb g" onclick="unban('${u._key}')">Unban</button>`:''}
-      </td></tr>`
-  }).join('')
+  var tb=document.getElementById('tbUsers');if(!tb)return;
+  tb.innerHTML='<tr class="empty-row"><td colspan="7">Memuat...</td></tr>';
+  var results=await Promise.all([DB.ref('users').get(),DB.ref('admin_perms').get()]);
+  if(!results[0].exists()){tb.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada user.</td></tr>';return}
+  var perms=results[1].val()||{};
+  var users=Object.entries(results[0].val()).map(function(e){return Object.assign({},e[1],{_key:e[0]})}).sort(function(a,b){return(a.createdAt||0)-(b.createdAt||0)});
+  tb.innerHTML=users.map(function(u){
+    var p=perms[u._key]||{},role=p.role||u.role||'user',isBanned=u.status==='banned';
+    var permsArr=p.perms||[];
+    return '<tr>'+
+      '<td><span class="'+rc(role)+'">'+esc(u.username||'')+'</span>'+(isBanned?' <span class="bdg b-banned" style="font-size:8px">BAN</span>':'')+'</td>'+
+      '<td style="font-size:10px;color:var(--t3)">'+esc(u.email||'')+'</td>'+
+      '<td><span style="font-size:11px">'+esc(RLBL[role]||role)+'</span></td>'+
+      '<td>'+(u.wlStatus==='accepted'?'<span class="bdg b-accepted" style="font-size:8px">✓</span>':'—')+'</td>'+
+      '<td style="font-size:10.5px">'+esc(u.icName||'—')+'</td>'+
+      '<td style="font-size:10px">'+fmtD(u.createdAt)+'</td>'+
+      '<td style="white-space:nowrap">'+
+        (hasPerm('manage_roles')?'<button class="atb" id="rb-'+u._key+'">Role</button> ':'')+
+        (hasPerm('edit_icname')?'<button class="atb" id="ib-'+u._key+'">IC</button> ':'')+
+        (hasPerm('ban_user')&&!isBanned?'<button class="atb r" id="bb-'+u._key+'">Ban</button>':'')+
+        (hasPerm('ban_user')&&isBanned?'<button class="atb g" id="ub-'+u._key+'">Unban</button>':'')+
+      '</td>'+
+    '</tr>';
+  }).join('');
+  // Attach handlers
+  users.forEach(function(u){
+    var p=perms[u._key]||{},role=p.role||u.role||'user',permsArr=p.perms||[];
+    var rb=document.getElementById('rb-'+u._key);
+    if(rb)rb.addEventListener('click',function(){openRoleModal(u._key,u.username||'',role,permsArr)});
+    var ib=document.getElementById('ib-'+u._key);
+    if(ib)ib.addEventListener('click',function(){openICModal(u._key,u.username||'',u.icName||'')});
+    var bb=document.getElementById('bb-'+u._key);
+    if(bb)bb.addEventListener('click',function(){openBanModal(u._key,u.username||'')});
+    var ub=document.getElementById('ub-'+u._key);
+    if(ub)ub.addEventListener('click',function(){unban(u._key)});
+  });
 }
-function openRoleModal(uid,name,role,perms){
-  roleTarget={uid,name,role,perms:[...perms],newRole:role,newPerms:[...perms]}
-  document.getElementById('roleInfo').textContent='User: '+name+' | Role saat ini: '+(RLBL[role]||role)
-  document.getElementById('roleSelect').innerHTML=ROLES.map(r=>`<div class="role-chip ${r===role?'sel':''}" onclick="selRole(this,'${r}')">${RLBL[r]||r}</div>`).join('')
-  document.getElementById('permSelect').innerHTML=ALL_PERMS.map(p=>`<div class="perm-tag ${perms.includes(p)?'on':'off'}" onclick="togPerm(this,'${p}')">${PERM_LBL[p]||p}</div>`).join('')
-  om('moRole')
+
+function openRoleModal(uid,name,role,permsArr){
+  roleTarget={uid:uid,name:name,role:role,newRole:role,newPerms:permsArr.slice()};
+  document.getElementById('roleInfo').textContent='User: '+name+' | Role: '+(RLBL[role]||role);
+  document.getElementById('roleSelect').innerHTML=ROLES.map(function(r){return'<div class="role-chip'+(r===role?' sel':'')+'" data-r="'+r+'">'+RLBL[r]+'</div>'}).join('');
+  document.getElementById('permSelect').innerHTML=ALL_PERMS.map(function(p){return'<div class="perm-tag'+(permsArr.indexOf(p)>=0?' on':' off')+'" data-p="'+p+'">'+PERM_LBL[p]+'</div>'}).join('');
+  document.querySelectorAll('#roleSelect .role-chip').forEach(function(el){
+    el.addEventListener('click',function(){
+      document.querySelectorAll('#roleSelect .role-chip').forEach(function(c){c.classList.remove('sel')});
+      el.classList.add('sel');roleTarget.newRole=el.dataset.r;
+    });
+  });
+  document.querySelectorAll('#permSelect .perm-tag').forEach(function(el){
+    el.addEventListener('click',function(){
+      el.classList.toggle('on');el.classList.toggle('off');
+      var p=el.dataset.p;
+      if(el.classList.contains('on')){if(roleTarget.newPerms.indexOf(p)<0)roleTarget.newPerms.push(p)}
+      else{roleTarget.newPerms=roleTarget.newPerms.filter(function(x){return x!==p})}
+    });
+  });
+  om('moRole');
 }
-function selRole(el,r){document.querySelectorAll('#roleSelect .role-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');roleTarget.newRole=r}
-function togPerm(el,p){el.classList.toggle('on');el.classList.toggle('off');if(el.classList.contains('on')){if(!roleTarget.newPerms.includes(p))roleTarget.newPerms.push(p)}else{roleTarget.newPerms=roleTarget.newPerms.filter(x=>x!==p)}}
+
 async function confirmRole(){
-  if(!roleTarget)return
-  await DB.ref('users/'+roleTarget.uid).update({role:roleTarget.newRole})
-  await DB.ref('admin_perms/'+roleTarget.uid).set({uid:roleTarget.uid,username:roleTarget.name,role:roleTarget.newRole,perms:roleTarget.newPerms,setAt:Date.now(),setBy:UP.username})
-  addLog('ROLE',`Role: ${roleTarget.name} → ${roleTarget.newRole} | Perms: ${roleTarget.newPerms.join(',')} | oleh ${UP.username}`)
-  toast('Role diperbarui!','s');cm('moRole');loadAdmUsers()
+  if(!roleTarget)return;
+  await DB.ref('users/'+roleTarget.uid).update({role:roleTarget.newRole});
+  await DB.ref('admin_perms/'+roleTarget.uid).set({uid:roleTarget.uid,username:roleTarget.name,role:roleTarget.newRole,perms:roleTarget.newPerms,setAt:Date.now(),setBy:UP.username});
+  addLog('ROLE','Role: '+roleTarget.name+' → '+roleTarget.newRole+' | Perms: '+roleTarget.newPerms.join(',')+' | oleh '+UP.username);
+  toast('Role diperbarui!','s');cm('moRole');loadAdmUsers();
 }
-function openBanModal(uid,name){banTarget={uid,name};document.getElementById('banInfo').textContent='Akan ban: '+name;document.getElementById('banReason').value='';om('moBan')}
+
+function openBanModal(uid,name){
+  banTarget={uid:uid,name:name};
+  document.getElementById('banInfo').textContent='Akan ban: '+name;
+  document.getElementById('banReason').value='';om('moBan');
+}
 async function confirmBan(){
-  if(!banTarget)return;const reason=document.getElementById('banReason').value.trim();if(!reason){toast('Isi alasan!','e');return}
-  await DB.ref('users/'+banTarget.uid).update({status:'banned',banReason:reason,bannedBy:UP.username,bannedAt:Date.now()})
-  addLog('BAN',`Ban: ${banTarget.name} — ${reason} oleh ${UP.username}`)
-  toast('User dibanned.','s');cm('moBan');loadAdmUsers()
+  if(!banTarget)return;var reason=document.getElementById('banReason').value.trim();
+  if(!reason){toast('Isi alasan!','e');return}
+  await DB.ref('users/'+banTarget.uid).update({status:'banned',banReason:reason,bannedBy:UP.username,bannedAt:Date.now()});
+  addLog('BAN','Ban: '+banTarget.name+' — '+reason+' oleh '+UP.username);
+  toast('User dibanned.','s');cm('moBan');loadAdmUsers();
 }
-async function unban(uid){if(!confirm('Unban user ini?'))return;await DB.ref('users/'+uid).update({status:'active',banReason:'',bannedBy:''});toast('User di-unban.','s');loadAdmUsers()}
-function openICModal(uid,name,icName){icTarget={uid,name};document.getElementById('icInfo').textContent='User: '+name;document.getElementById('icInput').value=icName;om('moIC')}
-async function confirmIC(){if(!icTarget)return;const n=document.getElementById('icInput').value.trim();if(!n){toast('Nama IC kosong!','e');return};await DB.ref('users/'+icTarget.uid).update({icName:n});addLog('ROLE',`IC Name ${icTarget.name}: ${n}`);toast('IC Name diperbarui!','s');cm('moIC');loadAdmUsers()}
+async function unban(uid){
+  if(!confirm('Unban user ini?'))return;
+  await DB.ref('users/'+uid).update({status:'active',banReason:'',bannedBy:''});
+  toast('User di-unban.','s');loadAdmUsers();
+}
+function openICModal(uid,name,icName){
+  icTarget={uid:uid,name:name};
+  document.getElementById('icInfo').textContent='User: '+name;
+  document.getElementById('icInput').value=icName;om('moIC');
+}
+async function confirmIC(){
+  if(!icTarget)return;var n=document.getElementById('icInput').value.trim();
+  if(!n){toast('Nama IC kosong!','e');return}
+  await DB.ref('users/'+icTarget.uid).update({icName:n});
+  addLog('ROLE','IC Name '+icTarget.name+': '+n);toast('IC Name diperbarui!','s');cm('moIC');loadAdmUsers();
+}
 
 async function loadAdmBanned(){
-  const tb=document.getElementById('tbBanned');if(!tb)return
-  const snap=await DB.ref('users').orderByChild('status').equalTo('banned').get()
+  var tb=document.getElementById('tbBanned');if(!tb)return;
+  var snap=await DB.ref('users').orderByChild('status').equalTo('banned').get();
   if(!snap.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="5">Tidak ada user banned.</td></tr>';return}
-  tb.innerHTML=Object.entries(snap.val()).map(([k,u])=>`<tr><td>${esc(u.username||'')}</td><td style="font-size:10px">${esc(u.email||'')}</td><td>${esc(u.banReason||'')}</td><td>${esc(u.bannedBy||'')}</td><td><button class="atb g" onclick="unban('${k}')">Unban</button></td></tr>`).join('')
+  tb.innerHTML=Object.entries(snap.val()).map(function(e){
+    var k=e[0],u=e[1];
+    return '<tr><td>'+esc(u.username||'')+'</td><td style="font-size:10px">'+esc(u.email||'')+'</td><td>'+esc(u.banReason||'')+'</td><td>'+esc(u.bannedBy||'')+'</td><td><button class="atb g" onclick="unban(\''+k+'\')">Unban</button></td></tr>';
+  }).join('');
 }
+
 async function loadAdmReports(){
-  const tb=document.getElementById('tbReports');if(!tb)return
-  const snap=await DB.ref('reports').get()
+  var tb=document.getElementById('tbReports');if(!tb)return;
+  var snap=await DB.ref('reports').get();
   if(!snap.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="6">Tidak ada laporan.</td></tr>';return}
-  const entries=Object.entries(snap.val()).map(([k,v])=>({...v,_key:k})).sort((a,b)=>b.createdAt-a.createdAt)
-  tb.innerHTML=entries.map(r=>`<tr><td>${esc(r.reporter||'')}</td><td>${esc(r.target||'')}</td><td>${esc(r.type||'')}</td><td><span class="bdg b-${r.status==='open'?'open':'accepted'}">${r.status.toUpperCase()}</span></td><td style="font-size:10px">${fmtD(r.createdAt)}</td><td><button class="atb g" onclick="closeReport('${r._key}')">Tutup</button></td></tr>`).join('')
+  var entries=Object.entries(snap.val()).map(function(e){return Object.assign({},e[1],{_key:e[0]})}).sort(function(a,b){return b.createdAt-a.createdAt});
+  tb.innerHTML=entries.map(function(r){
+    return '<tr><td>'+esc(r.reporter||'')+'</td><td>'+esc(r.target||'')+'</td><td>'+esc(r.type||'')+'</td><td><span class="bdg b-'+(r.status==='open'?'open':'accepted')+'">'+r.status.toUpperCase()+'</span></td><td style="font-size:10px">'+fmtD(r.createdAt)+'</td><td><button class="atb g" onclick="closeReport(\''+r._key+'\')">Tutup</button></td></tr>';
+  }).join('');
 }
 async function closeReport(key){await DB.ref('reports/'+key).update({status:'closed',closedBy:UP.username});toast('Report ditutup.','i');loadAdmReports()}
 
-// ── ADMIN CHAT ──
+// ============================================================
+// ADMIN CHAT
+// ============================================================
 function loadAdmChat(){
-  if(admChatListen)admChatListen()
-  const el=document.getElementById('admChatMsgs');if(!el)return
-  admChatListen=DB.ref('admin_chat').orderByChild('ts').limitToLast(100).on('value',snap=>{
+  if(admChatListen)admChatListen();
+  var el=document.getElementById('admChatMsgs');if(!el)return;
+  admChatListen=DB.ref('admin_chat').orderByChild('ts').limitToLast(100).on('value',function(snap){
     if(!snap.exists()){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Belum ada pesan.</div>';return}
-    el.innerHTML=Object.values(snap.val()).map(m=>{
-      const mine=m.uid===CU?.uid
-      return `<div class="adm-msg ${mine?'mine':'theirs'}"><div class="adm-msg-meta"><span class="${rc(m.role)}">[${RLBL[m.role]||m.role}]</span> ${esc(m.author||'')}</div><div class="adm-msg-txt">${esc(m.text||'')}</div><div class="adm-msg-time">${ago(m.ts)}</div></div>`
-    }).join('')
-    el.scrollTop=el.scrollHeight
-  })
-}
-async function sendAdmChat(){
-  const inp=document.getElementById('admChatIn');if(!inp||!inp.value.trim()||!CU)return
-  const text=inp.value.trim();inp.value=''
-  await DB.ref('admin_chat').push({uid:CU.uid,author:UP.username,role:UP.role||'user',text,ts:Date.now()})
+    el.innerHTML=Object.values(snap.val()).map(function(m){
+      var mine=m.uid===( CU&&CU.uid);
+      return '<div class="adm-msg '+(mine?'mine':'theirs')+'"><div class="adm-msg-meta"><span class="'+rc(m.role)+'">['+esc(RLBL[m.role]||m.role)+']</span> '+esc(m.author||'')+'</div><div class="adm-msg-txt">'+esc(m.text||'')+'</div><div class="adm-msg-time">'+ago(m.ts)+'</div></div>';
+    }).join('');
+    el.scrollTop=el.scrollHeight;
+  });
 }
 
-// ── ANNOUNCE ADMIN ──
-function selAnnTag(el,tag){document.querySelectorAll('#annTagPick .role-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');selAnnTagVal=tag}
+async function sendAdmChat(){
+  var inp=document.getElementById('admChatIn');
+  if(!inp||!inp.value.trim()||!CU)return;
+  var text=inp.value.trim();inp.value='';
+  await DB.ref('admin_chat').push({uid:CU.uid,author:UP.username,role:UP.role||'user',text:text,ts:Date.now()});
+}
+
+// ============================================================
+// ANNOUNCE ADMIN
+// ============================================================
+function selAnnTag(el,tag){
+  document.querySelectorAll('#annTagPick .role-chip').forEach(function(c){c.classList.remove('sel')});
+  el.classList.add('sel');selAnnTagVal=tag;
+}
 async function loadAdmAnn(){
-  const el=document.getElementById('annAdmList');if(!el)return
-  const snap=await DB.ref('announcements').orderByChild('ts').limitToLast(20).get()
+  var el=document.getElementById('annAdmList');if(!el)return;
+  var snap=await DB.ref('announcements').orderByChild('ts').limitToLast(20).get();
   if(!snap.exists()){el.innerHTML='<div style="color:var(--t3);font-size:11px;padding:4px">Belum ada pengumuman.</div>';return}
-  el.innerHTML=Object.entries(snap.val()).reverse().map(([k,a])=>`<div style="padding:9px;border-bottom:1px solid var(--b2)"><div style="font-size:11.5px;font-weight:600">${esc(a.title||'')}</div><div style="font-size:9.5px;color:var(--t3)">${esc(a.tag)} • ${fmtD(a.ts)}</div><button class="atb r" style="margin-top:4px" onclick="delAnn('${k}')">Hapus</button></div>`).join('')
+  el.innerHTML=Object.entries(snap.val()).reverse().map(function(e){
+    var k=e[0],a=e[1];
+    return '<div style="padding:9px;border-bottom:1px solid var(--b2)"><div style="font-size:11.5px;font-weight:600">'+esc(a.title||'')+'</div><div style="font-size:9.5px;color:var(--t3)">'+esc(a.tag)+' • '+fmtD(a.ts)+'</div><button class="atb r" style="margin-top:4px" onclick="delAnn(\''+k+'\')">Hapus</button></div>';
+  }).join('');
 }
 async function postAnn(){
-  const title=document.getElementById('annTtlIn').value.trim(),body=document.getElementById('annBodyIn').value.trim()
+  var title=document.getElementById('annTtlIn').value.trim(),body=document.getElementById('annBodyIn').value.trim();
   if(!title||!body){toast('Isi judul dan isi!','e');return}
-  const key=DB.ref('announcements').push().key
-  await DB.ref('announcements/'+key).set({tag:selAnnTagVal,title,content:body,author:UP.username,uid:CU.uid,ts:Date.now()})
-  addLog('NEWS',`Pengumuman baru: "${title}" oleh ${UP.username}`)
-  toast('Pengumuman diposting!','s');document.getElementById('annTtlIn').value='';document.getElementById('annBodyIn').value='';loadAdmAnn();loadAnn()
+  var key=DB.ref('announcements').push().key;
+  await DB.ref('announcements/'+key).set({tag:selAnnTagVal,title:title,content:body,author:UP.username,uid:CU.uid,ts:Date.now()});
+  addLog('NEWS','Pengumuman baru: "'+title+'" oleh '+UP.username);
+  toast('Pengumuman diposting!','s');document.getElementById('annTtlIn').value='';document.getElementById('annBodyIn').value='';loadAdmAnn();loadAnn();
 }
 async function delAnn(key){if(!confirm('Hapus pengumuman?'))return;await DB.ref('announcements/'+key).remove();toast('Dihapus.','i');loadAdmAnn()}
 
-// ── GUIDES ADMIN ──
+// ============================================================
+// GUIDES ADMIN
+// ============================================================
 async function loadAdmGuides(){
-  const type=document.getElementById('guideTypeF')?.value||'rules',el=document.getElementById('guideAdmList');if(!el)return
-  const snap=await DB.ref('guides').orderByChild('type').equalTo(type).get()
+  var tf=document.getElementById('guideTypeF');var type=tf?tf.value:'rules';
+  var el=document.getElementById('guideAdmList');if(!el)return;
+  var snap=await DB.ref('guides').orderByChild('type').equalTo(type).get();
   if(!snap.exists()){el.innerHTML='<div style="color:var(--t3);font-size:11px;padding:4px">Belum ada artikel.</div>';return}
-  el.innerHTML=Object.entries(snap.val()).map(([k,g])=>`<div style="padding:9px;border-bottom:1px solid var(--b2)"><div style="font-size:11.5px;font-weight:600">${g.pinned?'📌 ':''} ${esc(g.title||'')}</div><div style="font-size:9.5px;color:var(--t3)">${esc(g.tag||'')} • ${fmtD(g.createdAt)}</div><div style="display:flex;gap:5px;margin-top:5px"><button class="atb" onclick='editGuide("${k}",${JSON.stringify(g)})'>Edit</button><button class="atb r" onclick="delGuide('${k}')">Hapus</button></div></div>`).join('')
+  el.innerHTML=Object.entries(snap.val()).map(function(e){
+    var k=e[0],g=e[1];
+    var gJson=JSON.stringify(g).replace(/'/g,"\\'");
+    return '<div style="padding:9px;border-bottom:1px solid var(--b2)"><div style="font-size:11.5px;font-weight:600">'+(g.pinned?'📌 ':'')+esc(g.title||'')+'</div><div style="font-size:9.5px;color:var(--t3)">'+esc(g.tag||'')+' • '+fmtD(g.createdAt)+'</div><div style="display:flex;gap:5px;margin-top:5px"><button class="atb" id="ge-'+k+'">Edit</button><button class="atb r" id="gd-'+k+'">Hapus</button></div></div>';
+  }).join('');
+  // Attach handlers
+  Object.entries(snap.val()).forEach(function(e){
+    var k=e[0],g=e[1];
+    var geBtn=document.getElementById('ge-'+k);
+    if(geBtn)geBtn.addEventListener('click',function(){editGuideItem(k,g)});
+    var gdBtn=document.getElementById('gd-'+k);
+    if(gdBtn)gdBtn.addEventListener('click',function(){delGuide(k)});
+  });
 }
-function editGuide(key,g){editGuideKey=key;document.getElementById('guideTtlIn').value=g.title||'';document.getElementById('guideTagIn').value=g.tag||'';document.getElementById('guideBodyIn').value=g.body||'';document.getElementById('guidePinned').checked=g.pinned||false;document.getElementById('guideFormTtl').textContent='Edit Artikel';document.getElementById('cancelGuideBtn').style.display=''}
-function cancelGuide(){editGuideKey=null;document.getElementById('guideTtlIn').value='';document.getElementById('guideTagIn').value='';document.getElementById('guideBodyIn').value='';document.getElementById('guidePinned').checked=false;document.getElementById('guideFormTtl').textContent='Tambah Artikel';document.getElementById('cancelGuideBtn').style.display='none'}
+
+function editGuideItem(key,g){
+  editGuideKey=key;
+  document.getElementById('guideTtlIn').value=g.title||'';
+  document.getElementById('guideTagIn').value=g.tag||'';
+  document.getElementById('guideBodyIn').value=g.body||'';
+  document.getElementById('guidePinned').checked=g.pinned||false;
+  document.getElementById('guideFormTtl').textContent='Edit Artikel';
+  document.getElementById('cancelGuideBtn').style.display='';
+}
+function cancelGuide(){
+  editGuideKey=null;
+  document.getElementById('guideTtlIn').value='';document.getElementById('guideTagIn').value='';
+  document.getElementById('guideBodyIn').value='';document.getElementById('guidePinned').checked=false;
+  document.getElementById('guideFormTtl').textContent='Tambah Artikel';
+  document.getElementById('cancelGuideBtn').style.display='none';
+}
 async function submitGuide(){
-  const type=document.getElementById('guideTypeF')?.value||'rules',title=document.getElementById('guideTtlIn').value.trim(),tag=document.getElementById('guideTagIn').value.trim(),body=document.getElementById('guideBodyIn').value.trim(),pinned=document.getElementById('guidePinned').checked
+  var tf=document.getElementById('guideTypeF');var type=tf?tf.value:'rules';
+  var title=document.getElementById('guideTtlIn').value.trim();
+  var tag=document.getElementById('guideTagIn').value.trim();
+  var body=document.getElementById('guideBodyIn').value.trim();
+  var pinned=document.getElementById('guidePinned').checked;
   if(!title||!body){toast('Isi judul dan konten!','e');return}
-  const data={type,title,tag,body,pinned,author:UP.username,createdAt:Date.now()}
+  var data={type:type,title:title,tag:tag,body:body,pinned:pinned,author:UP.username,createdAt:Date.now()};
   if(editGuideKey){await DB.ref('guides/'+editGuideKey).update(data);toast('Diperbarui!','s')}
   else{await DB.ref('guides').push(data);toast('Artikel ditambahkan!','s')}
-  delete gcache[type];cancelGuide();loadAdmGuides()
+  delete gcache[type];cancelGuide();loadAdmGuides();
 }
-async function delGuide(key){const type=document.getElementById('guideTypeF')?.value||'rules';if(!confirm('Hapus artikel?'))return;await DB.ref('guides/'+key).remove();delete gcache[type];toast('Dihapus.','i');loadAdmGuides()}
+async function delGuide(key){
+  var tf=document.getElementById('guideTypeF');var type=tf?tf.value:'rules';
+  if(!confirm('Hapus artikel?'))return;
+  await DB.ref('guides/'+key).remove();delete gcache[type];toast('Dihapus.','i');loadAdmGuides();
+}
 
-// ── STAFF ADMIN ──
+// ============================================================
+// STAFF ADMIN
+// ============================================================
 async function loadAdmStaff(){
-  const tb=document.getElementById('tbStaff');if(!tb)return
-  const snap=await DB.ref('staff').orderByChild('order').get()
+  var tb=document.getElementById('tbStaff');if(!tb)return;
+  var snap=await DB.ref('staff').orderByChild('order').get();
   if(!snap.exists()){tb.innerHTML='<tr class="empty-row"><td colspan="4">Belum ada staff.</td></tr>';return}
-  tb.innerHTML=Object.entries(snap.val()).map(([k,s])=>`<tr><td><span class="${s.class||'r-user'}">${esc(s.name||'—')}</span></td><td>${esc(s.role||'')}</td><td style="font-size:10px">${esc(s.wa?'+'+s.wa:'—')}</td><td><button class="atb r" onclick="delStaff('${k}')">Hapus</button></td></tr>`).join('')
+  var entries=Object.entries(snap.val());
+  tb.innerHTML=entries.map(function(e){
+    var k=e[0],s=e[1];
+    return '<tr><td><span class="'+(s.class||'r-user')+'">'+esc(s.name||'—')+'</span></td><td>'+esc(s.role||'')+'</td><td style="font-size:10px">'+esc(s.wa?'+'+s.wa:'—')+'</td><td><button class="atb r" id="ds-'+k+'">Hapus</button></td></tr>';
+  }).join('');
+  entries.forEach(function(e){
+    var k=e[0];var btn=document.getElementById('ds-'+k);
+    if(btn)btn.addEventListener('click',function(){delStaff(k)});
+  });
 }
 async function addStaff(){
-  const name=document.getElementById('staffNameIn').value.trim(),role=document.getElementById('staffRoleIn').value,wa=document.getElementById('staffWAIn').value.trim()
+  var name=document.getElementById('staffNameIn').value.trim();
+  var role=document.getElementById('staffRoleIn').value;
+  var wa=document.getElementById('staffWAIn').value.trim();
   if(!name){toast('Isi nama!','e');return}
-  const rCls={'Owner':'r-owner','Co-Owner':'r-owner','Developer':'r-developer','Head Admin':'r-headadmin','Senior Admin':'r-senioradmin','Admin':'r-admin','Junior Admin':'r-junioradmin','Management':'r-management','Moderator':'r-moderator','Community Handle':'r-communityhandle','Senior Helper':'r-seniorhelper','Helper':'r-helper','Junior Helper':'r-juniorhelper','Volunteer':'r-volunteer','Ex Staff':'r-exstaff'}
-  const count=(await DB.ref('staff').get()).numChildren()
-  await DB.ref('staff').push({name,role,wa:wa||'',class:rCls[role]||'r-user',emoji:'',order:count+1})
-  toast('Staff ditambahkan!','s');document.getElementById('staffNameIn').value='';document.getElementById('staffWAIn').value='';loadAdmStaff()
+  var rCls={Owner:'r-owner','Co-Owner':'r-owner',Developer:'r-developer','Head Admin':'r-headadmin','Senior Admin':'r-senioradmin',Admin:'r-admin','Junior Admin':'r-junioradmin',Management:'r-management',Moderator:'r-moderator','Community Handle':'r-communityhandle','Senior Helper':'r-seniorhelper',Helper:'r-helper','Junior Helper':'r-juniorhelper',Volunteer:'r-volunteer','Ex Staff':'r-exstaff'};
+  var count=(await DB.ref('staff').get()).numChildren();
+  await DB.ref('staff').push({name:name,role:role,wa:wa||'',class:rCls[role]||'r-user',emoji:'',order:count+1});
+  toast('Staff ditambahkan!','s');document.getElementById('staffNameIn').value='';document.getElementById('staffWAIn').value='';loadAdmStaff();
 }
 async function delStaff(key){if(!confirm('Hapus staff ini?'))return;await DB.ref('staff/'+key).remove();toast('Dihapus.','i');loadAdmStaff()}
 
-// ── SETTINGS ──
+// ============================================================
+// SETTINGS
+// ============================================================
 function loadSettingsForm(){
-  const sv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v!==undefined?v:''}
-  sv('cfgIP',CFG.serverIP);sv('cfgName',CFG.serverName);sv('cfgWA',CFG.waNumber);sv('cfgWAG',CFG.waGroup);sv('cfgDesc',CFG.description);sv('cfgCD',SCFG.postCooldownMin||60)
-  sv('cfgWLOpen',SCFG.wlOpen===false?'0':'1');sv('cfgWLReq',SCFG.wlRequirements||'Min. 17 tahun\nWhatsApp aktif\nMengerti RP dasar')
-  sv('cfgCSOpen',SCFG.csOpen===false?'0':'1');sv('cfgCSInfo',SCFG.csInfo||'');sv('cfgCSSched',SCFG.csSchedules||'Senin 19:00,Kamis 19:00');sv('cfgCSMin',SCFG.csMinWords||150);sv('cfgCSPan',SCFG.csPanduan||'')
-  sv('cfgImpOpen',SCFG.importOpen===false?'0':'1');sv('cfgGood',SCFG.goodsideOpen===false?'0':'1');sv('cfgBad',SCFG.badsideOpen===false?'0':'1');sv('cfgFam',SCFG.familyOpen===false?'0':'1');sv('cfgImpInfo',SCFG.importInfo||'');sv('cfgImpReq',SCFG.importRequirements||'')
+  function sv(id,v){var e=document.getElementById(id);if(e)e.value=(v!==undefined&&v!==null)?v:''}
+  sv('cfgIP',CFG.serverIP);sv('cfgName',CFG.serverName);sv('cfgWA',CFG.waNumber);sv('cfgWAG',CFG.waGroup);sv('cfgDesc',CFG.description);sv('cfgCD',SCFG.postCooldownMin||60);
+  sv('cfgWLOpen',SCFG.wlOpen===false?'0':'1');sv('cfgWLReq',SCFG.wlRequirements||'Min. 17 tahun\nWhatsApp aktif\nMengerti RP dasar');
+  sv('cfgCSOpen',SCFG.csOpen===false?'0':'1');sv('cfgCSInfo',SCFG.csInfo||'');sv('cfgCSSched',SCFG.csSchedules||'Senin 19:00,Kamis 19:00');sv('cfgCSMin',SCFG.csMinWords||150);sv('cfgCSPan',SCFG.csPanduan||'');
+  sv('cfgImpOpen',SCFG.importOpen===false?'0':'1');sv('cfgGood',SCFG.goodsideOpen===false?'0':'1');sv('cfgBad',SCFG.badsideOpen===false?'0':'1');sv('cfgFam',SCFG.familyOpen===false?'0':'1');sv('cfgImpInfo',SCFG.importInfo||'');sv('cfgImpReq',SCFG.importRequirements||'');
 }
 async function saveSrvCfg(){
-  await DB.ref('config').update({serverIP:document.getElementById('cfgIP').value.trim(),serverName:document.getElementById('cfgName').value.trim(),waNumber:document.getElementById('cfgWA').value.trim(),waGroup:document.getElementById('cfgWAG').value.trim(),description:document.getElementById('cfgDesc').value.trim()})
-  await DB.ref('settings/postCooldownMin').set(parseInt(document.getElementById('cfgCD').value)||60)
-  addLog('SYSTEM','Config server diperbarui oleh '+UP.username);toast('Tersimpan!','s')
+  await DB.ref('config').update({serverIP:document.getElementById('cfgIP').value.trim(),serverName:document.getElementById('cfgName').value.trim(),waNumber:document.getElementById('cfgWA').value.trim(),waGroup:document.getElementById('cfgWAG').value.trim(),description:document.getElementById('cfgDesc').value.trim()});
+  await DB.ref('settings/postCooldownMin').set(parseInt(document.getElementById('cfgCD').value)||60);
+  addLog('SYSTEM','Config server diperbarui oleh '+UP.username);toast('Tersimpan!','s');
 }
 async function saveWLCfg(){await DB.ref('settings').update({wlOpen:document.getElementById('cfgWLOpen').value==='1',wlRequirements:document.getElementById('cfgWLReq').value.trim()});addLog('SYSTEM','Config WL diperbarui');toast('Config WL tersimpan!','s')}
 async function saveCScfg(){await DB.ref('settings').update({csOpen:document.getElementById('cfgCSOpen').value==='1',csInfo:document.getElementById('cfgCSInfo').value.trim(),csSchedules:document.getElementById('cfgCSSched').value.trim(),csMinWords:parseInt(document.getElementById('cfgCSMin').value)||150,csPanduan:document.getElementById('cfgCSPan').value.trim()});addLog('SYSTEM','Config CS diperbarui');toast('Config CS tersimpan!','s')}
 async function saveImpCfg(){await DB.ref('settings').update({importOpen:document.getElementById('cfgImpOpen').value==='1',goodsideOpen:document.getElementById('cfgGood').value==='1',badsideOpen:document.getElementById('cfgBad').value==='1',familyOpen:document.getElementById('cfgFam').value==='1',importInfo:document.getElementById('cfgImpInfo').value.trim(),importRequirements:document.getElementById('cfgImpReq').value.trim()});addLog('SYSTEM','Config Import diperbarui');toast('Config Import tersimpan!','s')}
 
-// ── TABLE FILTER ──
-function ftbl(tblId,q){const tbody=document.getElementById(tblId)?.querySelector('tbody');if(!tbody)return;tbody.querySelectorAll('tr').forEach(tr=>{tr.style.display=(tr.textContent.toLowerCase().includes(q.toLowerCase())||tr.classList.contains('empty-row'))?'':'none'})}
-
-// ── ADMIN GRID RESPONSIVE ──
-function checkAdmGrids(){
-  const w=window.innerWidth
-  ;['annAdmGrid','guideAdmGrid','staffAdmGrid'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.style.gridTemplateColumns=w<700?'1fr':'1fr 280px'})
+// ============================================================
+// TABLE FILTER
+// ============================================================
+function ftbl(tblId,q){
+  var tbody=document.getElementById(tblId);if(!tbody)return;
+  var rows=tbody.getElementsByTagName('tr');
+  for(var i=0;i<rows.length;i++){
+    var tr=rows[i];
+    tr.style.display=(tr.textContent.toLowerCase().indexOf(q.toLowerCase())>=0||tr.classList.contains('empty-row'))?'':'none';
+  }
 }
-window.addEventListener('resize',checkAdmGrids);checkAdmGrids()
+
+// ============================================================
+// RESPONSIVE ADMIN GRIDS
+// ============================================================
+function checkAdmGrids(){
+  var w=window.innerWidth;
+  ['annAdmGrid','guideAdmGrid','staffAdmGrid'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    el.style.gridTemplateColumns=w<700?'1fr':'1fr 280px';
+  });
+}
+window.addEventListener('resize',checkAdmGrids);
 
 // ============================================================
 // INIT
 // ============================================================
-window.addEventListener('DOMContentLoaded',()=>{
-  nav('home')
-  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),1100)
-})
+window.addEventListener('DOMContentLoaded',function(){
+  nav('home');
+  checkAdmGrids();
+  setTimeout(function(){
+    var loader=document.getElementById('loader');
+    if(loader)loader.classList.add('hidden');
+  },1100);
+});
+
 </script>
 </body>
 </html>
