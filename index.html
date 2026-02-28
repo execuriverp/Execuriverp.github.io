@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Community Forum</title>
+<title>Miracle RP — Community Forum</title>
 <style>
 :root{
   --bg:#09090E;--bg2:#0F0F18;--bg3:#161622;--bg4:#1E1E2E;--bg5:#252535;
@@ -1096,8 +1096,16 @@ let banModalTarget = null;
 let icModalTarget = null;
 let allLogsCache = [];
 let postImageBase64 = null;
-const DB = firebase.firestore();
-const STORAGE = firebase.storage ? firebase.storage() : null;
+let DB = null;
+let STORAGE = null;
+
+function _initAfterFirebase() {
+  DB = firebase.firestore();
+  STORAGE = firebase.storage ? firebase.storage() : null;
+  // Start auth listener
+  firebase.auth().onAuthStateChanged(_onAuthChanged);
+  loadConfig();
+}
 
 const ROLES_ORDER = ['owner','developer','headadmin','senioradmin','admin','junioradmin','management','moderator','communityhandle','seniorhelper','helper','juniorhelper','volunteer','exstaff','vip','user'];
 const ADMIN_ROLES = ['owner','developer','headadmin','senioradmin','admin','junioradmin','management','moderator','communityhandle','seniorhelper','juniorhelper','volunteer'];
@@ -1176,7 +1184,7 @@ async function logoutUser(){
   toast('Logout berhasil.','info');
   showPage('forums');
 }
-firebase.auth().onAuthStateChanged(async u=>{
+async function _onAuthChanged(u){
   currentUser=u;
   if(u){
     const ref=DB.collection('users').doc(u.uid);
@@ -2028,6 +2036,13 @@ function copyToClip(text){ navigator.clipboard.writeText(text).then(()=>toast('T
 // ============================
 // INIT
 // ============================
+// Wait for firebaseconfig.js to finish loading Firebase
+document.addEventListener('firebaseReady', _initAfterFirebase);
+// Fallback if event already fired
+if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+  _initAfterFirebase();
+}
+
 window.addEventListener('DOMContentLoaded',()=>{
   // Load initial data based on URL hash or default
   const page=location.hash.replace('#','');
@@ -2055,4 +2070,3 @@ window.showPage=function(name,navEl){
 </script>
 </body>
 </html>
-
