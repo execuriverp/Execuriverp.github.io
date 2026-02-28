@@ -1077,7 +1077,23 @@ tr:hover td{background:rgba(255,255,255,.012)}
   </div>
 </div>
 
-<script src="firebaseconfig.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyD5JGQ3eARM5Lo2IG3mkpdx7p3uh0nrBIk",
+    authDomain: "samp-miracle.firebaseapp.com",
+    projectId: "samp-miracle",
+    storageBucket: "samp-miracle.firebasestorage.app",
+    messagingSenderId: "465126706451",
+    appId: "1:465126706451:web:b94f2359a348ff7078dee6",
+    measurementId: "G-ZCRVX5DCPR",
+    databaseURL: "https://samp-miracle-default-rtdb.asia-southeast1.firebasedatabase.app"
+  });
+</script>
 <script>
 // ============================
 // GLOBALS
@@ -1096,16 +1112,8 @@ let banModalTarget = null;
 let icModalTarget = null;
 let allLogsCache = [];
 let postImageBase64 = null;
-let DB = null;
-let STORAGE = null;
-
-function _initAfterFirebase() {
-  DB = firebase.firestore();
-  STORAGE = firebase.storage ? firebase.storage() : null;
-  // Start auth listener
-  firebase.auth().onAuthStateChanged(_onAuthChanged);
-  loadConfig();
-}
+const DB = firebase.firestore();
+const STORAGE = firebase.storage ? firebase.storage() : null;
 
 const ROLES_ORDER = ['owner','developer','headadmin','senioradmin','admin','junioradmin','management','moderator','communityhandle','seniorhelper','helper','juniorhelper','volunteer','exstaff','vip','user'];
 const ADMIN_ROLES = ['owner','developer','headadmin','senioradmin','admin','junioradmin','management','moderator','communityhandle','seniorhelper','juniorhelper','volunteer'];
@@ -1202,7 +1210,7 @@ async function _onAuthChanged(u){
   }
   loadHomeStats();
   loadConfig();
-});
+}
 
 function renderTopbarAuth(){
   const el=document.getElementById('topbarRight');
@@ -2036,12 +2044,8 @@ function copyToClip(text){ navigator.clipboard.writeText(text).then(()=>toast('T
 // ============================
 // INIT
 // ============================
-// Wait for firebaseconfig.js to finish loading Firebase
-document.addEventListener('firebaseReady', _initAfterFirebase);
-// Fallback if event already fired
-if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
-  _initAfterFirebase();
-}
+firebase.auth().onAuthStateChanged(_onAuthChanged);
+loadConfig();
 
 window.addEventListener('DOMContentLoaded',()=>{
   // Load initial data based on URL hash or default
