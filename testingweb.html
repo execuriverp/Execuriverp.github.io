@@ -1,204 +1,165 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Modern Upload Panel</title>
+<title>Upload Gallery Modern</title>
 <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
-}
-
 body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #1e1e2f, #2a2a40);
-    color: white;
+    margin:0;
+    font-family:Segoe UI;
+    background:linear-gradient(135deg,#1e1e2f,#2a2a40);
+    color:white;
 }
-
-.card {
-    width: 380px;
-    padding: 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.08);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+.container{
+    width:90%;
+    max-width:800px;
+    margin:40px auto;
 }
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.card{
+    background:rgba(255,255,255,0.08);
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    backdrop-filter:blur(15px);
 }
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    background: rgba(255,255,255,0.1);
-    color: white;
+input,button{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    margin:5px 0;
 }
-
-input::file-selector-button {
-    background: #6c63ff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
+button{
+    background:#6c63ff;
+    color:white;
+    cursor:pointer;
 }
-
-button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: #6c63ff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+.gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:15px;
 }
-
-button:hover {
-    background: #5848d6;
-}
-
-.link {
-    text-align: center;
-    margin-top: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    opacity: 0.7;
-}
-
-.status {
-    margin-top: 10px;
-    font-size: 13px;
-    text-align: center;
-}
-
-img {
-    margin-top: 15px;
-    width: 100%;
-    border-radius: 10px;
-    display: none;
-}
-
-.logout {
-    background: #ff4b5c;
-    margin-top: 10px;
+.gallery img{
+    width:100%;
+    border-radius:10px;
 }
 </style>
 </head>
 <body>
 
+<div class="container">
+
+<div class="card" id="authSection">
+<h3>Login</h3>
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="register()">Register</button>
+<p id="authStatus"></p>
+</div>
+
+<div class="card" id="uploadSection" style="display:none;">
+<h3>Upload PNG</h3>
+<input type="file" id="fileInput" accept="image/png">
+<button onclick="uploadImage()">Upload</button>
+<button onclick="logout()">Logout</button>
+<p id="uploadStatus"></p>
+</div>
+
 <div class="card">
-
-    <!-- LOGIN SECTION -->
-    <div id="authSection">
-        <h2>Login Panel</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <div class="link" onclick="register()">Belum punya akun? Register</div>
-        <div class="status" id="authStatus"></div>
-    </div>
-
-    <!-- UPLOAD SECTION -->
-    <div id="uploadSection" style="display:none;">
-        <h2>Upload PNG</h2>
-        <input type="file" id="fileInput" accept="image/png">
-        <button onclick="uploadImage()">Upload</button>
-        <button class="logout" onclick="logout()">Logout</button>
-        <div class="status" id="uploadStatus"></div>
-        <img id="preview">
-    </div>
+<h3>Gallery</h3>
+<div class="gallery" id="gallery"></div>
+</div>
 
 </div>
 
 <script>
-// ===== CONFIG =====
-Parse.initialize("UqZ751TeTPxZ1kryoUEy4fclTgKVCMTqTuNf2LUp", "jx3I9ieWtAqJ50sLS9VrzaUwGk31t3vsHkwk7phb");
-Parse.serverURL = "https://parseapi.back4app.com/";
+Parse.initialize("UqZ751TeTPxZ1kryoUEy4fclTgKVCMTqTuNf2LUp","jx3I9ieWtAqJ50sLS9VrzaUwGk31t3vsHkwk7phb");
+Parse.serverURL="https://parseapi.back4app.com/";
 
-// ===== AUTO SESSION =====
-if (Parse.User.current()) {
+if(Parse.User.current()){
     showUpload();
 }
 
-// ===== AUTH FUNCTIONS =====
-async function login() {
-    const u = username.value;
-    const p = password.value;
-
-    try {
-        await Parse.User.logIn(u, p);
+async function login(){
+    try{
+        await Parse.User.logIn(username.value,password.value);
         showUpload();
-    } catch (err) {
-        authStatus.innerText = err.message;
+    }catch(err){
+        authStatus.innerText=err.message;
     }
 }
 
-async function register() {
-    const user = new Parse.User();
-    user.set("username", username.value);
-    user.set("password", password.value);
-
-    try {
+async function register(){
+    const user=new Parse.User();
+    user.set("username",username.value);
+    user.set("password",password.value);
+    try{
         await user.signUp();
         showUpload();
-    } catch (err) {
-        authStatus.innerText = err.message;
+    }catch(err){
+        authStatus.innerText=err.message;
     }
 }
 
-function logout() {
+function logout(){
     Parse.User.logOut();
     location.reload();
 }
 
-function showUpload() {
-    authSection.style.display = "none";
-    uploadSection.style.display = "block";
+function showUpload(){
+    authSection.style.display="none";
+    uploadSection.style.display="block";
+    loadGallery();
 }
 
-// ===== UPLOAD FUNCTION =====
-async function uploadImage() {
-    const file = fileInput.files[0];
-
-    if (!file) {
-        uploadStatus.innerText = "Pilih file PNG dulu.";
+async function uploadImage(){
+    const file=fileInput.files[0];
+    if(!file || file.type!=="image/png"){
+        uploadStatus.innerText="Pilih PNG!";
         return;
     }
 
-    if (file.type !== "image/png") {
-        uploadStatus.innerText = "Hanya PNG yang diizinkan!";
-        return;
-    }
+    uploadStatus.innerText="Uploading...";
 
-    uploadStatus.innerText = "Uploading...";
-
-    try {
-        const parseFile = new Parse.File(file.name, file);
+    try{
+        const parseFile=new Parse.File(file.name,file);
         await parseFile.save();
 
-        uploadStatus.innerText = "Upload berhasil!";
-        preview.src = parseFile.url();
-        preview.style.display = "block";
+        const Uploads=Parse.Object.extend("Uploads");
+        const newUpload=new Uploads();
+        newUpload.set("image",parseFile);
+        newUpload.set("user",Parse.User.current());
+        await newUpload.save();
 
-    } catch (err) {
-        uploadStatus.innerText = err.message;
+        uploadStatus.innerText="Upload berhasil!";
+        loadGallery();
+
+    }catch(err){
+        uploadStatus.innerText=err.message;
     }
 }
+
+async function loadGallery(){
+    const Uploads=Parse.Object.extend("Uploads");
+    const query=new Parse.Query(Uploads);
+    query.descending("createdAt");
+
+    const results=await query.find();
+
+    gallery.innerHTML="";
+    results.forEach(item=>{
+        const file=item.get("image");
+        if(file){
+            const img=document.createElement("img");
+            img.src=file.url();
+            gallery.appendChild(img);
+        }
+    });
+}
+
+loadGallery();
 </script>
 
 </body>
