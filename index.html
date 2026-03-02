@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle Community Portal</title>
+<title>Miracle Roleplay — Community Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -360,12 +360,42 @@ tr:hover td{background:rgba(255,255,255,.01)}
   <div class="mdl">
     <div class="mhdr"><div class="mtitle">Masuk ke Miracle RP</div><button class="mcls" onclick="cm('moLogin')">✕</button></div>
     <div class="mbody">
-      <p style="font-size:12px;color:var(--t2);margin-bottom:15px;line-height:1.7">Gunakan akun Google untuk bergabung. Data kamu aman.</p>
-      <button class="btn btn-p" style="width:100%;justify-content:center;padding:11px;font-size:13px" onclick="loginGoogle()">
-        <svg width="14" height="14" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      <button class="btn btn-p" style="width:100%;justify-content:center;padding:11px;font-size:13px;margin-bottom:13px" onclick="loginGoogle()">
+        <svg width="14" height="14" viewBox="0 0 48 48" style="margin-right:6px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         Masuk dengan Google
       </button>
-      <p style="font-size:9.5px;color:var(--t3);text-align:center;margin-top:9px">Dengan masuk kamu menyetujui Rules Miracle RP</p>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px"><div style="flex:1;height:1px;background:var(--b)"></div><span style="font-size:10px;color:var(--t3)">atau email</span><div style="flex:1;height:1px;background:var(--b)"></div></div>
+      <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="loginEmail" placeholder="email@gmail.com"></div>
+      <div class="fg"><label class="fl">Password</label><input type="password" class="fi" id="loginPass" placeholder="••••••••"></div>
+      <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px;margin-bottom:9px" onclick="doLogin()">Masuk</button>
+      <div style="display:flex;justify-content:space-between;font-size:11px">
+        <span style="color:var(--t3)">Belum punya akun? <span style="color:var(--acc);cursor:pointer" onclick="cm('moLogin');om('moReg')">Daftar</span></span>
+        <span style="color:var(--acc);cursor:pointer" onclick="cm('moLogin');om('moForgot')">Lupa password?</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="moReg">
+  <div class="mdl">
+    <div class="mhdr"><div class="mtitle">Daftar Akun</div><button class="mcls" onclick="cm('moReg')">✕</button></div>
+    <div class="mbody">
+      <div class="fg"><label class="fl">Username</label><input type="text" class="fi" id="regUser" placeholder="Username kamu..."></div>
+      <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="regEmail" placeholder="email@gmail.com"></div>
+      <div class="fg"><label class="fl">Password</label><input type="password" class="fi" id="regPass" placeholder="Min. 6 karakter"></div>
+      <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px;margin-bottom:9px" onclick="doRegister()">Daftar</button>
+      <div style="text-align:center;font-size:11px;color:var(--t3)">Sudah punya akun? <span style="color:var(--acc);cursor:pointer" onclick="cm('moReg');om('moLogin')">Masuk</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="moForgot">
+  <div class="mdl">
+    <div class="mhdr"><div class="mtitle">Reset Password</div><button class="mcls" onclick="cm('moForgot')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:12px;color:var(--t2);margin-bottom:13px">Masukkan email kamu, kami akan kirim link reset password.</p>
+      <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="forgotEmail" placeholder="email@gmail.com"></div>
+      <button class="btn btn-p" style="width:100%;justify-content:center;padding:10px" onclick="doForgot()">Kirim Reset Link</button>
     </div>
   </div>
 </div>
@@ -548,8 +578,14 @@ tr:hover td{background:rgba(255,255,255,.01)}
     <a data-p="admin" id="admNavLink" onclick="nav('admin')" style="display:none;color:var(--pur)">Admin</a>
   </nav>
   <div class="tb-right" id="tbRight">
-    <button class="btn" onclick="om('moLogin')">Masuk</button>
-    <button class="btn btn-p" onclick="om('moLogin')">Daftar</button>
+    <div id="authLogin" style="display:flex;gap:6px">
+      <button class="btn" onclick="om('moLogin')">Masuk</button>
+      <button class="btn btn-p" onclick="om('moReg')">Daftar</button>
+    </div>
+    <div id="authProfile" style="display:none;align-items:center;gap:7px">
+      <div id="navProfile" style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--t2)" onclick="nav('profile')"></div>
+      <button class="btn btn-sm" id="authLogout" onclick="doLogout()" style="font-size:11px">Keluar</button>
+    </div>
   </div>
 </div>
 
@@ -1287,18 +1323,25 @@ AUTH.onAuthStateChanged(function(user){
     UP={};window._perms=[];updateAuthUI();
   }
 });
+function loginGoogle(){
+  var provider=new firebase.auth.GoogleAuthProvider();
+  AUTH.signInWithPopup(provider).then(function(){toast('Login berhasil!','s');cm('moLogin');}).catch(function(e){toast(e.message,'e');});
+}
 function updateAuthUI(){
   var loggedIn=!!CU;
-  ['authLogin','authReg'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=loggedIn?'none':'';});
-  ['authProfile','authLogout'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=loggedIn?'':'none';});
+  var loginEl=document.getElementById('authLogin');
+  var profEl=document.getElementById('authProfile');
+  if(loginEl)loginEl.style.display=loggedIn?'none':'flex';
+  if(profEl)profEl.style.display=loggedIn?'flex':'none';
+  var navProf=document.getElementById('navProfile');
+  if(navProf&&UP){
+    var ava=UP.photoURL?'<img src="'+esc(UP.photoURL)+'" style="width:26px;height:26px;border-radius:50%;object-fit:cover;border:1px solid var(--b3)" onerror="this.style.display=\'none\'">':'<div style="width:26px;height:26px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">'+esc((UP.username||'?').charAt(0).toUpperCase())+'</div>';
+    navProf.innerHTML=ava+'<span style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(UP.username||'Profile')+'</span>';
+  }
   var adminLink=document.getElementById('admNavLink');var adminMob=document.getElementById('admMobLink');
   var isAdm=loggedIn&&(isOwner()||hasPerm('handle_wl')||hasPerm('handle_cs')||hasPerm('handle_import')||hasPerm('handle_tickets')||hasPerm('manage_roles')||hasPerm('ban_user')||hasPerm('manage_announce')||hasPerm('manage_guides')||hasPerm('settings')||hasPerm('admin_chat'));
   if(adminLink)adminLink.style.display=isAdm?'':'none';
   if(adminMob)adminMob.style.display=isAdm?'':'none';
-  var profEl=document.getElementById('navProfile');if(profEl&&UP){
-    var ava=UP.photoURL?'<img src="'+esc(UP.photoURL)+'" style="width:26px;height:26px;border-radius:50%;object-fit:cover;border:1px solid var(--b3)" onerror="this.style.display=\'none\'">':'';
-    profEl.innerHTML=ava+'<span style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(UP.username||'Profile')+'</span>';
-  }
 }
 function doLogin(){
   var email=gv('loginEmail').trim(),pass=gv('loginPass');
@@ -1321,10 +1364,7 @@ function doForgot(){
   var email=gv('forgotEmail').trim();if(!email){toast('Masukkan email!','e');return;}
   AUTH.sendPasswordResetEmail(email).then(function(){toast('Email reset dikirim!','s');cm('moForgot');}).catch(function(e){toast(e.message,'e');});
 }
-function googleLogin(){
-  var provider=new firebase.auth.GoogleAuthProvider();
-  AUTH.signInWithPopup(provider).then(function(){toast('Login Google berhasil!','s');cm('moLogin');}).catch(function(e){toast(e.message,'e');});
-}
+
 
 // Config loader
 function loadConfig(){
@@ -2254,4 +2294,3 @@ setTimeout(function(){document.getElementById('loader').classList.add('out');},4
 </script>
 </body>
 </html>
-
