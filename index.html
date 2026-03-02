@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle Community</title>
+<title>Miracle Roleplay — Community Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -639,7 +639,19 @@ tr:hover td{background:rgba(255,255,255,.01)}
               <div class="fg"><label class="fl">Usia Karakter</label><input type="number" class="fi" id="csAge" placeholder="25"></div>
               <div class="fg"><label class="fl">Level Karakter</label><input type="number" class="fi" id="csLvl" placeholder="10"></div>
             </div>
-            <div class="fg"><label class="fl">Screenshot Level (link)</label><input type="text" class="fi" id="csScr" placeholder="https://..."></div>
+            <div class="fg">
+              <label class="fl">Screenshot Level</label>
+              <div id="csImgDrop" onclick="document.getElementById('csImgIn').click()" ondragover="event.preventDefault();this.style.borderColor='var(--acc)'" ondragleave="this.style.borderColor='var(--b3)'" ondrop="event.preventDefault();this.style.borderColor='var(--b3)';if(event.dataTransfer.files[0]){document.getElementById('csImgIn').files=event.dataTransfer.files;previewCsImg(document.getElementById('csImgIn'));}" style="border:2px dashed var(--b3);border-radius:var(--r2);padding:18px;text-align:center;cursor:pointer;transition:border-color .13s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b3)'">
+                <div style="font-size:20px;margin-bottom:4px">📷</div>
+                <div style="font-size:12px;color:var(--t2)">Klik atau drag foto ke sini</div>
+                <div style="font-size:10px;color:var(--t3);margin-top:2px">JPG, PNG - max 5MB</div>
+                <input type="file" id="csImgIn" accept="image/*" style="display:none" onchange="previewCsImg(this)">
+              </div>
+              <div id="csImgPrev" style="display:none;margin-top:8px;position:relative">
+                <img id="csImgPreview" style="max-width:200px;max-height:150px;border-radius:var(--r);border:1px solid var(--b)">
+                <button onclick="clearCsImg()" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:11px">✕</button>
+              </div>
+            </div>
             <div class="fg">
               <label class="fl">Story IC <span id="csMinLbl" style="font-size:9px;color:var(--t3)">(min. 150 kata)</span></label>
               <textarea class="fi" id="csStory" rows="7" placeholder="Ceritakan latar belakang karakter secara mendetail..."></textarea>
@@ -677,8 +689,19 @@ tr:hover td{background:rgba(255,255,255,.01)}
             <div class="fg"><label class="fl">Fraksi / Family Tujuan</label><input type="text" class="fi" id="impFaction" placeholder="Nama fraksi/family"></div>
             <div class="fg"><label class="fl">Items / Aset yang Dibawa</label><textarea class="fi" id="impItems" rows="2" placeholder="List item, uang, kendaraan, dll"></textarea></div>
             <div class="fg"><label class="fl">Lore IC (Alasan In-Character)</label><textarea class="fi" id="impLore" rows="4" placeholder="Jelaskan alasan IC yang kuat..."></textarea></div>
-            <div class="fg"><label class="fl">Bukti Pendukung (link)</label><input type="text" class="fi" id="impProof" placeholder="https://..."></div>
-            <button class="btn btn-p" onclick="submitImport()">Kirim Request</button>
+            <div class="fg"><label class="fl">Bukti Pendukung</label>
+              <div id="impImgDrop" onclick="document.getElementById('impImgIn').click()" ondragover="event.preventDefault();this.style.borderColor='var(--acc)'" ondragleave="this.style.borderColor='var(--b3)'" ondrop="event.preventDefault();this.style.borderColor='var(--b3)';if(event.dataTransfer.files[0]){document.getElementById('impImgIn').files=event.dataTransfer.files;previewImpImg(document.getElementById('impImgIn'));}" style="border:2px dashed var(--b3);border-radius:var(--r2);padding:18px;text-align:center;cursor:pointer;transition:border-color .13s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b3)'">
+                <div style="font-size:20px;margin-bottom:4px">📷</div>
+                <div style="font-size:12px;color:var(--t2)">Klik atau drag foto ke sini</div>
+                <div style="font-size:10px;color:var(--t3);margin-top:2px">JPG, PNG - max 5MB</div>
+                <input type="file" id="impImgIn" accept="image/*" style="display:none" onchange="previewImpImg(this)">
+              </div>
+              <div id="impImgPrev" style="display:none;margin-top:8px;position:relative">
+                <img id="impImgPreview" style="max-width:200px;max-height:150px;border-radius:var(--r);border:1px solid var(--b)">
+                <button onclick="clearImpImg()" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:11px">✕</button>
+              </div>
+            </div>
+            <button class="btn btn-p" onclick="submitImport()" id="submitImpBtn">Kirim Request</button>
           </div>
         </div>
       </div>
@@ -1468,6 +1491,29 @@ function submitCS(){
 }
 
 // ============ IMPORT ============
+var pendingImpImgB64 = null;
+
+function previewImpImg(input){
+  var file = input.files[0]; if(!file) return;
+  if(file.size > 5*1024*1024){toast('Max 5MB!','e');return;}
+  var r = new FileReader();
+  r.onload = function(e){
+    pendingImpImgB64 = e.target.result;
+    document.getElementById('impImgPrev').style.display = '';
+    document.getElementById('impImgPreview').src = e.target.result;
+    document.getElementById('impImgDrop').style.display = 'none';
+  };
+  r.readAsDataURL(file);
+}
+
+function clearImpImg(){
+  pendingImpImgB64 = null;
+  document.getElementById('impImgPrev').style.display = 'none';
+  document.getElementById('impImgPreview').src = '';
+  document.getElementById('impImgDrop').style.display = '';
+  document.getElementById('impImgIn').value = '';
+}
+
 function initImport(){checkMyImport();}
 function selImpBtn(el,type){
   document.querySelectorAll('.imp-btn').forEach(function(b){b.classList.remove('sel');});
@@ -1484,12 +1530,30 @@ function submitImport(){
   if(!selImpType){toast('Pilih jenis import!','e');return;}
   var charN=gv('impChar').trim(),fac=gv('impFaction').trim(),items=gv('impItems').trim(),lore=gv('impLore').trim(),proof=gv('impProof').trim();
   if(!charN||!fac||!lore){toast('Isi semua field wajib!','e');return;}
-  var key=DB.ref('import_requests').push().key;
-  DB.ref('import_requests/'+key).set({uid:CU.uid,email:CU.email,username:UP.username,importType:selImpType,charName:charN,faction:fac,items:items,lore:lore,proof:proof,status:'pending',createdAt:Date.now()}).then(function(){
-    addLog('IMPORT',UP.username+' import '+selImpType+': '+charN);toast('Import Request terkirim!','s');
-    hide('impFormWrap');show('impMyStatus');
-    document.getElementById('impMyStatus').innerHTML='<div class="ibox ok">&#10003; Import Request dikirim!</div>';
-  }).catch(function(e){toast('Gagal: '+e.message,'e');});
+  var btn=document.getElementById('submitImpBtn');
+  if(btn)btn.disabled=true;
+  
+  var uploadPromise = Promise.resolve(null);
+  if(pendingImpImgB64){
+    uploadPromise = new Promise(function(resolve, reject){
+      uploadToImgBB(pendingImpImgB64, function(err, url){
+        if(err) reject(err); else resolve(url);
+      });
+    });
+  }
+  
+  uploadPromise.then(function(imgUrl){
+    var key=DB.ref('import_requests').push().key;
+    DB.ref('import_requests/'+key).set({uid:CU.uid,email:CU.email,username:UP.username,importType:selImpType,charName:charN,faction:fac,items:items,lore:lore,proof:imgUrl||proof,status:'pending',createdAt:Date.now()}).then(function(){
+      addLog('IMPORT',UP.username+' import '+selImpType+': '+charN);toast('Import Request terkirim!','s');
+      hide('impFormWrap');show('impMyStatus');
+      document.getElementById('impMyStatus').innerHTML='<div class="ibox ok">&#10003; Import Request dikirim!</div>';
+      if(btn)btn.disabled=false;
+      clearImpImg();
+    }).catch(function(e){toast('Gagal: '+e.message,'e');if(btn)btn.disabled=false;});
+  }).catch(function(e){
+    toast('Upload gagal: '+e,'e');if(btn)btn.disabled=false;
+  });
 }
 
 // ============ STAFF ============
