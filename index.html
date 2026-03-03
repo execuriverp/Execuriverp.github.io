@@ -1167,7 +1167,7 @@ function nav(page){
   else if(page==='cs')initCS();
   else if(page==='import')initImport();
   else if(page==='staff')loadStaff();
-  else if(page==='leaderboard')loadLB('posts');
+  else if(page==='leaderboard'){loadLB('posts');loadLB('pts');}
   else if(page==='announcements')loadAnn();
   else if(page==='rules')loadGuides('rules');
   else if(page==='profile')initProfile();
@@ -1188,6 +1188,63 @@ function openMob(){document.getElementById('mobNav').classList.add('open');docum
 function closeMob(){document.getElementById('mobNav').classList.remove('open');document.getElementById('mobOv').classList.remove('open');}
 
 function hideLoader(){setTimeout(function(){document.getElementById('loader').classList.add('out');},300);}
+
+function normalizeLBEntry(entry,uid){
+  entry=entry||{};
+  return {
+    uid: uid || entry.uid || '',
+    username: entry.username || entry.name || '?',
+    role: entry.role || 'user',
+    photoURL: entry.photoURL || '',
+    postCount: Number(entry.postCount || entry.posts || 0),
+    points: Number(entry.points || entry.score || 0)
+  };
+}
+
+function renderLB(elId,list,valCb,valCls){
+  var el=document.getElementById(elId);if(!el)return;
+  if(!list||!list.length){el.innerHTML='<div style="padding:22px;text-align:center;color:var(--t3)">Belum ada data.</div>';return;}
+  el.innerHTML=list.slice(0,10).map(function(u,i){
+    var av=u.photoURL?'<img src="'+esc(u.photoURL)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':ini(u.username||'?');
+    return'<div class="lb-row"><div class="lb-rank'+(i<3?' r'+(i+1):'')+'">'+(i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1)+'</div><div class="lb-av">'+av+'</div><div class="lb-info"><div class="lb-name">'+esc(u.username||'?')+'</div><div class="lb-sub '+rc(u.role||'user')+'">'+esc(RLBL[u.role||'user']||'Member')+'</div></div><div class="lb-val '+(valCls||'')+'">'+valCb(u)+'</div></div>';
+  }).join('');
+}
+
+function loadLBFromUsers(metric){
+  return DB.ref('users').orderByChild(metric).limitToLast(30).get().then(function(snap){
+    if(!snap.exists())return [];
+    var ptsPerPost=Math.max(0,Number(SCFG.pointsPerPost||10));
+    return Object.entries(snap.val()).map(function(e){
+      var n=normalizeLBEntry(e[1],e[0]);
+      // Backward compatibility: old users may still have points=0 while postCount already exists
+      if(metric==='points'&&(!n.points||n.points<=0)&&n.postCount>0)n.points=n.postCount*ptsPerPost;
+      return n;
+    }).sort(function(a,b){return(b[metric]||0)-(a[metric]||0);});
+  });
+}
+
+function loadLBFromLeaderboard(metric){
+  return DB.ref('leaderboard').orderByChild(metric).limitToLast(30).get().then(function(lbSnap){
+    if(!lbSnap.exists())return [];
+    return DB.ref('users').get().then(function(userSnap){
+      var users=userSnap.exists()?userSnap.val():{};
+      var ptsPerPost=Math.max(0,Number(SCFG.pointsPerPost||10));
+      return Object.entries(lbSnap.val()).map(function(e){
+        var uid=e[0],raw=e[1]||{},u=users[uid]||{};
+        var n=normalizeLBEntry({
+          uid:uid,
+          username:raw.username||u.username,
+          role:raw.role||u.role,
+          photoURL:raw.photoURL||u.photoURL,
+          postCount:raw.postCount||u.postCount,
+          points:raw.points||u.points||raw.score
+        },uid);
+        if(metric==='points'&&(!n.points||n.points<=0)&&n.postCount>0)n.points=n.postCount*ptsPerPost;
+        return n;
+      }).sort(function(a,b){return(b[metric]||0)-(a[metric]||0);});
+    });
+  }).catch(function(){return [];});
+}
 
 // ============ AUTH ============
 function loginGoogle(){
@@ -1379,7 +1436,9 @@ function submitPost(){
     var d={uid:CU.uid,author:UP.username,photoURL:UP.photoURL||'',role:UP.role||'user',content:txt,likes:{},ts:Date.now()};
     if(postImgB64)d.imageUrl=postImgB64;
     DB.ref('posts/'+key).set(d).then(function(){
+      var ptsPerPost=Math.max(0,Number(SCFG.pointsPerPost||10));
       DB.ref('users/'+CU.uid+'/postCount').transaction(function(c){return(c||0)+1;});
+      DB.ref('users/'+CU.uid+'/points').transaction(function(c){return(c||0)+ptsPerPost;});
       addLog('POST',UP.username+' posting: '+txt.substring(0,60));
       document.getElementById('compTxt').value='';clearImg();toast('Posted!','s');loadFeed();
     });
@@ -1388,7 +1447,11 @@ function submitPost(){
 function delPost(key){
   if(!confirm('Hapus post ini?'))return;
   DB.ref('posts/'+key+'/uid').get().then(function(snap){
-    if(snap.val())DB.ref('users/'+snap.val()+'/postCount').transaction(function(c){return Math.max(0,(c||1)-1);});
+    if(snap.val()){
+      var ptsPerPost=Math.max(0,Number(SCFG.pointsPerPost||10));
+      DB.ref('users/'+snap.val()+'/postCount').transaction(function(c){return Math.max(0,(c||1)-1);});
+      DB.ref('users/'+snap.val()+'/points').transaction(function(c){return Math.max(0,(c||0)-ptsPerPost);});
+    }
     DB.ref('posts/'+key).remove().then(function(){toast('Post dihapus.','i');loadFeed();});
   });
 }
@@ -1626,24 +1689,24 @@ function loadStaff(){
 // ============ LEADERBOARD ============
 function loadLB(type){
   if(type==='posts'){
-    DB.ref('users').orderByChild('postCount').limitToLast(10).get().then(function(snap){
-      var el=document.getElementById('lbPostsEl');if(!el)return;
-      if(!snap.exists()){el.innerHTML='<div style="padding:22px;text-align:center;color:var(--t3)">Belum ada data.</div>';return;}
-      var list=Object.values(snap.val()).sort(function(a,b){return(b.postCount||0)-(a.postCount||0);});
-      el.innerHTML=list.slice(0,10).map(function(u,i){
-        var av=u.photoURL?'<img src="'+esc(u.photoURL)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':ini(u.username||'?');
-        return'<div class="lb-row"><div class="lb-rank'+(i<3?' r'+(i+1):'')+'">'+  (i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1)+'</div><div class="lb-av">'+av+'</div><div class="lb-info"><div class="lb-name">'+esc(u.username||'?')+'</div><div class="lb-sub '+rc(u.role||'user')+'">'+esc(RLBL[u.role||'user']||'Member')+'</div></div><div class="lb-val">'+(u.postCount||0)+'</div></div>';
-      }).join('');
+    loadLBFromUsers('postCount').then(function(list){
+      if(list.length&&list.some(function(u){return(u.postCount||0)>0;}))return list;
+      return loadLBFromLeaderboard('postCount');
+    }).then(function(list){
+      renderLB('lbPostsEl',list,function(u){return u.postCount||0;});
+    }).catch(function(e){
+      var el=document.getElementById('lbPostsEl');if(el)el.innerHTML='<div style="padding:22px;text-align:center;color:var(--red)">Gagal memuat leaderboard posts.</div>';
+      console.error('loadLB posts failed',e);
     });
   } else if(type==='pts'){
-    DB.ref('users').orderByChild('points').limitToLast(10).get().then(function(snap){
-      var el=document.getElementById('lbPtsEl');if(!el)return;
-      if(!snap.exists()){el.innerHTML='<div style="padding:22px;text-align:center;color:var(--t3)">Belum ada data.</div>';return;}
-      var list=Object.values(snap.val()).sort(function(a,b){return(b.points||0)-(a.points||0);});
-      el.innerHTML=list.slice(0,10).map(function(u,i){
-        var av=u.photoURL?'<img src="'+esc(u.photoURL)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':ini(u.username||'?');
-        return'<div class="lb-row"><div class="lb-rank'+(i<3?' r'+(i+1):'')+'">'+( i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1)+'</div><div class="lb-av">'+av+'</div><div class="lb-info"><div class="lb-name">'+esc(u.username||'?')+'</div><div class="lb-sub">'+esc(RLBL[u.role||'user']||'Member')+'</div></div><div class="lb-val lb-pts">'+(u.points||0)+' pts</div></div>';
-      }).join('');
+    loadLBFromUsers('points').then(function(list){
+      if(list.length&&list.some(function(u){return(u.points||0)>0;}))return list;
+      return loadLBFromLeaderboard('points');
+    }).then(function(list){
+      renderLB('lbPtsEl',list,function(u){return (u.points||0)+' pts';},'lb-pts');
+    }).catch(function(e){
+      var el=document.getElementById('lbPtsEl');if(el)el.innerHTML='<div style="padding:22px;text-align:center;color:var(--red)">Gagal memuat leaderboard points.</div>';
+      console.error('loadLB points failed',e);
     });
   }
 }
