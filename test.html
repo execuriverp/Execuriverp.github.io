@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MiraAudio</title>
+
+<title>p</title>
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -18,45 +20,108 @@ height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-background:radial-gradient(circle,#0f172a,#020617);
+background:radial-gradient(circle at center,#0f172a,#020617);
 color:white;
+overflow:hidden;
+}
+
+/* background glow */
+
+body::before{
+content:"";
+position:absolute;
+width:600px;
+height:600px;
+background:radial-gradient(circle,#3b82f6,#0000);
+filter:blur(120px);
+animation:bgMove 8s infinite alternate;
+}
+
+@keyframes bgMove{
+from{transform:translate(-200px,-100px)}
+to{transform:translate(200px,100px)}
 }
 
 .container{
 text-align:center;
-animation:fade 1.2s ease;
+position:relative;
+z-index:2;
 padding:20px;
 }
 
+/* logo */
+
 .logo{
-font-size:46px;
-font-weight:700;
+font-size:52px;
+font-weight:800;
 letter-spacing:2px;
-background:linear-gradient(90deg,#22c1ff,#6f8cff);
+
+background:linear-gradient(90deg,#22c1ff,#6f8cff,#22c1ff);
+background-size:200%;
+
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+
+animation:gradientMove 5s linear infinite;
+}
+
+@keyframes gradientMove{
+to{background-position:200%}
 }
 
 .version{
 opacity:.6;
 margin-top:6px;
-font-size:14px;
 }
 
-.wait{
+/* equalizer */
+
+.equalizer{
+display:flex;
+gap:6px;
+justify-content:center;
 margin-top:25px;
-font-size:15px;
-opacity:.8;
 }
+
+.bar{
+width:6px;
+height:25px;
+background:#3b82f6;
+animation:beat 1s infinite ease-in-out;
+border-radius:3px;
+}
+
+.bar:nth-child(2){animation-delay:.2s}
+.bar:nth-child(3){animation-delay:.4s}
+.bar:nth-child(4){animation-delay:.6s}
+.bar:nth-child(5){animation-delay:.8s}
+
+@keyframes beat{
+0%,100%{height:20px}
+50%{height:45px}
+}
+
+/* wait text */
+
+.wait{
+margin-top:20px;
+opacity:.8;
+font-size:15px;
+}
+
+/* button */
 
 button{
 margin-top:25px;
-padding:12px 35px;
+padding:13px 38px;
 font-size:16px;
+
 border:none;
-border-radius:10px;
+border-radius:12px;
+
 background:#334155;
 color:#aaa;
+
 cursor:not-allowed;
 transition:.3s;
 }
@@ -66,20 +131,23 @@ background:linear-gradient(90deg,#3b82f6,#22c1ff);
 color:white;
 cursor:pointer;
 transform:scale(1.05);
+box-shadow:0 0 20px rgba(59,130,246,.6);
 }
 
 button.active:hover{
-transform:scale(1.08);
+transform:scale(1.1);
 }
 
-@keyframes fade{
-from{opacity:0}
-to{opacity:1}
-}
+/* responsive */
 
 @media(max-width:600px){
-.logo{font-size:32px;}
+
+.logo{
+font-size:36px;
 }
+
+}
+
 </style>
 </head>
 
@@ -87,8 +155,16 @@ to{opacity:1}
 
 <div class="container">
 
-<div class="logo">Welcome to MiraAudio</div>
-<div class="version">v1.0</div>
+<div class="logo">MiraAudio</div>
+<div class="version">Welcome • v1.0</div>
+
+<div class="equalizer">
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
 
 <div class="wait">
 Please wait <span id="count">5</span> seconds
@@ -98,8 +174,8 @@ Please wait <span id="count">5</span> seconds
 
 </div>
 
-<audio id="welcomeAudio">
-<source src="https://audio.jukehost.co.uk/22z0kp56nmEaZgdWYOvvmbBy0NJjMGBd.mp3" type="audio/mpeg">
+<audio id="welcomeAudio" preload="auto">
+<source src="https://audio.jukehost.co.uk/22z0kp56nmEaZgdWYOvvmbBy0NJjMGBd.mp3">
 </audio>
 
 <script>
@@ -107,11 +183,16 @@ Please wait <span id="count">5</span> seconds
 const audio = document.getElementById("welcomeAudio");
 audio.volume = 0.15;
 
+/* play audio after first interaction */
+
 document.body.addEventListener("click",()=>{
 audio.play().catch(()=>{});
 },{once:true});
 
+/* countdown */
+
 let time = 5;
+
 const count = document.getElementById("count");
 const btn = document.getElementById("continueBtn");
 
@@ -121,18 +202,23 @@ time--;
 count.textContent = time;
 
 if(time <= 0){
+
 clearInterval(timer);
-count.textContent = "0";
 
 btn.disabled = false;
 btn.classList.add("active");
+
 }
 
 },1000);
 
-btn.addEventListener("click",()=>{
+/* continue */
+
+btn.onclick = ()=>{
+
 window.location.href = "index.html";
-});
+
+};
 
 </script>
 
