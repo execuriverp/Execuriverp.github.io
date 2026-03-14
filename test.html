@@ -8863,7 +8863,13 @@
       }
       const queueLimit = getUploadQueueLimit();
       if (!queueLimit) {
-        Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi.`, background: '#181828', color: '#fff' });
+        // Calculate remaining cooldown in minutes and seconds
+        const remainingMinutes = Math.floor(cooldown - diff);
+        const remainingSeconds = Math.floor((cooldown - diff - remainingMinutes) * 60);
+        const timeDisplay = remainingMinutes > 0 
+          ? `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}` 
+          : `0:${remainingSeconds.toString().padStart(2, '0')}`;
+        Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${timeDisplay} lagi.`, background: '#181828', color: '#fff' });
         return;
       }
       const qSnap = await db.ref('uploadQueue/' + auth.currentUser.uid).get();
@@ -8907,7 +8913,13 @@
         // Add to queue
         const queueLimit = getUploadQueueLimit();
         if (!queueLimit) {
-          Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi.`, background: '#181828', color: '#fff' });
+          // Calculate remaining cooldown in minutes and seconds
+          const remainingMinutes = Math.floor(cooldown - diff);
+          const remainingSeconds = Math.floor((cooldown - diff - remainingMinutes) * 60);
+          const timeDisplay = remainingMinutes > 0 
+            ? `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}` 
+            : `0:${remainingSeconds.toString().padStart(2, '0')}`;
+          Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${timeDisplay} lagi.`, background: '#181828', color: '#fff' });
           return;
         }
         const scheduledAt = Math.max(lastUpload + cooldown * 60 * 1000, now);
