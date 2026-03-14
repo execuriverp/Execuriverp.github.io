@@ -1,83 +1,53 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Internet Speed Test</title>
-
-<style>
-body{
-  background:#0b0f1a;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-  padding-top:100px;
-}
-
-button{
-  padding:15px 40px;
-  font-size:18px;
-  border:none;
-  border-radius:10px;
-  background:#00f5ff;
-  cursor:pointer;
-}
-
-.result{
-  font-size:30px;
-  margin-top:30px;
-}
-</style>
+<title>Upload Lagu</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
-<h1>Speed Test</h1>
+<h2>Upload Lagu</h2>
 
-<button onclick="testSpeed()">Start Test</button>
+<input type="file" id="fileInput" accept="audio/*">
+<button onclick="uploadFile()">Upload</button>
 
-<div class="result" id="ping">Ping: -</div>
-<div class="result" id="download">Download: -</div>
-<div class="result" id="upload">Upload: -</div>
+<p id="result"></p>
 
 <script>
-async function testSpeed(){
 
-document.getElementById("ping").innerHTML="Ping: testing...";
-document.getElementById("download").innerHTML="Download: testing...";
-document.getElementById("upload").innerHTML="Upload: testing...";
+const supabaseUrl = "https://hikzgjseckxanetyxqkc.supabase.co";
+const supabaseKey = "sb_publishable_lRARo_osK1IOcIDegeW-jA_9k39aCto";
 
-// ping test
-let start=performance.now();
-await fetch("https://librespeed.org/backend/empty.php");
-let ping=Math.round(performance.now()-start);
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-document.getElementById("ping").innerHTML="Ping: "+ping+" ms";
+async function uploadFile() {
 
-// download test
-let t1=performance.now();
-let r=await fetch("https://librespeed.org/backend/garbage.php?r="+Math.random());
-let b=await r.blob();
-let t2=performance.now();
+const file = document.getElementById("fileInput").files[0];
 
-let speed=(b.size*8)/((t2-t1)/1000)/1000000;
+if(!file){
+alert("Pilih file dulu");
+return;
+}
 
-document.getElementById("download").innerHTML="Download: "+speed.toFixed(2)+" Mbps";
+const fileName = Date.now() + "_" + file.name;
 
-// upload test
-let data=new Blob([new Uint8Array(5*1024*1024)]);
+const { data, error } = await supabase.storage
+.from("music")
+.upload(fileName, file);
 
-let t3=performance.now();
-await fetch("https://librespeed.org/backend/empty.php",{
-method:"POST",
-body:data
-});
-let t4=performance.now();
+if(error){
+document.getElementById("result").innerText = "Upload gagal";
+console.log(error);
+return;
+}
 
-let up=(data.size*8)/((t4-t3)/1000)/1000000;
+const url = supabaseUrl + "/storage/v1/object/public/music/" + fileName;
 
-document.getElementById("upload").innerHTML="Upload: "+up.toFixed(2)+" Mbps";
+document.getElementById("result").innerHTML =
+"Upload sukses!<br><a href='"+url+"' target='_blank'>"+url+"</a>";
 
 }
+
 </script>
 
 </body>
