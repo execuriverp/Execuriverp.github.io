@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supabase Media Gallery with Email Verification</title>
+<title>Supabase Media Gallery Verified</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
@@ -53,34 +53,39 @@ const SUPABASE_URL = "https://hikzgjseckxanetyxqkc.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_lRARo_osK1IOcIDegeW-jA_9k39aCto";
 const BUCKET_NAME = "music";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Ganti nama variabel agar tidak bentrok
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// REGISTER
 async function register(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if(error){alert(error.message);return;}
+  const { data, error } = await client.auth.signUp({ email, password });
+  if(error){alert(error.message); return;}
   document.getElementById("verifyMessage").innerText = "Cek email untuk verifikasi!";
   document.getElementById("resendBtn").style.display = "inline-block";
 }
 
+// RESEND VERIFICATION
 async function resendVerification(){
   const email = document.getElementById("email").value;
-  const { data, error } = await supabase.auth.api.sendVerificationEmail(email);
-  if(error){alert(error.message);return;}
+  const { data, error } = await client.auth.api.sendVerificationEmail(email);
+  if(error){alert(error.message); return;}
   alert("Link verifikasi sudah dikirim ulang!");
 }
 
+// LOGIN
 async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if(error){alert(error.message);return;}
+  const { data, error } = await client.auth.signInWithPassword({ email, password });
+  if(error){alert(error.message); return;}
   checkVerified();
 }
 
+// CHECK EMAIL VERIFIED
 async function checkVerified(){
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await client.auth.getUser();
   if(!user) return;
   if(!user.email_confirmed_at){
     document.getElementById("verifyMessage").innerText = "Email belum diverifikasi!";
@@ -95,32 +100,35 @@ async function checkVerified(){
   }
 }
 
+// LOGOUT
 async function logout(){
-  await supabase.auth.signOut();
+  await client.auth.signOut();
   document.getElementById("authBox").style.display = "block";
   document.getElementById("uploadBox").style.display = "none";
   document.getElementById("logoutBtn").style.display = "none";
   document.getElementById("verifyMessage").innerText = "";
 }
 
+// UPLOAD FILE
 async function uploadFile(){
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await client.auth.getUser();
   if(!user.email_confirmed_at){alert("Verifikasi email dulu!"); return;}
   const file = document.getElementById("fileInput").files[0];
   if(!file){alert("Pilih file dulu"); return;}
   const fileName = Date.now() + "_" + file.name;
-  const { error } = await supabase.storage.from(BUCKET_NAME).upload(fileName, file);
+  const { error } = await client.storage.from(BUCKET_NAME).upload(fileName, file);
   if(error){alert("Upload gagal"); console.log(error); return;}
   loadFiles();
 }
 
+// LOAD FILES
 async function loadFiles(){
-  const { data, error } = await supabase.storage.from(BUCKET_NAME).list("", { limit:100 });
+  const { data, error } = await client.storage.from(BUCKET_NAME).list("", { limit:100 });
   const gallery = document.getElementById("gallery");
   if(error){gallery.innerHTML="Error load files"; return;}
   gallery.innerHTML="";
   for(const file of data){
-    const { data:urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(file.name);
+    const { data:urlData } = client.storage.from(BUCKET_NAME).getPublicUrl(file.name);
     const url = urlData.publicUrl;
     let preview="";
     if(file.name.match(/\.(jpg|png|jpeg|webp|gif)$/i)){
@@ -144,20 +152,22 @@ async function loadFiles(){
   }
 }
 
+// DOWNLOAD FILE
 async function downloadFile(name){
-  const { data } = supabase.storage.from(BUCKET_NAME).getPublicUrl(name);
+  const { data } = client.storage.from(BUCKET_NAME).getPublicUrl(name);
   window.open(data.publicUrl, "_blank");
 }
 
+// DELETE FILE
 async function deleteFile(name){
   if(!confirm("Hapus file ini?")) return;
-  const { error } = await supabase.storage.from(BUCKET_NAME).remove([name]);
+  const { error } = await client.storage.from(BUCKET_NAME).remove([name]);
   if(error){alert("Delete gagal"); return;}
   loadFiles();
 }
 
 // Cek session otomatis
-supabase.auth.onAuthStateChange((event, session) => {
+client.auth.onAuthStateChange((event, session) => {
   checkVerified();
 });
 
